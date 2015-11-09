@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:id="@+id/logindialog_space"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="@drawable/bg_main"
+		    android:orientation="vertical" >
+
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_main"> 
+    <!-- 点击桌面加载文件 -->
+    
+   <!--  <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"> -->
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:id="@+id/bg_logo"
+            >
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/img_logo"/>
+            <ImageView android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/img_logo2"/>
+        </LinearLayout>
+          
+               <AutoCompleteTextView 
+                 android:id="@+id/tvUser" 
+                 android:layout_width="fill_parent" 
+                 android:layout_height="40dp" 
+                 android:height="40dp"
+                 android:layout_marginTop="40dp"
+                 android:layout_marginLeft="50dp"
+                 android:layout_marginRight="50dp" 
+                 android:hint="输入用户名/手机号" 
+                 android:textColorHint="#888888"
+                 android:textSize="@dimen/text_size_16" 
+                 android:maxLines="1" 
+                 android:singleLine="true" 
+                 android:selectAllOnFocus="true"
+                 android:maxLength="16"
+                 android:cursorVisible="true"
+	             android:textCursorDrawable="@null"
+                 android:drawableLeft="@drawable/login_text3"
+                 android:background="@drawable/radius_corner"
+                 android:imeOptions="actionNext"
+                 android:textColor="@color/black" />
+           <!--android:background="@drawable/textview_bg"  -->
+          
+               <EditText 
+                android:id="@+id/etPassword" 
+                android:layout_width="fill_parent" 
+                android:layout_height="40dp" 
+                android:height="40dp"
+                android:layout_marginTop="10dp" 
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp" 
+                android:textSize="@dimen/text_size_16" 
+                android:hint="输入密码" 
+                android:textColorHint="#888888"
+                android:maxLines="1" 
+                android:password="true" 
+                android:singleLine="true" 
+                android:selectAllOnFocus="true"
+                android:maxLength="16"
+                android:cursorVisible="true"
+                android:imeOptions="actionNext"
+	            android:textCursorDrawable="@null"
+                android:drawableLeft="@drawable/login_text4"
+                android:background="@drawable/radius_corner"
+                android:textColor="@color/black"  />
+           
+	         <Button 
+	      	  android:id="@+id/login_btn_login" 
+	      	  android:layout_width="fill_parent" 
+		      android:layout_height="wrap_content"
+		      android:layout_marginTop="10dp" 
+		      android:textSize="@dimen/text_size_20"
+		      android:text="登 录" 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="50dp" 
+			  android:layout_marginRight="50dp" 
+	   		  android:background="@drawable/btn" />
+            
+	      <RelativeLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content"
+	         android:layout_margin="5dip">
+	         <TextView 
+	              android:id="@+id/login_a_reg"
+			      android:layout_width="wrap_content" 
+			      android:layout_height="wrap_content" 
+			      android:layout_marginLeft="50.0dip" 
+			      android:layout_gravity="left|center" 
+			      android:text="注册帐号" />
+	         <TextView 
+	              android:id="@+id/login_a_retrieve"
+			      android:layout_width="wrap_content" 
+			      android:layout_height="wrap_content" 
+			      android:layout_alignParentRight="true"
+			      android:layout_marginRight="50dp"
+			      android:text="忘记密码" />
+	      </RelativeLayout>
+        <!-- android:layout_marginLeft="20.0dip"  -->
+        
+   <!--  </RelativeLayout> -->
+</LinearLayout> 
+
+</com.views.CustomScrollView>

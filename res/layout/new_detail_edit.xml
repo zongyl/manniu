@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:attr="http://schemas.android.com/apk/"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6E6E6"
+    android:orientation="vertical">
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
+        <ImageView 
+            android:id="@+id/pers_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/common_title_back"/>
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/per_detail"
+            android:textColor="@color/dark"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+    
+    <LinearLayout style="@style/SetGroup" android:layout_marginTop="20dp">
+            <LinearLayout style="@style/SetGroupItem"   android:id="@+id/photo_upload" android:background="@drawable/listitem_selector">
+		       <TextView android:text="@string/sel_photo" style="@style/SetGroupItemLeftText"/>
+		       <de.hdodenhof.circleimageview.CircleImageView
+		            android:layout_width="50dp"
+		            android:layout_height="50dp"
+		            android:layout_margin="15dp"
+		            android:layout_gravity="center_vertical"
+		            android:src="@drawable/head_setting"
+		            attr:border_width="2dp"
+		            attr:border_color="@color/light"
+		            android:id="@+id/faceimage"/>
+   			</LinearLayout>
+   			<TextView style="@style/DetailBaseline"/>
+			<LinearLayout style="@style/SetGroupItem" android:id="@+id/hotN" android:background="@drawable/listitem_selector">
+			    <TextView android:text="@string/hot_name" style="@style/SetGroupItemLeftText"/>
+			    <TextView  android:id="@+id/hot_name" android:hint="@string/non_set" style="@style/SetGroupItemDescText"/>
+			    <ImageView android:src="@drawable/face_right" style="@style/SetGroupItemRightText"/>
+			</LinearLayout>
+			<TextView style="@style/DetailBaseline"/>
+			<!-- <LinearLayout style="@style/SetGroupItem" android:id="@+id/pSign" android:background="@drawable/listitem_selector">
+			    <TextView android:text="@string/per_signer" style="@style/SetGroupItemLeftText"/>
+			    <TextView android:id="@+id/per_signer" android:hint="@string/non_set" style="@style/SetGroupItemDescText"/>
+			    <ImageView android:src="@drawable/face_right" style="@style/SetGroupItemRightText"/>
+			</LinearLayout>
+			
+			
+			<TextView style="@style/DetailBaseline"/> -->
+			
+			<LinearLayout style="@style/SetGroupItem" android:id="@+id/mailN" android:background="@drawable/listitem_selector">
+			   <TextView android:text="@string/e_mail" style="@style/SetGroupItemLeftText"/>
+			   <TextView android:id="@+id/e_mail" android:hint ="@string/non_bound" style="@style/SetGroupItemDescText"/>
+			   <ImageView android:src="@drawable/face_right" style="@style/SetGroupItemRightText"/>
+			</LinearLayout>
+			<TextView style="@style/DetailBaseline"/>
+			<LinearLayout style="@style/SetGroupItem" android:id="@+id/phoN" android:background="@drawable/listitem_selector" android:clickable="false">
+			    <TextView android:text="@string/pho_number" style="@style/SetGroupItemLeftText"/>
+			    <TextView android:id="@+id/pho_number" android:hint="@string/non_bound" style="@style/SetGroupItemDescText"/>
+			    <ImageView android:src="@drawable/face_right" style="@style/SetGroupItemRightText"/>
+			</LinearLayout>
+			
+    </LinearLayout>
+	<LinearLayout style="@style/SetGroupItem" android:paddingLeft="10dp" android:layout_marginTop="20dp" android:id="@+id/pwdChg" android:background="@drawable/listitem_selector">
+	    <TextView android:text="@string/chg_pwd" style="@style/SetGroupItemLeftText"/>
+	    <ImageView android:src="@drawable/face_right"
+	        style="@style/SetGroupItemRightText"/>
+	</LinearLayout>
+</LinearLayout>

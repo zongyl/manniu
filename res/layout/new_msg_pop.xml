@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <!-- <TextView
+        android:id="@+id/ontime_video" 
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:drawableLeft="@drawable/title_down_play"
+	    android:layout_marginTop="15dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:text="实时视频"/>
+    <TextView 
+        android:id="@+id/msg_save"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:drawableLeft="@drawable/title_down_download"
+	    android:layout_marginTop="15dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:text="存至本地"/> -->
+    <TextView 
+        android:id="@+id/msg_shareImg"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:drawableLeft="@drawable/title_down_share"
+	    android:layout_marginTop="15dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:gravity="center"
+	    android:text="分享图片"/>
+</LinearLayout>

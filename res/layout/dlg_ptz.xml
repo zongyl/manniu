@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res-auto"
+    android:layout_width="100dp"
+    android:layout_height="250dp"
+    android:background="#FF000000"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzz0"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1z0"
+            xgps:SelectedImage="@drawable/ptz_1z1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzi0"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1f0"
+            xgps:SelectedImage="@drawable/ptz_1f1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzf0"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1i0"
+            xgps:SelectedImage="@drawable/ptz_1i1" />
+        
+      	<com.ctrl.XImageBtn
+      	    android:id="@+id/ptzl"
+      	    android:layout_width="50dp"
+            android:layout_height="50dp"
+      	    xgps:NormalImage="@drawable/ptz_0l0"
+      	    xgps:SelectedImage="@drawable/ptz_0l1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzr"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_0r0"
+            xgps:SelectedImage="@drawable/ptz_0r1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzz1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1z1"
+            xgps:SelectedImage="@drawable/ptz_1z1" />
+
+
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzi1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1f1"
+            xgps:SelectedImage="@drawable/ptz_1f1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzf1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_1i1"
+            xgps:SelectedImage="@drawable/ptz_1i1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_0u0"
+            xgps:SelectedImage="@drawable/ptz_0u1" />
+        
+        <com.ctrl.XImageBtn
+            android:id="@+id/ptzd"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            xgps:NormalImage="@drawable/ptz_0d0"
+            xgps:SelectedImage="@drawable/ptz_0d1" />
+    </LinearLayout>
+
+</LinearLayout>

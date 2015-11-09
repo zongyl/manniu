@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item1_tv0"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/ss_switch"
+            android:tag="on"
+            android:layout_width="wrap_content" 
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp" android:src="@drawable/my_switch_on" /> 
+    </RelativeLayout>

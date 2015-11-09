@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/full_transparent"
+    android:padding="5dp" 
+    android:orientation="vertical" >
+    <TextView 
+	    android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#8F8F8F"
+	    android:textSize="12sp"
+	    android:background="@drawable/actionsheet_top_normal"
+	    android:text="@string/setphoto"/>
+    
+	<TextView 
+	    android:id="@+id/take_photo"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#037BFF"
+	    android:textSize="16sp"
+	    android:background="@drawable/actionsheet_middle_selector" 
+	    android:text="@string/camera"/>
+	<TextView 
+	    android:id="@+id/from_photo"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	   	android:gravity="center"
+	   	android:textColor="#037BFF"
+	   	android:textSize="16sp"
+	   	android:background="@drawable/actionsheet_middle_selector"
+	    android:text="@string/album"/>
+	<!-- <TextView 
+	    android:id="@+id/use_weixin"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#037BFF"
+	    android:textSize="16sp"
+	    android:background="@drawable/actionsheet_bottom_selector"
+	    android:text="使用微信头像"/> -->
+	<TextView 
+	    android:id="@+id/cancel_upload"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#037BFF"
+	    android:textSize="16sp"
+	    android:background="@drawable/actionsheet_single_selector"
+	    android:text="@string/cancel"
+	    android:layout_marginTop="10dp"/>
+</LinearLayout>

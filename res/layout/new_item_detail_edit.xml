@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" 
+    android:background="#E6E6E6"
+    android:orientation="vertical">
+	
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/common_title_cancel"
+            android:id="@+id/cancel_edit"/>
+        <TextView android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/dark"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/hotN_title"/>
+        
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/common_title_confirm"
+            android:id="@+id/confirm_edit"/>
+    </LinearLayout>
+    <LinearLayout  
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="#ffffff"
+        >
+        <EditText android:layout_width="0dp"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:singleLine="true"
+            android:textColorHint="@color/gray"
+            android:textColor="@color/black"
+            android:id="@+id/hotN_write"/>
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:src="@drawable/del_sel"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/del_edit"/>
+    </LinearLayout>
+    <TextView 
+        android:id="@+id/detailItem_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"/>
+
+</LinearLayout>

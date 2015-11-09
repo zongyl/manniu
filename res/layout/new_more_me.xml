@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:background="#E6E6E6"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+ <!--    <LinearLayout 
+        android:layout_width="fill_parent" android:layout_height="200dp"
+        android:background="@drawable/more_background1"
+        android:orientation="vertical"
+        android:id="@+id/photos_parent">
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_alignParentLeft="true"
+	            android:id="@+id/photo"
+	            android:layout_width="60dp"
+	            android:layout_height="60dp"
+	            android:layout_centerInParent="true"
+	            android:src="@drawable/head_setting"
+	            attr:border_width="1.5dp"
+	            attr:border_color="@color/light"
+	            android:clickable="true"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+	            android:layout_margin="5dp"
+	            android:id="@+id/photo_s"
+	            android:layout_width="30dp"
+	            android:layout_height="30dp"
+	            android:src="@drawable/individual2_center"
+	            android:layout_alignParentTop="true"
+	            android:layout_alignParentRight="true"
+	            attr:border_color="@color/light"
+	            android:clickable="true"/>
+	           
+            <TextView android:text="yummy"
+                android:gravity="center"
+                android:id="@+id/main_hotname"
+                android:textColor="@color/light"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/photo"/>
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/face_right"/>
+        </RelativeLayout>
+   </LinearLayout> -->
+    <RelativeLayout 
+        android:id="@+id/per_edit"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_margin="10dp"
+                android:layout_alignParentLeft="true"
+	            android:id="@+id/photo"
+	            android:layout_width="60dp"
+	            android:layout_height="60dp"
+	            android:layout_centerInParent="true"
+	            android:src="@drawable/head_setting"
+	            attr:border_width="1.5dp"
+	            attr:border_color="@color/dark"
+	            android:clickable="true"/>
+		    <TextView 
+		        android:text="yummy"
+		        android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/main_hotname"
+                android:layout_toRightOf="@id/photo"
+                android:textColor="@color/dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/face_right"/>
+        </RelativeLayout>
+   <LinearLayout 
+       android:layout_width="match_parent" 
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+        
+        <com.adapter.NoScrollListView  
+        android:id="@+id/list01"
+        android:divider="@null"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" >
+        </com.adapter.NoScrollListView>
+    
+    	<com.adapter.NoScrollListView  
+        android:id="@+id/list02"
+        android:divider="@null"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp">
+            
+    	</com.adapter.NoScrollListView>
+    
+    	<!--   android:dividerHeight="1px"-->
+    	
+    	<com.adapter.NoScrollListView 
+        android:id="@+id/list03"
+        android:divider="@null"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp">
+    	</com.adapter.NoScrollListView>  
+   </LinearLayout>
+</LinearLayout> 
+</ScrollView>
+

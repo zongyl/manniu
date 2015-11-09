@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFF0F1"
+    android:orientation="vertical" >
+    
+    <FrameLayout
+		 android:layout_width="fill_parent"
+		 android:layout_height="50dp"
+		 android:layout_gravity="center_vertical|center_horizontal"
+		 android:background="@drawable/common_title" >
+		 
+        <TextView
+       	android:id="@+id/dev_set_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="添加设备 "
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:textStyle="bold" 
+        android:layout_gravity="center_vertical|center_horizontal"/>
+       	
+       	<Button 
+       	    android:id="@+id/new_main_adddev_cancel"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/new_dev_set_info_cancel_selector"/>
+       	
+       	<Button 
+       	    android:id="@+id/new_main_adddev_submit"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:layout_gravity="right"
+       	    android:background="@drawable/new_dev_set_info_submit_selector"/>
+       	
+		 </FrameLayout>
+
+    <EditText 
+        android:id="@+id/new_dev_sn"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:hint="序列号"
+        android:textColor="@color/black"
+        android:layout_marginTop="15dp"
+        android:textCursorDrawable="@null"
+        android:drawableRight="@drawable/new_dev_set_info_del_selector"
+        android:background="@drawable/textview_bg"/>
+    <EditText 
+        android:id="@+id/new_dev_pn"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:hint="验证码"
+        android:textColor="@color/black"
+        android:layout_marginTop="15dp"
+        android:textCursorDrawable="@null"
+        android:drawableRight="@drawable/new_dev_set_info_del_selector"
+        android:background="@drawable/textview_bg"/>
+    
+    <TextView
+        android:id="@+id/location_tv" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="定位中..."
+        />
+    
+    <!-- <TextView
+        android:textColor="#ACACAC"
+        android:text="不超过50个字符" 
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/> -->
+    
+</LinearLayout>

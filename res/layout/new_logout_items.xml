@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:padding="5dp" 
+	 android:layout_alignParentBottom="true"
+	 android:layout_width="fill_parent"
+	 android:layout_height="wrap_content"
+	 android:background="@color/full_transparent"
+	 android:orientation="vertical" >
+    <TextView 
+	    android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#8F8F8F"
+	    android:textSize="12sp"
+	    android:background="@drawable/actionsheet_top_normal"
+	    android:text="@string/logout_tip"/>
+	<TextView 
+	    android:id="@+id/logout_confirm"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="@color/red"
+	    android:textSize="16sp"
+	    android:background="@drawable/actionsheet_bottom_selector"
+	    android:text="@string/confirm"/>
+	<TextView 
+	    android:id="@+id/logout_cancel"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:textColor="#037BFF"
+	    android:textSize="16sp"
+	    android:background="@drawable/actionsheet_single_selector"
+	    android:text="@string/cancel"
+	    android:layout_marginTop="10dp"/> 
+</LinearLayout> 
+
+

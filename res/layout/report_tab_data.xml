@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@color/fun_bkcolor">
+    <!-- 报警数据值列表 -->
+    <!-- <ListView
+        android:id="@+id/data_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:textColor="@color/black"  
+		android:textSize="16dp"
+        /> -->
+    
+       <ListView 
+        android:id="@+id/data_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></ListView>
+</LinearLayout>

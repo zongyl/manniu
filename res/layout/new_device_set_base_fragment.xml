@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res-auto"
+    android:background="#E6E6E6"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+      <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="分辨率"
+            android:textColor="@color/black" />
+        
+        <Spinner android:id="@+id/resolution"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+      
+    </RelativeLayout>
+      <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="画质"
+            android:textColor="@color/black" />
+        <Spinner android:id="@+id/quality"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout>
+   
+     <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="动态检测"
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/dev_set_item_switch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/my_switch_on"
+            />
+    </RelativeLayout>
+     <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="报警录像云存储"
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/dev_set_item_switch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/my_switch_on"
+            />
+    </RelativeLayout>
+   
+     <RelativeLayout
+       android:id="@+id/device_set_network"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="网络"
+            android:textColor="@color/black" />
+       
+    </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

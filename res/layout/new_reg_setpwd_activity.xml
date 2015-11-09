@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:id="@+id/logindialog_space"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="@drawable/bk_main"
+		    android:orientation="vertical" >
+       <LinearLayout 
+        android:id="@+id/myViewReg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="vertical" >
+        
+       <!-- <EditText 
+           android:id="@+id/pwd"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+	   	   android:layout_marginLeft="20.0dip" 
+		   android:layout_marginRight="20.0dip" 
+           android:password="true"/>
+       
+       <EditText 
+           android:id="@+id/repwd"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+	   	   android:layout_marginLeft="20.0dip" 
+		   android:layout_marginRight="20.0dip" 
+           android:password="true"/> -->
+           
+           <EditText 
+                android:id="@+id/pwd" 
+                android:layout_width="fill_parent" 
+                android:layout_height="35dp" 
+                android:layout_marginLeft="10.0dip" 
+                android:layout_marginRight="10.0dip" 
+                android:textSize="@dimen/text_size_16" 
+                android:hint="@string/pwd_putTip" 
+                android:textColorHint="@color/black"
+                android:maxLines="1" 
+                android:singleLine="true" 
+                android:selectAllOnFocus="true"
+                android:password="true"
+                android:maxLength="16"
+                android:cursorVisible="true"
+	            android:textCursorDrawable="@null"
+	            android:drawableLeft="@drawable/login_text4"
+                android:background="@drawable/textview_bg"
+                android:textColor="@color/black"  />
+           
+           <EditText 
+                android:id="@+id/repwd" 
+                android:layout_width="fill_parent" 
+                android:layout_height="35dp" 
+                android:layout_marginTop="10dp" 
+                android:layout_marginLeft="10.0dip" 
+                android:layout_marginRight="10.0dip" 
+                android:textSize="@dimen/text_size_16" 
+                android:hint="@string/pwd_reputTip" 
+                android:textColorHint="@color/black"
+                android:maxLines="1" 
+                android:singleLine="true" 
+                android:selectAllOnFocus="true"
+                android:password="true"
+                android:maxLength="16"
+                android:cursorVisible="true"
+	            android:textCursorDrawable="@null"
+	            android:drawableLeft="@drawable/login_text4"
+                android:background="@drawable/textview_bg"
+                android:textColor="@color/black"  />
+           
+       
+       <Button 
+	      	  android:id="@+id/sub" 
+	      	  android:layout_width="fill_parent" 
+		      android:layout_height="wrap_content" 
+		      android:layout_marginTop="10dp" 
+		      android:textSize="@dimen/text_size_20"
+		      android:text="@string/pwdSet" 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="20.0dip" 
+			  android:layout_marginRight="20.0dip" 
+	   		  android:background="@drawable/btn" />
+     
+</LinearLayout>
+</com.views.CustomScrollView>

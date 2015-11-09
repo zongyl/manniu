@@ -1,0 +1,100 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:background="@color/white" >
+
+  <FrameLayout android:id="@+id/hhheader"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white">
+
+      <Button
+       	    android:id="@+id/btn_back_video"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/common_title_back" 
+       	    android:layout_marginLeft="5dp"
+       	    android:gravity="left"/>
+         
+         <TextView
+       	    android:id="@+id/dev_name"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="@string/app_name"
+        	android:textSize="18dp"
+        	android:textColor="@color/black"
+        	android:layout_gravity="center|center_horizontal"/>
+         
+    </FrameLayout>
+    
+    <FrameLayout android:id="@+id/frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+  	 <SurfaceView
+         android:id="@+id/SurfaceViewPlay1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         />
+    <!-- 实时视频时用 -->
+    <!-- <RelativeLayout
+        android:id="@+id/SurfaceViewPlay1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        /> -->
+    
+    <RelativeLayout 
+        android:id="@+id/pagefooter"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="#ae000000"
+        >
+        <Button 
+            android:id="@+id/btn_play_play"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/stop"/>
+        <Button 
+            android:id="@+id/btn_play_cut"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/btn_play_play" 
+            android:background="@drawable/control_icon_small_cut_n"/>
+        <Button 
+            android:id="@+id/btn_play_video"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/btn_play_cut" 
+            android:background="@drawable/control_icon_small_video_n"/>
+        
+        
+        <Button 
+            android:id="@+id/btn_play_gpu"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/btn_play_video" 
+            android:background="@drawable/gpu_false"/>
+        
+        <Button 
+            android:id="@+id/btn_play_fullscreen"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/control_icon_full_screen_n" />
+    </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

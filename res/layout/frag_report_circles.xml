@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/fun_bkcolor">
+    <!-- 数据报表   fragment  数据 值列表    XML -->
+    <FrameLayout
+         android:id="@+id/layoutHead"
+		 android:layout_width="fill_parent"
+		 android:layout_height="wrap_content"
+		 android:layout_gravity="center_vertical|center_horizontal"
+		 android:background="@drawable/top"
+		 android:padding="4dp" >
+       	<TextView
+       	    android:id="@+id/tvTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="15dp"
+	        android:layout_marginRight="15dp"
+	        android:text="数据报表"
+	        android:textColor="#FFFFFFFF"
+	        android:textSize="18dp"
+	        android:textStyle="bold" 
+	        android:layout_gravity="center_vertical|center_horizontal"/>
+       	<Button
+       	    android:id="@+id/btn_local"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/btn_back0"
+       	    android:layout_marginLeft="5dp"
+       	    android:layout_gravity="center_vertical|left"/>
+    </FrameLayout>
+    
+    
+    <LinearLayout
+ 	    android:layout_width="match_parent"
+ 	    android:layout_height="wrap_content"
+ 	    android:orientation="horizontal" 
+ 	    android:layout_gravity="center|center_vertical|center_horizontal">
+    <TextView android:id="@+id/text1"  
+		 android:layout_width="fill_parent"  
+		 android:layout_height="wrap_content"  
+		 android:textColor="@color/black"  
+		 android:textSize="16dp"
+		 android:text="通道名称  2014-09-05 00:00:00 --  2014-09-05 23:59:59"
+		 android:background="#E2E2E2"
+		 android:layout_weight="1"
+		 /> 
+		 
+    <TextView android:id="@+id/text2"  
+		 android:layout_width="fill_parent"  
+		 android:layout_height="fill_parent"  
+		 android:textColor="@color/black"  
+		 android:textSize="16dp"
+		 android:text="总条数：6000"
+		 android:layout_marginRight="5dp"
+		 android:background="#E2E2E2"
+		 android:layout_weight="2"
+		 android:gravity="top|center_vertical|center_horizontal"
+		 /> 
+		 
+    </LinearLayout>
+    
+		 
+    <!-- <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/> -->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    <!-- <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/indicator"
+        android:padding="10dip"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        /> -->
+       <!--  
+       app:fillColor="#ffffff" 选中背景色-白色
+       app:pageColor="#88FF00" 背景色-绿色
+       app:strokeColor="#FF0000" 背景 边框色 - 红色
+       -->
+   <!--  <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/indicator"
+        android:padding="10dip"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:background="@color/fun_bkcolor"
+        app:radius="10dp"
+        app:fillColor="#2E91B0"
+        app:pageColor="#676566"
+        app:strokeColor="@color/fun_bkcolor"
+        app:strokeWidth="2dp"
+        /> -->
+</LinearLayout>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_ad">
+    <!-- 点击桌面加载文件 -->
+    
+    <ImageView android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:background="@drawable/ad1"/>
+
+        <LinearLayout 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+            
+            <RelativeLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                 <!-- <ImageView android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:src="@drawable/img_logo"/> -->
+                
+           <!--  <ImageView android:layout_width="fill_parent"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ad_logo"/> -->
+            </RelativeLayout>
+            
+            <!--  -->
+        </LinearLayout>
+</LinearLayout>

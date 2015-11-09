@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <!-- ImageView from copy native version -->
+    <ImageView android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="5dip"
+        />
+    
+    <!-- native version
+     <TextView android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:layout_margin="10dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        /> -->
+    
+    <!-- waterGate version. id name is textView. native version id name is title. -->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pop_item"
+        android:textColor="@color/popup_menu_text"
+        android:clickable="true"
+        android:drawablePadding="3.0dip"
+        android:gravity="center_vertical"
+        android:padding="7.0dip"
+        android:text="about"
+        android:textSize="18.0sp" />
+
+</LinearLayout>

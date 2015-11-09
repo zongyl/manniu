@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res-auto"
+    android:layout_width="150dp"
+    android:layout_height="100dp"
+    android:background="#808080"
+    android:orientation="vertical" >
+    
+    <TableLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+        >
+		<TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+		    <com.ctrl.XImageBtn
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            xgps:NormalImage="@drawable/talk1"
+            xgps:SelectedImage="@drawable/talk1" />
+	        <TextView
+	            android:id="@+id/talk1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="    语音对讲 "
+	            android:textColor="#FFFFFF"
+	            android:textSize="16dp"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	    </TableRow>
+	    <View android:layout_width="wrap_content"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#000000"/>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+		    <com.ctrl.XImageBtn
+            android:id="@+id/imgaudio"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            xgps:NormalImage="@drawable/btn_audio0"
+            xgps:SelectedImage="@drawable/btn_audio0" />
+	        <TextView
+	            android:id="@+id/btn_audio"
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="    伴   音 "
+	            android:textColor="#FFFFFF"
+	            android:textSize="16dp"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	    </TableRow> 
+   		  
+    </TableLayout> 
+   		  
+
+</LinearLayout>

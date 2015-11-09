@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E6E6E6" >
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/title_cancel_selector"
+            android:id="@+id/cancel_edit"/>
+        <TextView android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="WI-FI配置工具"
+            android:textColor="@color/dark"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/hotN_title"/>
+        
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/title_confirm_selector"
+            android:id="@+id/confirm_edit"/>
+    </LinearLayout>
+	<TextView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="输入你的WI-FI网络信息"
+	    android:textColor="@color/dark"
+	    android:layout_gravity="center_vertical"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginTop="15dp"/>
+	<TextView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="请输入网络名称"
+	    android:layout_marginLeft="25dp"
+	    android:layout_gravity="center_vertical"/>
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:background="#ffffff"
+	    android:layout_marginTop="10dp">
+	    <ImageView android:layout_width="50dp"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical" 
+	        android:layout_marginLeft = "20dp"
+	        android:src="@drawable/device_wifi"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="10dp"/>
+	    <EditText android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@null"
+	        android:layout_gravity="center_vertical"
+	        android:layout_marginTop="10dp"
+	        android:layout_marginBottom="10dp"
+	        android:layout_marginLeft="25dp"/>
+	</LinearLayout>
+	
+	<TextView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="请输入网络密码"
+	    android:layout_marginTop="20dp"
+	    android:layout_marginLeft="25dp"
+	    android:layout_gravity="center_vertical"/>
+	<LinearLayout 
+	    android:background="#ffffff"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_marginTop="10dp">
+	   <TextView android:layout_width="50dp"
+	       android:layout_height="wrap_content"
+	       android:layout_marginLeft="20dp"
+	       android:text="密码"
+	       android:textSize="18sp"
+	       android:textColor="@color/dark"
+	       android:gravity="center"
+	       android:layout_gravity="center_vertical"
+	       android:layout_marginTop="10dp"
+	       android:layout_marginBottom="10dp"/>
+	   <EditText android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_gravity="center_vertical"
+	       android:layout_marginLeft="25dp"
+	       android:background="@null"
+	       android:layout_marginTop="10dp"
+	       android:layout_marginBottom="10dp"/>
+	</LinearLayout>
+</LinearLayout>

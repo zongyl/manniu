@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#ffffff">
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff">
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/title_cancel_selector"
+            android:id="@+id/cancel_edit"/>
+        <TextView android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="@string/suggest"
+            android:textColor="@color/dark"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/hotN_title"/>
+        
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/title_confirm_selector"
+            android:id="@+id/confirm_edit"/>
+    </LinearLayout>
+	<TextView android:layout_width="fill_parent"
+	    android:layout_height="0.8dp"
+	    android:background="#E6E6E6"/>
+	<LinearLayout 
+	    android:layout_marginTop="15dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_width="match_parent"
+	    android:layout_height="200dp"
+	    android:background="@drawable/bk_setting_feedback"
+	    android:orientation="horizontal">
+	   	<ScrollView android:layout_width="0dp"
+	   	    android:layout_weight="1"
+	   	    android:layout_height="fill_parent"
+	   	    android:scrollbarStyle="insideInset">
+	   	    <EditText 
+	   	        android:id="@+id/feed_content"
+		   	    android:layout_width="fill_parent"
+		        android:layout_height="fill_parent"
+		        android:hint="@string/suggest_hint"
+		        android:background="@null"/>
+	   	</ScrollView>
+	    
+	    <RelativeLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="fill_parent">
+	        <ImageView 
+	            android:id="@+id/cancel_fee"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerInParent="true"
+	            android:src="@drawable/del_sel"
+	            android:visibility="invisible"
+	            android:layout_centerHorizontal="true"/>
+	        <TextView android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentBottom="true"
+	            android:text="256"
+	            android:visibility="invisible"
+	            android:layout_centerHorizontal="true"/>
+	        
+	    </RelativeLayout>
+	</LinearLayout>
+</LinearLayout>

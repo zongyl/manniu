@@ -1,0 +1,142 @@
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:background="#E6E6E6"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
+<!-- <com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:id="@+id/logindialog_space"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="@drawable/bg_main"
+		    android:orientation="vertical" > -->
+	
+	<RelativeLayout style="@style/SetLayout" android:background="#ffffff">
+        <ImageView 
+            android:id="@+id/set_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/title_back_selector"/>
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/base_set"
+            android:textColor="@color/dark"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>   
+
+	<LinearLayout style="@style/SetGroup" android:orientation="vertical" android:layout_marginTop="20dp">
+        <LinearLayout style="@style/SetGroupItem">
+	        <TextView android:text="@string/flow_remaind" style="@style/DetailSetLeft"/>
+	        <ImageView 
+	            android:id="@+id/flow_switch"
+	            android:tag="on"
+	            android:layout_gravity="center_vertical"
+	            android:layout_width="wrap_content" android:layout_height="wrap_content"
+	            android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+	    </LinearLayout>
+   		<TextView style="@style/DetailBaseline" android:id="@+id/set_line"/>
+	    <LinearLayout android:id="@+id/flow_limit" style="@style/SetGroupItem" android:background="@drawable/listitem_selector">
+	        <TextView android:text="@string/flow_limit" style="@style/DetailSetLeft" />
+	        <TextView  android:id="@+id/flow_tipSize" android:text="20MB" style="@style/DetailCommenText"/>
+	        <ImageView  android:src="@drawable/face_right" style="@style/DetailSetRight"/>
+	    </LinearLayout>
+	</LinearLayout>
+
+   <LinearLayout  style="@style/SetLayout" android:background="#E6E6E6" >
+        <TextView android:text="@string/flow_desc" style="@style/DetailCommenText"/>
+   </LinearLayout>
+   <LinearLayout style="@style/SetGroup" android:orientation="vertical" >
+       <!--  <LinearLayout android:paddingLeft="10dp" style="@style/SetGroupItem">
+		   <TextView android:text="@string/auto_check" style="@style/DetailSetLeft" />
+		   <ImageView 
+			    android:id="@+id/check_switch"
+			    android:tag="on"
+			    android:layout_gravity="center_vertical"
+			    android:layout_width="wrap_content" android:layout_height="wrap_content" 
+			    android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+    	</LinearLayout>
+    	<TextView style="@style/DetailBaseline" android:id="@+id/set_line"/> -->
+        <LinearLayout style="@style/SetGroupItem">
+	        <TextView android:text="@string/set_push" style="@style/DetailSetLeft"/>
+	        <ImageView 
+	            android:id="@+id/push_switch"
+	            android:tag="on"
+	            android:layout_gravity="center_vertical"
+	            android:layout_width="wrap_content" android:layout_height="wrap_content"
+	            android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+	    </LinearLayout>
+   		<!-- <TextView style="@style/DetailBaseline" android:id="@+id/set_line"/>
+	    <LinearLayout android:paddingLeft="10dp" style="@style/SetGroupItem">
+		   <TextView android:text="@string/auto_recMsg" style="@style/DetailSetLeft" />
+		   <ImageView 
+			    android:id="@+id/devi_switch"
+			    android:tag="on"
+			    android:layout_gravity="center_vertical"
+			    android:layout_width="wrap_content" android:layout_height="wrap_content" 
+			    android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+    	</LinearLayout> -->
+	</LinearLayout>
+	
+   
+    <LinearLayout  style="@style/SetLayout" android:background="#E6E6E6" >
+        <TextView android:text="@string/auto_desc" style="@style/DetailCommenText"/>
+    </LinearLayout>
+    
+   <!--  <LinearLayout style="@style/SetGroup" >
+       <LinearLayout android:id="@+id/flow_count" style="@style/SetGroupItem" android:background="@drawable/listitem_selector">
+	       <TextView android:text="@string/flow_count" style="@style/DetailSetLeft"/>
+	       <ImageView  android:src="@drawable/face_right" style="@style/DetailSetRight"/>
+   	   </LinearLayout>
+	   <TextView style="@style/DetailBaseline"/>
+	   <LinearLayout  android:id="@+id/rece_login" style="@style/SetGroupItem" android:background="@drawable/listitem_selector">
+	       <TextView android:text="@string/rece_login" style="@style/DetailSetLeft"/>
+	       <ImageView  android:src="@drawable/face_right" style="@style/DetailSetRight"/>
+	   </LinearLayout>
+    </LinearLayout> -->
+	
+     <LinearLayout  style="@style/SetLayout" android:background="#E6E6E6" >
+        <TextView android:text="@string/auto_loginset" style="@style/DetailCommenText"/>
+     </LinearLayout>
+   
+   <LinearLayout style="@style/SetGroup" android:orientation="vertical" >
+        <LinearLayout style="@style/SetGroupItem">
+	        <TextView android:text="@string/auto_login" style="@style/DetailSetLeft"/>
+	        <ImageView 
+	            android:id="@+id/zddl_switch"
+	            android:tag="on"
+	            android:layout_gravity="center_vertical"
+	            android:layout_width="wrap_content" android:layout_height="wrap_content"
+	            android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+	    </LinearLayout>
+   		<TextView style="@style/DetailBaseline" android:id="@+id/set_line"/>
+	    <LinearLayout android:paddingLeft="10dp" style="@style/SetGroupItem">
+		   <TextView android:text="@string/pass_save" style="@style/DetailSetLeft" />
+		   <ImageView 
+			    android:id="@+id/bcmm_switch"
+			    android:tag="on"
+			    android:layout_gravity="center_vertical"
+			    android:layout_width="wrap_content" android:layout_height="wrap_content" 
+			    android:layout_marginRight="10dp" android:background="@drawable/my_switch_on" />
+    	</LinearLayout>
+	</LinearLayout>
+<!-- </com.views.CustomScrollView> -->
+</LinearLayout>
+</ScrollView>
+
+
+
+
+
+
+
+

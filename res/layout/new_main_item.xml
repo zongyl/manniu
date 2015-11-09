@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:textSize="18sp"
+    android:descendantFocusability="blocksDescendants">
+    
+      <FrameLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical|center_horizontal"> 
+        
+        <TextView  
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:id="@+id/device_txt">
+       </TextView>
+       
+        <!-- <Button 
+           android:id="@+id/device_msg"
+           android:layout_width="50dp"
+           android:layout_height="50dp"
+           android:layout_marginRight="50dp"
+           android:layout_gravity="center_vertical|right"
+           android:background="@drawable/common_title_more"/> -->
+       
+        <Button 
+           android:id="@+id/device_btn"
+           android:layout_width="50dp"
+           android:layout_height="50dp"
+           android:layout_gravity="center_vertical|right"
+           android:background="@drawable/new_main_item_more_selector"/>
+       	</FrameLayout>
+        
+      <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="280dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:adjustViewBounds="true">
+          <ImageView 
+              android:id="@+id/device_img"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:scaleType="fitXY"
+              />
+          <!-- <TextView android:id="@+id/device_status"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentRight="true"
+              android:layout_marginRight="5dp"
+              android:layout_marginBottom="5dp"
+              android:textColor="@color/white"
+              android:layout_alignParentBottom="true"/> -->
+          
+          <ImageView android:id="@+id/device_type_ic"
+              android:layout_width="30dp"
+              android:layout_height="30dp"
+              android:layout_alignParentRight="true"
+              android:layout_marginRight="45dp"
+              android:layout_marginBottom="5dp"
+              android:layout_alignParentBottom="true"
+              />
+          
+          <ImageView android:id="@+id/device_status_ic"
+              android:layout_width="30dp"
+              android:layout_height="30dp"
+              android:layout_alignParentRight="true"
+              android:layout_marginRight="5dp"
+              android:layout_marginBottom="5dp"
+              android:layout_alignParentBottom="true"
+              />
+          
+      </RelativeLayout>
+    <!-- <ImageView 
+        android:layout_width="fill_parent"
+        android:layout_height="280dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/device_img"
+        android:adjustViewBounds="true"/>  -->
+    
+    <!-- <GridView 
+        android:id="@+id/gridView"
+        android:background="@color/black"
+        android:layout_height="200dp"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"
+        android:numColumns="4"
+        android:columnWidth="30dp"></GridView> -->
+    
+</LinearLayout>

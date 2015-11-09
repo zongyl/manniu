@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:id="@+id/logindialog_space"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="@drawable/bg_main"
+		    android:orientation="vertical" >
+<LinearLayout 
+        android:id="@+id/myView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center|center_vertical|center_horizontal"
+        android:background="@color/yellow"
+        android:orientation="vertical" >
+   
+    <LinearLayout 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_marginTop="20.0dip" 
+		android:gravity="center" 
+		android:orientation="vertical"> 
+		
+	    <ImageView 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_gravity="center"
+		android:src="@drawable/img_logo"/> 
+	    <ImageView 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_gravity="center"
+		android:src="@drawable/img_logo2"/> 
+
+    </LinearLayout>
+
+       <TableLayout 
+        android:orientation="vertical" 
+        android:id="@+id/login_user_table" 
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="0.0dip" 
+        android:layout_marginLeft="20.0dip" 
+        android:layout_marginRight="20.0dip" 
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center|center_vertical|center_horizontal"
+        >
+          
+           <LinearLayout 
+            	android:layout_width="fill_parent" 
+            	android:layout_height="wrap_content"
+            	android:gravity="center_vertical"
+            	android:paddingTop="2dp"
+            	android:layout_margin="5dp">
+               <AutoCompleteTextView 
+                 android:id="@+id/tvUser" 
+                 android:layout_width="fill_parent" 
+                 android:layout_height="35dp" 
+                 android:layout_marginLeft="8.0dip" 
+                 android:hint="输入用户名/手机号" 
+                 android:textColorHint="@color/black"
+                 android:textSize="@dimen/text_size_16" 
+                 android:maxLines="1" 
+                 android:singleLine="true" 
+                 android:selectAllOnFocus="true"
+                 android:maxLength="16"
+                 android:cursorVisible="true"
+	             android:textCursorDrawable="@null"
+                 android:drawableLeft="@drawable/login_text3"
+                 android:background="@drawable/textview_bg"
+                 android:textColor="@color/black" />
+           </LinearLayout>
+          
+           <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:layout_margin="5dip">
+               <EditText 
+                android:id="@+id/etPassword" 
+                android:layout_width="fill_parent" 
+                android:layout_height="35dp" 
+                android:layout_marginTop="5dp" 
+                android:layout_marginLeft="8.0dip" 
+                android:textSize="@dimen/text_size_16" 
+                android:hint="输入密码" 
+                android:textColorHint="@color/black"
+                android:maxLines="1" 
+                android:password="true" 
+                android:singleLine="true" 
+                android:selectAllOnFocus="true"
+                android:maxLength="16"
+                android:cursorVisible="true"
+	            android:textCursorDrawable="@null"
+                android:drawableLeft="@drawable/login_text4"
+                android:background="@drawable/textview_bg"
+                android:textColor="@color/black"  />
+           </LinearLayout>
+	      
+            <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:gravity="center"
+	         android:layout_margin="5dip">
+	         <Button 
+	      	  android:id="@+id/login_btn_login" 
+	      	  android:layout_width="fill_parent" 
+		      android:layout_height="wrap_content" 
+		      android:textSize="@dimen/text_size_20"
+		      android:text="登 录" 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="20.0dip" 
+			  android:layout_marginRight="20.0dip" 
+	   		  android:background="@drawable/btn" />
+	      </LinearLayout>
+            
+          <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:layout_margin="5dip">
+	         <TextView 
+	              android:id="@+id/login_a_reg"
+			      android:layout_width="wrap_content" 
+			      android:layout_height="wrap_content" 
+			      android:layout_marginLeft="20.0dip" 
+			      android:layout_gravity="left|center" 
+			      android:text="注册" />
+	         <TextView 
+	              android:id="@+id/login_a_retrieve"
+			      android:layout_width="wrap_content" 
+			      android:layout_height="wrap_content" 
+			      android:layout_marginLeft="20.0dip" 
+			      android:layout_gravity="left|center" 
+			      android:text="忘记密码" />
+	      </LinearLayout> 
+       </TableLayout>
+
+</LinearLayout>
+</com.views.CustomScrollView>

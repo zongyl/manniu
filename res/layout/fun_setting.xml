@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res/com.client.xgps"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#E3E6E8">
+    
+   <TableLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
+      android:stretchColumns="1"
+      android:background="@drawable/bk_setting_wnd"  >
+	    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:gravity="center" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:singleLine="true"
+            android:text="自动布撤防"
+            android:textSize="15dp"
+	        android:textStyle="bold"
+            android:textColor="@color/black"
+             />
+        <com.ctrl.XSlipButton
+            android:id="@+id/btn_autoSMS"
+            android:layout_width="90dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            />
+    	</RelativeLayout>
+	    
+	    <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+	    
+	    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:gravity="center" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:singleLine="true"
+            android:text="报警提示音"
+            android:textSize="15dp"
+	        android:textStyle="bold"
+            android:textColor="@color/black"
+             />
+        <com.ctrl.XSlipSoundButton
+            android:id="@+id/btn_autoSound"
+            android:layout_width="90dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            />
+    	</RelativeLayout>
+	    
+	    
+	    <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+	    
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="40dp">
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:text="存储位置"
+	            android:textColor="@color/black"
+	            android:textSize="15dp"
+	            android:textStyle="bold" 
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <!-- <TextView
+	            android:id="@+id/tvImgPath"
+	            android:layout_width="fill_parent"
+	            android:layout_height="40dp"
+	            android:layout_marginLeft="10dp"
+	            android:text="/sdcard/xgps/images/" 
+	            android:gravity="left|center_vertical"/> -->
+	        
+	        
+	        <RadioGroup 
+		        android:id="@+id/rg_storage"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="right|center_vertical"
+		        android:orientation="horizontal">
+		        <RadioButton 
+		            android:id="@+id/sto_sdk"
+		            android:textColor="#FF333333"
+		            android:text="存储卡"/>
+		        <RadioButton 
+		            android:id="@+id/sto_mobile"
+		            android:textColor="#FF333333"
+		            android:text="手机"/>
+		    </RadioGroup>
+	        
+	        
+	    </TableRow>
+	    
+	    
+	    
+	    
+	    
+		<!-- <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:text="录像路径"
+	            android:textColor="#FF333333"
+	            android:textSize="14dp"
+	            android:textStyle="bold" 
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <TextView
+	            android:id="@+id/tvRecPath"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="10dp"
+	            android:text="/sdcard/xgps/images/" 
+	            android:gravity="left|center_vertical"/>
+	    </TableRow> -->
+	      
+	    <!-- <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/> -->
+	    
+		<!-- <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:text="只解I帧"
+	            android:textColor="#FF333333"
+	            android:textSize="14dp"
+	            android:textStyle="bold"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <CheckBox
+	            android:id="@+id/cbIFOnly"
+	             android:layout_width="fill_parent"
+	            android:layout_height="40dp"
+	            android:layout_marginLeft="10dp" />
+	    </TableRow> -->
+	    
+		<!-- 修改密码 -->
+		<!-- <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+		<TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	        <TextView
+	            android:id="@+id/pwd_channge"
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:text="修改密码"
+	            android:textColor="#FF333333"
+	            android:textSize="14dp"
+	            android:textStyle="bold"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	    </TableRow> -->
+	</TableLayout>
+	
+    <TableLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:paddingLeft="5dp"
+      android:paddingRight="5dp"
+      android:stretchColumns="1"
+      android:background="@drawable/bk_setting_wnd"  >
+		<TableRow
+		    android:id="@+id/pwd_row"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="修改密码 "
+	            android:textColor="@color/black"
+	            android:textSize="15dp"
+	            android:textStyle="bold"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        
+	        <TextView
+	            android:id="@+id/pwd_channge"
+	            android:layout_width="fill_parent"
+	            android:layout_height="40dp"
+	            android:layout_marginLeft="10dp"
+	            android:drawableRight="@drawable/img_goto"
+	            android:gravity="right|center_vertical"/>
+	    </TableRow>
+    </TableLayout>         
+	
+</LinearLayout>

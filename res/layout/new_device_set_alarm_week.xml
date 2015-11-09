@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFF0F1"
+    android:orientation="vertical" >
+    
+    <FrameLayout
+		 android:layout_width="fill_parent"
+		 android:layout_height="50dp"
+		 android:layout_gravity="center_vertical|center_horizontal"
+		 android:background="@drawable/common_title" >
+		 
+        	<TextView
+       	    android:id="@+id/dev_set_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="报警配置"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:textStyle="bold" 
+        android:layout_gravity="center_vertical|center_horizontal"/>
+       	
+       	<Button 
+       	    android:id="@+id/dev_set_alarm_cancel"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/new_dev_set_info_cancel_selector"/>
+       	
+       	<Button 
+       	    android:id="@+id/dev_set_alarm_submit"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:layout_gravity="right"
+       	    android:background="@drawable/new_dev_set_info_submit_selector"/>
+		 </FrameLayout>
+    
+      <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="2dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/dev_set_item_switch3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/my_switch_on"
+            />
+    </RelativeLayout>
+    
+</LinearLayout>

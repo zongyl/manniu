@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:id="@+id/logindialog_space"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:background="@drawable/bk_main"
+		    android:orientation="vertical" >
+<LinearLayout 
+        android:id="@+id/myViewReg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center|center_vertical|center_horizontal"
+        android:orientation="vertical" >
+        
+    
+    <com.views.ScrollLayout
+            android:id="@+id/ScrollLayoutTest"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#000000" >
+   </com.views.ScrollLayout>
+   
+    <LinearLayout 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_marginTop="20.0dip" 
+		android:gravity="center" 
+		android:orientation="horizontal"> 
+		
+   	 
+    </LinearLayout>
+
+       <TableLayout 
+        android:orientation="vertical" 
+        android:id="@+id/login_user_table" 
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="0.0dip" 
+        android:layout_marginLeft="20.0dip" 
+        android:layout_marginRight="20.0dip" 
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center|center_vertical|center_horizontal"
+        >
+          
+           <LinearLayout 
+            	android:layout_width="fill_parent" 
+            	android:layout_height="wrap_content"
+            	android:gravity="center_vertical"
+            	android:paddingTop="2dp"
+            	android:layout_margin="5dp">
+               <AutoCompleteTextView 
+                 android:id="@+id/regtvUser" 
+                 android:layout_width="fill_parent" 
+                 android:layout_height="35dp" 
+                 android:layout_marginLeft="8.0dip" 
+                 android:hint="@string/phnum_putTip" 
+                 android:textColorHint="#888888"
+                 android:textSize="@dimen/text_size_16" 
+                 android:maxLines="1" 
+                 android:singleLine="true" 
+                 android:selectAllOnFocus="true"
+                 android:maxLength="14"
+                 android:cursorVisible="true"
+                 android:textCursorDrawable="@null"
+                 android:drawableLeft="@drawable/login_text3"
+                 android:textColor="@color/black" />
+               <!-- android:background="@drawable/textview_bg" -->
+           </LinearLayout>
+          
+           <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:layout_margin="5dip">
+               <EditText 
+                android:id="@+id/regetPassword" 
+                android:layout_width="wrap_content" 
+                android:layout_height="35dp" 
+                android:layout_marginTop="5dp" 
+                android:layout_marginLeft="8.0dip" 
+                android:textSize="@dimen/text_size_16" 
+                android:hint="@string/registerCode_in" 
+                android:textColorHint="#888888"
+                android:maxLines="1" 
+                android:singleLine="true" 
+                android:selectAllOnFocus="true"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@null"
+                android:maxLength="16"
+                android:drawableLeft="@drawable/login_text4"
+                android:textColor="@color/black"  />
+               
+               <Button android:id="@+id/validCode"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="@string/register_getcode"/>
+               
+           </LinearLayout>
+          
+            <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:gravity="center"
+	         android:layout_margin="5dip">
+	         <Button 
+	      	  android:id="@+id/reg_btn_reg" 
+	      	  android:layout_width="fill_parent" 
+		      android:layout_height="wrap_content" 
+		      android:textSize="@dimen/text_size_20"
+		      android:text="@string/register" 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="20.0dip" 
+			  android:layout_marginRight="20.0dip" 
+	   		  android:background="@drawable/btn" />
+	      </LinearLayout>
+           
+       </TableLayout>
+     
+</LinearLayout>
+</com.views.CustomScrollView>

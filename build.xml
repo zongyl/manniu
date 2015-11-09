@@ -1,0 +1,273 @@
+<project default="main" basedir=".">
+    <!-- 使用说明：
+    	1、本脚本目前不支持Eclipse内执行 请通过cmd在工程目录下 执行 ant deploy操作实现自动打包
+    	2、各个环境变量请按照实际情况进行配置，这里只供参考
+    	3、本脚本通过属性publish的值 来决定签名apk文件以及对齐优化后apk文件 的输出位置，可自行定义
+    	4、对于ant.properties配置文件里的属性值，也可以直接在本脚本内定义
+    	5、多渠道值在key属性中添加-->
+    <!-- 初始化变量声明 -->
+    <!-- 安装包输出路径 -->
+    <property name="publish" value="E:\publish\${app_versionName}"/>
+    <property file="ant.properties"/>
+    <!-- android.jar路径 -->              
+    <property name="android-jar" value="D:\adt_131030\sdk\platforms\android-19\android.jar"/>
+    
+    <!-- android tools路径 -->
+    <property name="android-tools" value="D:\adt_131030\sdk\tools"/>
+    <!-- plugin jars -->
+    <property name="external-jars" value="libs"/>
+    <property name="proguard-home" value="${android-tools}\proguard\lib"/>
+    <!-- ant支持循环插件 -->
+    <property name="ant-contri" value="D:\apache-ant-1.9.4\lib\ant-contrib-1.0b3.jar"/>
+    <!-- 库应用路径 -->
+    <property name="librarys" value="E:\zl\library"/>
+    <!-- 渠道信息 -->
+    <property name="channelname" value=""/>
+    <property name="channelkey" value=""/>
+    <property 
+        name="key" 
+        value="BAI:baidu"/><!-- UM:umumum, -->
+    <!-- 支持ant循环 -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" >           
+        <classpath>              
+            <pathelement location="${ant-contri}" />           
+        </classpath>       
+    </taskdef>       
+    <echo>Run ant-contrib-1.0b3.jar ok</echo>
+    
+    <target name="deploy">
+        <foreach target="modify_manifest" list="${key}" param="channel" delimiter=","></foreach>
+    </target>
+    
+    <target name="modify_manifest">
+       <!-- 获取渠道名字 -->
+    	<propertyregex
+    	    input="${channel}"
+    	    override="true"
+    	    property="channelname"
+    	    regexp="(.*):"
+    	    select="\1"/>
+    	<!-- 获取渠道号码 -->
+    	<propertyregex
+    	    input="${channel}"
+    	    override="true"
+    	    property="channelkey"
+    	    regexp=":(.*)"
+    	    select="\1"/>
+    	<!-- 正则匹配替换渠道号 -->
+    	<replaceregexp byline="false" encoding="UTF-8" flags="g">
+    	    <regexp pattern="meta-data android:value=&quot;(.*)quot;android:name=&quot;app_key&quot;" />
+    		<substitution expression="meta-data android:value=&quot;${channelkey}&quot;android:name=&quot;app_key&quot;"/>
+    		<fileset dir="" includes="AndroidManifest.xml"/>
+    	</replaceregexp>
+    	<antcall target="clean"/>
+    </target>
+    	
+    <!-- 初始化 创建目录，清理目录等 -->
+    <target name="init">
+        <echo> start initing.....</echo>
+        	<mkdir dir="out"/>
+        	<delete>
+        	    <fileset dir="out"></fileset>
+        	</delete>
+        	
+        	<mkdir dir="outgen"/>
+        	<delete>
+        	    <fileset dir="outgen"></fileset>
+        	</delete>
+        	
+        	<mkdir dir="bin/classes"/>
+        	<delete>
+        	    <fileset dir="bin/classes"></fileset>
+        	</delete>
+      
+        	<var name="outdir" value="${publish}/${channelname}"/>
+        	<delete dir="${outdir}"/>
+        	<mkdir dir="${outdir}"/>
+         <echo> finish initing....</echo>
+    </target>
+    <!-- 打包过程 -->
+    <target name="generR" depends="init">
+        <!-- 主应用的R.java的生成文件 -->
+        <echo> generating R.java for project to dir gen(using aapt)...</echo>
+        <exec executable="aapt" failonerror="true">
+            <arg value="package"/> <!-- package表示打包 -->
+            <arg value="-m"/> <!-- -m,J,gen表示创建包名和R.java到gen目录下 -->
+            <arg value="--auto-add-overlay"/>
+            <arg value="-J"/>
+            <arg value="outgen"/>
+            <arg value="-M"/> <!-- -M指定AndroidManifest.xml文件 -->
+            <arg value="AndroidManifest.xml"/>
+            <arg value="-S"/>
+            <arg value="res" />
+		    <arg value="-S" />  
+		    <arg value="${librarys}/res" /><!-- 注意点:同时需要调用库应用的res -->
+		    <arg value="-I" /> <!-- I指定android包的位置-->
+		    <arg value="${android-jar}" />
+        </exec>
+    </target>
+    
+    <target name="generLibR" depends="init">
+       <echo> generating R.java for library to dir gen(using aapt)...</echo>
+       <exec executable="aapt" failonerror="true">
+          <arg value="package"/> <!-- package表示打包 -->
+          <arg value="-m"/> <!-- -m,J,gen表示创建包名和R.java到gen目录下 -->
+          <arg value="--non-constant-id"/>  <!-- 去掉生成的R.java字段的final修饰 -->
+          <arg value="--auto-add-overlay"/> <!-- 覆盖资源-->
+          <arg value="-J"/>
+          <arg value="outgen"/>
+          <arg value="-M"/> <!-- -M指定AndroidManifest.xml文件 -->
+          <arg value="${librarys}/AndroidManifest.xml"/>
+       	  <arg value="-S"/>
+          <arg value="res" />
+          <arg value="-S" />
+	   <arg value="${librarys}/res" />
+	   <arg value="-I" /> <!-- I指定android包的位置-->
+	   <arg value="${android-jar}" />
+       </exec>
+     </target>
+       
+     <path id="project.libs">
+         <fileset dir="libs">
+             <include name="*.jar"/>
+         </fileset>
+     </path>
+        
+     <!-- 编译java文件为class文件 生成的class文件全部保存到bin/classes目录下 -->
+     <target name="compile" depends="generR,generLibR">
+       <!--第三方jar包需要引用，用于辅助编译  -->
+       <echo> compiling jave files to class files(include R.java,library and the third-party jars)</echo>
+       <javac destdir="bin/classes" bootclasspath="${android-jar}" includeAntRuntime="false" encoding="utf-8" failonerror="true">
+          <src path="${librarys}/src"/>
+          <src path="src"/>
+          <src path="outgen"/>
+          <classpath refid="project.libs"/>
+       </javac> 
+     </target>
+     
+     <!-- <target name="optimize" depends="compile">
+         <echo>excute code obfuscation</echo>
+         <jar
+             basedir="bin/classes"
+             destfile="temp.jar"/>
+         <echo>config the path of proguard.jar</echo>
+         <java jar="${proguard-home}/proguard.jar" fork="true" failonerror="true">
+             <jvmarg value="-Dmaximum.inlined.code.length=64" />
+             <arg value="-injars temp.jar"/>
+             <arg value="-outjars optimized.jar"/>
+             <arg value="-libraryjars ${android-jar}"/>
+             <arg value="-libraryjars ${external-jars}"/>
+             <arg value="-dontpreverify"/>
+             <arg value="-dontoptimize"/>
+             <arg value="-dontusemixedcaseclassnames"/>
+             <arg value="-repackageclasses ''"/>
+             <arg value="-allowaccessmodification"/>
+             <arg value="@proguard.cfg"/>
+             <arg value="-optimizationpasses 7"/>
+             <arg value="-verbose"/>
+             <arg value="-dontskipnonpubliclibraryclasses"/>
+             <arg value="-dontskipnonpubliclibraryclassmembers"/>
+         </java>
+        
+         <delete file="temp.jar"/>
+         <delete dir="bin/classes"/>
+         <mkdir dir="bin/classes"/>
+         <unzip
+             dest="bin/classes"
+             src="optimized.jar"/>
+         <delete file="optimized.jar"/>
+         <echo>end of obfuscation</echo>
+     </target> -->
+     
+     <!-- 打包class文件为classes.dex -->
+     <target name="dex" depends="compile">
+         <echo> packaging  class files(include the thrid-party jars) to classes.dex...</echo>
+	     <exec executable="dx.bat" failonerror="true">
+	         <arg value="--dex"/>
+	         <arg value="--output=out/classes.dex"/> <!-- 输出 -->
+	         <arg value="bin/classes"/> <!-- classes文件位置 -->
+	         <arg value="libs"/> <!-- 把libs下所有jar打包 -->
+	     </exec>
+     </target>
+        
+     <!-- 打包res,assets为资源压缩包(默认为res.zip) -->
+     <target name="package-res-and-assets">
+         <echo> packaging resource(include res,assets,AndroidMainfest.xml,etc.) to res.zip...</echo>
+      	 <exec executable="aapt" failonerror="true">
+	          <arg value="package"/>
+	          <arg value="-f"/> <!-- 资源覆盖重写 -->
+	          <arg value="-M"/>
+	          <arg value="AndroidManifest.xml"/>
+	          <arg value="-S"/>
+	          <arg value="res"/>
+			  <arg value="-S"/>
+			  <arg value="${librarys}/res" />
+			  <arg value="-A" /> <!-- 与R.java不同，需要asset目录也打包 -->
+			  <arg value="assets" />
+			  <arg value="-I"/>
+			  <arg value="${android-jar}" />
+			  <arg value="-F" /> <!-- 输出资源压缩包 -->
+			  <arg value="out/res.zip" />
+			  <arg value="--auto-add-overlay" />
+      	 </exec>
+     </target>
+        
+        
+     <!-- 使用apkbuilder命令组合classes.dex,res.zip,os.zip和AndroidManifest.xml为未命名的apk -->
+     <target name="package" depends="dex,package-res-and-assets">
+        <echo>building  unsigned.apk...</echo>
+        <java classpath="${android-tools}/lib/sdklib.jar" classname="com.android.sdklib.build.ApkBuilderMain" failonerror="true">
+       <!--  <exec executable="${android-tools}/apkbuilder.bat" failonerror="true"> -->
+          <arg value="out/unsigned.apk"/> <!-- 输出 -->
+          <arg value="-u"/>
+          <arg value="-z" /> <!-- 资源压缩包 -->
+		  <arg value="out/res.zip" />
+		  <arg value="-f" /> <!-- dex文件 -->
+		  <arg value="out/classes.dex"/>
+		  <arg value="-nf" /> 
+		  <arg value="libs" />  
+        <!-- </exec> -->
+           
+        </java> 
+     </target>
+       
+    <!-- 使用jarsigner命令对上步中产生的apk签名 -->
+    <target name="jarsigner" depends="package">
+      <echo>signing the unsigned apk to final product apk...</echo>
+      <exec executable="jarsigner" failonerror="true">
+        <arg value="-keystore" />
+	    <arg value="${key.store}" />
+	    <arg value="-storepass"/>
+	    <arg value="${key.store.password}"/>
+	    <arg value="-keypass"/>
+	    <arg value="${kay.alias.password}"/>
+	    <arg value="-signedjar" />
+	    <arg value="${outdir}/${app_name}V${app_version}.apk" /> <!-- 输出 -->
+	    <arg value="out/unsigned.apk" /> <!-- 未签名的apk -->
+	    <arg value="android.keystore" /> <!-- 别名,创建时建立的 -->
+      </exec>
+    </target>
+    
+   <!--  <target name="release" depends="jarsigner">
+        删除未签证apk
+        <delete file="out/unsigned.apk"/>
+        <echo>APK is released. path:out/unsigned.apk</echo>
+    </target> -->
+    <!-- APP对齐优化 -->
+    <target name="zipalign" depends="jarsigner">
+        <exec executable="${android-tools}/zipalign" failonerror="true">
+            <arg value="-v"/>
+            <arg value="4"/>
+            <arg value="${outdir}/${app_name}V${app_version}.apk"/>
+            <arg value="${outdir}/${app_name}V${app_versionName}.apk"/>
+        </exec>
+    </target>
+    
+     <!-- 清理不需要的生成文件 -->
+    <target name="clean" depends="zipalign">
+        <delete dir="out"/>
+        <delete dir="outgen"/>
+        <delete dir="bin/classes"/>
+        <delete file="${outdir}/${app_name}v${app_version}.apk"/>
+    </target>
+</project>

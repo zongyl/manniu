@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color> 
+    <color name="lightgray">#E6E6E6</color>
+    <color name="transparent">#00000000</color>
+	<color name="white">#FFFFFF</color>
+	<color name="black">#000000</color>
+	<color name="gray">#808080</color>
+	<color name="red">#FF0000</color>
+	<color name="gold">#FFD700</color>
+	<color name="yellow">#FFFF00</color>
+	<color name="green">#008000</color>
+	<color name="blue">#0000FF</color>
+	<color name="purple">#800080</color>
+	<color name="pink">#FFC0CB</color>
+	<color name="orange">#FFA500</color>
+	<color name="lemonyellow">#FFFACD</color>
+	<color name="graywhite">#F5F5F5</color>
+	<color name="grayslate">#708090</color>
+	<color name="lightblue">#0083FF</color>
+	
+	<color name="red_btn">#E20000</color>
+	<color name="blue_menu">#3AA3EE</color>
+	
+    <color name="full_transparent">#00000000</color>
+    <color name="half_transparent">#aa000000</color>
+    
+    <color name="bright_foreground_light">#ff000000</color>
+    <color name="bright_foreground_light_inverse">#ffffffff</color>
+    <color name="bright_foreground_light_disabled">#80000000</color>
+    
+    <color name="dim_foreground_light">#808080</color>
+    <color name="dim_foreground_light_disabled">#80323232</color>
+    <color name="dim_foreground_light_inverse">#ff006eaa</color>
+    <color name="dim_foreground_light_inverse_disabled">#80bebebe</color>
+    
+    <color name="head_text">#0e5986</color>
+    <color name="author_text">#0e5986</color>
+    
+    <color name="face_bg">#eef1f4</color>
+    
+    <color name="frame_button_text_nor">#033a5c</color>
+    <color name="frame_button_text_select">#FFFFFF</color>
+    
+    <color name="listitem_transparent">#00000000</color>
+    <color name="listitem_black">#ff000000</color><!-- 黑色 --> 
+    <color name="listitem_white">#ffffffff</color>
+    <color name="listitem_blue">#0e5986</color>
+    <color name="listitem_gray">#ff9da19e</color>
+    <color name="listitem_green">#ffe3ffc6</color>
+    <color name="listitem_greenyellow">#ff87b869</color>
+    <color name="listitem_yellow">#fffaffbf</color>
+    <color name="def_font_color">#FFFFFF</color>  
+    <!-- 返回 -->
+    <color name="btn_back">#8B8A8A</color>
+    <!-- 主页面下拉菜单背景 -->
+    <color name="bk_menu">#3B9CBC</color>
+    <!-- 主页面下拉菜单背景 -->
+    <color name="bk_menu_black">#ae000000</color>
+    <!-- 子功能背景颜色 -->
+    <color name="fun_bkcolor">#EAEAEA</color>
+    <!-- 圆形进度条-->
+    <color name="circle_color">#323a45</color>
+    <color name="ring_color">#E1C121</color>
+    <color name="dark">#FF222222</color>
+    <!-- 配置字体颜色恢色-->
+    <color name="text_color">#707070</color>
+
+	<color name="light">#FFEEEEEE</color>
+	<!-- <color name="transparent">#00000000</color> -->
+	
+	<color name="holo_blue">#FF33E5B5</color>
+</resources>

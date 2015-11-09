@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:textSize="18sp"
+    android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants">
+    
+    <!-- <ImageView 
+        android:id="@+id/ck"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/unchecked"
+        android:layout_gravity="center_vertical"/> -->
+    <!--  android:button="@drawable/check_state" -->
+    
+    <!-- 40dp
+     android:scaleX="0.6"
+        android:scaleY="0.6" -->
+    <CheckBox 
+        android:id="@+id/cb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/check_state"
+        android:layout_gravity="center_vertical"
+        android:button="@null"
+        style="@style/msg_checkbox"/>
+    
+    <FrameLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal">  
+        
+        <ImageView 
+        android:layout_width="100dp"
+        android:layout_height="66dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/circle_color"
+        android:id="@+id/msg_img"
+        android:adjustViewBounds="true"/>
+        
+        <TextView  
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:id="@+id/msg_title">
+       </TextView>
+        <!-- <TextView   android:layout_marginLeft="105dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:id="@+id/msg_time">
+       </TextView> -->
+          
+          </FrameLayout> 
+</LinearLayout>

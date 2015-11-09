@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res-auto"
+    android:background="#E6E6E6"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+        
+      <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="模式"
+            android:textColor="@color/black" />
+    
+        <RadioGroup 
+            android:layout_marginLeft="50dp"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center"
+            >
+            <RadioButton 
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="固定地址"
+                android:checked="true" />
+            <RadioButton 
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="DHCP" />
+        </RadioGroup> 
+        
+    </RelativeLayout>
+      <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="IP地址"
+            android:textColor="@color/black" />
+        
+        <EditText 
+            android:id="@+id/dev_set_base_network_ip"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+      <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="子网掩码"
+            android:textColor="@color/black" />
+        
+        <EditText 
+            android:id="@+id/dev_set_base_network_subnet_mask"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+      <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="网关"
+            android:textColor="@color/black" />
+        
+        <EditText 
+            android:id="@+id/dev_set_base_network_gateway"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+    
+       <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+        <RadioGroup 
+            android:layout_marginLeft="50dp"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center"
+            >
+            <RadioButton 
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="自动获取DNS"
+                android:checked="true" />
+            <RadioButton 
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="自动获取DNS" />
+        </RadioGroup> 
+        
+    </LinearLayout>
+      
+       
+      <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="首选DNS"
+            android:textColor="@color/black" />
+        
+        <EditText 
+            android:id="@+id/dev_set_base_network_dns1"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+    
+      
+      <LinearLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="备选DNS"
+            android:textColor="@color/black" />
+        
+        <EditText 
+            android:id="@+id/dev_set_base_network_dns2"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+        
+   
+    </LinearLayout>
+</ScrollView>

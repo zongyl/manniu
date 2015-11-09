@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white" >
+    
+   <LinearLayout 
+        
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical" >
+   
+    <TextView 
+        android:layout_margin="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sharemsg"
+        android:textColor="@color/dark"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal|center_vertical"/>
+  
+	
+     <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:stretchColumns="1"
+            android:background="@drawable/bk_setting_wnd"  >
+	    
+	    <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal" >
+				<TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:text="@string/title"
+		            android:gravity="left|center_vertical"
+		            android:textColor="@color/blue_menu"
+		            android:textSize="@dimen/text_size_15"
+		            android:paddingLeft="3dp"/>
+				<TextView android:id="@+id/titleForce" style="@style/forceInput"/>
+				
+               <EditText
+                   android:id="@+id/share_title"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:layout_marginLeft="8.0dip"
+                   android:layout_weight="1"
+                   android:background="@null"
+                   android:ems="10"
+                   android:hint="@string/title_hint"
+                   android:maxLength="16"
+                   android:maxLines="1"
+                   android:selectAllOnFocus="true"
+                   android:singleLine="true"
+                   android:textColor="@color/black"
+                   android:cursorVisible="true"
+	               android:textCursorDrawable="@null"
+                   android:textSize="@dimen/text_size_15" >
+               </EditText>
+           </LinearLayout>
+           
+           <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+           
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:orientation="horizontal">
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="fill_parent"
+	            android:text="@string/group"
+	            android:background="@null"
+	            android:textColor="@color/blue_menu"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <TextView android:id="@+id/groupForce" style="@style/forceInput"/>
+	        <TextView
+	            android:hint="@string/group_hint"
+	            android:background="@null"
+	            android:id="@+id/share_type"
+	            android:textColor="@color/dark"
+	            android:textSize="@dimen/text_size_15"
+	            android:layout_width="fill_parent"
+	            android:gravity="center_vertical|left"
+	            android:layout_height="45dp"
+	            android:layout_marginLeft="8dp"
+	         />
+
+	    </LinearLayout>
+	 	<!-- <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+	 	<TableRow
+		    android:id="@+id/qrcode_row"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:text="时间 "
+	            android:textColor="@color/blue_menu"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <TextView
+	            android:textColor="@color/dark"
+	            android:id="@+id/time_start"
+	            android:text="2015/07/09 08:00"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="40dp"
+	            android:layout_marginLeft="8dp"
+	            android:gravity="center"/>
+	        <TextView 
+	            android:textColor="@color/dark"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:text="-"/>
+	        <TextView
+	            android:textColor="@color/dark"
+	            android:id="@+id/time_end"
+	            android:text="2015/07/09 09:00"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="40dp"
+	             android:gravity="center"/>
+	    </TableRow> -->
+	    <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+	    <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal" >
+				<TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:text="@string/live_dec"
+		            android:gravity="left|center_vertical"
+		            android:textColor="@color/blue_menu"
+		            android:textSize="@dimen/text_size_15"
+		            android:paddingLeft="3dp"/>
+               <EditText
+                   android:id="@+id/share_declare"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:layout_marginLeft="8.0dip"
+                   android:layout_weight="1"
+                   android:background="@null"
+                   android:ems="10"
+                   android:maxLength="16"
+                   android:maxLines="1"
+                   android:selectAllOnFocus="true"
+                   android:singleLine="true"
+                   android:textColor="@color/black"
+                   android:cursorVisible="true"
+	               android:textCursorDrawable="@null"
+                   android:textSize="@dimen/text_size_15" >
+               </EditText>
+        </LinearLayout>
+	    <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+	    
+	    <LinearLayout
+	        android:id="@+id/userMessage"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	        <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal" >
+			<TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:text="@string/relname"
+	            android:gravity="left|center_vertical"
+	            android:textColor="@color/blue_menu"
+	            android:textSize="@dimen/text_size_15"
+	            android:paddingLeft="3dp"/>
+			<TextView android:id="@+id/nameForce" style="@style/forceInput"/>
+               <EditText
+                   android:id="@+id/share_relN"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:layout_marginLeft="8dp"
+                   android:layout_weight="1"
+                   android:background="@null"
+                   android:ems="10"
+                   android:hint="@string/relname_hint"
+                   android:maxLength="16"
+                   android:maxLines="1"
+                   android:selectAllOnFocus="true"
+                   android:singleLine="true"
+                   android:textColor="@color/black"
+                   android:cursorVisible="true"
+	               android:textCursorDrawable="@null"
+                   android:textSize="@dimen/text_size_15" >
+               </EditText>
+           </LinearLayout>
+           <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+           
+        <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal" >
+				<TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:text="@string/idcard"
+		            android:gravity="left|center_vertical"
+		            android:textColor="@color/blue_menu"
+		            android:textSize="@dimen/text_size_15"
+		            android:paddingLeft="3dp"/>
+				<TextView android:id="@+id/groupForce" style="@style/forceInput"/>
+               <EditText
+                   android:id="@+id/share_idCard"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:layout_marginLeft="8.0dip"
+                   android:layout_weight="1"
+                   android:background="@null"
+                   android:maxLength="18"
+                   android:selectAllOnFocus="true"
+                   android:singleLine="true"
+                   android:textColor="@color/black"
+                   android:cursorVisible="true"
+	               android:textCursorDrawable="@null"
+                   android:textSize="@dimen/text_size_15" >
+               </EditText>
+           </LinearLayout>
+           <View android:layout_width="fill_parent"
+	   		  android:layout_height="0.5dp"
+	   		  android:layout_marginTop="2dp"
+	   		  android:layout_marginBottom="5dp"
+	   		  android:background="#D4D4D4"/>
+	    <LinearLayout 
+	        android:id="@+id/idcard_verify"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal" >
+				<TextView
+				    android:id="@+id/idline"
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:text="@string/cardVefi"
+		            android:gravity="left|center_vertical"
+		            android:textColor="@color/blue_menu"
+		            android:textSize="@dimen/text_size_15"
+		            android:paddingLeft="3dp"/>
+			   <TextView android:id="@+id/groupForce" style="@style/forceInput"/>
+               <EditText
+                   android:editable="false"
+                   android:id="@+id/share_title"
+                   android:layout_width="match_parent"
+                   android:layout_height="45dp"
+                   android:layout_marginLeft="8.0dip"
+                   android:layout_weight="1"
+                   android:background="@null"
+                   android:ems="10"
+                   android:hint="@string/cardVefi_hint"
+                   android:maxLength="16"
+                   android:maxLines="1"
+                   android:selectAllOnFocus="true"
+                   android:singleLine="true"
+                   android:textColor="@color/black"
+                   android:cursorVisible="true"
+	               android:textCursorDrawable="@null"
+                   android:textSize="@dimen/text_size_15" >
+               </EditText>
+           </LinearLayout>
+           <LinearLayout 
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               android:orientation="horizontal">
+               <de.hdodenhof.circleimageview.CircleImageView
+                   android:id="@+id/verify_1"
+                   android:visibility="gone"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"
+                   android:layout_marginRight="10dp"/>
+               <de.hdodenhof.circleimageview.CircleImageView
+                   android:id="@+id/verify_2"
+                   android:layout_marginRight="10dp"
+                   android:visibility="gone"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"/>
+               <ImageView
+                   android:id="@+id/add_verify"
+                   android:adjustViewBounds="true"
+                   android:layout_marginRight="10dp"
+                   android:background="@drawable/add_image"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"/>
+               <View android:layout_width="0dp" android:layout_height="50dp" android:layout_weight="1"/>
+               <ImageView 
+                   android:id="@+id/take_idcard"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"
+                   android:layout_marginRight="10dp"
+                   android:visibility="gone"
+                   android:background="@drawable/capture"/>
+               <ImageView 
+                   android:id="@+id/local_idcard"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"
+                   android:visibility="gone"
+                   android:background="@drawable/location_search"/>
+           </LinearLayout>
+           <TextView 
+               android:id="@+id/veriDeclare"
+               android:layout_margin="5dp"
+               android:textColor="@color/red"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/cardVefi_desc"/>
+	    </LinearLayout>
+	    
+	    
+    </TableLayout>
+    
+     <LinearLayout
+        android:layout_margin="15dp"
+        android:layout_gravity="center"
+        android:id="@+id/share_date_sel"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button 
+            android:id="@+id/share_commit"
+            android:background="@null"
+            android:layout_margin="10dp"
+            android:text="@string/commit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"/>
+    </LinearLayout>
+  
+</LinearLayout>
+</RelativeLayout>
+

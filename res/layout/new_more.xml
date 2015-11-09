@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical">
+
+<LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+     <com.adapter.NoScrollListView  
+        android:id="@+id/list_mores"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp" >
+    </com.adapter.NoScrollListView>
+    
+    <com.adapter.NoScrollListView  
+        android:id="@+id/list_mores1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:footerDividersEnabled="false">
+    </com.adapter.NoScrollListView>
+    
+    <com.adapter.NoScrollListView 
+        android:id="@+id/list_mores2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp">
+    </com.adapter.NoScrollListView>  
+    
+    <Button android:id="@+id/btn_exit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_20"
+		android:textColor="@color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/btn"
+        android:text="注销账号"
+         />
+    
+    <Button 
+        android:id="@+id/btn_about_phone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_20"
+		android:textColor="@color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/btn"
+        android:text="手机信息"
+         />
+    
+</LinearLayout>
+</ScrollView>

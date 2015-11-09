@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res/com.sdmc"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#E3E6E8">
+    <!-- 配置 -->
+    
+    <LinearLayout  
+       android:id="@+id/linearLayout1"  
+       android:layout_width="fill_parent"  
+       android:layout_height="50dp"  
+       android:background="@drawable/common_title"
+       >  
+       <TextView  
+           android:id="@+id/text2"  
+           android:layout_width="fill_parent"  
+           android:layout_height="fill_parent"  
+           android:gravity="center"  
+           android:text="@string/niuyan"  
+           android:textColor="@color/black"  
+           android:textSize="18dp" />
+   </LinearLayout>  
+    
+    
+   <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="15dp"
+      android:orientation="vertical" >
+      
+      <TextView
+          	android:id="@+id/device_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备信息 :"
+            android:textColor="@color/text_color"
+            android:textSize="16dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"/>
+       
+        <TableLayout
+            android:id="@+id/device_table"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:stretchColumns="1"
+            android:background="@drawable/bk_setting_wnd"  >
+           
+	    <TableRow
+		    android:id="@+id/qrcode_row"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:text="二维码 "
+	            android:textColor="@color/black"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        <TextView
+	            android:id="@+id/qrcode_tv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="40dp"
+	            android:layout_marginLeft="10dp"
+	            android:drawableRight="@drawable/img_goto"
+	            android:gravity="right|center_vertical"/>
+	    </TableRow>
+	 
+    </TableLayout>
+       
+       <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:layout_marginTop="15dp"
+	         >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备配置 :        "
+            android:textColor="@color/text_color"
+            android:textSize="16dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"/>
+        
+        </LinearLayout>
+   <TableLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:paddingLeft="15dp"
+      android:paddingRight="5dp"
+      android:stretchColumns="1"
+      android:background="@drawable/bk_setting_wnd"  >
+	    
+       <TableRow
+		    android:id="@+id/resolution_row"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="分辩率"
+	            android:textColor="@color/black"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        
+	        <Spinner
+                android:id="@+id/sp_rec_Type"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp" 
+                android:layout_marginLeft="15dp"
+                android:gravity="center_vertical"
+                style="@style/spinner_style"/>
+	    </TableRow>
+       
+       <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+      
+       <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:gravity="center" >
+        <TextView
+            android:id="@+id/tv_hz"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:singleLine="true"
+            android:text="画  质"
+            android:textSize="@dimen/text_size_15"
+            android:textColor="@color/black"
+             />
+        	<RadioGroup 
+		        android:id="@+id/streamType"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@id/tv_hz"
+		        android:gravity="center_vertical"
+		        android:layout_marginTop="5dp"
+		        android:layout_marginLeft="35dp"
+		        android:orientation="horizontal">
+		        <RadioButton 
+		            android:id="@+id/picture_high"
+		            android:textColor="#FF333333"
+		            android:textSize="@dimen/text_size_15"
+		            android:text="高"/>
+		        <RadioButton 
+		            android:id="@+id/picture_in"
+		            android:textColor="#FF333333"
+		            android:textSize="@dimen/text_size_15"
+		            android:text="中"/>
+		        <RadioButton 
+		            android:id="@+id/picture_min"
+		            android:textColor="#FF333333"
+		            android:textSize="@dimen/text_size_15"
+		            android:text="低"/>
+		    </RadioGroup>
+    	</RelativeLayout>
+	    
+	    <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+	    
+	    <TableRow
+	        android:layout_width="wrap_content"
+	        android:layout_height="40dp">
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="存储位置"
+	            android:textColor="@color/black"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        
+	        <RadioGroup 
+		        android:id="@+id/rg_storage"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center_vertical"
+		        android:layout_marginTop="5dp"
+		        android:layout_marginLeft="15dp"
+		        android:orientation="horizontal">
+		        <RadioButton 
+		            android:id="@+id/sto_sdk"
+		            android:textColor="#FF333333"
+		            android:textSize="@dimen/text_size_15"
+		            android:text="存储卡"/>
+		        <RadioButton 
+		            android:id="@+id/sto_mobile"
+		            android:textColor="#FF333333"
+		            android:textSize="@dimen/text_size_15"
+		            android:text="手机 "/>
+		    </RadioGroup>
+	    </TableRow>
+	    <!-- <View android:layout_width="fill_parent"
+   		  android:layout_height="0.5dp"
+   		  android:layout_marginTop="2dp"
+   		  android:layout_marginBottom="5dp"
+   		  android:background="#D4D4D4"/>
+	    <TableRow
+		    android:id="@+id/pwd_row"
+	        android:layout_width="wrap_content"
+	        android:layout_height="match_parent" >
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="45dp"
+	            android:text="报警配置"
+	            android:textColor="@color/black"
+	            android:textSize="@dimen/text_size_15"
+	            android:gravity="left|center_vertical"
+	            android:paddingLeft="3dp"/>
+	        
+	        <CheckBox 
+			      android:id="@+id/ckAutoLogin" 
+			      android:layout_width="wrap_content" 
+			      android:layout_height="wrap_content" 
+			      android:layout_gravity="left|center" 
+			      android:button="@drawable/login_checkbox_selector"
+			      android:layout_marginLeft="20dp"
+			      android:text="移动侦测"
+			      android:textSize="@dimen/text_size_15"
+			      android:textColor="@color/black"
+			      android:checked="true"
+			      />
+	    </TableRow> -->
+	    
+	</TableLayout>
+    
+     <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:orientation="horizontal"
+	         android:layout_margin="5dip">
+	    
+	         <Button 
+	      	  android:id="@+id/btn_sub" 
+	      	  android:layout_width="wrap_content" 
+		      android:layout_height="40dp" 
+		      android:layout_weight="1.0"  
+		      android:textSize="16dp"
+		      android:text="打  开" 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="10.0dip" 
+	   		  android:layout_marginRight="10.0dip"
+	   		  android:background="@drawable/btn_blue" />
+	         
+	         <Button 
+	      	  android:id="@+id/btn_share" 
+	      	  android:layout_width="wrap_content" 
+		      android:layout_height="40dp" 
+		      android:layout_weight="1.0"  
+		      android:textSize="16dp"
+		      android:text="loading..." 
+		      android:textColor="@color/white"
+			  android:layout_marginLeft="10.0dip" 
+			  android:layout_marginRight="10.0dip"
+			  android:enabled="false"
+	   		  android:background="@drawable/btn_blue" />
+	         
+	      </LinearLayout> 
+    
+     <!-- <LinearLayout 
+	         android:layout_width="fill_parent" 
+	         android:layout_height="wrap_content" 
+	         android:gravity="center"
+	         android:layout_margin="5dip">
+	         <Button 
+	      	  android:id="@+id/btn_share" 
+	      	  android:layout_width="wrap_content" 
+		      android:layout_height="40dp" 
+		      android:textSize="16dp"
+		      android:text="loading..." 
+		      android:textColor="@color/white"
+	   		  android:layout_marginLeft="20.0dip" 
+			  android:layout_marginRight="20.0dip" 
+			  android:enabled="false"
+	   		  android:background="@drawable/btn_blue" />
+	      </LinearLayout>  -->
+    
+     
+     <RelativeLayout
+        android:id="@+id/my_camera_view"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:background="#EBEBEB" >
+    </RelativeLayout>
+	      
+	</LinearLayout>
+</LinearLayout>
