@@ -21,7 +21,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
-import com.utils.ShareContentCustomize;
 import com.views.RecommendSheet.OnRecmSheetSelected;
 
 public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSheetSelected,OnCancelListener{
@@ -83,7 +82,7 @@ public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSh
 					strText+="\r\n请点击:"+short_url;
 				String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
 
-				ShareContentCustomize.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
+				ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
 						strText,
 						strPYQText,
 						Constants.hostUrl+"/images/WechatMomentsqrcode.png",false,null);

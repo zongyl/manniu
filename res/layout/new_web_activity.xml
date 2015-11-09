@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--  ScrollView
-   
+<!-- <ScrollView
+   	
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="@color/white"
     android:scrollbars="none"
-    android:fillViewport="true">-->
+    android:fillViewport="true"> -->
+ 
     
-  <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+ <LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xgps="http://schemas.android.com/apk/res-auto"
     android:id="@+id/play_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" 
     android:background="@color/white">
 
@@ -65,11 +66,7 @@
         android:background="#CC0000"
         android:visibility="gone" >
     </FrameLayout>
-     
-    <!--  <Button 
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:text="TEST"/>	 -->
+
 
     <Button
         android:layout_centerInParent="true"
@@ -80,13 +77,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
      
-	    <WebView
-	        android:id="@+id/webView02"
-	        android:layout_width="fill_parent"
-	        android:layout_weight="6"
-        	android:layout_height="0dp"
-        	android:visibility="visible"
-	        android:scrollbars="none" />
+    <WebView
+        android:id="@+id/webView02"
+        android:layout_width="fill_parent"
+        android:layout_weight="6"
+       	android:layout_height="0dp"
+       	android:visibility="visible"
+        android:scrollbars="none" />
     
 	<TextView   
 	    android:id="@+id/line0"
@@ -139,133 +136,77 @@
 	        android:textColor="#ff888888"
             android:layout_alignParentRight = "true"/>
     </LinearLayout>
-    
+
    	<TextView 
    	    android:id="@+id/line1"  
 	    android:layout_marginLeft="7dp" 
 	    android:layout_marginRight="7dp"
-	    style="@style/DetailBaseline"/>  
-		<WebView
-	    	android:id="@+id/webView03"
-	       	android:layout_weight="8"
-	        android:layout_height="0dp"
-	      	android:layout_width="fill_parent"
-	      	android:visibility="visible"        
-	      	android:background="#00000000"/>
-	    <LinearLayout
-	        android:id="@+id/information_page"
-	        android:layout_width="fill_parent"
-        	android:layout_weight="8"
-        	android:layout_height="0dp"
-	        android:background ="#FFFFFF"
-	        android:orientation="vertical"
-	        android:visibility="gone">
-	        
-	        <TextView
-	            android:layout_marginLeft="7dp"
-	            android:layout_marginRight="7dp"
-	    	    android:gravity="center"
-	        	android:id="@+id/comment_title"
-	            android:layout_gravity="center_vertical"
-	            android:layout_height="0dp"
-	            android:textSize="20sp"
-	            android:textColor="#ff888888"
-	            android:layout_width="fill_parent"
-	            android:layout_weight="1"/>
-	        	
-	        <TextView
-	            android:layout_marginLeft="7dp"
-	            android:layout_marginRight="7dp"
-	            android:inputType="textMultiLine"
-	    	    android:gravity="left"
-	        	android:id="@+id/comment_content"
-	            android:layout_gravity="center_vertical"
-	            android:layout_height="0dp"
-	            android:textSize="18sp"
-	            android:textColor="#ff888888"
-	            android:layout_width="fill_parent"
-	            android:layout_weight="3"/>
-	        
-	        <TextView
-	            android:id="@+id/line2" 
-	    		android:layout_marginLeft="7dp" 
-	    		android:layout_marginRight="7dp"
-	    		style="@style/DetailBaseline"/>  
-	    		
-	       <com.amap.api.maps2d.MapView
-	            android:layout_marginLeft="7dp"
-	            android:layout_marginRight="7dp"
-	    	    android:gravity="center"
-	        	android:id="@+id/comment_map"
-	        	android:text="百度地图"
-	            android:layout_gravity="center_vertical"
-	            android:layout_width="wrap_content"
-	            android:textSize="15sp"
-	            android:textColor="@color/white"
-	            android:background ="@color/black"
-	            android:layout_height="0dp"
-	            android:layout_weight="5"/>
-	    </LinearLayout>
-    
-    <TextView   
-        android:id="@+id/line3"
-	    android:layout_marginLeft="7dp" 
-	    android:layout_marginRight="7dp"
-	    style="@style/DetailBaseline"/>
-	<LinearLayout
-	    android:padding="5dp"
-	    android:background="@color/white"
-        android:id="@+id/square_tools"
+	    style="@style/DetailBaseline"/> 	  
+
+	<WebView
+       	android:id="@+id/webView03"
+       	android:layout_weight="8"
+      		android:layout_height="0dp"
+      	android:layout_width="fill_parent"
+      	android:visibility="visible"        
+      	android:background="#00000000"/>
+	
+    <LinearLayout
+        android:id="@+id/information_page"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+       	android:layout_weight="8"
+       	android:layout_height="0dp"
+        android:background ="#FFFFFF"
+        android:orientation="vertical"
+        android:visibility="gone">
         
-    	<TextView
-    	    android:layout_marginLeft="7dp"
-    	    android:id="@+id/square_com"
-    	    android:layout_width="50dp"
-    	    android:layout_height="wrap_content"
-    	    android:layout_gravity="center_vertical"
-    	    android:layout_marginRight="5dp"
-    	    android:layout_weight="0.39"
-    	    android:background="@drawable/label_bg_ling"
-    	    android:gravity="center"
-    	    android:text="发表你的看法"
-    	    android:visibility="visible" />
-    	 
-    	<ImageView
-            android:id="@+id/like"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/like" />
-    
-    	 <ImageView 
-            android:layout_marginRight="5dp"
-            android:id="@+id/collection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/collection"/>
-    	 <ImageView 
-           	
-            android:layout_marginRight="5dp"
-            android:id="@+id/previously"
-    	    android:visibility="visible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/previously"/>
-    	 <ImageView 
+        <TextView
+            android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
-            android:id="@+id/square_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    	    android:gravity="center"
+        	android:id="@+id/comment_title"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/square_share"/>
+            android:layout_height="0dp"
+            android:textSize="20sp"
+            android:textColor="#ff888888"
+            android:layout_width="fill_parent"
+            android:layout_weight="1"/>
+        	
+        <TextView
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:inputType="textMultiLine"
+    	    android:gravity="left"
+        	android:id="@+id/comment_content"
+            android:layout_gravity="center_vertical"
+            android:layout_height="0dp"
+            android:textSize="18sp"
+            android:textColor="#ff888888"
+            android:layout_width="fill_parent"
+            android:layout_weight="3"/>
+        
+        <TextView
+            android:id="@+id/line2" 
+    		android:layout_marginLeft="7dp" 
+    		android:layout_marginRight="7dp"
+    		style="@style/DetailBaseline"/>  
+    		
+       <com.amap.api.maps2d.MapView
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+    	    android:gravity="center"
+        	android:id="@+id/comment_map"
+        	android:text="百度地图"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:background ="@color/black"
+            android:layout_height="0dp"
+            android:layout_weight="5"/>
     </LinearLayout>
     
-  <LinearLayout 
+     <LinearLayout 
         android:visibility="gone"
         android:id="@+id/share_comment"
         android:layout_width="match_parent"
@@ -300,8 +241,8 @@
 	            android:id="@+id/cancel_com"/>
 	        
 	        <EditText 
-	            android:hint="不超过15字符"
-	            android:ems="15"
+	            android:imeOptions="actionDone" 
+	            android:paddingBottom="10dp"
 	            android:singleLine="true"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
@@ -321,9 +262,68 @@
         </LinearLayout>
     </LinearLayout>
     <TextView   
+        android:id="@+id/line3"
+	    android:layout_marginLeft="7dp" 
+	    android:layout_marginRight="7dp"
+	    style="@style/DetailBaseline"/>
+	<LinearLayout
+	    android:padding="5dp"
+	    android:background="@color/white"
+        android:id="@+id/square_tools"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+    	<Button
+    	    android:layout_marginLeft="7dp"
+    	    android:id="@+id/square_com"
+    	    android:layout_width="50dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_marginRight="5dp"
+    	    android:layout_weight="0.39"
+    	    android:background="@drawable/label_bg_ling"
+    	    android:gravity="center"
+    	    android:text="发表你的看法"
+    	    android:visibility="visible" />
+    	 
+    	<ImageView
+            android:id="@+id/like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/like" />
+    
+    	 <ImageView 
+            android:layout_marginRight="5dp"
+            android:id="@+id/collection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/collection"/>
+    	 <ImageView 
+           	
+            android:layout_marginRight="5dp"
+            android:id="@+id/previously"
+    	    android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/previously"/>
+    	 <ImageView 
+            android:layout_marginRight="7dp"
+            android:id="@+id/square_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/square_share"/>
+    </LinearLayout>
+ 
+    <TextView   
         android:id="@+id/line4"
 	    android:layout_marginLeft="7dp" 
 	    android:layout_marginRight="7dp"
 	    style="@style/DetailBaseline"/>
   </LinearLayout>
-<!-- </ScrollView>-->
+<!-- </ScrollView> -->

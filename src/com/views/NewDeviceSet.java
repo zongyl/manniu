@@ -52,11 +52,15 @@ public class NewDeviceSet extends Activity {
 	
 	DeviceParcel device;
 	
-	TextView tv_dev_name, dev_item_version, dev_set_base, dev_set_advanced;
+	TextView tv_dev_name, dev_item_version/*, dev_set_base, dev_set_advanced*/;
 	
 	Button btn_update;
 	
-	Spinner show_position;
+	Spinner /*show_position,*/ resolution, quality;
+	
+	ImageView switch1, switch2;
+	
+	ArrayAdapter<CharSequence> adapter;
 	
 	int[] pixels;
 	
@@ -82,29 +86,54 @@ public class NewDeviceSet extends Activity {
 		tv_dev_name = (TextView) findViewById(R.id.dev_name);
 		tv_dev_name.setText(device.devname); 
 
-		show_position = (Spinner) findViewById(R.id.show_position);
-		show_position.setDropDownWidth(pixels[0]/2);
-		STR_PICTURE_TYPE = getResources().getStringArray(R.array.devSetPosition);
+		switch1 = (ImageView) findViewById(R.id.dev_set_item_switch1);
+		switch2 = (ImageView) findViewById(R.id.dev_set_item_switch2);
 		
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item, STR_PICTURE_TYPE);
-		adapter.setDropDownViewResource(R.layout.spinner_checked_text);//simple_spinner_item
-		show_position.setAdapter(adapter);
-		show_position.setOnItemSelectedListener(new SelectedListener());
-		show_position.setSelection(0);
+//		show_position = (Spinner) findViewById(R.id.show_position);
+//		show_position.setDropDownWidth(pixels[0]/2);
+//		STR_PICTURE_TYPE = getResources().getStringArray(R.array.devSetPosition);
+//		
+//		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item, STR_PICTURE_TYPE);
+//		adapter.setDropDownViewResource(R.layout.spinner_checked_text);//simple_spinner_item
+//		show_position.setAdapter(adapter);
+//		show_position.setOnItemSelectedListener(new SelectedListener());
+//		show_position.setSelection(0);
+//		adapter.notifyDataSetChanged();
+		
+		resolution = (Spinner) findViewById(R.id.resolution);
+		quality = (Spinner) findViewById(R.id.quality);
+
+		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
+				getResources().getStringArray(R.array.devSetResolution));
+		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
+		resolution.setAdapter(adapter);
+		resolution.setOnItemSelectedListener(new SelectedListener());
+		resolution.setSelection(0);
+		adapter.notifyDataSetChanged();
+
+		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
+				getResources().getStringArray(R.array.devSetQuality));
+		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
+		quality.setAdapter(adapter);
+		quality.setOnItemSelectedListener(new SelectedListener());
+		quality.setSelection(0);
 		adapter.notifyDataSetChanged();
 		
 		dev_item_version = (TextView) findViewById(R.id.dev_item_ver_version);
 		//dev_item_upver = (TextView) findViewById(R.id.dev_item_ver_upver);
 		btn_update = (Button) findViewById(R.id.dev_item_update);
-		dev_set_base = (TextView) findViewById(R.id.dev_set_base);
-		dev_set_advanced = (TextView) findViewById(R.id.dev_set_advanced);
+//		dev_set_base = (TextView) findViewById(R.id.dev_set_base);
+//		dev_set_advanced = (TextView) findViewById(R.id.dev_set_advanced);
 		
-		dev_set_base.setWidth(pixels[0]/2);
-		dev_set_advanced.setWidth(pixels[0]/2);
-		
-		dev_set_base.setOnClickListener(new Click());
-		dev_set_advanced.setOnClickListener(new Click());
+//		dev_set_base.setWidth(pixels[0]/2);
+//		dev_set_advanced.setWidth(pixels[0]/2);
+//		
+//		dev_set_base.setOnClickListener(new Click());
+//		dev_set_advanced.setOnClickListener(new Click());
 		btn_update.setOnClickListener(new Click());
+
+		switch1.setOnClickListener(new Click());
+		switch2.setOnClickListener(new Click());
 		
 		//设备信息
 		findViewById(R.id.dev_info).setOnClickListener(new Click());
@@ -113,7 +142,7 @@ public class NewDeviceSet extends Activity {
 		
 		getVersion(device.sid);
 		
-		getFragmentView(0);
+		//getFragmentView(0);
 		
 		devicesid = "Q04hAQEAbDAwMDEwYmMzAAAAAAAA";
 		
@@ -122,6 +151,8 @@ public class NewDeviceSet extends Activity {
 		SDK.SendJsonPck(0, str1);
 		
 		readSetInfos();
+		
+		findViewById(R.id.device_set_network).setOnClickListener(new Click());
 		
 	}
 	
@@ -191,14 +222,11 @@ public class NewDeviceSet extends Activity {
 					JSONObject response) {
 				APP.ShowToast(getString(R.string.dev_upgradeOk));
 			}
-			
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					String responseString, Throwable throwable) {
 			}
-			
 		});
-		
 	}
 	
 	/**
@@ -290,7 +318,7 @@ public class NewDeviceSet extends Activity {
 		}
 	}
 	
-	public void switchTag(ImageView iv_switch, String key){
+	public void switchTag(View iv_switch, String key){
 		if("on".equals(iv_switch.getTag())){
 			iv_switch.setTag("off");
 			iv_switch.setBackgroundResource(R.drawable.my_switch_off);
@@ -301,7 +329,7 @@ public class NewDeviceSet extends Activity {
 		write(iv_switch, key);
 		}
 	}
-	public void write(ImageView iv_switch, String key){
+	public void write(View iv_switch, String key){
 		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, key, iv_switch.getTag().toString());
 	}
 	
@@ -357,16 +385,16 @@ public class NewDeviceSet extends Activity {
 			case R.id.dev_item_update:
 				update(device.sid);
 				break;
-			case R.id.dev_set_base:
-				getFragmentView(0);
-				dev_set_base.setTextColor(getResources().getColor(R.color.blue_menu));
-				dev_set_advanced.setTextColor(getResources().getColor(R.color.black));
-				break;
-			case R.id.dev_set_advanced:
-				getFragmentView(1);
-				dev_set_base.setTextColor(getResources().getColor(R.color.black));
-				dev_set_advanced.setTextColor(getResources().getColor(R.color.blue_menu));
-				break;
+//			case R.id.dev_set_base: //base setting and advanced setting tab  
+//				getFragmentView(0);
+//				dev_set_base.setTextColor(getResources().getColor(R.color.blue_menu));
+//				dev_set_advanced.setTextColor(getResources().getColor(R.color.black));
+//				break;
+//			case R.id.dev_set_advanced:
+//				getFragmentView(1);
+//				dev_set_base.setTextColor(getResources().getColor(R.color.black));
+//				dev_set_advanced.setTextColor(getResources().getColor(R.color.blue_menu));
+//				break;
 			case R.id.dev_info://设备改名不能点进去
 				/*Bundle extras = new Bundle();
 				extras.putString("devicesname", device.devname);
@@ -375,6 +403,17 @@ public class NewDeviceSet extends Activity {
 				break;
 			case R.id.dev_set_back:
 				close();
+				break;
+			case R.id.device_set_network:
+				Bundle data = new Bundle();
+				data.putString("deviceId", devicesid);
+				forward(NewDeviceSetNetWork.class, data, 1);
+				break;
+			case R.id.dev_set_item_switch1:
+				switchTag(v, "default");
+				break;
+			case R.id.dev_set_item_switch2:
+				switchTag(v, "default");
 				break;
 			default:
 				break;

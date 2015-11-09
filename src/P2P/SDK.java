@@ -189,7 +189,7 @@ public class SDK {
 			if (cmd == 10) {
 				LogUtil.d("SDK", "发送宽高。。="+VideoStream.mRequestedQuality.framerate+"--"+VideoStream.mRequestedQuality.bitrate*0.8+"--"+VideoStream.mRequestedQuality.resX+"--"+VideoStream.mRequestedQuality.resY);
 				int ret = SendMediaInfo(param1, 0,1,0,VideoStream.mRequestedQuality.framerate,5,(int)(VideoStream.mRequestedQuality.bitrate*0.8),2,VideoStream.mRequestedQuality.resX,VideoStream.mRequestedQuality.resY);
-				if(ret == 0){
+				if(ret == 0 && AnalogvideoActivity.instance != null){
 					_createChnlFlag = 0;
 					LogUtil.d("SDK", "发数据。。。。。");
 					AnalogvideoActivity.instance.startEncode();

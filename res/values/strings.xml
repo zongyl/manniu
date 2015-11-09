@@ -232,9 +232,12 @@
  	</string-array>
  	<!-- 画质 -->
  	<string-array name="devSetQuality">
- 	    <item>高</item>
- 	    <item>中</item>
- 	    <item>低</item>
+ 	    <item>1</item>
+ 	    <item>2</item>
+ 	    <item>3</item>
+ 	    <item>4</item>
+ 	    <item>5</item>
+ 	    <item>6</item>
  	</string-array>
  	<!-- 帧率 -->
  	<string-array name="devSetFrameRate">
@@ -370,7 +373,7 @@
  	<string-array name="device_set_list5_ic">
  	    <item>@drawable/checked</item>
  	</string-array>
- 	<string name="version_upgrade">版本更新</string>
+ 	<string name="version_upgrade">设备升级</string>
  	<string-array name="device_set_list6">
  	    <item>@string/version_upgrade</item>
  	</string-array>

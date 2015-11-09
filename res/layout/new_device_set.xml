@@ -80,7 +80,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1px"></RelativeLayout>
     
-    <RelativeLayout
+  <!--   <RelativeLayout
         android:id="@+id/dev_info"
         android:background="@drawable/new_dev_set_item_selector"
         android:layout_marginTop="15dp"
@@ -108,7 +108,7 @@
             android:layout_marginRight="20dp"
             android:layout_alignParentRight="true">
         </Spinner>
-    </RelativeLayout>
+    </RelativeLayout> -->
     
     <RelativeLayout 
         android:background="#E6E6E6"
@@ -159,7 +159,7 @@
        android:layout_height="50dp">
         </RelativeLayout>
    
-   <LinearLayout
+  <!--  <LinearLayout
        android:layout_marginTop="15dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -186,7 +186,146 @@
         android:id="@+id/ui_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-    </FrameLayout>
+    </FrameLayout> -->
    
+       <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="分辨率"
+            android:textColor="@color/black" />
+        
+        <Spinner android:id="@+id/resolution"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+      
+    </RelativeLayout>
+      <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="画质"
+            android:textColor="@color/black" />
+        <Spinner android:id="@+id/quality"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout>
+   
+     <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="报警"
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/dev_set_item_switch1"
+            android:tag="on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/my_switch_on"
+            />
+    </RelativeLayout>
+     <RelativeLayout
+       android:id="@+id/device_set_alarm"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="云存储"
+            android:textColor="@color/black" />
+        
+        <ImageView 
+            android:id="@+id/dev_set_item_switch2"
+            android:tag="on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/my_switch_on"
+            />
+    </RelativeLayout>
+   
+     <RelativeLayout
+       android:id="@+id/device_set_network"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white" >
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="网络"
+            android:textColor="@color/black" />
+       
+    </RelativeLayout>
 </LinearLayout>
 </ScrollView>

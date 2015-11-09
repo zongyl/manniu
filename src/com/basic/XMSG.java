@@ -19,13 +19,14 @@ public class XMSG {
 	public final static int ON_CLICKED_PTZ = 16;
 	//public final static int REAL_GetNotify = 17; //实时报警
 	public final static int UPDATE_REAL_ALARM = 18;//更新实时报警
-	public final static int REALDATA = 19;//传感器实时数据
+	public final static int ANALOG = 19;//打开牛眼
 	public final static int UPDATEA_APP = 20;
 	public final static int CROSS_SCREEN = 22;//横屏
 	public final static int VERTICAL_SCREEN = 23;//竖屏
 	public final static int HeartBeat = 24;//牛眼发送心跳
 	public final static int CHANGE_TEXTVALUE = 100;//改变采集视频上面的文字
 	public final static int CHECK_DEVICE = 101;//检查模拟设备有没有开通
+	public final static int CHECK_DEVICE_SHARE = 102;//检查模拟设备有没有开通
 	
 	
 	public final static int CREATECHANLL = 101;

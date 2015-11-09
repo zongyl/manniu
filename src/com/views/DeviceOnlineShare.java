@@ -537,10 +537,8 @@ public class DeviceOnlineShare extends Activity implements OnClickListener{
 							//APP.ShowToast("上传成功(上传分享信息)");
 							APP.ShowToast(suc_up);
 							
-							Fun_AnalogVideo.handler.sendEmptyMessage(XMSG.CHECK_DEVICE);
 							//发送广播
 							Intent intent = new Intent("com.views.bovine.Fun_AnalogVideo");
-							//intent.putExtras(msg.getData());
 							sendBroadcast(intent);
 							finish();
 						}

@@ -88,6 +88,4 @@ public class DevSetBaseFragment extends Fragment {
 		}
 	}
 
-	//private OnClickListener click = s
-	
 }

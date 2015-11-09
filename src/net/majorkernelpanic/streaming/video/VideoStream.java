@@ -892,7 +892,7 @@ public abstract class VideoStream extends MediaStream {
 				}
 				
 				//if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
-				if(EnCoderQueue.runFlag)
+				if(EnCoderQueue.runFlag && AnalogvideoActivity.instance != null)
 					AnalogvideoActivity.instance._encoderQueue.addSound(data);
 					//System.out.println(".....数据长度..."+data.length);
 				//}

@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
+
 import net.majorkernelpanic.streaming.gl.V_SurfaceView;
 import net.majorkernelpanic.streaming.hw.AnalogvideoActivity;
 import net.majorkernelpanic.streaming.video.H264Stream;
 import net.majorkernelpanic.streaming.video.VideoQuality;
+
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -56,6 +59,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import com.adapter.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.backprocess.BackLoginThread;
@@ -272,7 +276,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 		_btnShare.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(isDevice){
+				if(isshare){
 					cancelShare();
 				}else{
 					share();
@@ -317,12 +321,6 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
         viewPager.setAdapter(new XViewPagerAdapter(views));  
         viewPager.setOnPageChangeListener(new MyOnPageChangeListener());  
     } 
-    
-    public static Handler handler = new Handler(){
-    	public void handleMessage(Message msg) {
-    		LogUtil.d("Fun_AnalogVideo", "static handler!");
-    	};
-    };
     
     private MyHandler _handler = new MyHandler();
     @Override
@@ -377,6 +375,15 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
         imageView.setImageMatrix(matrix);// 设置动画初始位置  
     }
     
+    @Override
+	public void OnMessage(Message msg) {
+    	switch (msg.what) {
+		case XMSG.ANALOG:	//挂断电话后重新打开
+			initAnalog();
+			break;
+    	}
+    }
+    
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.text1:
@@ -413,7 +420,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 		RequestParams params = new RequestParams();
 		params.put("deviceId", _devSid);
 		
-		LogUtil.d(TAG, "isShare:" + Constants.hostUrl+"/device/isShare"+params.toString());
+		LogUtil.d(TAG, "isShare:" + Constants.hostUrl+"/device/isShare?"+params.toString());
 		
 		HttpUtil.get(Constants.hostUrl + "/device/isShare", params, new JsonHttpResponseHandler(){
 			@Override
@@ -426,13 +433,11 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 					if(status){
 						Log.d(TAG, "true");
 						isshare = true;
-						isDevice = true;
 						_btnShare.setText(context.getString(R.string.analog_video_cancel_share));
 						_btnShare.setEnabled(true);
 					}else{
 						Log.d(TAG, "false");
 						isshare = false;
-						isDevice = false;
 						_btnShare.setText(context.getString(R.string.analog_video_open_ok_share));
 						_btnShare.setEnabled(true);
 					}
@@ -509,7 +514,6 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 							}
 							intent.putExtras(b);
 							context.startActivity(intent);
-							//ACT.startActivityForResult(intent, 1);
 						}
 					}catch(JSONException e){
 						e.printStackTrace();
@@ -641,7 +645,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
 				if(statusCode == 200){
-					Log.d(TAG, "onSuccess:" + json.toString());
+					//Log.d(TAG, "onSuccess:" + json.toString());
 					String msg = "";
 					try {
 						msg = json.getString("msg");
@@ -653,9 +657,11 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 						}else if("nologin".equals(msg)){
 							//BaseApplication.getInstance().relogin();
 						}else{
+							_btnSub.setClickable(true);
 							APP.ShowToast(ACT.getResources().getString(R.string.Err_Error_Unknow));
 						}
 					} catch (JSONException e) {
+						_btnSub.setClickable(true);
 						LogUtil.e(TAG, "" + e.getMessage());
 					}
 					if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
@@ -913,8 +919,10 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	        	}
 				break;
 			case XMSG.CHECK_DEVICE:
-				LogUtil.d(TAG, " handler by check_device");
 				backgroundExecution();
+				break;
+			case XMSG.CHECK_DEVICE_SHARE:
+				isShare();
 				break;
 			case XMSG.ANALOG_IS_LOGIN:
 				APP.ShowToastLong(APP.GetString(R.string.Video_Dviece_login));
@@ -1008,7 +1016,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 							APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.openning_stream, 0, 0);
 						}
 						Log.d(TAG, "已开通!");
-						isShare();
+						_handler.sendEmptyMessage(XMSG.CHECK_DEVICE_SHARE);
 					}else{
 						isDevice = false;
 						_QRcodeRow.setVisibility(View.GONE);

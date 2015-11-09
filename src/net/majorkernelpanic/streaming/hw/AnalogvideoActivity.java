@@ -22,6 +22,7 @@ import com.utils.Constants;
 import com.utils.DateUtil;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
+import com.utils.PhoneStatReceiver;
 import com.utils.SdCardUtils;
 import com.views.BaseApplication;
 import com.views.Dlg_WaitForActivity;
@@ -35,6 +36,7 @@ import P2P.SDK;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.net.ConnectivityManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -91,6 +93,9 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     public Dlg_WaitForActivity _dlgWait = null;
 //    ProgressDialog _myDialog = null;
     public static boolean isOpenAnalog = false;//0 打开牛眼
+    
+  //检查网络广播接收器
+//    PhoneStatReceiver phoReceiver;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -137,6 +142,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		Main.Instance.startLocation();
 		registerReceiver(receiver, filter);
 		startHeartBeat();
+//		phoReceiver = new PhoneStatReceiver();
 //		_dlgWait.start();
 //		_dlgWait.show();
 //		_dlgWait.UpdateTextReal("正在查找MPEG4头");
@@ -262,16 +268,30 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		//LogUtil.i(TAG, ".......onPause........");
 	}
 	
+	public void onStart(){
+		super.onStart();
+        //注册广播接收器
+//		IntentFilter intentFilter = new IntentFilter(); 
+//		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); 
+//		intentFilter.setPriority(1000); 
+//		registerReceiver(phoReceiver, intentFilter);
+    }
+	
 	protected void onStop() {
 		//LogUtil.i(TAG,"onstop");
 		stopHeartBeat();
-		//unregisterReceiver(receiver);
+		//取消广播接收器
+//        if (phoReceiver != null) {
+//        	unregisterReceiver(phoReceiver);
+//    	}
 		super.onStop();
 	}
 	
 	protected void onDestroy() {
-		receiver = null;
-		instance = null;
+		if(!AnalogvideoActivity.isOpenAnalog){
+			receiver = null;
+			instance = null;
+		}
 		//LogUtil.i(TAG,"onDestroy");
 		super.onDestroy();
 	}

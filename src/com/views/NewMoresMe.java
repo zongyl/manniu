@@ -3,7 +3,6 @@ package com.views;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -38,13 +37,14 @@ import com.utils.UpdateManager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+//个人
 public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	private String TAG =getClass().getName();
 	
 	static String SAVEFILE = "Info_Login";
 	String _img ="";
 	String _userid = "";
-	private final static int CHANGED = 0*0010;
+	//private final static int CHANGED = 0*0010;
 	private final static String PER_DETAIL_EDIT = "com.views.NewDetailEdit";// 个人资料编辑页面
 	private final static String PER_DETAIL_SET = "com.views.NewDetailSet";
 	private final static String PER_DETAIL_HELP = "com.views.NewDetailHelp";
@@ -80,7 +80,6 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	
 	SharedPreferences preferences = null;
 	
-	@SuppressWarnings("static-access")
 	public NewMoresMe(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
 		// 加载页面中的ListView，并添加监听
@@ -123,13 +122,16 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	}
 	
 	public void getHeadImg(){
-		_img = preferences.getString("img", "");
-		 _userid = preferences.getString("sid", "");
-		BitmapUtils.loadImage(_img, _userid, _headImage);
+		try {
+			_img = preferences.getString("head_img", "");
+			 _userid = preferences.getString("sid", "");
+			BitmapUtils.loadImage(_img, _userid, _headImage);
+		} catch (Exception e) {
+		}
 	}
 	
 	protected void OnMessage(Message msg) {
-		if(msg.what ==CHANGED){
+ 		if(msg.what == NewDetailEdit.IMG_CHANGED){
 			getHeadImg();
 		}
 	}
@@ -231,7 +233,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			 case R.id.logout_confirm:
 				 if(logout){//退出登录
 					 _mydilog.dismiss();
-					APP.GetMainActivity().finish();
+					//APP.GetMainActivity().finish();
 					Main.Instance.ExitApp("exit");
 					//BaseApplication.getInstance().exitApp("exit");
 					forwardTo(PRE_LOG_IN);

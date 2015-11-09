@@ -20,9 +20,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -32,6 +35,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -114,7 +118,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	ImageView screenshot;
 	
-	TextView comment;
+	Button comment;
 	
 	String liveId;
 	String liveUrl;
@@ -149,6 +153,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	public  MapView mMapView;
 	public   AMap mAMap;
 	private boolean   bSubView = false;
+	private int count =0;
+	//add by zra
+	private boolean bGetBoardHeight = false;
+	private int iBoardHeight;
+	private boolean bFinish = true;
+	private boolean bRestore = false;
+	private boolean bInput = false;
 	
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
@@ -162,7 +173,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		//Log.i("debug", "width:"+dm.widthPixels);
 		context = this.getApplicationContext();
-		
+		imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.new_web_activity);
@@ -197,18 +208,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
 		_more = (XImageBtn)findViewById(R.id.web_more);
 		
-		comment = (TextView)findViewById(R.id.square_com);
-		squareTools = (LinearLayout)findViewById(R.id.square_tools);
 		
-		linearParams = (LinearLayout.LayoutParams) squareTools.getLayoutParams(); 
-		linearParams.height = height*3/40 -height/80;
-		squareTools.setLayoutParams(linearParams); 
-		
-		comEdit =(LinearLayout)findViewById(R.id.share_comment);
-		
-		cancelC = (ImageView) findViewById(R.id.cancel_com);
-		editC = (EditText) findViewById(R.id.edit_com);
-		confrimC = (ImageView) findViewById(R.id.confirm_com);
 		
 		videoWebViewInit(height);
 		
@@ -364,24 +364,71 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		bindListeners();
 		//百度地图相关
+		
+		
+		playLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+	        @Override
+	        public void onGlobalLayout() {
+	            // TODO Auto-generated method stub
+	        	if(bInput== true)
+	        	{
+	        		bInput = false;
+	        		return ;
+	        	}
+	        	Rect r = new Rect();
+        		playLayout.getWindowVisibleDisplayFrame(r);
+	            int screenHeight = playLayout.getRootView().getHeight();
+	            
+	            
+	        	if(bGetBoardHeight == false)
+	            {
+	        		bGetBoardHeight = true;
+		            iBoardHeight = screenHeight - (r.bottom - r.top);
+	            }
+	        	
+	        	if(bFinish == false)
+	        	{
+	        		if(count == 0){
+	        			count ++;
+	        			return;
+	        		}
+	        		else{	
+	        			restoreCommentAndInfoView();
+	        		}
+	        	}
+	        	
+	        }
+	    });
+		
 	}
 	
 	private void resetCommentAndInfoView()
-	{
+	{  
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);		
 		squareTools.setVisibility(View.GONE);
 		comEdit.setVisibility(View.VISIBLE);
-		bPopKey = true;
+		commentContent.setVisibility(View.GONE);
+		mMapView.setVisibility(View.GONE);
 		LinearLayout.LayoutParams  linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/40;// height - 500;// 当前界面高度-320
+		linearParams.height = dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-500;// height - 500;// 当前界面高度-320
 		informationPage.setLayoutParams(linearParams);
 		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/40;// height - 500;// 当前界面高度-320
+		linearParams.height = dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-500;// height - 500;// 当前界面高度-320
+		
 		commentView.setLayoutParams(linearParams);
+		//commentView.setBackgroundColor(Color.RED);
+		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+		bPopKey = true;
+		bFinish = false;
 	}
 	private void restoreCommentAndInfoView()
 	{
+		imm.hideSoftInputFromWindow(playLayout.getWindowToken(), 0);
 		comEdit.setVisibility(View.GONE);
 		squareTools.setVisibility(View.VISIBLE);
+		commentContent.setVisibility(View.VISIBLE);
+		mMapView.setVisibility(View.VISIBLE);
 		bPopKey = false;
 		LinearLayout.LayoutParams  linearParams;
 		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
@@ -390,6 +437,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
 		linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
 		commentView.setLayoutParams(linearParams);
+		count = 0;
+		bFinish = true;
 	}
 	
 	private void snapshotOperation()
@@ -450,10 +499,26 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private void commentOperation(int height)
 	{
-		//Constants.hostUrl+
+		comEdit =(LinearLayout)findViewById(R.id.share_comment);
+		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) comEdit.getLayoutParams(); 
+		linearParams.height = height*3/40+dmHeight/320;
+		comEdit.setLayoutParams(linearParams); 
+		
+		
+		comment = (Button)findViewById(R.id.square_com);
+		squareTools = (LinearLayout)findViewById(R.id.square_tools);
+		
+		linearParams = (LinearLayout.LayoutParams) squareTools.getLayoutParams(); 
+		linearParams.height = height*3/40;
+		squareTools.setLayoutParams(linearParams); 
+		cancelC = (ImageView) findViewById(R.id.cancel_com);
+		editC = (EditText) findViewById(R.id.edit_com);
+		confrimC = (ImageView) findViewById(R.id.confirm_com);
+		
+		//height-500
 		commentTools = (LinearLayout)findViewById(R.id.comment_tools);
-		LinearLayout.LayoutParams  linearParams = (LinearLayout.LayoutParams) commentTools.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = height/20-height/80;// height - 500;// 当前界面高度-320
+		linearParams = (LinearLayout.LayoutParams) commentTools.getLayoutParams(); // 取控件webView当前的布局参数		
+		linearParams.height = height/20;// height - 500;// 当前界面高度-320
 		commentTools.setLayoutParams(linearParams);
 		
 		commentBar = (TextView)findViewById(R.id.comment_bar);
@@ -482,7 +547,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
 		linearParams.height = height/2 -height/20+height/40+height/80;// height - 500;// 当前界面高度-320
-		//commentView.setLayoutParams(linearParams); // 使设置好的布局参数应用到控件webView
+		commentView.setLayoutParams(linearParams); // 使设置好的布局参数应用到控件webView
 		
 		commentView.setVerticalScrollBarEnabled(true);
 		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -531,28 +596,32 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		commentContent = (TextView)findViewById(R.id.comment_content);
 		
 		getDeviceInfo();
+		
+		
+		editC.addTextChangedListener(new TextWatcher(){
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+					bInput = true;
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s){
+				
+			}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int before, int count){
+				
+			}
+		});	
 	}
+
 	
 	private void showSmallMap(Bundle savedInstanceState)
 	{
 		
-		try{
-			Log.i("NewWebActivity", "mManView   findViewById(R.id.comment_map) ");
-			mMapView = (MapView) findViewById(R.id.comment_map);
-			Log.i("NewWebActivity", "mMapView.onCreate(savedInstanceState) ");
-			mMapView.onCreate(savedInstanceState);
-			//mMapView.setOnClickListener(this);
-			
-		}catch(Exception e){
-			//APP.ShowToast("TEST______1111");
-			e.printStackTrace();
-			Log.i("NewWebActivity", e.getMessage());
-			//return;
-		}
-		
-		//if(mAMap == null)
+		mMapView = (MapView) findViewById(R.id.comment_map);
+		mMapView.onCreate(savedInstanceState);
 		{
-			Log.i("NewWebActivity", "mAMap = mMapView.getMap();");
 			mAMap = mMapView.getMap();
 			mAMap.setOnMapClickListener(this);
 			mAMap.setOnMapLoadedListener(this);
@@ -572,8 +641,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	public void initOverlay()
 	{
-		try{
-			Log.i("NewWebActivity", "mAMap.clear()");
 		mAMap.clear();
 		MarkerOptions markerOption;
 		// add marker overlay
@@ -610,11 +677,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
 		MarkerOptions ooD = new MarkerOptions().position(llD).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
 		mAMap.addMarker(ooD).showInfoWindow();	
-		Log.i("NewWebActivity", "mAMap.addMarker(ooD).showInfoWindow();	  after");
-		}catch(Exception e){
-			//APP.ShowToast("TEST______222222**************");
-			Log.i("NewWebActivity", "initOverlay error");
-		}
+
 	}
 	
 	@Override
@@ -651,7 +714,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private void resetViewAndMap()
 	{
-		try{
 		webView.setVisibility(View.GONE);
 		commentTools.setVisibility(View.GONE);
 		squareTools.setVisibility(View.GONE);
@@ -668,10 +730,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		uiSettings.setScaleControlsEnabled(true);
 		uiSettings.setAllGesturesEnabled(true);
 		mAMap.setOnMapClickListener(null);
-		} catch(Exception e){
-			
-			LogUtil.d("NewWebActivity", ExceptionsOperator.getExceptionInfo(e));
-		}
 	}
 	
 	
@@ -763,7 +821,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}   
 
 	//全屏
-	//private myWebChromeClient xwebchromeclient;
 	private FrameLayout video_fullView;// 全屏时视频加载view
 	private CustomViewCallback xCustomViewCallback;
 	private View xCustomView;
@@ -780,7 +837,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	 * 全屏时按返加键执行退出全屏方法
 	 */
 	public void hideCustomView() {
-		// xwebchromeclient.onHideCustomView();
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 	
@@ -795,26 +851,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	//2015.10.13 李德明 添加，清理webView缓存(怀疑与webView无响应有关)
 	 @Override  
-	 protected void onDestroy() {  
-	   
-		 try{
-			 
-	       	 super.onDestroy();
-	       	 clearVideoAndComentWebView();
-	       	 video_fullView.removeAllViews();
-	       	 playLayout.removeView(webView);
-	       	 playLayout.removeView(commentView);
-	       	 webView.destroy();
-	       	 commentView.destroy();
-	       	 mMapView.onDestroy();	       	
-	       	 mAMap=null;
-       	
-       	 }catch(Exception e){
-       		LogUtil.d("NewWebActivity", ExceptionsOperator.getExceptionInfo(e));
-       	 }
-	   
-		
-         
+	 protected void onDestroy() {  	 
+       	 super.onDestroy();
+       	 clearVideoAndComentWebView();
+       	 video_fullView.removeAllViews();
+       	 playLayout.removeView(webView);
+       	 playLayout.removeView(commentView);
+       	 webView.destroy();
+       	 commentView.destroy();
+       	 mMapView.onDestroy();	       	
+       	 mAMap=null;
 	 }
 	
 	public void bindListeners(){
@@ -868,8 +914,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				hideCustomView();
 			
 			}else{
-				//视频退出时清空数据
-				//clearVideoAndComentWebView();
 				this.finish();	
 			}
 			
@@ -915,22 +959,20 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		case R.id.square_com:
 			editC.setText("");
 			editC.requestFocus();
-			imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);			
 			resetCommentAndInfoView();
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			break;
 			
 		case R.id.cancel_com:
 			
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			imm.hideSoftInputFromWindow(comEdit.getWindowToken(), 0);
 			restoreCommentAndInfoView();
+			
 			break;
 		case R.id.confirm_com:
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			imm.hideSoftInputFromWindow(comEdit.getWindowToken(), 0);
+			
 			restoreCommentAndInfoView();
+		
 			sendComMessage();
 			break;
 		case R.id.collection:
@@ -1059,6 +1101,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						String result = json.get("commentNum").toString();
 						 commentNum = (Integer) json.get("commentNum");
 						 commentBar.setText("评论("+commentNum+")");
+						 
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -1311,11 +1354,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		editC.setText("");
 	}
-	
-	/*public void onBackPressed(){
-		super.onBackPressed();
-		finish();
-	}*/
 	
 	public final class transUserId{
 		public transUserId(){

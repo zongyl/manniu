@@ -100,8 +100,9 @@ public class Main extends Activity implements OnClickListener {
 	
 	View main_tab;
 	
-	TextView title,titleMore, titleSquTv, sq_live,sq_short/*,sq_nearby*/;
-	//LinearLayout titleSqu;
+	TextView title,titleMore/*, titleSquTv*/, sq_live, sq_short/*,sq_nearby*/;
+	
+	LinearLayout titleSqu;
 	
 	Timer _timer;
 	private Context context;
@@ -190,8 +191,8 @@ public class Main extends Activity implements OnClickListener {
 		
 		title = (TextView)findViewById(R.id.tvTitle);
 		titleMore =(TextView) findViewById(R.id.titleMore);
-		titleSquTv =(TextView) findViewById(R.id.titleSquTv);
-		//titleSqu =(LinearLayout) findViewById(R.id.titleSqu);
+		//titleSquTv =(TextView) findViewById(R.id.titleSquTv);//广场title
+		titleSqu =(LinearLayout) findViewById(R.id.titleSqu);
 		
 		sq_live  = (TextView) findViewById(R.id.sq_live);
 		sq_short = (TextView) findViewById(R.id.sq_short);
@@ -433,7 +434,7 @@ public class Main extends Activity implements OnClickListener {
 				APP.SendMsg(R.layout.main, XMSG.SELECTED_FUN, Main.XV_NEW_WEB);
 				change(R.id.btn_webs, R.drawable.common_bar_find_sel);
 				//change(btn_webmore);
-				change(titleSquTv);
+				change(titleSqu);
 				break;
 			case R.id.btn_mores: 	
 				APP.SendMsg(R.layout.main, XMSG.SELECTED_FUN, Main.XV_NEW_MORE);
@@ -651,7 +652,7 @@ public class Main extends Activity implements OnClickListener {
 			if(btn.getId() == R.id.btn_add){
 				title.setVisibility(View.GONE);
 				titleMore.setVisibility(View.GONE);
-				titleSquTv.setVisibility(View.GONE);
+				titleSqu.setVisibility(View.GONE);
 				main_tab.setVisibility(View.VISIBLE);
 			}
 		}
@@ -669,9 +670,9 @@ public class Main extends Activity implements OnClickListener {
 		btn_qrcode.setVisibility(View.GONE);
 		if(v.getText().toString().equals("个人")){
 			titleMore.setVisibility(View.VISIBLE);
-			titleSquTv.setVisibility(View.GONE);
+			titleSqu.setVisibility(View.GONE);
 		}else{
-			titleSquTv.setVisibility(View.VISIBLE);
+			titleSqu.setVisibility(View.VISIBLE);
 			titleMore.setVisibility(View.GONE);
 		}
 	}
@@ -910,7 +911,7 @@ public class Main extends Activity implements OnClickListener {
 			}
 			//android.os.Process.killProcess(android.os.Process.myPid());
 			BaseApplication.getInstance().exitApp(flag);
-			System.exit(0);		// 退出操作
+			//System.exit(0);		// 退出操作
 		} catch (Exception e) {
 			Log.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}

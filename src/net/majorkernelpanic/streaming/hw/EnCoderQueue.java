@@ -123,7 +123,7 @@ public class EnCoderQueue implements Runnable{
 			return;
 		}
 	}
-	byte[] newData = new byte[1024*40];
+	byte[] newData = new byte[1024*750];
 	int[] framerate = new int[1]; 
 	@Override
 	public void run() {	

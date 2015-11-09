@@ -11,7 +11,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,14 +21,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.adapter.HttpUtil;
 import com.basic.APP;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.utils.BitmapUtils;
 import com.utils.Constants;
 import com.utils.Tools;
@@ -39,15 +35,16 @@ import com.views.XViewBasic.MyHandler;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+//个人资料
 public class NewDetailEdit extends Activity implements OnClickListener,OnActionSheetSelected,OnCancelListener {
 	private static final String TAG ="NewDetailEdit";
 	private  String IMAGE_FILE_NAME = ".jpg";
-	private static final int CHANGED = 0;
+	public static final int IMG_CHANGED = 0;
 	private static final int CAMERA_REQUEST_CODE = 0;//拍照
 	private static final int IMAGE_REQUEST_CODE = 1;//相册
 	private static final int WEIXIN_REQUEST_CODE = 2;//微信
     private static final int RESULT_REQUEST_CODE = 3; 
-    final static String SAVEFILE = "Info_Login";
+   // final static String SAVEFILE = "Info_Login";
     private MyHandler _mhandler = null;
     private BaseApplication _bApp  = null;
     CircleImageView _faceimage = null;
@@ -105,13 +102,13 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 	/**获取用户资料*/
 	public void ReadUserInfo() {
 		APP.GetMainActivity();
-		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(SAVEFILE, Context.MODE_PRIVATE);
+		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(NewMoresMe.SAVEFILE, Context.MODE_PRIVATE);
 		_userName.setText(preferences.getString("username", ""));
 		//_perSigner.setText(preferences.getString("signer", ""));
 		_phoneNum.setText(preferences.getString("phonenumber", ""));
 		_email.setText(preferences.getString("email", ""));
 		_UserId =preferences.getString("sid","");
-		_img =preferences.getString("img", "");
+		_img =preferences.getString("head_img", "");
 		IMAGE_FILE_NAME = "temp"+IMAGE_FILE_NAME;
 		BitmapUtils.loadImage(_img, _UserId, _faceimage);
 	}
@@ -252,7 +249,7 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 				BitmapUtils.rename(IMAGE_FILE_NAME,_UserId);//成功后将文件改名
 				Log.v(TAG, "userId:"+_UserId);
 				UpdateUserInfo();//更新本地缓存(更新)
-				_mhandler.sendEmptyMessage(CHANGED);
+				_mhandler.sendEmptyMessage(IMG_CHANGED);
 				APP.ShowToast(getResources().getString(R.string.SUCCESS_UPLOAD));
 			}
 			public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
@@ -264,9 +261,10 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 	}
 	
 	private void UpdateUserInfo() {
-		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(SAVEFILE, APP.GetMainActivity().MODE_PRIVATE);
-		Editor editor = preferences.edit();
-		editor.putString("img","images/users/"+_UserId.concat(".jpg"));
+		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(NewMoresMe.SAVEFILE, MODE_PRIVATE);
+		preferences.edit().putString("head_img", "").commit();
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString("head_img","images/users/"+_UserId.concat(".jpg"));
 		editor.commit();
 	}
 	//剪裁图片

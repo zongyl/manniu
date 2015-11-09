@@ -16,6 +16,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -93,11 +94,11 @@ public class BitmapUtils extends XViewBasic {
 		if(getContext().getResources().getString(R.string.default_photo).equals(imgname)){
 			imagetarget.setImageResource(R.drawable.images_nophoto_bg);//默认头像
 		}else{
-			/*String temp = replace(imgname);
+			String temp = replace(imgname);
 			String [] strs =temp.split("/");
 			String ImageName  = strs[2];
 			File tempfile = new File(BitmapUtils.getPath(),ImageName);
-			if(!tempfile.exists()){*/
+			if(!tempfile.exists()){
 				Log.v("headimage original", "from http");
 				/*String image_url = getContext().getResources().getString(R.string.server_address)+"/"+replace(imgname);
 				AsyncImageLoader.setImageViewFromUrl(image_url, imagetarget,userid);*/
@@ -115,11 +116,11 @@ public class BitmapUtils extends XViewBasic {
 				ImageLoader imageloader = ImageLoader.getInstance();
 				imageloader.displayImage(url, imagetarget, options,null);
 				//Log.v(TAG, imageloader.getDiskCache().get(url).getPath());
-			/*}else{
+			}else{
 				Log.v("headimage original", "from SD card and path is:"+tempfile.getAbsolutePath());
 				Bitmap bt = BitmapFactory.decodeFile(BitmapUtils.getPath()+ImageName);//从Sd中找头像，转换成Bitmap
 				imagetarget.setImageBitmap(bt);
-			}*/
+			}
 		}
 	}
 	//反斜杠处理
@@ -144,7 +145,6 @@ public class BitmapUtils extends XViewBasic {
 	
     //创建文件目录
     public static String getPath(){
-    
     	return path;
     }
     
