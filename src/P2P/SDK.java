@@ -17,6 +17,7 @@ import com.basic.APP;
 import com.manniu.manniu.R;
 import com.nmbb.vlc.ui.VlcVideoActivity;
 import com.utils.DevSetHandler;
+import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.utils.ScreenHandler;
 import com.views.BaseApplication;
@@ -37,7 +38,6 @@ public class SDK {
 	//type:类型   0：视频 1：音频 2：语音对讲
 	//isIFrame		1：i帧，否则为p帧
 	//static byte[] newbuf = new byte[60*1024];
-	@SuppressWarnings("static-access")
 	public void onData(int chnl,int type,int isIFrame,byte[] data, int length) {
 		if(NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
 		//if(NewSurfaceTest.instance != null){
@@ -77,13 +77,9 @@ public class SDK {
 					}
 				}else if(type == 1){//音频
 					if(data != null && data.length > 0 && AudioQueue.runFlag){
-						
-//						if(data[0]==-1 && (data[1] & -16)==-16){
-							AudioQueue.addSound(data);
-//						}else{
-							LogUtil.d("SDK", "收声音..."+data.length+" type: "+type+"--"+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
-									+"------"+data[data.length-6]+","+data[data.length-7]+","+data[data.length-8]+","+data[data.length-9]+","+data[data.length-10]);
-//						}
+						AudioQueue.addSound(data);
+//						LogUtil.d("SDK", "收声音..."+data.length+" type: "+type+"--"+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
+//								+"------"+data[data.length-6]+","+data[data.length-7]+","+data[data.length-8]+","+data[data.length-9]+","+data[data.length-10]);
 					}
 				}
 			}
@@ -188,7 +184,7 @@ public class SDK {
 		if(Main.Instance._curIndex == Main.XV_NEW_MSG){//牛眼
 			if (cmd == 10) {
 				LogUtil.d("SDK", "发送宽高。。="+VideoStream.mRequestedQuality.framerate+"--"+VideoStream.mRequestedQuality.bitrate*0.8+"--"+VideoStream.mRequestedQuality.resX+"--"+VideoStream.mRequestedQuality.resY);
-				int ret = SendMediaInfo(param1, 0,1,0,VideoStream.mRequestedQuality.framerate,5,(int)(VideoStream.mRequestedQuality.bitrate*0.8),2,VideoStream.mRequestedQuality.resX,VideoStream.mRequestedQuality.resY);
+				int ret = SendMediaInfo(param1, 0,1,0,10,5,(int)(VideoStream.mRequestedQuality.bitrate*0.8),2,VideoStream.mRequestedQuality.resX,VideoStream.mRequestedQuality.resY);
 				if(ret == 0 && AnalogvideoActivity.instance != null){
 					_createChnlFlag = 0;
 					LogUtil.d("SDK", "发数据。。。。。");
@@ -287,28 +283,33 @@ public class SDK {
 			break;
 		case 3:
 			if(_isLogout){
-				_isLogout = false;
-				LogUtil.d("SDK", "同一个账号在别的设备上登陆....");
-				Main.Instance._loginThead.stop();
-				//判断如果正在播放视频关闭
-				if(NewSurfaceTest.isPlay){
-					NewSurfaceTest.instance.stop();
+				try {
+					_isLogout = false;
+					LogUtil.d("SDK", "同一个账号在别的设备上登陆....");
+					//判断如果正在播放视频关闭
+					if(NewSurfaceTest.isPlay){
+						NewSurfaceTest.instance.stop();
+					}
+					//关闭牛眼
+					if(Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog){
+						AnalogvideoActivity.instance.clearAnalog();
+						AnalogvideoActivity.instance.finish();
+					}
+					//判断如果正在播放广场视频关闭
+					if(VlcVideoActivity.instance != null && VlcVideoActivity.instance.isVlcPlaying()){
+						VlcVideoActivity.instance.release();
+					}
+					LogUtil.d("SDK", "关闭资源....");
+					
+					Intent intent = new Intent();
+					intent.setAction("com.service.EXIT_SERVICE");
+					intent.putExtra("type", "1");
+					intent.setPackage("com.manniu.manniu");
+					BaseApplication.getInstance().startService(intent);
+					LogUtil.d("SDK", "打开弹出框....");
+				} catch (Exception e) {
+					LogUtil.e("SDK", ExceptionsOperator.getExceptionInfo(e));
 				}
-				//关闭牛眼
-				if(Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog){
-					AnalogvideoActivity.instance.clearAnalog();
-					AnalogvideoActivity.instance.finish();
-				}
-				//判断如果正在播放广场视频关闭
-				if(VlcVideoActivity.instance != null && VlcVideoActivity.instance.isVlcPlaying()){
-					VlcVideoActivity.instance.release();
-				}
-				
-				Intent intent = new Intent();
-				intent.setAction("com.service.EXIT_SERVICE");
-				intent.putExtra("type", "1");
-				intent.setPackage("com.manniu.manniu");
-				BaseApplication.getInstance().startService(intent);
 			}
 			break;
 		default:

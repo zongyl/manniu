@@ -829,11 +829,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	private void stopRecordingVideo(){
 		video.setBackgroundResource(R.drawable.control_icon_small_video_n);
 		_decoderQueue._isRecording = false;
-		if(NewMain.devType == 1){
-			Mp4Enc.stop(Mp4Enc.handle);
-		}else{
+//		if(NewMain.devType == 1){
+//			Mp4Enc.stop(Mp4Enc.handle);
+//		}else{
 			_decoderQueue.h264ToMp4();
-		}
+//		}
 	}
 		
 	@Override 
@@ -846,6 +846,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	
 	public void stopPause(){
 		try {
+			if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
+				stopRecordingVideo();
+			}
 			_sQueue.Stop();
 			//_deThead.de_stop();
 			if(_decoderQueue != null){
@@ -1023,8 +1026,8 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					File efile = new File(_recordfileName + ".bmp");
 					if(recordCount < 10){
 						if(efile.exists()){
-							long handle = Mp4Enc.handle;
-							Mp4Enc.startwrite(handle,_recordfileName + ".mp4");
+//							long handle = Mp4Enc.handle;
+//							Mp4Enc.startwrite(handle,_recordfileName + ".mp4");
 							_decoderQueue.recordFile(_recordfileName);
 							stopNotify();
 							closeWait();

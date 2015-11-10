@@ -58,11 +58,5 @@ public class About_MobilephoneActivity extends Activity{
 		// this.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
 
 	}
-	
-	
-	
-	
-	
-	
 
 }

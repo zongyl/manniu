@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.util.Log;
 import com.basic.APP;
 import com.manniu.manniu.R;
+import com.utils.LogUtil;
 import com.views.BaseApplication;
 import com.views.Main;
 import com.views.NewSurfaceTest;
@@ -37,11 +38,13 @@ public class ExitService extends Service {
 				APP.ShowConfirmDialog2(getString(R.string.tip_title), getString(R.string.user_in_other_dev), new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
+						LogUtil.d(TAG, "start ..踢出账号....");
 						Main.Instance.stopUpdateCheck();
-						Main.Instance._loginThead.stop();
+						Main.Instance._loginThead.stop();//停止IDM线程
 						SDK.Logout();
 						SDK.UnInit();
 						BaseApplication.getInstance().exitApp("play");
+						LogUtil.d(TAG, "end ..踢出账号....");
 						System.exit(0);		// 退出操作
 					}
 				}, getString(R.string.exit),this);

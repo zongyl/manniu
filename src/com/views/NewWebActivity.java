@@ -405,20 +405,28 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private void resetCommentAndInfoView()
 	{  
-		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);		
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);	
+		
 		squareTools.setVisibility(View.GONE);
 		comEdit.setVisibility(View.VISIBLE);
-		commentContent.setVisibility(View.GONE);
-		mMapView.setVisibility(View.GONE);
-		LinearLayout.LayoutParams  linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-500;// height - 500;// 当前界面高度-320
-		informationPage.setLayoutParams(linearParams);
-		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-500;// height - 500;// 当前界面高度-320
+		LinearLayout.LayoutParams  linearParams;
 		
-		commentView.setLayoutParams(linearParams);
-		//commentView.setBackgroundColor(Color.RED);
-		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+		if(bComment == true)
+		{
+			commentView.setVisibility(View.VISIBLE);
+			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
+			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
+			commentView.setLayoutParams(linearParams);
+		}
+		else
+		{
+			commentContent.setVisibility(View.GONE);
+			mMapView.setVisibility(View.GONE);
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
+			linearParams.height = dmHeight/80;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
+			informationPage.setLayoutParams(linearParams);
+		}
+
 		bPopKey = true;
 		bFinish = false;
 	}
@@ -427,16 +435,25 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		imm.hideSoftInputFromWindow(playLayout.getWindowToken(), 0);
 		comEdit.setVisibility(View.GONE);
 		squareTools.setVisibility(View.VISIBLE);
-		commentContent.setVisibility(View.VISIBLE);
-		mMapView.setVisibility(View.VISIBLE);
-		bPopKey = false;
 		LinearLayout.LayoutParams  linearParams;
-		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
-		informationPage.setLayoutParams(linearParams);
-		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
-		commentView.setLayoutParams(linearParams);
+		
+		if(bComment == true)
+		{
+			commentView.setVisibility(View.VISIBLE);
+			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
+			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+			commentView.setLayoutParams(linearParams);
+		}
+		else
+		{
+			commentContent.setVisibility(View.VISIBLE);
+			mMapView.setVisibility(View.VISIBLE);
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
+			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+			informationPage.setLayoutParams(linearParams);
+		}
+		
+		bPopKey = false;
 		count = 0;
 		bFinish = true;
 	}
@@ -468,6 +485,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		ws.setGeolocationEnabled(true);// 启用地理定位
 		ws.setDomStorageEnabled(true);
 		ws.setSupportMultipleWindows(true);// 新加
+		ws.setSupportZoom(true);
 		 
 		//2015.10.13 李德明 重新调整webView高度
 		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) webView.getLayoutParams(); // 取控件webView当前的布局参数		
@@ -501,7 +519,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	{
 		comEdit =(LinearLayout)findViewById(R.id.share_comment);
 		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) comEdit.getLayoutParams(); 
-		linearParams.height = height*3/40+dmHeight/320;
+		linearParams.height = height*3/40+dmHeight/320+dmHeight/50;
 		comEdit.setLayoutParams(linearParams); 
 		
 		
@@ -528,9 +546,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		informationBar.setClickable(true);
 
 		getCommentNum();
-		
 		commentView = (WebView)findViewById(R.id.webView03);
-		
+		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 		commentView.setOnTouchListener(new OnTouchListener() {
 			
 			@Override
@@ -959,20 +976,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		case R.id.square_com:
 			editC.setText("");
 			editC.requestFocus();
+			editC.setCursorVisible(true);
 			resetCommentAndInfoView();
 			break;
-			
 		case R.id.cancel_com:
-			
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			restoreCommentAndInfoView();
-			
 			break;
 		case R.id.confirm_com:
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			
 			restoreCommentAndInfoView();
-		
 			sendComMessage();
 			break;
 		case R.id.collection:
@@ -1028,6 +1039,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			bComment = true;
 			informationPage.setVisibility(View.GONE);
 			commentView.setVisibility(View.VISIBLE);
+			
+			//if(bPopKey == true)
+			{
+				commentView.setVisibility(View.VISIBLE);
+				LinearLayout.LayoutParams  linearParams;
+				linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+				commentView.setLayoutParams(linearParams);
+			}
+			
 			informationBar.setTextColor(Color.parseColor("#ff888888"));
 			informationBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
 			commentBar.setBackgroundColor(Color.parseColor("#66CCFF"));
@@ -1037,6 +1058,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			bComment = false;
 			commentView.setVisibility(View.GONE);
 			informationPage.setVisibility(View.VISIBLE);
+			//if(bPopKey == true)
+			{
+				commentContent.setVisibility(View.VISIBLE);
+				mMapView.setVisibility(View.VISIBLE);
+				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+				informationPage.setLayoutParams(linearParams);
+			}
 			commentBar.setTextColor(Color.parseColor("#ff888888"));
 			commentBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
 			informationBar.setBackgroundColor(Color.parseColor("#66CCFF"));

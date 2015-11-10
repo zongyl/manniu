@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -24,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.basic.APP;
+import com.basic.G;
 import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
@@ -254,7 +257,7 @@ public class XVideoAdapter extends BaseAdapter {
 							APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
 							new Thread(new Runnable() {
 								@Override
-								public void run() {
+								public void run() {//上传视频
 									String path = Constants.data.get(position).get(KEY_THUMB_URL);
 									byte[] tem = SDK.StartupLoadLocalMedia();
 									int ret = 0;
@@ -353,6 +356,29 @@ public class XVideoAdapter extends BaseAdapter {
 			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/android/uploadVideo",params);
 			if (Integer.parseInt(map.get("code").toString()) != 200) {
 				APP.ShowToastLong(APP.GetString(R.string.Err_Error_Unknow));
+			}else{
+				JSONObject json = new JSONObject(map.get("data").toString());
+				String msg = "";
+				//{"success":"true","mid":1022}
+				msg = json.getString("success");
+				if("true".equals(msg)){
+					//上传封面
+					byte[] temData = FileUtil.getBytes(param.split(",")[1]);
+		        	byte[] imgByte = new byte[210]; 
+		        	int nRet = SDK.uploadlocalsnapshot(imgByte, 0, temData, temData.length);
+		        	String imgUrl = "";
+		        	if(nRet > 0){
+		        		imgUrl = G.BytesToStr(imgByte,0,nRet);
+		        		HashMap<String, String> params2 = new HashMap<String, String>();
+						params2.put("userId", Constants.userid);
+						params2.put("mid", json.getString("mid"));
+						params2.put("imgUrl", imgUrl);
+						Map<String, Object> map2 = HttpURLConnectionTools.post(Constants.hostUrl + "/android/saveVideoCover",params2);
+						if (Integer.parseInt(map2.get("code").toString()) != 200) {
+							APP.ShowToastLong(APP.GetString(R.string.Err_Error_Unknow));
+						}
+		        	}
+				}
 			}
 		} catch (Exception e) {
 		}

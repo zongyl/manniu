@@ -62,19 +62,22 @@ public class ScreenHandler extends Handler{
 	}
 	
 	private void display(String url){
-		ImageView iv = ScreenCache.getInstance().getImgView(deviceId);
-		fileName = rootPath + deviceId + ".png";
-		
-		HttpUtil.get(url, new BinaryHttpResponseHandler() {
-			@Override
-			public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-				FileUtil.toFile(arg2, fileName);
-			}
-			@Override
-			public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
-			}
-		});
-		ImageLoader.getInstance().displayImage(url, iv);
+		try {
+			ImageView iv = ScreenCache.getInstance().getImgView(deviceId);
+			fileName = rootPath + deviceId + ".png";
+			
+			HttpUtil.get(url, new BinaryHttpResponseHandler() {
+				@Override
+				public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
+					FileUtil.toFile(arg2, fileName);
+				}
+				@Override
+				public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
+				}
+			});
+			ImageLoader.getInstance().displayImage(url, iv);
+		} catch (Exception e) {
+		}
 	}
 	
 	/**

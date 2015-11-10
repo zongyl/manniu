@@ -66,9 +66,11 @@ import com.backprocess.BackLoginThread;
 import com.basic.APP;
 import com.basic.XMSG;
 import com.bean.LiveVideo;
+import com.google.zxing.WriterException;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
+import com.mining.app.zxing.encodeing.EncodingHandler;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;
@@ -139,6 +141,8 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	//分享状态
 	private boolean isshare = false;
 	
+	private ImageView rqcodeImg;
+	
     public Fun_AnalogVideo(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
 		context = activity;
@@ -205,10 +209,11 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     	
 		_storageSDK = (RadioButton) findViewById(R.id.sto_sdk);
 		_storageMobile = (RadioButton) findViewById(R.id.sto_mobile);
-		_streamType = (RadioGroup) findViewById(R.id.streamType);
+		//画质先隐掉  帧率目前不能固定
+		/*_streamType = (RadioGroup) findViewById(R.id.streamType);
 		_pictureHigh = (RadioButton) findViewById(R.id.picture_high);
 		_pictureIn = (RadioButton) findViewById(R.id.picture_in);
-		_pictureMin = (RadioButton) findViewById(R.id.picture_min);
+		_pictureMin = (RadioButton) findViewById(R.id.picture_min);*/
 		_devTite = (TextView) findViewById(R.id.device_info);
 		_QRcodeRow = (TableRow) findViewById(R.id.qrcode_row);
 		//_tvPwd = (EditText) findViewById(R.id.tv_pwd);
@@ -238,7 +243,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 		_rectype.setSelection(resolution);
 		adapter.notifyDataSetChanged();
 		//画质选择
-		_streamType.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+		/*_streamType.setOnCheckedChangeListener(new OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId==_pictureHigh.getId()){
@@ -249,7 +254,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
                 	SaveConfigInfo(1,1);
                 }
             }
-        });
+        });*/
 		//存储路径选择
 		_radGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
             @Override
@@ -305,8 +310,23 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 				_btnSub.setClickable(false);
 			}
 		});
+
+		rqcodeImg = (ImageView) findViewById(R.id.qrcode_img);
+		//rqcodeImg.setBackgroundColor(context.getResources().getColor(R.color.red_btn));
+		genBitmap("zongyl is my chinese name!");
+		
+		//rqcodeImg.setBackgroundResource(R.drawable.default_img);
+		
     }
-    
+  
+    //string gen rqcode IMG
+    private void genBitmap(String str){
+    	try {
+			rqcodeImg.setImageBitmap(EncodingHandler.createQRCode(str, 350));
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+    }
   
     private void InitViewPager() {  
         viewPager=(ViewPager) findViewById(R.id.vPager);  
@@ -710,13 +730,13 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			setFilePath(tmp);
 		}
 		
-		if(picture == 3){
+		/*if(picture == 3){
 			_pictureHigh.setChecked(true);
 		}else if(picture == 2){
 			_pictureIn.setChecked(true);
 		}else if(picture == 1){
 			_pictureMin.setChecked(true);
-		}
+		}*/
     }
     
     @SuppressLint("SdCardPath")

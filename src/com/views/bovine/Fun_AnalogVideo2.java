@@ -449,10 +449,10 @@ public class Fun_AnalogVideo2 extends XViewBasic implements OnClickListener, OnT
             	
         		_storageSDK = (RadioButton) findViewById(R.id.sto_sdk);
         		_storageMobile = (RadioButton) findViewById(R.id.sto_mobile);
-        		_streamType = (RadioGroup) findViewById(R.id.streamType);
+        		/*_streamType = (RadioGroup) findViewById(R.id.streamType);
         		_pictureHigh = (RadioButton) findViewById(R.id.picture_high);
         		_pictureIn = (RadioButton) findViewById(R.id.picture_in);
-        		_pictureMin = (RadioButton) findViewById(R.id.picture_min);
+        		_pictureMin = (RadioButton) findViewById(R.id.picture_min);*/
         		_devTite = (TextView) findViewById(R.id.device_info);
         		_QRcodeRow = (TableRow) findViewById(R.id.qrcode_row);
         		//_tvPwd = (EditText) findViewById(R.id.tv_pwd);

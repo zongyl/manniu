@@ -169,7 +169,6 @@ public class NewDeviceSet extends Activity {
 		return pixels;
 	}
 	
-	
 	private String getSets(){
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		return JSON.toJSONString(pre.getAll());

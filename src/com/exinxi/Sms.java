@@ -6,9 +6,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import android.widget.BaseAdapter;
-
-import com.basic.APP;
 import com.manniu.manniu.R;
 import com.views.BaseApplication;
 

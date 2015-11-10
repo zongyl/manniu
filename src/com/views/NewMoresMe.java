@@ -1,6 +1,7 @@
 package com.views;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
@@ -11,6 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,12 +28,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.adapter.Menu;
 import com.adapter.UpdateDialog;
 import com.basic.APP;
 import com.manniu.manniu.R;
 import com.utils.BitmapUtils;
+import com.utils.Constants;
 import com.utils.DateUtil;
 import com.utils.SetSharePrefer;
 import com.utils.UpdateManager;
@@ -124,7 +127,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	public void getHeadImg(){
 		try {
 			_img = preferences.getString("head_img", "");
-			 _userid = preferences.getString("sid", "");
+			_userid = preferences.getString("sid", "");
 			BitmapUtils.loadImage(_img, _userid, _headImage);
 		} catch (Exception e) {
 		}
@@ -132,7 +135,14 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	
 	protected void OnMessage(Message msg) {
  		if(msg.what == NewDetailEdit.IMG_CHANGED){
-			getHeadImg();
+			//getHeadImg();
+ 			//加载本地
+ 			String path = BitmapUtils.path+Constants.userid +".jpg";
+ 			File file = new File(path);
+ 			if(file.exists()){
+ 				Bitmap bt = BitmapFactory.decodeFile(path);//从Sd中找头像，转换成Bitmap
+ 				_headImage.setImageBitmap(bt);
+ 			}
 		}
 	}
 	

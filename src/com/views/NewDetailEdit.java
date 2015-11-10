@@ -101,16 +101,19 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 	
 	/**获取用户资料*/
 	public void ReadUserInfo() {
-		APP.GetMainActivity();
-		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(NewMoresMe.SAVEFILE, Context.MODE_PRIVATE);
-		_userName.setText(preferences.getString("username", ""));
-		//_perSigner.setText(preferences.getString("signer", ""));
-		_phoneNum.setText(preferences.getString("phonenumber", ""));
-		_email.setText(preferences.getString("email", ""));
-		_UserId =preferences.getString("sid","");
-		_img =preferences.getString("head_img", "");
-		IMAGE_FILE_NAME = "temp"+IMAGE_FILE_NAME;
-		BitmapUtils.loadImage(_img, _UserId, _faceimage);
+		try {
+			//APP.GetMainActivity();
+			SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(NewMoresMe.SAVEFILE, Context.MODE_PRIVATE);
+			_userName.setText(preferences.getString("username", ""));
+			//_perSigner.setText(preferences.getString("signer", ""));
+			_phoneNum.setText(preferences.getString("phonenumber", ""));
+			_email.setText(preferences.getString("email", ""));
+			_UserId =preferences.getString("sid","");
+			_img =preferences.getString("head_img", "");
+			IMAGE_FILE_NAME = "temp"+IMAGE_FILE_NAME;
+			BitmapUtils.loadImage(_img, _UserId, _faceimage);
+		} catch (Exception e) {
+		}
 	}
 
 	@Override
@@ -230,7 +233,7 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 		dialogW.show();
 		dialogW.UpdateTextNoDelay(getResources().getString(R.string.IN_UPLOAD));
 		File photofile = BitmapUtils.CompressToFile(_bitmap, IMAGE_FILE_NAME,50);//剪裁后的照片按50%比例压缩后上传
-		Log.v("处理后文件", ""+photofile.getName());
+		//Log.v("处理后文件", ""+photofile.getName());
 		RequestParams params = new RequestParams();
 		params.put("userId", _UserId);
 		//params.put("sessionId", Constants.sessionId);
@@ -247,7 +250,6 @@ public class NewDetailEdit extends Activity implements OnClickListener,OnActionS
 				dialogW.dismiss();
 				_faceimage.setImageBitmap(_bitmap);
 				BitmapUtils.rename(IMAGE_FILE_NAME,_UserId);//成功后将文件改名
-				Log.v(TAG, "userId:"+_UserId);
 				UpdateUserInfo();//更新本地缓存(更新)
 				_mhandler.sendEmptyMessage(IMG_CHANGED);
 				APP.ShowToast(getResources().getString(R.string.SUCCESS_UPLOAD));

@@ -142,14 +142,14 @@
 	    android:layout_marginLeft="7dp" 
 	    android:layout_marginRight="7dp"
 	    style="@style/DetailBaseline"/> 	  
-
+   	
 	<WebView
        	android:id="@+id/webView03"
        	android:layout_weight="8"
       		android:layout_height="0dp"
       	android:layout_width="fill_parent"
       	android:visibility="visible"        
-      	android:background="#00000000"/>
+      	android:background="@color/white"/>
 	
     <LinearLayout
         android:id="@+id/information_page"
@@ -216,23 +216,23 @@
     	
   	    <LinearLayout 
   	        android:orientation="horizontal"
-        	android:layout_width="match_parent"
-        	android:layout_height="wrap_content">
-        	
+        	android:layout_width="fill_parent"
+        	android:layout_height="0dp"
+        	android:layout_weight="2">
 	  	    <TextView
 	    	    android:gravity="center"
 	    	    android:text="发表评论"
 	    	    android:visibility="visible"
 	            android:layout_gravity="center_vertical"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"/>    
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"/>    
   	    </LinearLayout>
   	    
   	    <LinearLayout
   	        android:orientation="horizontal"
         	android:layout_width="match_parent"
-        	android:layout_height="wrap_content">
+        	android:layout_height="0dp"
+        	android:layout_weight="5">
 	  	    
 	        <ImageView android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
@@ -242,13 +242,12 @@
 	        
 	        <EditText 
 	            android:imeOptions="actionDone" 
-	            android:paddingBottom="10dp"
 	            android:singleLine="true"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
 	            android:layout_weight="1"
 	            android:gravity="center"
-	            android:textSize="25sp"
+	            android:textSize="20sp"
 	            android:textColor="@color/black"
 	            android:layout_gravity="center_vertical"
 	            android:background="@drawable/radius_corner"
@@ -260,6 +259,14 @@
 	            android:src="@drawable/common_title_confirm"
 	            android:id="@+id/confirm_com"/>
         </LinearLayout>
+  	    <TextView
+			android:gravity="center"
+			android:text=" "
+			android:visibility="visible"
+			android:layout_gravity="center_vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"/>    
     </LinearLayout>
     <TextView   
         android:id="@+id/line3"

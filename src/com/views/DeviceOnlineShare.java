@@ -46,7 +46,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.basic.APP;
-import com.basic.XMSG;
 import com.bean.LiveVideo;
 import com.bean.UsersMessage;
 import com.loopj.android.http.AsyncHttpClient;
@@ -61,7 +60,6 @@ import com.utils.DateTimePickerDialog.OnDateTimeSetListener;
 import com.utils.DateUtil;
 import com.utils.LogUtil;
 import com.utils.Tools;
-import com.views.bovine.Fun_AnalogVideo;
 
 public class DeviceOnlineShare extends Activity implements OnClickListener{
 	final String TAG = this.getClass().getName();

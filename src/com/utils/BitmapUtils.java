@@ -24,10 +24,15 @@ import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.basic.APP;
 import com.manniu.manniu.R;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.views.XViewBasic;
 import com.vss.vssmobile.decoder.H264Dec;
 
@@ -45,7 +50,7 @@ public class BitmapUtils extends XViewBasic {
     * @param url 
     * @return 
     */  
-	static String path =Environment.getExternalStorageDirectory().getAbsolutePath()+"/photos/";
+	public static String path =Environment.getExternalStorageDirectory().getAbsolutePath()+"/photos/";
 	public static Uri getImageFromCamer(Context context,String ImageFileName, int REQUE_CODE_CAMERA) {
 	    if(ImageFileName==null||"".equals(ImageFileName)){
 	    	return null;
@@ -90,37 +95,40 @@ public class BitmapUtils extends XViewBasic {
     }
 	
 	public static void loadImage(String imgname,String userid,ImageView imagetarget){
-		
+		if(imgname.equals("")){
+			imgname = "images/users/"+Constants.userid +".jpg";
+		}
 		if(getContext().getResources().getString(R.string.default_photo).equals(imgname)){
 			imagetarget.setImageResource(R.drawable.images_nophoto_bg);//默认头像
 		}else{
-			String temp = replace(imgname);
-			String [] strs =temp.split("/");
-			String ImageName  = strs[2];
-			File tempfile = new File(BitmapUtils.getPath(),ImageName);
-			if(!tempfile.exists()){
-				Log.v("headimage original", "from http");
+//			String temp = replace(imgname);
+//			String [] strs =temp.split("/");
+//			String ImageName  = strs[2];
+//			File tempfile = new File(BitmapUtils.getPath(),ImageName);
+//			if(!tempfile.exists()){
+				//Log.v("headimage original", "from http");
 				/*String image_url = getContext().getResources().getString(R.string.server_address)+"/"+replace(imgname);
 				AsyncImageLoader.setImageViewFromUrl(image_url, imagetarget,userid);*/
 				String url=com.utils.Constants.hostUrl+File.separator+imgname;
 				DisplayImageOptions options = new DisplayImageOptions.Builder()
-				.showImageForEmptyUri(R.drawable.images_nophoto_bg)
-				.showImageOnFail(R.drawable.event_list_fail_pic)
-				.cacheOnDisk(true)
-				.resetViewBeforeLoading(true)
+				.showImageForEmptyUri(R.drawable.images_nophoto_bg)//没有图片资源时的默认图片 
+				.showImageOnFail(R.drawable.event_list_fail_pic)//加载失败时的图片  
+				.cacheOnDisk(false)								//启用外存缓存
+				.cacheInMemory(false)                           //启用内存缓存 
+				.resetViewBeforeLoading(false)
 				.imageScaleType(ImageScaleType.EXACTLY)
 				.bitmapConfig(Bitmap.Config.RGB_565)
-				.considerExifParams(true)
+				.considerExifParams(true)						//启用EXIF和JPEG图像格式
 				//.displayer(new FadeInBitmapDisplayer(300))
 				.build();
 				ImageLoader imageloader = ImageLoader.getInstance();
 				imageloader.displayImage(url, imagetarget, options,null);
-				//Log.v(TAG, imageloader.getDiskCache().get(url).getPath());
-			}else{
-				Log.v("headimage original", "from SD card and path is:"+tempfile.getAbsolutePath());
-				Bitmap bt = BitmapFactory.decodeFile(BitmapUtils.getPath()+ImageName);//从Sd中找头像，转换成Bitmap
-				imagetarget.setImageBitmap(bt);
-			}
+				//Log.v(TAG, imageloader.getDiskCache().get(url)+"");
+//			}else{
+//				Log.v("headimage original", "from SD card and path is:"+tempfile.getAbsolutePath());
+//				Bitmap bt = BitmapFactory.decodeFile(BitmapUtils.getPath()+ImageName);//从Sd中找头像，转换成Bitmap
+//				imagetarget.setImageBitmap(bt);
+//			}
 		}
 	}
 	//反斜杠处理
