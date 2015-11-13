@@ -33,46 +33,76 @@
        	    android:layout_width="wrap_content"
        	    android:layout_height="wrap_content"
        	    android:background="@drawable/new_dev_set_back_selector"/>
+       	<Button 
+       	    android:id="@+id/dev_set_save"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:layout_gravity="right"
+       	    android:background="@drawable/new_dev_set_info_submit_selector"/>
 		 </FrameLayout>
     
-    <!-- device info -->
+    <!-- device info  android:background="@drawable/new_dev_set_item_selector" -->
     <RelativeLayout
         android:id="@+id/dev_info"
-        android:background="@drawable/new_dev_set_item_selector"
         android:layout_marginTop="15dp"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
+        android:background="@color/white"
         >
-         <ImageView 
+          <ImageView 
             android:id="@+id/dev_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/device_c1"
-            />
+            /> 
          
-         <TextView 
+         <!--  android:layout_toRightOf="@id/dev_icon" -->
+         
+       <!--   <TextView 
+             android:id="@+id/dev_name_label"
+             android:layout_width="wrap_content"
+             android:layout_height="50dp"
+             android:layout_marginLeft="10dp"
+             android:gravity="center_vertical"
+             android:textColor="@color/black"
+             android:text="设备名称" 
+              /> -->
+         
+        <!--  <TextView 
              android:id="@+id/dev_name"
-             android:layout_toRightOf="@id/dev_icon"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_alignParentTop="true"
              android:textColor="@color/black"
              android:layout_marginTop="18dp"
-             android:text="C2mini(88889888)"/>
+             android:text=""/> -->
          
-         <TextView android:layout_toRightOf="@id/dev_icon"
+         <EditText 
+             android:id="@+id/dev_name_et"
+             android:layout_width="260dp"
+             android:layout_height="30dp"
+             android:layout_marginLeft="10dp"
+             android:layout_marginTop="25dp"
+             android:layout_toRightOf="@id/dev_icon"
+             android:hint="device name"
+             android:cursorVisible="true"
+             android:textColor="@color/black"
+             android:background="@drawable/radius_corner"
+             />
+         
+         <!-- <TextView android:layout_toRightOf="@id/dev_icon"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_alignParentBottom="true"
              android:layout_marginBottom="18dp"
-             android:text="C2mini(501234567)"/>
+             android:text="C2mini(501234567)"/> -->
          
-          <ImageView 
+        <!--   <ImageView 
         android:layout_height="40dp" 
         android:layout_width="40dp" 
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/face_right_sel"/>
+        android:src="@drawable/face_right_sel"/> -->
     </RelativeLayout>
     
     <RelativeLayout 
@@ -159,35 +189,6 @@
        android:layout_height="50dp">
         </RelativeLayout>
    
-  <!--  <LinearLayout
-       android:layout_marginTop="15dp"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="@color/white" >
-    
-        <TextView 
-            android:id="@+id/dev_set_base"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:text="@string/dev_set_base"
-            android:textColor="@color/blue_menu" />
-        <TextView 
-            android:id="@+id/dev_set_advanced"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:text="@string/dev_set_advanced"
-            android:textColor="@color/black" />
-    </LinearLayout>
-   
-   <FrameLayout
-        android:id="@+id/ui_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-    </FrameLayout> -->
-   
        <RelativeLayout
        android:id="@+id/device_set_alarm_dj"
        android:layout_marginTop="1dp"
@@ -217,7 +218,7 @@
             android:layout_alignParentRight="true">
         </Spinner>
       
-    </RelativeLayout>
+    </RelativeLayout><!-- 
       <RelativeLayout
        android:id="@+id/device_set_alarm_dj"
        android:layout_marginTop="1dp"
@@ -239,6 +240,65 @@
             android:text="画质"
             android:textColor="@color/black" />
         <Spinner android:id="@+id/quality"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout> -->
+   
+   
+      <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="帧率"
+            android:textColor="@color/black" />
+        <Spinner android:id="@+id/frameRate"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout>
+    
+      <RelativeLayout
+       android:id="@+id/device_set_alarm_dj"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:id="@+id/dev_item_ver_tv"
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="码流"
+            android:textColor="@color/black" />
+        <Spinner android:id="@+id/bitStream"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:gravity="center_vertical"

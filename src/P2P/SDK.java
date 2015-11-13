@@ -146,17 +146,8 @@ public class SDK {
 				}
 			}else if(jsonData.containsKey("action")&&"101".equals(jsonData.getString("action"))){//配置
 				
-				Set<String> keys = jsonData.keySet();
-				for(String key : keys){
-					LogUtil.d( "SDK", "key:" + key);
-					if(jsonData.get(key) instanceof JSONObject){
-						LogUtil.d( "SDK", key + " is JSONObject instance!");
-					}else if(jsonData.get(key) instanceof JSONArray){
-						LogUtil.d( "SDK", key + " is JSONArray instance!");
-					}else{
-						LogUtil.d( "SDK", key + " value is other instance! value " + jsonData.get(key));
-					} 
-				}
+				printJson(jsonData);
+				
 				Message msg = new Message();
 				msg.what = 1;
 				Bundle data = new Bundle();
@@ -366,6 +357,24 @@ public class SDK {
 	 */                      
 	public static native int SendJsonPck(int jiami, String json);
 
+	/**
+	 * print jsonObject 
+	 * @param jsonData
+	 */
+	private void printJson(JSONObject jsonData){
+		Set<String> keys = jsonData.keySet();
+		for(String key : keys){
+			LogUtil.d( "SDK", "key:" + key);
+			if(jsonData.get(key) instanceof JSONObject){
+				LogUtil.d( "SDK", key + " is JSONObject instance!");
+			}else if(jsonData.get(key) instanceof JSONArray){
+				LogUtil.d( "SDK", key + " is JSONArray instance!");
+			}else{
+				LogUtil.d( "SDK", key + " value is other instance! value " + jsonData.get(key));
+			} 
+		}
+	}
+	
 	public static String getJsonString(String sid){
 		return sid +"|{\"type\":1,\"action\":109,\"sid\":\""+sid+"\"}";
 	}

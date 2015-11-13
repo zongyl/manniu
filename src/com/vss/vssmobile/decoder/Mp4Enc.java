@@ -1,5 +1,6 @@
 package com.vss.vssmobile.decoder;
 
+//智诺 IPC   MP4 录像接口(暂时不用)
 public class Mp4Enc
 {
 	public native static long getInstance();
@@ -20,17 +21,17 @@ public class Mp4Enc
 
 	public native static long StartRead(long handle, String filename);
 
-	static
-	{
-		try
-		{
-			System.loadLibrary("Mp4Enc");
-		}
-		catch (UnsatisfiedLinkError ule)
-		{
-			System.out.println("loadLibrary(Mp4Enc)," + ule.getMessage());
-		}
-	}
+//	static
+//	{
+//		try
+//		{
+//			System.loadLibrary("Mp4Enc");
+//		}
+//		catch (UnsatisfiedLinkError ule)
+//		{
+//			System.out.println("loadLibrary(Mp4Enc)," + ule.getMessage());
+//		}
+//	}
 
 	public static long handle = getInstance();
 }

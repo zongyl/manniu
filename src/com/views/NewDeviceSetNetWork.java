@@ -2,6 +2,7 @@ package com.views;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -104,6 +105,22 @@ public class NewDeviceSetNetWork extends Activity{
 		}
 	}
 	
+	private void save(){
+		Fragment fragment = getFragmentManager().findFragmentById(R.id.ui_container);
+		if(fragment instanceof DevSetNetWorkBaseFragment){
+			LogUtil.d(TAG, "base fragment!");
+			DevSetNetWorkBaseFragment fmt = (DevSetNetWorkBaseFragment)fragment;
+			fmt.getString(R.id.dev_set_base_network_ip);
+			
+			LogUtil.d(TAG, fmt.getkey());
+			LogUtil.d(TAG, fmt.getText(R.id.dev_set_base_network_ip));
+			LogUtil.d(TAG, fmt.getString(R.id.dev_set_base_network_subnet_mask));
+			LogUtil.d(TAG, fmt.getString(R.id.dev_set_base_network_gateway));
+			LogUtil.d(TAG, fmt.getString(R.id.dev_set_base_network_dns1));
+		}else if(fragment instanceof DevSetNetWorkWifiFragment){
+			LogUtil.d(TAG, "wifi fragment!");
+		}
+	}
 	
 	private OnClickListener click = new OnClickListener() {
 		@Override
@@ -113,7 +130,7 @@ public class NewDeviceSetNetWork extends Activity{
 				finish();
 				break;
 			case R.id.dev_set_network_submit:
-				
+				save();
 				break;
 			case R.id.dev_set_net_base:
 				getFragmentView(0);

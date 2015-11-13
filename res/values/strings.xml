@@ -227,8 +227,10 @@
  	</string-array>
  	<!-- 分辨率 -->
  	<string-array name="devSetResolution">
- 	    <item>640 X 480</item>
- 	    <item>1280 X 720</item>
+ 	    <item>CIF(352 X 288)</item>
+ 	    <item>VGA(640 X 480)</item>
+ 	    <item>D1(704 X 576)</item>
+ 	    <item>720P(1280 X 720)</item>
  	</string-array>
  	<!-- 画质 -->
  	<string-array name="devSetQuality">
@@ -241,15 +243,15 @@
  	</string-array>
  	<!-- 帧率 -->
  	<string-array name="devSetFrameRate">
- 	    <item>FrameRate1</item>
- 	    <item>FrameRate2</item>
- 	    <item>FrameRate3</item>
- 	</string-array>
+ 	    <item>1</item>
+ 	    <item>5</item>
+ 	    <item>10</item>
+ 	    <item>15</item>
+	</string-array>
  	<!-- 码流 -->
  	<string-array name="devSetBitStream">
- 	    <item>bitStream1</item>
- 	    <item>bitStream2</item>
- 	    <item>bitStream3</item>
+ 	    <item>448 kbps</item>
+ 	    <item>892 kbps</item>
  	</string-array>
  	
  	<string-array name="menuList0">
@@ -710,7 +712,6 @@
     <string name="GW_ERRCODE_TRANS_TIMEOUT">网络超时</string>
 
     <string name="GW_ERRCODE_P2P_SEND_MSG_FAILD">发送消息失败</string>
-    <string name="GW_ERRCODE_P2P_SEND_MSG_DISCONNECT">设备从服务器掉线</string>
     
     <string name="GW_ERRCODE_P2P_SEND_DATA_FAILD">发送数据失败</string>
     <string name="GW_ERRCODE_P2P_SEND_DATA_DISCONNECT">链接不存在或者已经断开</string>
@@ -1106,4 +1107,11 @@
  	<string name="loading...">加载中...</string>
  	<string name="file">文件</string>
  	<string name="SUCCESS_SAVE">保存成功</string>
+ 	
+ 	<string name="sendComment">发送评论</string>
+ 	<string name="commentTip">评论</string>
+ 	<string name="profileTip">简介</string>
+ 	<string name="commentBtn">发表你的看法</string>
+ 	
+ 	
 </resources>

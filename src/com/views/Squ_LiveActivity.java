@@ -47,7 +47,6 @@ public class Squ_LiveActivity extends Fragment{
 			
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
 				LoadURL();
 			}
 		});
@@ -57,6 +56,9 @@ public class Squ_LiveActivity extends Fragment{
 			WebSettings settings = webView.getSettings();
 			settings.setJavaScriptEnabled(true);
 			settings.setDefaultTextEncodingName("utf-8");
+			settings.setJavaScriptEnabled(true);
+			settings.setAllowFileAccess(true);
+			settings.setDomStorageEnabled(true);
 			if(sdk_int >= 17)
 				settings.setMediaPlaybackRequiresUserGesture(false);
 		} catch (Exception e) {
@@ -90,6 +92,7 @@ public class Squ_LiveActivity extends Fragment{
 							Intent intent = new Intent(Intent.ACTION_VIEW);
 					        intent.setClassName(context, "com.views.NewWebActivity"); 
 					        intent.putExtra("url", url);
+					        intent.putExtra("playType", "0");
 							APP.GetMainActivity().startActivity(intent);
 							
 							return true;

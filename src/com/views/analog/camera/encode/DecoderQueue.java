@@ -208,7 +208,7 @@ public class DecoderQueue implements Runnable{
 										int realLen = bean.getLength() - realHead - 8;
 										byte[] newbuf = new byte[realLen];
 										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
-										if(NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen) < 0) i_flag = 0;
+										NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen);
 										if(_isRecording){//录像
 											raf.write(newbuf);
 										}

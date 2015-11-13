@@ -1,7 +1,5 @@
 package com.views;
 
-import java.net.URLDecoder;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,15 +15,13 @@ import android.widget.Button;
 
 import com.basic.APP;
 import com.manniu.manniu.R;
-import com.nmbb.vlc.ui.VlcVideoActivity;
 import com.utils.Constants;
-
-
 
 public class Squ_ShortActivity extends Fragment{
 	
 	WebView webView;
 	Button refresh;
+	boolean bShortStart=false;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -45,9 +41,7 @@ public class Squ_ShortActivity extends Fragment{
 		webView.setWebViewClient(new WebViewClient(){
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				
-				try {
-					
+				/*try {
 					if(url.contains("mobileSearch.jsp")){
 						Intent intent = new Intent(getActivity(),SearchTip.class);
 						APP.GetMainActivity().startActivity(intent);
@@ -60,9 +54,22 @@ public class Squ_ShortActivity extends Fragment{
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+				}*/
+				if(false == bShortStart)
+				{	
+					bShortStart = true;
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+			        intent.setClassName(getActivity(), "com.views.NewWebActivity"); 
+			        intent.putExtra("url", url);
+			        intent.putExtra("playType", "1");
+					APP.GetMainActivity().startActivity(intent);
+					return true;
 				}
+				
+				bShortStart = false;
 				return true;
 			}
+			
 			@Override
 			public void onReceivedError(WebView view, int errorCode,
 					String description, String failingUrl) {

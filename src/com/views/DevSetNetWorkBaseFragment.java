@@ -30,17 +30,36 @@ public class DevSetNetWorkBaseFragment extends Fragment {
 		subnet_mask = (EditText) view.findViewById(R.id.dev_set_base_network_subnet_mask);
 		gateway = (EditText) view.findViewById(R.id.dev_set_base_network_gateway);
 		dns1 = (EditText) view.findViewById(R.id.dev_set_base_network_dns1);
-		
-		
-		ip.setText("1111111111111");
-		subnet_mask.setText("22222222222");
-		gateway.setText("333333333");
-		dns1.setText("444444444444" + readInfo("net_dns","net_dns_defValue"));
+
+//		ip.setText("10.12.6.18");
+//		subnet_mask.setText("255.255.255.0");
+//		gateway.setText("10.12.6.1");
+//		dns1.setText("114.114.114.114");
+		ip.setText(readInfo("wifi_ip",""));
+		subnet_mask.setText(readInfo("pass_mask",""));
+		gateway.setText(readInfo("net_gateway",""));
+		dns1.setText(readInfo("net_dns",""));
 		return view;
+	}
+	
+	public String getkey(){
+		save();
+		return "abcdefg";
+	}
+	
+	private void save(){
+		writeInfo("wifi_ip", ip.getText().toString());
+		writeInfo("pass_mask", subnet_mask.getText().toString());
+		writeInfo("net_gateway", gateway.getText().toString());
+		writeInfo("net_dns", dns1.getText().toString());
 	}
 	
 	private String readInfo(String key, String defValue){
 		return SetSharePrefer.read(MD5Util.MD5(deviceId)+NewDeviceSet.FILE, key, defValue);
+	}
+	
+	private void writeInfo(String key, String value){
+		SetSharePrefer.write(MD5Util.MD5(deviceId)+NewDeviceSet.FILE, key, value);
 	}
 	
 }

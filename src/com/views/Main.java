@@ -235,7 +235,7 @@ public class Main extends Activity implements OnClickListener {
 		
 		change(R.id.btn_mes, R.drawable.common_bar_cloud_sel);
 		change(btn_add, btn_qrcode);
-		//_handler.sendEmptyMessageDelayed(XMSG.UPDATEA_APP, 10000); //延迟发送
+		_handler.sendEmptyMessageDelayed(XMSG.UPDATEA_APP, 10000); //延迟发送
 		MyReceiver.isCloseApp = true;
 		initLocation();
 	}
@@ -911,7 +911,9 @@ public class Main extends Activity implements OnClickListener {
 			}
 			//android.os.Process.killProcess(android.os.Process.myPid());
 			BaseApplication.getInstance().exitApp(flag);
-			//System.exit(0);		// 退出操作
+			//点击退出登录返回登录页面不需要关进程
+			if(!"exit".equals(flag))
+				System.exit(0);		// 退出操作
 		} catch (Exception e) {
 			Log.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}

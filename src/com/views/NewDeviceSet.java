@@ -1,5 +1,9 @@
 package com.views;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,9 +14,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,9 +59,11 @@ public class NewDeviceSet extends Activity {
 	
 	TextView tv_dev_name, dev_item_version/*, dev_set_base, dev_set_advanced*/;
 	
+	EditText et_dev_name;
+	
 	Button btn_update;
 	
-	Spinner /*show_position,*/ resolution, quality;
+	Spinner /*show_position,*/ resolution, /*quality*/frameRate, bitStream;
 	
 	ImageView switch1, switch2;
 	
@@ -68,6 +75,15 @@ public class NewDeviceSet extends Activity {
 
 	private static final String SW1_KEY = "dynamic-detection";
 	private static final String SW2_KEY = "cloud-storage";
+	
+	private static NewDeviceSet instance;
+	
+	public static NewDeviceSet getInstance(){
+		if(instance==null){
+			instance = new NewDeviceSet();
+		}
+		return instance;
+	}
 	
 	String devicesid;
 	
@@ -83,9 +99,12 @@ public class NewDeviceSet extends Activity {
 		
 		device = getIntent().getParcelableExtra("device");
 		
-		tv_dev_name = (TextView) findViewById(R.id.dev_name);
-		tv_dev_name.setText(device.devname); 
+//		tv_dev_name = (TextView) findViewById(R.id.dev_name);
+//		tv_dev_name.setText(device.devname); 
 
+		et_dev_name = (EditText) findViewById(R.id.dev_name_et);
+		et_dev_name.setText(device.devname);
+		
 		switch1 = (ImageView) findViewById(R.id.dev_set_item_switch1);
 		switch2 = (ImageView) findViewById(R.id.dev_set_item_switch2);
 		
@@ -101,8 +120,10 @@ public class NewDeviceSet extends Activity {
 //		adapter.notifyDataSetChanged();
 		
 		resolution = (Spinner) findViewById(R.id.resolution);
-		quality = (Spinner) findViewById(R.id.quality);
-
+		//quality = (Spinner) findViewById(R.id.quality);
+		frameRate = (Spinner) findViewById(R.id.frameRate);
+		bitStream = (Spinner) findViewById(R.id.bitStream);
+		
 		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
 				getResources().getStringArray(R.array.devSetResolution));
 		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
@@ -112,11 +133,19 @@ public class NewDeviceSet extends Activity {
 		adapter.notifyDataSetChanged();
 
 		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
-				getResources().getStringArray(R.array.devSetQuality));
+				getResources().getStringArray(R.array.devSetFrameRate));
 		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
-		quality.setAdapter(adapter);
-		quality.setOnItemSelectedListener(new SelectedListener());
-		quality.setSelection(0);
+		frameRate.setAdapter(adapter);
+		frameRate.setOnItemSelectedListener(new SelectedListener());
+		frameRate.setSelection(0);
+		adapter.notifyDataSetChanged();
+
+		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
+				getResources().getStringArray(R.array.devSetBitStream));
+		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
+		bitStream.setAdapter(adapter);
+		bitStream.setOnItemSelectedListener(new SelectedListener());
+		bitStream.setSelection(0);
 		adapter.notifyDataSetChanged();
 		
 		dev_item_version = (TextView) findViewById(R.id.dev_item_ver_version);
@@ -140,18 +169,22 @@ public class NewDeviceSet extends Activity {
 		//返回按钮
 		findViewById(R.id.dev_set_back).setOnClickListener(new Click());
 		
+		findViewById(R.id.dev_set_save).setOnClickListener(new Click());
+		
 		getVersion(device.sid);
 		
 		//getFragmentView(0);
 		
-		devicesid = "Q04hAQEAbDAwMDEwYmMzAAAAAAAA";
+		//Q04hAQEAbDAwMTIzN2E4AAAAAAAA ...37a8
+		//Q04hAQEAbDAwMDEwYmMzAAAAAAAA manniu202
+		devicesid = "Q04hAQEAbDAwMTIzN2E4AAAAAAAA";
+		
+		registerReceiver(receiver, intentFilter);
 		
 		String str1 = getSetting(devicesid);//device.sid 
 		Log.d(TAG, "device sets:"+str1);
 		SDK.SendJsonPck(0, str1);
-		
-		readSetInfos();
-		
+		//readSetInfos();
 		findViewById(R.id.device_set_network).setOnClickListener(new Click());
 		
 	}
@@ -169,18 +202,21 @@ public class NewDeviceSet extends Activity {
 		return pixels;
 	}
 	
-	private String getSets(){
-		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
-		return JSON.toJSONString(pre.getAll());
-	}
-	
 	private void close(){
 		this.finish();
-		String str = getSets();
-		Log.d(TAG, "device sets:"+str);
 		Main.Instance.NewMainreLoad();
 	}
 
+	private void save(){
+		if(!device.devname.equals(et_dev_name.getText().toString())){
+			updateDevName();
+		} 
+		String sets = getSets();
+		LogUtil.d(TAG, "save config json:"+sets);
+		send(sets);
+		close();
+	}
+	
 	//获取配置 发送请求的json
 	private String getSetting(String sid){
 		return sid + "|{\"type\":1,\"action\":101,\"sid\":\""+sid+"\",\"method\":1}";
@@ -207,6 +243,106 @@ public class NewDeviceSet extends Activity {
 	
 	private String getServerAddress(){
 		return Constants.hostUrl;
+	}
+	
+	private String paramStr;
+	
+	/**
+	 * 将设置信息发送到web
+	 */
+	private void send(String configJson){
+		RequestParams params = new RequestParams();
+		
+		com.alibaba.fastjson.JSONObject obj = JSON.parseObject(configJson);
+		
+		//printJson(obj);
+		paramStr = devicesid + "|" + cvtJson(obj);
+		params.put("configJson", paramStr);// configJson
+		LogUtil.d(TAG, "set Confiog params:" + params.toString());
+		HttpUtil.get(getServerAddress()+"/device/saveDesConfig", params, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(int statusCode, Header[] headers,
+					JSONObject response) {
+				LogUtil.d(TAG, "config setting response:"+response.toString());
+				//APP.ShowToast(getString(R.string.dev_upgradeOk));
+				try {
+					if("true".equals(response.getString("return"))){
+						SDK.SendJsonPck(0, paramStr);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			@Override
+			public void onFailure(int statusCode, Header[] headers,
+					String responseString, Throwable throwable) {
+			}
+		});
+	}
+
+	private void updateDevName(){
+		RequestParams params = new RequestParams();
+		///dev_name = et_dev_name.getText().toString();
+		params.put("sid", device.sid);
+		params.put("devicesname", et_dev_name.getText().toString().trim());
+		HttpUtil.get(getServerAddress()+"/android/updateDevName", params, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(int statusCode, Header[] headers,
+					JSONObject response) {
+				Log.d("update Name：", "statusCode："+statusCode);
+				if(statusCode == 200){
+					Log.d("update Name：", response.toString());
+//					Intent data = new Intent();
+//					data.putExtra("deviceName", dev_name);
+//					setResult(1, data);
+//					finish();
+//					APP.ShowToast(getString(R.string.SUCCESS_MODIFY));
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, Header[] headers,
+					Throwable throwable, JSONObject errorResponse) {
+			}
+			
+			@Override
+			public void onFailure(int statusCode, Header[] headers,
+					String responseString, Throwable throwable) {
+				Log.d("", "" + responseString);
+			}
+		});
+	}
+
+	/**
+	 * 
+	 * @param jsonData
+	 * @return
+	 */
+	private String cvtJson(com.alibaba.fastjson.JSONObject jsonData){
+		Set<String> keys = jsonData.keySet();
+		Map<String, Object> map = new HashMap<String, Object>();
+		for(String key : keys){
+			if("cam_conf".equals(key)){
+				map.put(key, JSON.parseArray(jsonData.get(key).toString()));
+			}else{
+				map.put(key, jsonData.get(key));
+			}
+		}
+		return JSON.toJSONString(map);
+	}
+	
+	private void printJson(com.alibaba.fastjson.JSONObject jsonData){
+		Set<String> keys = jsonData.keySet();
+		for(String key : keys){
+			LogUtil.d(TAG, "key:" + key);
+			if(jsonData.get(key) instanceof JSONObject){
+				LogUtil.d( TAG, key + " is JSONObject instance!");
+			}else if(jsonData.get(key) instanceof JSONArray){
+				LogUtil.d( TAG, key + " is JSONArray instance!");
+			}else{
+				LogUtil.d( TAG, key + " value is other instance! value " + jsonData.get(key));
+			} 
+		}
 	}
 	
 	/**
@@ -285,7 +421,18 @@ public class NewDeviceSet extends Activity {
 		}); 
 	}
 	
+	private String getSets(){
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		return JSON.toJSONString(pre.getAll());
+	}
+	
+	private String readInfo(String key){
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		return pre.getString(key, "");
+	}
+	
 	public void readSetInfos(){
+		LogUtil.d(TAG, "readSetInfos!");
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		if(pre!=null){
 			//switch1.setTag(pre.getString(SW1_KEY, ""));//动检
@@ -304,6 +451,13 @@ public class NewDeviceSet extends Activity {
 					LogUtil.d(TAG, "toString:" + set.toString());
 				}
 			}
+			
+			resolution.setSelection(3);
+			frameRate.setSelection(2);
+			bitStream.setSelection(1);
+			
+		}else{
+			LogUtil.d(TAG, "readSetInfos perperences is null!");
 		}
 		//setSwitch(switch1);
 		//setSwitch(switch2);
@@ -329,7 +483,25 @@ public class NewDeviceSet extends Activity {
 		}
 	}
 	public void write(View iv_switch, String key){
-		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, key, iv_switch.getTag().toString());
+		if("alert_type".equals(key)){
+			if("on".equals(iv_switch.getTag().toString())){
+				String cam_conf = readInfo("cam_conf");
+				com.alibaba.fastjson.JSONArray array = JSON.parseArray(cam_conf);
+				com.alibaba.fastjson.JSONObject obj = array.getJSONObject(0);
+				obj.put("alert_type", 9);
+				array.set(0, obj);
+				SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, "cam_conf", array.toJSONString());
+			}else if("off".equals(iv_switch.getTag().toString())){
+				String cam_conf = readInfo("cam_conf");
+				com.alibaba.fastjson.JSONArray array = JSON.parseArray(cam_conf);
+				com.alibaba.fastjson.JSONObject obj = array.getJSONObject(0);
+				obj.put("alert_type", 0);
+				array.set(0, obj);
+				SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, "cam_conf", array.toJSONString());
+			}
+		}
+		
+		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, iv_switch.getTag().toString());
 	}
 	
 	/**
@@ -403,13 +575,17 @@ public class NewDeviceSet extends Activity {
 			case R.id.dev_set_back:
 				close();
 				break;
+			case R.id.dev_set_save:
+				APP.ShowToast("SAVE!");
+				save();
+				break;
 			case R.id.device_set_network:
 				Bundle data = new Bundle();
 				data.putString("deviceId", devicesid);
 				forward(NewDeviceSetNetWork.class, data, 1);
 				break;
 			case R.id.dev_set_item_switch1:
-				switchTag(v, "default");
+				switchTag(v, "alert_type");
 				break;
 			case R.id.dev_set_item_switch2:
 				switchTag(v, "default");
@@ -426,17 +602,12 @@ public class NewDeviceSet extends Activity {
 	BroadcastReceiver receiver = new BroadcastReceiver(){
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			unregisterReceiver(this);
 			LogUtil.d(TAG, "接收到广播!");
+			readSetInfos();
 		}
 	};
 	
-	
-	public class CFHandler extends Handler{
-		
-	}
-	
-	public Handler handler = new Handler(){
-		public void handleMessage(android.os.Message msg) {};
-	};
+	IntentFilter intentFilter = new IntentFilter("com.views.NewDeviceSet");
 	
 }

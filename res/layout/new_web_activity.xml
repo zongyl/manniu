@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <ScrollView
-   	
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="@color/white"
-    android:scrollbars="none"
-    android:fillViewport="true"> -->
- 
-    
  <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xgps="http://schemas.android.com/apk/res-auto"
@@ -18,7 +8,6 @@
     android:orientation="vertical" 
     android:background="@color/white">
 
-    <!-- android:background="@color/white" -->
      <FrameLayout 
         android:id="@+id/webTitle"
         android:layout_width="fill_parent"
@@ -107,7 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_gravity="left"
-            android:text="评论"
+            android:text="@string/commentTip"
     	    android:visibility="visible"
     	    android:gravity="center"
     	    android:textSize="15sp"
@@ -129,8 +118,8 @@
             android:layout_height="fill_parent"
      		android:layout_gravity="right"
             android:layout_marginRight="6dp"
-            android:text="简介"
-    	    android:visibility="visible"
+            android:text="@string/profileTip"
+    	    android:visibility="gone"
     	    android:gravity="center"
     	    android:textSize="15sp"
 	        android:textColor="#ff888888"
@@ -156,7 +145,6 @@
         android:layout_width="fill_parent"
        	android:layout_weight="8"
        	android:layout_height="0dp"
-        android:background ="#FFFFFF"
         android:orientation="vertical"
         android:visibility="gone">
         
@@ -167,11 +155,11 @@
         	android:id="@+id/comment_title"
             android:layout_gravity="center_vertical"
             android:layout_height="0dp"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="#ff888888"
             android:layout_width="fill_parent"
             android:layout_weight="1"/>
-        	
+
         <TextView
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
@@ -180,11 +168,11 @@
         	android:id="@+id/comment_content"
             android:layout_gravity="center_vertical"
             android:layout_height="0dp"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textColor="#ff888888"
             android:layout_width="fill_parent"
-            android:layout_weight="3"/>
-        
+            android:layout_weight="4"/>
+
         <TextView
             android:id="@+id/line2" 
     		android:layout_marginLeft="7dp" 
@@ -196,12 +184,10 @@
             android:layout_marginRight="7dp"
     	    android:gravity="center"
         	android:id="@+id/comment_map"
-        	android:text="百度地图"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:textSize="15sp"
             android:textColor="@color/white"
-            android:background ="@color/black"
             android:layout_height="0dp"
             android:layout_weight="5"/>
     </LinearLayout>
@@ -221,7 +207,7 @@
         	android:layout_weight="2">
 	  	    <TextView
 	    	    android:gravity="center"
-	    	    android:text="发表评论"
+	    	    android:text="@string/sendComment"
 	    	    android:visibility="visible"
 	            android:layout_gravity="center_vertical"
 	            android:layout_width="fill_parent"
@@ -232,7 +218,7 @@
   	        android:orientation="horizontal"
         	android:layout_width="match_parent"
         	android:layout_height="0dp"
-        	android:layout_weight="5">
+        	android:layout_weight="4">
 	  	    
 	        <ImageView android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
@@ -240,14 +226,15 @@
 	            android:src="@drawable/common_title_cancel"
 	            android:id="@+id/cancel_com"/>
 	        
-	        <EditText 
+	        <com.views.EditTextPreIme 
+	            android:inputType="text"
 	            android:imeOptions="actionDone" 
 	            android:singleLine="true"
 	            android:layout_width="0dp"
 	            android:layout_height="wrap_content"
 	            android:layout_weight="1"
 	            android:gravity="center"
-	            android:textSize="20sp"
+	            android:textSize="18sp"
 	            android:textColor="@color/black"
 	            android:layout_gravity="center_vertical"
 	            android:background="@drawable/radius_corner"
@@ -291,7 +278,7 @@
     	    android:layout_weight="0.39"
     	    android:background="@drawable/label_bg_ling"
     	    android:gravity="center"
-    	    android:text="发表你的看法"
+    	    android:text="@string/commentBtn"
     	    android:visibility="visible" />
     	 
     	<ImageView
@@ -333,4 +320,3 @@
 	    android:layout_marginRight="7dp"
 	    style="@style/DetailBaseline"/>
   </LinearLayout>
-<!-- </ScrollView> -->

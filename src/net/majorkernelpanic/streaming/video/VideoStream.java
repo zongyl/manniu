@@ -532,7 +532,6 @@ public abstract class VideoStream extends MediaStream {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	protected synchronized void createCamera() throws RuntimeException {
 		if (mSurfaceView == null)
@@ -569,7 +568,7 @@ public abstract class VideoStream extends MediaStream {
 				List<Size> previewSizes = parameters.getSupportedPreviewSizes(); 
 		        for(int i=0; i<previewSizes.size(); i++){  
 			          Size size = previewSizes.get(i);  
-			          LogUtil.d(TAG, "width*height="+size.width+"*"+size.height);
+			          //LogUtil.d(TAG, "width*height="+size.width+"*"+size.height);
 			          if(size.width == 352 && size.height == 288){
 			        	  _isPreSize = true;
 			        	  break;

@@ -133,18 +133,22 @@ public class DevAdapter extends BaseAdapter{
 		
 		final ViewHolder holder;
 		if(convertView == null){
-			convertView = inflater.inflate(R.layout.new_main_item, null);
-			holder = new ViewHolder();
-			holder.tv = (TextView)convertView.findViewById(R.id.device_txt);
-			holder.iv = (ImageView)convertView.findViewById(R.id.device_img);
-			//holder.msg_btn = (Button)convertView.findViewById(R.id.device_msg);
-			holder.more_btn = (Button)convertView.findViewById(R.id.device_btn);
-			//holder.status = (TextView) convertView.findViewById(R.id.device_status);
-			holder.status_ic = (ImageView)convertView.findViewById(R.id.device_status_ic);
-			holder.type_ic = (ImageView)convertView.findViewById(R.id.device_type_ic);
-			convertView.setTag(holder);
 			
 			final Device device = (Device)items.get(position);
+			holder = new ViewHolder();
+		//	if(device.channelNo == null){//单通道
+				convertView = inflater.inflate(R.layout.new_main_item, null);
+				holder.tv = (TextView)convertView.findViewById(R.id.device_txt);
+				holder.iv = (ImageView)convertView.findViewById(R.id.device_img);
+				//holder.msg_btn = (Button)convertView.findViewById(R.id.device_msg);
+				holder.more_btn = (Button)convertView.findViewById(R.id.device_btn);
+				//holder.status = (TextView) convertView.findViewById(R.id.device_status);
+				holder.status_ic = (ImageView)convertView.findViewById(R.id.device_status_ic);
+				holder.type_ic = (ImageView)convertView.findViewById(R.id.device_type_ic);
+				convertView.setTag(holder);
+//			}else{
+//				convertView = inflater.inflate(R.layout.new_main_grid_item, null);
+//			}
 			
 			holder.tv.setText(device.devname + (device.channelNo==null?"":" 通道:"+(device.channelNo+1)));
 			

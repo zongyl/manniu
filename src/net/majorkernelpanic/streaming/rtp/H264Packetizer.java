@@ -53,7 +53,7 @@ public class H264Packetizer extends AbstractPacketizer implements Runnable {
 	private int naluLength = 0;
 	private long delay = 0, oldtime = 0;
 	private Statistics stats = new Statistics();
-	public byte[] sps = null, pps = null,_headAndSPSPPS = null;
+	public static byte[] sps = null, pps = null,_headAndSPSPPS = null;
 	byte[] header = new byte[5];	
 	private int count = 0;
 	private int streamType = 1;

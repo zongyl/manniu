@@ -2,11 +2,13 @@ package com.utils;
 
 import java.util.Set;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.basic.APP;
 import com.views.NewDeviceSet;
 
 /**
@@ -34,16 +36,14 @@ public class DevSetHandler extends Handler{
 			spFileName = MD5Util.MD5(data.getString("deviceId")) + NewDeviceSet.FILE;
 			LogUtil.d(TAG, "文件名为:" + spFileName);
 			JSONObject jsonObj = JSONObject.parseObject(data.getString("setting"));
-			
 			keys = jsonObj.keySet();
 			for(String key: keys){
-				/*if(jsonObj.get(key) instanceof JSONObject){
-				}else if(jsonObj.get(key) instanceof JSONObject){
-				}else{
-				}*/
 				SetSharePrefer.write(spFileName, key, jsonObj.getString(key));
 			}
 			LogUtil.d(TAG, "write end!");
+			
+			Intent intent = new Intent("com.views.NewDeviceSet");
+			APP.GetMainActivity().sendBroadcast(intent);
 			break;
 
 		default:

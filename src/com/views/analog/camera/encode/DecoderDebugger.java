@@ -214,7 +214,6 @@ public class DecoderDebugger {
 				//outputStream.write(input, 0, length);
 				//Mp4Enc.InsertVideoBuffer(Mp4Enc.handle, input, len);
 			//}
-//			System.out.println("........................ifram = "+iFrame + ";"+ _haveIFrameSucce+"-------------");			
 			//硬解 start.....
 			ByteBuffer[] inputBuffers = mediaCodecDecode.getInputBuffers();
 			ByteBuffer[] outputBuffers = mediaCodecDecode.getOutputBuffers();
@@ -234,28 +233,20 @@ public class DecoderDebugger {
 			//获得你接收到结果的ByteBuffer的索引位置 排一个输出buffer,如果等待timeoutUs时间还没响应则跳过，返回TRY_AGAIN_LATER
 			int outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,10000);
 			//ret = outputBufferIndex;
-				while (outputBufferIndex >= 0) {
-//					if(_haveIFrameSucce== false && iFrame == 1 )
-//					{
-//						_haveIFrameSucce=true;
-//					}
-//					if(_haveIFrameSucce == true)
-//					{
-						//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
-						//释放所有权 这个output buffer将被返回到解码器中
-						if(_startSnap && length > 100){
-							_startSnap = false;
-							ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-							byte[] outData = new byte[bufferInfo.size];
-							outputBuffer.get(outData);
-					        YuvImage image = new YuvImage(outData,ImageFormat.NV21, 704,576,null);
-					        setData(image,704,576);
-						}
-				        
-						mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
-						outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
+			while (outputBufferIndex >= 0) {
+					//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
+					//释放所有权 这个output buffer将被返回到解码器中
+					if(_startSnap && length > 100){
+						_startSnap = false;
+						ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
+						byte[] outData = new byte[bufferInfo.size];
+						outputBuffer.get(outData);
+				        YuvImage image = new YuvImage(outData,ImageFormat.NV21, 704,576,null);
+				        setData(image,704,576);
 					}
-//				}
+					mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
+					outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
+				}
 			
 			//end.....
 		} catch (Exception e) {

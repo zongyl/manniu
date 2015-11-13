@@ -10,11 +10,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,13 +27,17 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +45,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -52,6 +60,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.adapter.HttpUtil;
@@ -79,8 +88,6 @@ import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.utils.SetSharePrefer;
 
-
-
 @SuppressLint({ "SetJavaScriptEnabled", "ResourceAsColor", "NewApi" })
 public class NewWebActivity extends Activity implements OnClickListener, OnMapLoadedListener, OnMapClickListener, InfoWindowAdapter{
 	
@@ -96,14 +103,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	ImageView cancelC;
 	
-	EditText editC;
+	EditTextPreIme editC;
 	
 	ImageView confrimC;
 	
 	InputMethodManager imm;
 	
 	WebView webView;
-	//临时存储title
 	String tempTitle;
 	
 	ProgressBar progressBar; 
@@ -147,8 +153,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	//add by zra
 	TextView commentTitle;
 	TextView commentContent;
+	TextView commentProfile;
+	TextView commentAddress;
+	TextView commentPublisher;
 	boolean bComment = true;
 	int dmHeight;
+	int dmWidth;
 	//add by zra
 	public  MapView mMapView;
 	public   AMap mAMap;
@@ -160,6 +170,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private boolean bFinish = true;
 	private boolean bRestore = false;
 	private boolean bInput = false;
+	private int bType;
+	private boolean bHave = true;
+	private boolean bConfig = true;
+	private float devLng;
+	private float devLat;
+	private JSONArray posArray;
+	private Handler  handler;
+	private static long oldTime;
 	
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
@@ -171,21 +189,40 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		NewMain._isOpen = true;
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		//Log.i("debug", "width:"+dm.widthPixels);
 		context = this.getApplicationContext();
 		imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
+		parseURL();
+		handler = new Handler(){
+			@Override
+	    	public void handleMessage(Message msg) {
+	    		// TODO Auto-generated method stub
+	    		super.handleMessage(msg);
+	    		switch(msg.what)
+	    		{
+	    		case 0:
+	    			initAMap();
+	    			getSurrroundGp();
+	    			break;
+	    		case 1:
+	    			initOverlay();	
+	    			break;
+	    		default:
+	    			break;
+	    		}
+	    		
+	    	}
+		};
 		
 		setContentView(R.layout.new_web_activity);
 		playLayout = (LinearLayout)findViewById(R.id.play_layout);
 		
 		refresh = (Button) findViewById(R.id.refresh_web1);
+		refresh.setVisibility(View.GONE);
 		refresh.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				LoadURL();
+				webView.loadUrl(liveUrl);
 			}
 		});
 		
@@ -194,6 +231,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		int height = dm.heightPixels ;//高度
 		int width = dm.widthPixels;
 		dmHeight =dm.heightPixels;
+		dmWidth = dm.widthPixels;
 		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) video_fullView.getLayoutParams(); 
 		linearParams.height = width;
 		linearParams.width = height;
@@ -208,17 +246,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
 		_more = (XImageBtn)findViewById(R.id.web_more);
 		
-		
-		
 		videoWebViewInit(height);
 		
-		LoadURL();
-		
+		getCommentNum();
 		//设备评论相关
 		commentOperation(height);
 		showSmallMap(savedInstanceState);
-		
-		refresh.setVisibility(View.GONE);
 		
 		progressBar = (ProgressBar)findViewById(R.id.progressBar2);
 		
@@ -228,7 +261,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		screenshot = (ImageView)findViewById(R.id.previously);
 		
 		initPraiseAndCollect();
-		
+		webView.loadUrl(liveUrl);
 		webView.setWebViewClient(new WebViewClient(){
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -237,20 +270,27 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					  	view.stopLoading();
 					  	//载入本地assets文件夹下面的错误提示页面404.html   
 					  	//view.loadUrl("file:///android_asset/404.html");
-					  	webView.setVisibility(View.GONE);
-						refresh.setVisibility(View.VISIBLE);
+					  	//webView.setVisibility(View.GONE);
+						//refresh.setVisibility(View.VISIBLE);
+						view.clearView();
+						String data = "NET DISCONNECT, PAGE NO FOUND";
+						view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
 				   } else {  
 				     	view.loadUrl(url);  
 				   }
 				  
-				   view.loadUrl(url);
+				   //view.loadUrl(url);
 				   Log.v(TAG, "-----直播地址-----------"+url);
 				   return true;
-			}    
+			}   
+			
 			@Override
 			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
 			{
-				APP.ShowToast("TEST++++++++++++========webViewwebViewwebViewwebView23444442334444---------------");
+				view.stopLoading();
+				view.clearView();
+				String data = "NET DISCONNECT, PAGE NO FOUND";
+				view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
 			}
 		});
 
@@ -275,7 +315,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				squareTools.setVisibility(View.GONE);
 				
 				webView.setVisibility(View.GONE);
-				// 如果一个视图已经存在，那么立刻终止并新建一个
+
 				if (xCustomView != null) {
 					callback.onCustomViewHidden();
 					return;
@@ -286,7 +326,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				xCustomView = view;
 				xCustomViewCallback = callback;
 				video_fullView.setVisibility(View.VISIBLE);
-				
 			}
 			
 			// 视频播放退出全屏会被调用的
@@ -328,8 +367,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				webView.stopLoading();
 		        webView.clearCache(true);  
 		        webView.clearFormData();
-		        webView.clearHistory();
-		        
+		        webView.clearHistory(); 
 			}
 			
 			@Override
@@ -363,23 +401,22 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 		
 		bindListeners();
+		
 		//百度地图相关
-		
-		
 		playLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
 	        @Override
 	        public void onGlobalLayout() {
 	            // TODO Auto-generated method stub
-	        	if(bInput== true)
+	        	/*if(bInput== true)
 	        	{
 	        		bInput = false;
 	        		return ;
-	        	}
+	        	}*/
+	        	
 	        	Rect r = new Rect();
         		playLayout.getWindowVisibleDisplayFrame(r);
 	            int screenHeight = playLayout.getRootView().getHeight();
-	            
 	            
 	        	if(bGetBoardHeight == false)
 	            {
@@ -389,11 +426,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	        	
 	        	if(bFinish == false)
 	        	{
-	        		if(count == 0){
+	        		if(count < 1){
+	        			oldTime = System.currentTimeMillis();
 	        			count ++;
 	        			return;
 	        		}
 	        		else{	
+	        			
+	        			long curTime = System.currentTimeMillis();
+	        			
+	        			if( curTime - oldTime <= 500)
+	        			{
+	        				//APP.ShowToast(Long.toString(curTime - oldTime));
+	        				return;
+	        			}
+	        
 	        			restoreCommentAndInfoView();
 	        		}
 	        	}
@@ -403,10 +450,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 	}
 	
+	
+
+	
 	private void resetCommentAndInfoView()
-	{  
+	{    
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);	
-		
 		squareTools.setVisibility(View.GONE);
 		comEdit.setVisibility(View.VISIBLE);
 		LinearLayout.LayoutParams  linearParams;
@@ -421,18 +470,25 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		else
 		{
 			commentContent.setVisibility(View.GONE);
-			mMapView.setVisibility(View.GONE);
+			if(bType == 0)
+				mMapView.setVisibility(View.GONE);
 			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight/80;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
+			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
 			informationPage.setLayoutParams(linearParams);
 		}
-
+		if(bType == 0)
+			informationBar.setClickable(false);
+		commentBar.setClickable(false);
+		
 		bPopKey = true;
 		bFinish = false;
 	}
+	
+	
+	
 	private void restoreCommentAndInfoView()
 	{
-		imm.hideSoftInputFromWindow(playLayout.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		comEdit.setVisibility(View.GONE);
 		squareTools.setVisibility(View.VISIBLE);
 		LinearLayout.LayoutParams  linearParams;
@@ -447,11 +503,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		else
 		{
 			commentContent.setVisibility(View.VISIBLE);
-			mMapView.setVisibility(View.VISIBLE);
+			if(bType == 0)
+				mMapView.setVisibility(View.VISIBLE);
 			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
 			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
 			informationPage.setLayoutParams(linearParams);
 		}
+		
+		if(bType == 0)
+			informationBar.setClickable(true);
+		commentBar.setClickable(true);
 		
 		bPopKey = false;
 		count = 0;
@@ -530,7 +591,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		linearParams.height = height*3/40;
 		squareTools.setLayoutParams(linearParams); 
 		cancelC = (ImageView) findViewById(R.id.cancel_com);
-		editC = (EditText) findViewById(R.id.edit_com);
+		editC = (EditTextPreIme) findViewById(R.id.edit_com);
 		confrimC = (ImageView) findViewById(R.id.confirm_com);
 		
 		//height-500
@@ -541,15 +602,20 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		commentBar = (TextView)findViewById(R.id.comment_bar);
 		commentBar.setBackgroundColor(Color.parseColor("#66CCFF"));
-		informationBar = (TextView)findViewById(R.id.information_bar);
 		commentBar.setClickable(true);
-		informationBar.setClickable(true);
-
-		getCommentNum();
+		
+		if(bType == 0)
+		{
+			informationBar = (TextView)findViewById(R.id.information_bar);
+			informationBar.setVisibility(View.VISIBLE);
+			informationBar.setClickable(true);
+			
+		}
+		
 		commentView = (WebView)findViewById(R.id.webView03);
 		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+		
 		commentView.setOnTouchListener(new OnTouchListener() {
-			
 			@Override
 			public boolean onTouch(View arg0, MotionEvent arg1) {
 				
@@ -586,13 +652,20 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			@Override
 			public void onPageFinished(WebView view, String url) 
 			{
-				commentView.loadUrl("javascript:setLiveId('" + liveId + "')" );
+				if(bType == 0)
+					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + '0' + ")" );
+				else
+					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + '1' + ")" );
+				
 				super.onPageFinished(view, url);
 			}
 			@Override
 			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
 			{
-				APP.ShowToast("TEST++++++++++++========23444442334444---------------");
+				view.stopLoading();
+				view.clearView();
+				String data = "NET DISCONNECT, PAGE NO FOUND";
+				view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
 			}
 		});
 		
@@ -630,71 +703,134 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 			}
 		});	
+		
+		
+		editC.setOnEditorActionListener(new OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					restoreCommentAndInfoView();
+				}
+
+				return false;
+			}
+		});
 	}
 
-	
 	private void showSmallMap(Bundle savedInstanceState)
-	{
-		
-		mMapView = (MapView) findViewById(R.id.comment_map);
-		mMapView.onCreate(savedInstanceState);
-		{
-			mAMap = mMapView.getMap();
-			mAMap.setOnMapClickListener(this);
-			mAMap.setOnMapLoadedListener(this);
-			mAMap.setInfoWindowAdapter(this);
-			UiSettings uiSettings = mAMap.getUiSettings();
-			uiSettings.setCompassEnabled(false);
-			uiSettings.setZoomControlsEnabled(false);
-			uiSettings.setScaleControlsEnabled(false);
-			uiSettings.setAllGesturesEnabled(false);
-			LatLngBounds bounds = new LatLngBounds.Builder()
-			.include(new LatLng(30.297233, 120.047253)).build();	
-			mAMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10));
-			initOverlay();
-			
+	{	
+		try{
+				
+			mMapView = (MapView) findViewById(R.id.comment_map);
+			mMapView.onCreate(savedInstanceState);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
+		
+	}
+	
+	public void initAMap()
+	{
+		mAMap = mMapView.getMap();
+		mAMap.setOnMapClickListener(this);
+		mAMap.setOnMapLoadedListener(this);
+		mAMap.setInfoWindowAdapter(this);
+		UiSettings uiSettings = mAMap.getUiSettings();
+		uiSettings.setCompassEnabled(false);
+		uiSettings.setZoomControlsEnabled(false);
+		uiSettings.setScaleControlsEnabled(false);
+		uiSettings.setAllGesturesEnabled(false);
+		
+		LatLngBounds bounds= null;
+		if(bConfig == false)
+		{
+			bounds = new LatLngBounds.Builder().include(new LatLng(30.297233, 120.047253)).build();	
+		}
+		else{
+			bounds = new LatLngBounds.Builder().include(new LatLng(devLat, devLng)).build();	
+		}
+		
+		mAMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10));
 	}
 	
 	public void initOverlay()
 	{
-		mAMap.clear();
-		MarkerOptions markerOption;
-		// add marker overlay
-		LatLng llD = new LatLng(30.297233, 120.047253);
-		LatLng llB = new LatLng(30.287233, 120.147253);
-		LatLng llC = new LatLng(30.27233, 120.247253);
-		LatLng llA = new LatLng(30.267233, 120.347253);
-
-		markerOption = new MarkerOptions();
-		markerOption.position(llA);
-		markerOption.title("蛮牛云眼1号").snippet("坐标:30.267233, 120.347253");
-		markerOption.draggable(true);
-		markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-		mAMap.addMarker(markerOption);
-		
-		markerOption = new MarkerOptions();
-		markerOption.position(llB);
-		markerOption.title("蛮牛云眼2号").snippet("坐标:30.27233, 120.247253");
-		markerOption.draggable(true);
-		markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-		mAMap.addMarker(markerOption);
 		
 		
-		
-		markerOption = new MarkerOptions();
-		markerOption.position(llC);
-		markerOption.title("蛮牛云眼3号").snippet("坐标:30.287233, 120.147253");
-		markerOption.draggable(true);
-		markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-		mAMap.addMarker(markerOption);
-		
-		ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
-		giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-		giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
-		MarkerOptions ooD = new MarkerOptions().position(llD).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
-		mAMap.addMarker(ooD).showInfoWindow();	
-
+		try{		
+			mAMap.clear();
+			MarkerOptions markerOption;
+			// add marker overlay
+			if(bHave == false)
+			{
+				LatLng llD = new LatLng(30.297233, 120.047253);
+				LatLng llB = new LatLng(30.287233, 120.147253);
+				LatLng llC = new LatLng(30.27233, 120.247253);  
+				LatLng llA = new LatLng(30.267233, 120.347253);
+				
+				markerOption = new MarkerOptions();
+				markerOption.position(llA);
+				markerOption.title("蛮牛云眼1号").snippet("坐标:30.267233, 120.347253");
+				markerOption.draggable(true);
+				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				mAMap.addMarker(markerOption);
+				
+				markerOption = new MarkerOptions();
+				markerOption.position(llB);
+				markerOption.title("蛮牛云眼2号").snippet("坐标:30.27233, 120.247253");
+				markerOption.draggable(true);
+				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				mAMap.addMarker(markerOption);
+				
+				markerOption = new MarkerOptions();
+				markerOption.position(llC);
+				markerOption.title("蛮牛云眼3号").snippet("坐标:30.287233, 120.147253");
+				markerOption.draggable(true);
+				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				mAMap.addMarker(markerOption);
+			}
+			else{
+				
+				for(int i=0; i< posArray.length(); i++)
+				{
+					JSONObject jpos = posArray.getJSONObject(i);
+					
+					float devLngT = Float.parseFloat(jpos.get("longitude").toString());
+				 	float devLatT = Float.parseFloat(jpos.get("latitude").toString());
+				 	
+					markerOption = new MarkerOptions();
+					markerOption.position(new LatLng(devLatT, devLngT));
+					markerOption.title("蛮牛云眼1号");
+					markerOption.draggable(true);
+					markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+					mAMap.addMarker(markerOption);
+				}
+				
+			}
+			
+			if(bConfig == false)
+			{
+				ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
+				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+				MarkerOptions ooD = new MarkerOptions().position(new LatLng(30.297233, 120.047253)).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
+				mAMap.addMarker(ooD).showInfoWindow();
+			}
+			else
+			{
+				ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
+				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+				MarkerOptions ooD = new MarkerOptions().position(new LatLng(devLat, devLng)).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
+				mAMap.addMarker(ooD).showInfoWindow();
+			}	
+	
+		}catch(Exception e){
+			
+			LogUtil.d("NewWebActivity", "map operation");
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -722,31 +858,32 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	 */
 	@Override
 	public void onMapLoaded() {
-		// 设置所有maker显示在当前可视区域地图中
-		LatLngBounds bounds = new LatLngBounds.Builder()
-				.include(new LatLng(30.297233, 120.047253)).build();	
-		mAMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10));
-		initOverlay();
+		return;
 	}
 	
 	private void resetViewAndMap()
 	{
-		webView.setVisibility(View.GONE);
-		commentTools.setVisibility(View.GONE);
-		squareTools.setVisibility(View.GONE);
-		commentTitle.setVisibility(View.GONE);
-		commentContent.setVisibility(View.GONE);
-		LinearLayout.LayoutParams  linearParams;
-		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight- dmHeight*3/40;// height - 500;// 当前界面高度-320
-		informationPage.setLayoutParams(linearParams);
-       
-		UiSettings uiSettings = mAMap.getUiSettings();
-		uiSettings.setCompassEnabled(true);
-		uiSettings.setZoomControlsEnabled(true);
-		uiSettings.setScaleControlsEnabled(true);
-		uiSettings.setAllGesturesEnabled(true);
-		mAMap.setOnMapClickListener(null);
+		try{	
+			webView.setVisibility(View.GONE);
+			commentTools.setVisibility(View.GONE);
+			squareTools.setVisibility(View.GONE);
+			commentTitle.setVisibility(View.GONE);
+			commentContent.setVisibility(View.GONE);
+			LinearLayout.LayoutParams  linearParams;
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
+			linearParams.height = dmHeight- dmHeight*3/40;// height - 500;// 当前界面高度-320
+			informationPage.setLayoutParams(linearParams);
+	       
+			UiSettings uiSettings = mAMap.getUiSettings();
+			uiSettings.setCompassEnabled(true);
+			uiSettings.setZoomControlsEnabled(true);
+			uiSettings.setScaleControlsEnabled(true);
+			uiSettings.setAllGesturesEnabled(true);
+			mAMap.setOnMapClickListener(null);
+			
+		} catch(Exception e){		
+			LogUtil.d("NewWebActivity", ExceptionsOperator.getExceptionInfo(e));
+		}	
 	}
 	
 	
@@ -771,12 +908,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		mAMap.setOnMapClickListener(this);
 	}
 	
-	
 	@Override
 	public void onMapClick(LatLng point) {
-
+		
 		resetViewAndMap();
-		bSubView = true;
+			bSubView = true;
 
 	}
    
@@ -784,17 +920,19 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	protected void onPause() {
 		
 		super.onPause();
-		mMapView.onPause();
+		if(bType == 0)
+			mMapView.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 	
 		super.onResume();
-		mMapView.onResume();
+		if(bType == 0)
+			mMapView.onResume();
 	}
 	
-	private void LoadURL()
+	private void parseURL()
 	{
 		liveUrl = getIntent().getStringExtra("url");
 
@@ -822,7 +960,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		//String webUrl = "http://192.168.1.61:8080/NineCloud/mobileLive.jsp";
 		//String webUrl = Constants.hostUrl+"/sharesquare.jsp";
-		webView.loadUrl(liveUrl);
 	}
 	
 	 private int getRespStatus(String url) {   
@@ -832,7 +969,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		 	HttpClient client = new DefaultHttpClient();   
 		 	HttpResponse resp = client.execute(head);   
 		 	status = resp.getStatusLine().getStatusCode();   
-		 } catch (IOException e) {}   
+		 } catch (IOException e) {
+			 
+		 }   
 
 		 return status;   
 	}   
@@ -863,6 +1002,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		if(bType == 0)
 		mMapView.onSaveInstanceState(outState);
 	}	
 	
@@ -876,8 +1016,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
        	 playLayout.removeView(commentView);
        	 webView.destroy();
        	 commentView.destroy();
-       	 mMapView.onDestroy();	       	
-       	 mAMap=null;
+       	if(bType == 0)
+       		mMapView.onDestroy();	       	
 	 }
 	
 	public void bindListeners(){
@@ -890,7 +1030,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		comment.setOnClickListener(this);
 		screenshot.setOnClickListener(this);
 		commentBar.setOnClickListener(this);
-		informationBar.setOnClickListener(this);
+		
+		if(bType == 0)
+		{
+			informationBar.setOnClickListener(this);
+		}
 		
 	}
 	
@@ -931,6 +1075,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				hideCustomView();
 			
 			}else{
+				
 				this.finish();	
 			}
 			
@@ -954,7 +1099,27 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		menu.show(v);
 	}
 	
-	
+	public  void  editPop()  {
+		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS); //显示软键盘
+		Builder  dialog  =  new  AlertDialog.Builder(this);
+		LayoutInflater  inflater  =  (LayoutInflater)  this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LinearLayout  layout  =  (LinearLayout)inflater.inflate(R.layout.edit_dialog_view,  null);
+		
+		dialog.setView(layout);
+		AlertDialog ad = dialog.create();
+		WindowManager.LayoutParams lp = ad.getWindow().getAttributes();
+		WindowManager m = getWindowManager();
+		Display d = m.getDefaultDisplay();
+		lp.x = 0;
+		lp.y = dmHeight/2 -280;
+		lp.width = dmWidth; // 宽度
+		ad.getWindow().setAttributes(lp);
+		ad.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+		//ad.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM); 
+		ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		ad.show();
+	}
 	
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -974,6 +1139,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			createMenu(v);
 			break;
 		case R.id.square_com:
+			//editPop();
 			editC.setText("");
 			editC.requestFocus();
 			editC.setCursorVisible(true);
@@ -1049,10 +1215,15 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				commentView.setLayoutParams(linearParams);
 			}
 			
-			informationBar.setTextColor(Color.parseColor("#ff888888"));
-			informationBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+			if(bType == 0)
+			{
+				informationBar.setTextColor(Color.parseColor("#ff888888"));
+				informationBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+			}
+			
 			commentBar.setBackgroundColor(Color.parseColor("#66CCFF"));
 			commentBar.setTextColor(Color.parseColor("#FFFFFF"));
+			
 			break;
 		case R.id.information_bar:
 			bComment = false;
@@ -1061,11 +1232,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			//if(bPopKey == true)
 			{
 				commentContent.setVisibility(View.VISIBLE);
-				mMapView.setVisibility(View.VISIBLE);
+				if(bType == 0)
+					mMapView.setVisibility(View.VISIBLE);
 				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
 				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
 				informationPage.setLayoutParams(linearParams);
 			}
+			
 			commentBar.setTextColor(Color.parseColor("#ff888888"));
 			commentBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
 			informationBar.setBackgroundColor(Color.parseColor("#66CCFF"));
@@ -1118,6 +1291,45 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 	}
 	
+	
+	
+	private void getSurrroundGp(){
+		RequestParams params = new RequestParams();
+		params.put("deviceId", liveId);
+		HttpUtil.get(Constants.hostUrl+ "/mobile/getSurrounGp", params, new JsonHttpResponseHandler(){
+			
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
+				if(statusCode == 200){
+					try {
+						String result = null;
+						if(json.has("data"))
+						{
+							bHave = false;
+						}
+						else
+						{
+							 posArray = json.getJSONArray("success");
+						}
+						
+						 Message message=new Message();
+						 message.what= 1;
+						 handler.sendMessage(message);//发送message信息 
+						 
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
+			}
+		});
+	}
+	
+	
 	private void getCommentNum(){
 		RequestParams params = new RequestParams();
 		params.put("liveid", liveId);
@@ -1130,6 +1342,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						String result = json.get("commentNum").toString();
 						 commentNum = (Integer) json.get("commentNum");
 						 commentBar.setText("评论("+commentNum+")");
+						 if(json.length() == 3)
+						 { 
+							 bConfig = false;
+						 }
+						 else{
+							 if(bType == 0){ 
+								 devLng = Float.parseFloat(json.get("longitude").toString());
+								 devLat = Float.parseFloat(json.get("latitude").toString());
+								// APP.ShowToast(Float.toString(devLat));
+							 }
+						 }
+						 
+						 Message message=new Message();
+						 message.what= 0;
+						 handler.sendMessage(message);//发送message信息 
 						 
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1163,20 +1390,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						 commentTitle.setText("杭州蛮牛云视频");
 						else
 							commentTitle.setText(title);
-						if(content == "null")
-							contentText ="简介" + "好视频，一辈子";
-						else
-							contentText ="简介:" + content;
 						
-						if(address == "null")
-							contentText = contentText + "\n地址:" + "杭州荆长大道" ;
+						if(content == "null")
+							contentText ="介绍:" + "好视频，一辈子";
 						else
-							contentText = contentText +"\n地址:" + address;
+							contentText ="介绍:" + content;
+
+						if(address == "null")
+							contentText = contentText+"\n\n地址:" + "杭州荆长大道" ;
+						else
+							contentText = contentText+"\n\n地址:" + address;
 						
 						if(username == "null")
-							contentText = contentText +"\n发布者:" + "李大帅";
+							contentText = contentText + "\n\n发布者:" + "李大帅";
 						else
-							contentText = contentText +"\n发布者:" + username;
+							contentText = contentText + "\n\n发布者:" + username;
 						
 						commentContent.setText(contentText);
 						
@@ -1366,6 +1594,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			obj.put("liveId", liveId);
 			obj.put("position", "约300米");
 			obj.put("content", str);
+			if(bType == 0)
+			{
+				obj.put("topictype", 0);
+			}
+			else
+			{
+				obj.put("topictype", 1);
+			}
 			return obj.toString();
 		} catch( JSONException e){
 			e.printStackTrace();

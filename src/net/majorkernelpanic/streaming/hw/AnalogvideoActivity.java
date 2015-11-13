@@ -22,21 +22,16 @@ import com.utils.Constants;
 import com.utils.DateUtil;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
-import com.utils.PhoneStatReceiver;
 import com.utils.SdCardUtils;
 import com.views.BaseApplication;
 import com.views.Dlg_WaitForActivity;
 import com.views.Main;
-import com.views.NewMain;
 import com.views.analog.camera.audio.AudioRecorder;
 import com.views.bovine.Fun_AnalogVideo;
-import com.vss.vssmobile.decoder.Mp4Enc;
-
 import P2P.SDK;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.net.ConnectivityManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -86,7 +81,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     TextView _tooltip;
     public AudioRecorder _talkPlayer; //AAC编码
     public EnCoderQueue _encoderQueue;//软编码队列
-    public String deviceSid = "";
+    public String deviceSid = "",deviceName = "";
     
     
     private AnalogHandler _handler = null;
@@ -107,6 +102,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		setContentView(R.layout.activity_main);
 		instance = this;
 		deviceSid = getIntent().getExtras().getString("deviceSid");
+		deviceName = getIntent().getExtras().getString("deviceName");
 		//context = this.getApplicationContext();
 		BaseApplication.getInstance().addActivity(this);
 		_btnPic = (XImageBtn) this.findViewById(R.id.btnPic);
@@ -155,7 +151,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		BitmapUtils.CompressToFile(bitmap, fileName,100);
 		File file = new File(Fun_AnalogVideo.instance.h.mPacketizer._fileName);
 		if(file.isFile() && file.exists()){
-			Toast.makeText(this, "截图成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, getString(R.string.Video_snap_success), Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -169,7 +165,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		String path = Fun_AnalogVideo.ImagePath +File.separator+ calendar.get(Calendar.YEAR)+ month + File.separator;
 		File dir = new File(path);
 		if(!dir.exists()) dir.mkdirs();
-		String fileName = path + strDate + "模拟IPC" + ".bmp";
+		String fileName = path + strDate + deviceName + ".bmp";
 		fileName = fileName.replace(" ", "");
 		fileName = fileName.replace("-", "");
 		fileName = fileName.replace(":", "");
@@ -196,6 +192,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     					clearAnalog();
     					//先把模拟的登出
     					//SDK.P2PClose(SDK._sessionId);//2015.09.28 李德明添加，解决视频源播放时退出视频，接收视频端第二次无法打开的处理，一直提示设备忙
+    					LogUtil.d(TAG, "logout...start...");
     			    	SDK.Logout();
     					//退出之前 在登录IPC的
     			    	BackLoginThread.state = 2;
@@ -203,7 +200,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     			    	LogUtil.d(TAG, "Main.Instance._loginThead.start()..ok.."); 
     			    	AnalogvideoActivity.this.finish();
     				}
-    			}).setNegativeButton("取消", null).show();
+    			}).setNegativeButton(getString(R.string.btn_Cancel_caption), null).show();
 //    		}else{
 //    			APP.ShowToast("正在采集视频不能退出...");
 //    		}
@@ -219,10 +216,10 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		}
 		if(_encoderQueue != null) _encoderQueue.Stop();//停止编码线程
 		if(_talkPlayer != null) _talkPlayer.Stop();//停止音频线程
-		LogUtil.d(TAG, "停止编码线程");
+		//LogUtil.d(TAG, "停止编码线程");
 		stopEncode();
     	SDK.Ffmpegh264Uninit();  			    	
-    	LogUtil.d(TAG, "stopEncode...ok.. SDK._sessionId=="+SDK._sessionId); 
+    	//LogUtil.d(TAG, "stopEncode...ok.. SDK._sessionId=="+SDK._sessionId); 
     }
     
     //断线关闭连接
@@ -364,7 +361,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 				_btnRecord.setClickable(false);
 				_btnRecord.SetImages(R.drawable.btn_record2, R.drawable.btn_record2);
 				String strDate = DateUtil.getCurrentStringDate(DateUtil.DEFAULT_DATE_TIME_FORMAT);
-				_recordfileName = Fun_AnalogVideo.RecordPath + strDate + "模拟IPC";
+				_recordfileName = Fun_AnalogVideo.RecordPath + strDate + deviceName;
 				File dir = new File(Fun_AnalogVideo.RecordPath.substring(0,Fun_AnalogVideo.RecordPath.length()-1));
 				if(!dir.exists()) dir.mkdirs();
 				if((int)SdCardUtils.getSurplusStorageSize(Fun_AnalogVideo.RecordPath) > 20){

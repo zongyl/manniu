@@ -29,7 +29,7 @@ public class XMSG {
 	public final static int CHECK_DEVICE_SHARE = 102;//检查模拟设备有没有开通
 	
 	
-	public final static int CREATECHANLL = 101;
+	public final static int CREATECHANLL = 101;//IPC创建通道失败
 	public final static int Alias = 102; //jpush设置别名
 	public final static int P2PConnect = 103;//创建连接
 

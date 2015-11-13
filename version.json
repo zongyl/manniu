@@ -1,9 +1,9 @@
 ﻿{"appname":"ManNiu",
-"apkname":"ManNiuV1.0.7.4.apk",
-"verName":"1.0.7.4",
+"apkname":"ManNiuV1.0.7.5.apk",
+"verName":"1.0.7.5",
 "updateLog":"
-1.退出登录不退出程序-
-2.广场支持短片-
-3.修复牛眼分享状态显示不正确的bug
+1.支持mp4录制-
+2.牛眼页面的二维码显示在一级页面- 
+3.视频广场短片播放 
 ",
-"verCode":74}
+"verCode":75}

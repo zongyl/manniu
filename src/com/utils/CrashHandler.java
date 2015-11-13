@@ -96,8 +96,8 @@ public class CrashHandler implements UncaughtExceptionHandler{
     			BaseApplication.getInstance().finishAllActivity();
     			LogUtil.i(TAG, "程序出现异常...4444444444");
                 */
-//            	Main.Instance._loginThead.stop();
-//            	BaseApplication.getInstance().finishAllActivity();
+            	Main.Instance._loginThead.stop();
+            	BaseApplication.getInstance().finishAllActivity();
             	try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

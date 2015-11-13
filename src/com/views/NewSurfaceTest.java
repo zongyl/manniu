@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -26,7 +25,6 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -62,12 +60,10 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public static NewSurfaceTest instance = null;
 	RelativeLayout footer;//, header;
 	FrameLayout framelayout;
-	//LinearLayout _hreadframeLayout;
 	FrameLayout _hreadframeLayout;
 	LinearLayout.LayoutParams params;
     SurfaceView   m_prevewview;
     SurfaceHolder m_surfaceHolder;
-    //public Surface _surface;
     int ret;
     private int[] pixels;
     Button play, fullscreen, cut, video,_btnBack,_btnGpu;//back, more,
@@ -84,8 +80,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
     /** 视频解码器 */
 	long m_decoder = -1;
 	Lock m_decoderLock = new ReentrantLock();
-	//MP4录像
-	//long _mp4Enc = -1;
 	private final int MAX_IMG_BUFFER_SIZE = 2560 * 1600 * 3;
 	public Rect m_rect = null;
 	/** Image数据 */
@@ -187,7 +181,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		//ProgressDialog MyDialog = ProgressDialog.show(this, " " , " 正在打开视频 ... ", true);
 		// 解码器
 		m_decoder = H264Dec.InitDecoder();
-		//_mp4Enc = Mp4Enc.getInstance();
 		//_deThead = new decoderThead();
 //		try {
 //			if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
@@ -555,7 +548,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					_decoderDebugger = null;
 				}
 				H264Dec.UninitDecoder(m_decoder);
-				//Mp4Enc.ReleaseInstance(_mp4Enc);
 				long t4= System.currentTimeMillis();
 				LogUtil.d(TAG, " 退出app .time "+(t4-t3));
 				SDK.isInitDecoder = false;
@@ -592,12 +584,12 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				_playId = SDK.P2PCreateChannel(SDK._sessionId,getDeviceChannel(),1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
 				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionId+" time="+(t4-t3));
+				stopTimer();
 				if(_playId > 0){
 					//模拟目前不要发消息
 					if(NewMain.devType ==1)
 						_handler.sendEmptyMessageDelayed(XMSG.ON_PLAY,12000);//12秒收不到数据 提示打开视频失败!
 					_decoderDebugger.flag = 0;
-					stopTimer();
 					if(type == 0){
 						isPlay = true;
 						if(_decoderQueue == null){
@@ -609,7 +601,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					}else if(type == 1){
 						closeWait();
 					}
-				}else{
+				}else{//创建通道失败不用重试直接退出
 					Message msg = new Message();
 					msg.what = XMSG.CREATECHANLL;
 					msg.obj = _playId;
@@ -695,6 +687,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		if (_timer != null) {
 			_timer.cancel();
 			_timer = null;
+			_runFlag = false;
 		}
 	}
 	
@@ -941,7 +934,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	}
 	
 	
-	class MyOrientationEventListener extends OrientationEventListener{
+	/*class MyOrientationEventListener extends OrientationEventListener{
 		public MyOrientationEventListener(Context context, int rate) {
 			super(context, rate);
 		}
@@ -957,10 +950,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			}else if(orientation > 260 && orientation < 280){
 				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 			}else{}
-			
 		}
-		
-	}
+	}*/
+	
 	private int recordCount = 0;
 	//2.接受消息
 	@SuppressLint("HandlerLeak")
@@ -970,7 +962,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		public void handleMessage(Message msg) {
 			try {
 				switch (msg.what) {
-				case XMSG.CREATECHANLL:
+				case XMSG.CREATECHANLL://创建通道失败
 					APP.ShowToast(SDK.GetErrorStr(_playId));
 					NewSurfaceTest.this.finish();
 					break;

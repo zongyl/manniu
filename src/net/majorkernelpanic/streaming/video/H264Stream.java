@@ -56,7 +56,7 @@ public class H264Stream extends VideoStream {
 	private Semaphore mLock = new Semaphore(0);
 	private MP4Config mConfig;
 
-	final String TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu-test.mp4";
+	public String TESTFILE = "";
 	
 	
 	/**
@@ -111,7 +111,7 @@ public class H264Stream extends VideoStream {
 	/**
 	 * Starts the stream.
 	 * This will also open the camera and dispay the preview if {@link #startPreview()} has not aready been called.
-	 * 硬编码
+	 * 硬编码--带PPS头
 	 */
 //	public synchronized void start() throws IllegalStateException, IOException {
 //		configure();
@@ -138,8 +138,8 @@ public class H264Stream extends VideoStream {
 	 */
 	public synchronized void configure() throws IllegalStateException, IOException {
 		super.configure();
-		mMode = mRequestedMode;
-		mQuality = mRequestedQuality.clone();
+//		mMode = mRequestedMode;
+//		mQuality = mRequestedQuality.clone();
 		mConfig = testH264();
 	}
 	
@@ -154,7 +154,8 @@ public class H264Stream extends VideoStream {
 	 * and determines the pps and sps. Should not be called by the UI thread.
 	 * 录制MP4文件
 	 **/
-	public void testMediaRecorderAPI() throws RuntimeException, IOException {
+	public int testMediaRecorderAPI() throws RuntimeException, IOException {
+		int ret = 0;
 		if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 			throw new StorageUnavailableException("No external storage or external storage not ready !");
 		}
@@ -162,6 +163,7 @@ public class H264Stream extends VideoStream {
 		try {
 			File dir = new File(Fun_AnalogVideo.temMP4Path);
 			if(!dir.exists()) dir.mkdirs();
+			TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_"+mRequestedQuality.resX+".mp4";
 			File file = new File(TESTFILE);
 			file.createNewFile();
 		} catch (IOException e) {
@@ -230,6 +232,7 @@ public class H264Stream extends VideoStream {
 			mMediaRecorder.prepare();
 			mMediaRecorder.start();
 
+			Thread.sleep(3000);
 			if (mLock.tryAcquire(3,TimeUnit.SECONDS)) {
 				Log.d(TAG,"MediaRecorder callback was called :)");
 				Thread.sleep(400);
@@ -237,10 +240,13 @@ public class H264Stream extends VideoStream {
 				Log.d(TAG,"MediaRecorder callback was not called after 6 seconds... :(");
 			}
 		} catch (IOException e) {
+			ret = -1;
 			throw new ConfNotSupportedException(e.getMessage());
 		} catch (RuntimeException e) {
+			ret = -1;
 			throw new ConfNotSupportedException(e.getMessage());
 		} catch (InterruptedException e) {
+			ret = -1;
 			e.printStackTrace();
 		} finally {
 			try {
@@ -253,7 +259,12 @@ public class H264Stream extends VideoStream {
 			// Restore flash state
 			mFlashEnabled = savedFlashState;
 		}
-
+		
+		File file = new File(TESTFILE);
+		if (!file.exists()){
+			ret = -1;
+		}
+		return ret;
 		// Retrieve SPS & PPS & ProfileId with MP4Config
 		/*MP4Config config = new MP4Config(TESTFILE);
 		System.out.println("SPS & PPS :"+config.getProfileLevel()+","+config.getB64SPS()+","+config.getB64PPS());

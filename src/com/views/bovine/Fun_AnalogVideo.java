@@ -2,6 +2,7 @@ package com.views.bovine;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -110,7 +112,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     Spinner _rectype;
     public static int stoStep = 0; //存储位置状态 0外置 1手机
 	public static int picture = 2; //画质-帧率3高 2 中1低
-	public static int resolution = 0; //分辨率 0, 1, 2, 3
+	public static int resolution = 0; //分辨率 0, 1, 2
     public static int[] NUM_PICTURE_TYPE = null;
     public static String[] STR_PICTURE_TYPE = null;
     RadioGroup _radGroup, _streamType, _isshare;//存储卡
@@ -130,7 +132,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	public TableRow _QRcodeRow;
 	public String _sn = "";
 	public String _vn = "";
-	public String _devSid = "";
+	public String _devSid = "",_devName = "";
 //	public int[] _bitrate = {700,400,200};
 //	public int[] _framerate = {30,20,15};
 	public int _bitrateAndFramerate[][] = {{300,200,100},{25,20,15}};
@@ -220,6 +222,12 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     	_btnSub = (Button) findViewById(R.id.btn_sub);
     	_btnShare = (Button) findViewById(R.id.btn_share);
     //	isShare();
+    	
+    	//录MP4文件VIEW
+    	RelativeLayout layout = (RelativeLayout) findViewById(R.id.my_camera_view);
+    	m_prevewview = new V_SurfaceView(context);
+		layout.addView(m_prevewview);
+		
 		initSetting();
 		
 		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
@@ -294,29 +302,33 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			public void onClick(View arg0) {
 				//修改分辨率之后更新数据
 				h.setVideoQuality(videoQuality);
-				//保存MP4文件(软编码不需要--苹果需要)
-				/*try {
-					h.setSurfaceView(m_prevewview);
-					h.testMediaRecorderAPI();
-				} catch (RuntimeException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
-				initAnalog();
-				if(!isDevice){
-					addOrUpdateDevice("123456");
+				/*//保存MP4文件(软编码不需要--苹果需要)
+				if(resolution == 0){ //352
+					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_352.mp4";
+				}else if(resolution == 1){//640
+					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_640.mp4";
+				}else if(resolution == 2){//1280
+					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_1280.mp4";
 				}
-				_btnSub.setClickable(false);
+				File file = new File(h.TESTFILE);
+				if(!file.exists()){
+					//如果分辨率没有变化不生成 MP4
+					APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.set_pwd, 1, 0);
+				}else{*/
+					initAnalog();
+					if(!isDevice){
+						addOrUpdateDevice("123456");
+					}
+					_btnSub.setClickable(false);
+				//}
 			}
 		});
 
 		rqcodeImg = (ImageView) findViewById(R.id.qrcode_img);
 		//rqcodeImg.setBackgroundColor(context.getResources().getColor(R.color.red_btn));
-		genBitmap("zongyl is my chinese name!");
+		genBitmap("");
 		
 		//rqcodeImg.setBackgroundResource(R.drawable.default_img);
-		
     }
   
     //string gen rqcode IMG
@@ -355,9 +367,10 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     	if(isDevice){
 			APP._dlgWait.show();
         	APP.SetWaitDlgText(context.getText(R.string.openning_stream).toString());
-        	Message msg = new Message();
-			msg.what = 1002;
-			_handler.sendMessageDelayed(msg, 1000);
+			_handler.sendEmptyMessageDelayed(1002, 1000);
+//        	Message msg = new Message();
+//			msg.what = 1002;
+//			_handler.sendMessageDelayed(msg, 1000);
         }
     }
     //如果手机不支持355 更新到640
@@ -890,6 +903,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 					}
 				}, 100, 1000);
 			}else{
+				_btnSub.setClickable(true);
 				_handler.sendEmptyMessage(XMSG.ANALOG_IS_LOGIN);
 			}
 		} catch (Exception e) {
@@ -911,6 +925,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			stopTimer();
 			Intent intent = new Intent(ACT, AnalogvideoActivity.class);
 			intent.putExtra("deviceSid", _devSid);
+			intent.putExtra("deviceName", _devName);
 			ACT.startActivity(intent);
 			if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
 			_btnSub.setClickable(true);
@@ -934,7 +949,6 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			switch (msg.what) {
 			case 1002:
 				if(APP.IsWaitDlgShow()){
-	        		//startExperience();
 					startTimer();
 	        	}
 				break;
@@ -947,6 +961,13 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			case XMSG.ANALOG_IS_LOGIN:
 				APP.ShowToastLong(APP.GetString(R.string.Video_Dviece_login));
 				if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
+				break;
+			case 1003:
+				initAnalog();
+				if(!isDevice){
+					addOrUpdateDevice("123456");
+				}
+				_btnSub.setClickable(false);
 				break;
 			}
 		}
@@ -1032,10 +1053,12 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 						_sn = data.getString("sn").toString();
 						_vn = data.getString("vn").toString();
 						_devSid = data.getString("sid").toString();
+						_devName = data.getString("devicesname").toString();
 						if(type == 1){//添加成功后 直接加打开牛眼
 							APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.openning_stream, 0, 0);
 						}
 						Log.d(TAG, "已开通!");
+						genBitmap("sn:"+_sn+";vn:"+_vn);
 						_handler.sendEmptyMessage(XMSG.CHECK_DEVICE_SHARE);
 					}else{
 						isDevice = false;
@@ -1064,6 +1087,16 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 				startTimer();
 				//return startExperience();
 				return 0;
+			case 1: 	// MP4文件
+				try {
+					h.setSurfaceView(m_prevewview);
+					int ret = h.testMediaRecorderAPI();
+					return ret;
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		} catch (Exception e) {
 			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
@@ -1079,6 +1112,14 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 			Integer nRet = (Integer) ret;
 			if (nRet != 0) {	// 打开视频失败
 				APP.ShowDialog(SDK.GetErrorStr(nRet));
+			}
+			break;
+		case 1:
+			Integer nRet1 = (Integer) ret;
+			if (nRet1 != 0) {	// 录像失败
+				APP.ShowDialog(SDK.GetErrorStr(nRet1));
+			}else{
+				_handler.sendEmptyMessageDelayed(1003, 500);
 			}
 			break;
 		case -1:					// 异常

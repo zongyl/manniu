@@ -59,17 +59,31 @@
         <TextView 
             android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="IP地址"
             android:textColor="@color/black" />
         
+        <!--  <EditText 
+             android:id="@+id/dev_name_et"
+             android:layout_width="260dp"
+             android:layout_height="30dp"
+             android:layout_marginLeft="20dp"
+             android:layout_marginTop="10dp"
+             android:layout_toRightOf="@id/dev_name_label"
+             android:hint="device name"
+             android:cursorVisible="true"
+             android:textColor="@color/black"
+             android:background="@drawable/radius_corner"
+             /> -->
+        
         <EditText 
             android:id="@+id/dev_set_base_network_ip"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:textColor="@color/black"/>
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@drawable/radius_corner"/>
     </LinearLayout>
       <LinearLayout
        android:id="@+id/device_set_alarm"
@@ -82,7 +96,7 @@
         <TextView 
             android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="子网掩码"
@@ -90,9 +104,10 @@
         
         <EditText 
             android:id="@+id/dev_set_base_network_subnet_mask"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:textColor="@color/black"/>
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@drawable/radius_corner"/>
     </LinearLayout>
       <LinearLayout
        android:id="@+id/device_set_alarm"
@@ -105,7 +120,7 @@
         <TextView 
             android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="网关"
@@ -113,9 +128,10 @@
         
         <EditText 
             android:id="@+id/dev_set_base_network_gateway"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:textColor="@color/black"/>
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@drawable/radius_corner"/>
     </LinearLayout>
     
        <LinearLayout
@@ -161,7 +177,7 @@
         <TextView 
             android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="首选DNS"
@@ -169,11 +185,11 @@
         
         <EditText 
             android:id="@+id/dev_set_base_network_dns1"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:textColor="@color/black"/>
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@drawable/radius_corner"/>
     </LinearLayout>
-    
       
       <LinearLayout
        android:id="@+id/device_set_alarm"
@@ -186,7 +202,7 @@
         <TextView 
             android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="备选DNS"
@@ -194,9 +210,10 @@
         
         <EditText 
             android:id="@+id/dev_set_base_network_dns2"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:textColor="@color/black"/>
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:background="@drawable/radius_corner"/>
     </LinearLayout>
         
    

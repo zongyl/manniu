@@ -64,7 +64,7 @@ import android.widget.TextView;
 /**
  * @author: li_jianhua Date: 2015-10-26 上午7:58:15
  * To change this template use File | Settings | File Templates.
- * Description： 这种方法 可以解决联想手机第二次打开崩的问题  横竖屏问题未解决
+ * Description： 这种方法 可以解决联想手机第二次打开崩的问题  横竖屏问题未解决.在测试DEMO中已经解决
  */
 public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListener{
 	private String TAG = Fun_RealPlay.class.getSimpleName();

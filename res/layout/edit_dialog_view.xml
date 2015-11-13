@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	 xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:layout_height="fill_parent"  
+	 android:layout_width="fill_parent"
+	 android:background="#eeeeee"
+	 android:orientation="vertical">
+    	
+ 	 <LinearLayout 
+ 	    android:orientation="horizontal"
+       	android:layout_width="fill_parent"
+       	android:layout_height="45dp">
+  	    <TextView
+    	    android:gravity="center"
+    	    android:text="@string/sendComment"
+    	    android:visibility="visible"
+            android:layout_gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>    
+ 	    </LinearLayout>
+ 	    
+ 	    <LinearLayout
+ 	        android:orientation="horizontal"
+       	android:layout_width="match_parent"
+       	android:layout_height="0dp"
+       	android:layout_weight="4">
+  	    
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/common_title_cancel"
+            android:id="@+id/cancel_com"/>
+        
+        <EditText 
+            android:inputType="text"
+            android:imeOptions="actionDone" 
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/radius_corner"
+            android:id="@+id/edit_com"/>
+        
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/common_title_confirm"
+            android:id="@+id/confirm_com"/>
+       </LinearLayout>
+ 	   <TextView
+			android:gravity="center"
+			android:text=" "
+			android:visibility="visible"
+			android:layout_gravity="center_vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"/>    
+   
+</LinearLayout>
