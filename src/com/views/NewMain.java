@@ -440,14 +440,14 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				}
 			});
 			
-			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					APP.ShowToast("long click!");
-					return false;
-				}
-			});
+//			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+//				@Override
+//				public boolean onItemLongClick(AdapterView<?> parent, View view,
+//						int position, long id) {
+//					APP.ShowToast("long click!");
+//					return false;
+//				}
+//			});
 			
 			scrollView = (PullToRefreshScrollView)findViewById(R.id.pull_refresh_main);
 			scrollView.setOnRefreshListener(new OnRefreshListener<ScrollView>() {

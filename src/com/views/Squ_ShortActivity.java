@@ -34,7 +34,7 @@ public class Squ_ShortActivity extends Fragment{
 		WebSettings settings = webView.getSettings();
 		settings.setJavaScriptEnabled(true);
 		settings.setDefaultTextEncodingName("utf-8");
-		//String webUrl = "http://10.12.6.107:8080/NineCloud/squareShort.jsp";
+		//String webUrl = "http://10.12.6.121:8080/NineCloud/squareShort.jsp";
 		String webUrl = Constants.hostUrl+"/squareShort.jsp";
 		webView.loadUrl(webUrl);
 		

@@ -96,7 +96,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     private ViewPager viewPager;//页卡内容  
     //private ViewPager local_viewPager;//页卡内容  
     private ImageView imageView;// 动画图片  
-    public TextView textView1,textView2,textView3,_qrcodetDevice,_devTite;  
+    public TextView textView1,textView2,textView3,_devTite,_analogName;  //_qrcodetDevice
     public LinearLayout _layout;
     private List<View> views;// Tab页面列表  
     private int offset = 0;// 动画图片偏移量  
@@ -229,17 +229,18 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 		layout.addView(m_prevewview);
 		
 		initSetting();
+		_analogName = (TextView) findViewById(R.id.devName_tv);
 		
-		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
-		_qrcodetDevice.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
-				intent.putExtra("sn", _sn);
-				intent.putExtra("vn", _vn);
-				ACT.startActivity(intent);
-			}
-		});
+//		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
+//		_qrcodetDevice.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View arg0) {
+//				Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
+//				intent.putExtra("sn", _sn);
+//				intent.putExtra("vn", _vn);
+//				ACT.startActivity(intent);
+//			}
+//		});
 		
     	STR_PICTURE_TYPE = new String[] { "352x288","640x480","1280x720"};
 		NUM_PICTURE_TYPE = new int[] { 0, 1, 2};
@@ -1054,6 +1055,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 						_vn = data.getString("vn").toString();
 						_devSid = data.getString("sid").toString();
 						_devName = data.getString("devicesname").toString();
+						_analogName.setText(_devName);
 						if(type == 1){//添加成功后 直接加打开牛眼
 							APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.openning_stream, 0, 0);
 						}

@@ -49,9 +49,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	String _userid = "";
 	//private final static int CHANGED = 0*0010;
 	private final static String PER_DETAIL_EDIT = "com.views.NewDetailEdit";// 个人资料编辑页面
-	private final static String PER_DETAIL_SET = "com.views.NewDetailSet";
-	private final static String PER_DETAIL_HELP = "com.views.NewDetailHelp";
-	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";
+	private final static String PER_DETAIL_SET = "com.views.NewDetailSet";//基本配置
+	private final static String PER_DETAIL_HELP = "com.views.NewDetailHelp";//意见反馈
+	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";//关闭
 	private final static String PRE_LOG_IN ="com.views.SplashScreen";
 	private UpdateDialog tipDialog;
 	BaseApplication _bApp = null;
@@ -86,9 +86,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	public NewMoresMe(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
 		// 加载页面中的ListView，并添加监听
-		listView0 = (ListView) findViewById(R.id.list01);
-		listView1 = (ListView) findViewById(R.id.list02);
-		listView2 = (ListView) findViewById(R.id.list03);
+		listView0 = (ListView) findViewById(R.id.list01);//基本配置
+		listView1 = (ListView) findViewById(R.id.list02);//意见反馈、版本检测、关于
+		listView2 = (ListView) findViewById(R.id.list03);//退出登录、关闭蛮牛
 
 		listView0.setOnItemClickListener(this);
 		listView1.setOnItemClickListener(this);
@@ -113,7 +113,11 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	
 	public void ReadUserInfo(){
 		preferences = APP.GetMainActivity().getSharedPreferences(SAVEFILE, APP.GetMainActivity().MODE_PRIVATE);
-		String username = preferences.getString("username", "");
+		String username ="";
+		if(preferences.contains("username"))//判断该项是否存在
+		{
+			username= preferences.getString("username", "");
+		}
 		((TextView)findViewById(R.id.main_hotname)).setText(username);
 	}
 	 /**注册广播*/
@@ -125,7 +129,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	}
 	
 	public void getHeadImg(){
-		try {
+		try {			
 			_img = preferences.getString("head_img", "");
 			_userid = preferences.getString("sid", "");
 			BitmapUtils.loadImage(_img, _userid, _headImage);
@@ -137,11 +141,14 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
  		if(msg.what == NewDetailEdit.IMG_CHANGED){
 			//getHeadImg();
  			//加载本地
- 			String path = BitmapUtils.path+Constants.userid +".jpg";
- 			File file = new File(path);
- 			if(file.exists()){
- 				Bitmap bt = BitmapFactory.decodeFile(path);//从Sd中找头像，转换成Bitmap
- 				_headImage.setImageBitmap(bt);
+ 			if(BitmapUtils.path.length()>0 && Constants.userid.length()>0)//防止BitmapUtils.path和Constants.userid为空值
+ 			{
+	 			String path = BitmapUtils.path+Constants.userid +".jpg";	 			
+	 			File file = new File(path);
+	 			if(file.exists()){
+	 				Bitmap bt = BitmapFactory.decodeFile(path);//从Sd中找头像，转换成Bitmap
+	 				_headImage.setImageBitmap(bt);
+	 			}
  			}
 		}
 	}
@@ -150,11 +157,11 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		switch(id){
 		case R.id.photo:
 			_bApp.setMyhandler(_handler);
-			forwardTo(PER_DETAIL_EDIT);
+			forwardTo(PER_DETAIL_EDIT);//跳转到个人信息编辑页面
 			break;
 		case R.id.per_edit:
 			_bApp.setMyhandler(_handler);
-			forwardTo(PER_DETAIL_EDIT);
+			forwardTo(PER_DETAIL_EDIT);//跳转到个人信息编辑页面
 			break;
 		}
 	}
@@ -166,13 +173,13 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
 		}
 		if (tv.getText().equals(ACT.getString(R.string.base_set))) {//set
-			forwardTo(PER_DETAIL_SET);
+			forwardTo(PER_DETAIL_SET);//跳转到基本配置页面
 		}
 		if (tv.getText().equals(ACT.getString(R.string.suggest))) {//feedback
-			forwardTo(PER_DETAIL_HELP);
+			forwardTo(PER_DETAIL_HELP);//跳转到意见反馈页面
 		}
 		if (tv.getText().equals(ACT.getString(R.string.about))) {//about
-			forwardTo(PER_DETAIL_ABOUT);
+			forwardTo(PER_DETAIL_ABOUT);//跳转到关于页面
 		}
 		if(tv.getText().equals(ACT.getString(R.string.ver_check))){//version check
 			String timeNow = DateUtil.getCurrentStringDate("yyyyMMdd");

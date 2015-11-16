@@ -120,7 +120,7 @@ public class SDK {
 	public static int nFrameRate = 20;//帧率
 	public void OnCommand(int cmd, long param1, int param2, int param3,
 			int param4,int param5 ,int param6,int param7, String str1, String str2, String str3) {
-		LogUtil.d("SDK", cmd + " -- " + param1 + "-- " + param2 + "--" + param3+ "--" + param4 + "--" + str1 + "--" + str2 + "--" + str3);
+		LogUtil.d("SDK", "OnCommand:"+cmd + " -- " + param1 + "-- " + param2 + "--" + param3+ "--" + param4 + "--" + str1 + "--" + str2 + "--" + str3);
 		if(cmd == 8){
 			LogUtil.d("SDK", "被踢掉了");
 		} else if(cmd == 27){
@@ -230,29 +230,29 @@ public class SDK {
 	// 对于手机、OCX客户端：停止播放音视频，并提示链接断线
 	C_STATUS_SVR_DISCONNECTED,		
 	 * */
-	public static boolean _isRun = true; //是否发送登录IDM
+	//public static boolean _isRun = true; //是否发送登录IDM
 	public static long _sessionId = 0;
 	public static boolean _isLogout = true;
 	public void OnStatus(int value, long sessionId, int status, String dst_uuid){
 		switch (value) {
-		case 0:
-			if(status == -4999){//牛眼-停止发送视频  云端 -关闭连接
-				LogUtil.d("SDK", "value = 0 IDM  onStatus:"+status);
-				if(_isRun) {
-					_isRun = false;
-					BackLoginThread.state = 1;
-					Main.Instance._loginThead.start();
-				}
-			}
-			break;
+//		case 0:
+//			if(status == -4999){//牛眼-停止发送视频  云端 -关闭连接(IDM掉线 移到后台管理)
+//				LogUtil.d("SDK", "value = 0 IDM  onStatus:"+status);
+//				if(_isRun) {
+//					_isRun = false;
+//					BackLoginThread.state = 1;
+//					Main.Instance._loginThead.start();
+//				}
+//			}
+//			break;
 		case 1:
 			if(status == -4999){//牛眼-停止发送视频 //云端 -关闭连接
 				LogUtil.d("SDK", "value = 1 ETS onStatus:"+status);
-				if(_isRun) {
-					_isRun = false;
+				//if(_isRun) {
+					//_isRun = false;
 					BackLoginThread.state = 1;
 					Main.Instance._loginThead.start();
-				}
+				//}
 			}
 			break;
 		case 2:
@@ -364,14 +364,17 @@ public class SDK {
 	private void printJson(JSONObject jsonData){
 		Set<String> keys = jsonData.keySet();
 		for(String key : keys){
-			LogUtil.d( "SDK", "key:" + key);
-			if(jsonData.get(key) instanceof JSONObject){
+			LogUtil.d( "SDK", "key:" + key + "; type:"+jsonData.get(key).getClass().getName() + "; value:" +jsonData.get(key));
+			
+			/*if(jsonData.get(key) instanceof JSONObject){
 				LogUtil.d( "SDK", key + " is JSONObject instance!");
 			}else if(jsonData.get(key) instanceof JSONArray){
 				LogUtil.d( "SDK", key + " is JSONArray instance!");
 			}else{
+				LogUtil.d( "SDK", "type:"+jsonData.get(key).getClass().getName());
 				LogUtil.d( "SDK", key + " value is other instance! value " + jsonData.get(key));
-			} 
+			}*/ 
+			
 		}
 	}
 	

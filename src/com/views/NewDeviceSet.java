@@ -61,7 +61,7 @@ public class NewDeviceSet extends Activity {
 	
 	EditText et_dev_name;
 	
-	Button btn_update;
+	Button btn_update ;
 	
 	Spinner /*show_position,*/ resolution, /*quality*/frameRate, bitStream;
 	
@@ -168,8 +168,9 @@ public class NewDeviceSet extends Activity {
 		findViewById(R.id.dev_info).setOnClickListener(new Click());
 		//返回按钮
 		findViewById(R.id.dev_set_back).setOnClickListener(new Click());
-		
 		findViewById(R.id.dev_set_save).setOnClickListener(new Click());
+		findViewById(R.id.dev_set_btn_sub).setOnClickListener(new Click());
+		findViewById(R.id.dev_set_btn_cancel).setOnClickListener(new Click());
 		
 		getVersion(device.sid);
 		
@@ -177,7 +178,8 @@ public class NewDeviceSet extends Activity {
 		
 		//Q04hAQEAbDAwMTIzN2E4AAAAAAAA ...37a8
 		//Q04hAQEAbDAwMDEwYmMzAAAAAAAA manniu202
-		devicesid = "Q04hAQEAbDAwMTIzN2E4AAAAAAAA";
+		//Q04hAQEAbDAwMDEwYmY4AAAAAAAA manniu203
+		devicesid = "Q04hAQEAbDAwMDEwYmY4AAAAAAAA";
 		
 		registerReceiver(receiver, intentFilter);
 		
@@ -204,13 +206,15 @@ public class NewDeviceSet extends Activity {
 	
 	private void close(){
 		this.finish();
-		Main.Instance.NewMainreLoad();
+		//Main.Instance.NewMainreLoad();
 	}
 
 	private void save(){
 		if(!device.devname.equals(et_dev_name.getText().toString())){
 			updateDevName();
 		} 
+		writeInfo("method", 0);
+		writeInfo("type", 1);
 		String sets = getSets();
 		LogUtil.d(TAG, "save config json:"+sets);
 		send(sets);
@@ -256,8 +260,8 @@ public class NewDeviceSet extends Activity {
 		com.alibaba.fastjson.JSONObject obj = JSON.parseObject(configJson);
 		
 		//printJson(obj);
-		paramStr = devicesid + "|" + cvtJson(obj);
-		params.put("configJson", paramStr);// configJson
+		paramStr = cvtJson(obj);
+		params.put("configJson", devicesid + "|" + paramStr);// configJson
 		LogUtil.d(TAG, "set Confiog params:" + params.toString());
 		HttpUtil.get(getServerAddress()+"/device/saveDesConfig", params, new JsonHttpResponseHandler(){
 			@Override
@@ -267,6 +271,7 @@ public class NewDeviceSet extends Activity {
 				//APP.ShowToast(getString(R.string.dev_upgradeOk));
 				try {
 					if("true".equals(response.getString("return"))){
+						LogUtil.d(TAG, "QWE:"+paramStr);
 						SDK.SendJsonPck(0, paramStr);
 					}
 				} catch (JSONException e) {
@@ -426,6 +431,19 @@ public class NewDeviceSet extends Activity {
 		return JSON.toJSONString(pre.getAll());
 	}
 	
+	/**
+	 * 修改属性值
+	 * @param key
+	 * @param value
+	 */
+	private void writeInfo(String key, String value){
+		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, value);
+	}
+	
+	private void writeInfo(String key, Object value){
+		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, value);
+	}
+	
 	private String readInfo(String key){
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		return pre.getString(key, "");
@@ -452,9 +470,68 @@ public class NewDeviceSet extends Activity {
 				}
 			}
 			
-			resolution.setSelection(3);
-			frameRate.setSelection(2);
-			bitStream.setSelection(1);
+			set = sets.getJSONObject(0);
+
+			String bps,fps,width;
+			bps = set.getString("bps");
+			fps = set.getString("fps");
+			width = set.getString("width");
+			
+			if("192".equals(bps)){
+				bitStream.setSelection(0);
+			}else if("224".equals(bps)){
+				bitStream.setSelection(1);
+			}else if("256".equals(bps)){
+				bitStream.setSelection(2);
+			}else if("320".equals(bps)){
+				bitStream.setSelection(3);
+			}else if("448".equals(bps)){
+				bitStream.setSelection(4);
+			}else if("512".equals(bps)){
+				bitStream.setSelection(5);
+			}else if("640".equals(bps)){
+				bitStream.setSelection(6);
+			}else if("768".equals(bps)){
+				bitStream.setSelection(7);
+			}else if("896".equals(bps)){
+				bitStream.setSelection(8);
+			}else if("1024".equals(bps)){
+				bitStream.setSelection(9);
+			}else if("1280".equals(bps)){
+				bitStream.setSelection(10);
+			}else if("1536".equals(bps)){
+				bitStream.setSelection(11);
+			}else {
+				
+			} 
+			
+			if("1".equals(fps)){
+				frameRate.setSelection(0);
+			}else if("5".equals(fps)){
+				frameRate.setSelection(1);
+			}else if("10".equals(fps)){
+				frameRate.setSelection(2);
+			}else if("15".equals(fps)){
+				frameRate.setSelection(3);
+			}else {
+				
+			}
+			
+			if("352".equals(width)){
+				resolution.setSelection(0);
+			}else if("640".equals(width)){
+				resolution.setSelection(1);
+			}else if("704".equals(width)){
+				resolution.setSelection(2);
+			}else if("1280".equals(width)){
+				resolution.setSelection(3);
+			}else{
+				
+			} 
+			
+//			resolution.setSelection(3);
+//			frameRate.setSelection(2);
+//			bitStream.setSelection(1);
 			
 		}else{
 			LogUtil.d(TAG, "readSetInfos perperences is null!");
@@ -576,7 +653,12 @@ public class NewDeviceSet extends Activity {
 				close();
 				break;
 			case R.id.dev_set_save:
-				APP.ShowToast("SAVE!");
+				save();
+				break;
+			case R.id.dev_set_btn_cancel:
+				close();
+				break;
+			case R.id.dev_set_btn_sub:
 				save();
 				break;
 			case R.id.device_set_network:

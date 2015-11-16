@@ -475,16 +475,16 @@ public class Fun_AnalogVideo2 extends XViewBasic implements OnClickListener, OnT
         		}
         		initSetting();
         		
-        		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
-        		_qrcodetDevice.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
-						intent.putExtra("sn", _sn);
-						intent.putExtra("vn", _vn);
-						ACT.startActivity(intent);
-					}
-				});
+//        		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
+//        		_qrcodetDevice.setOnClickListener(new OnClickListener() {
+//					@Override
+//					public void onClick(View arg0) {
+//						Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
+//						intent.putExtra("sn", _sn);
+//						intent.putExtra("vn", _vn);
+//						ACT.startActivity(intent);
+//					}
+//				});
         		
             	STR_PICTURE_TYPE = new String[] { "352x288","640x480","1280x720"};
         		NUM_PICTURE_TYPE = new int[] { 0, 1, 2};

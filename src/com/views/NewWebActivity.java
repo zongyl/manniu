@@ -54,7 +54,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -136,9 +135,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	boolean b_collection = false;
 
 	//add by zra
-	private Bitmap bmp = null;
 	private ImageView image = null;
-	private FileService fileService = null;
 	
 	//add by zra
 	LinearLayout playLayout;
@@ -179,12 +176,29 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private Handler  handler;
 	private static long oldTime;
 	
+	String shortUrl;
+	String mId;
+	String liveName;
+ 
+	private String sCommentTip ;
+	private String sProfileTip;
+	private String sDefaultAddr;
+	private String sAddressPre ;
+	private String sPublisherPre ;
+	private String sDefaultPublisher;
+	private String sProfilePre ;
+	private String sDefaultProfile ;
+	private String sDefaultDevTitle ;
+	
+	private int getLatLngCount = 0;
+	private int getCommentNumCount = 0;
+	
 	@SuppressWarnings("deprecation")
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);// 去掉应用标题
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		NewMain._isOpen = true;
 		DisplayMetrics dm = new DisplayMetrics();
@@ -192,33 +206,122 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		context = this.getApplicationContext();
 		imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
+		int height = dm.heightPixels ;
+		int width = dm.widthPixels;
+		dmHeight =dm.heightPixels;
+		dmWidth = dm.widthPixels;
+		
+		sCommentTip = getResources().getString(R.string.commentTip);
+		sProfileTip = getResources().getString(R.string.profileTip);
+		sDefaultAddr = getResources().getString(R.string.default_address);
+		sAddressPre = getResources().getString(R.string.address_pre);
+		sPublisherPre = getResources().getString(R.string.publisher_pre);
+		sDefaultPublisher = getResources().getString(R.string.default_publisher);
+		sProfilePre = getResources().getString(R.string.profile_pre);
+		sDefaultProfile = getResources().getString(R.string.default_profile);
+		sDefaultDevTitle = getResources().getString(R.string.default_dev_title);
+		
 		parseURL();
-		handler = new Handler(){
-			@Override
-	    	public void handleMessage(Message msg) {
-	    		// TODO Auto-generated method stub
-	    		super.handleMessage(msg);
-	    		switch(msg.what)
-	    		{
-	    		case 0:
-	    			initAMap();
-	    			getSurrroundGp();
-	    			break;
-	    		case 1:
-	    			initOverlay();	
-	    			break;
-	    		default:
-	    			break;
-	    		}
-	    		
-	    	}
-		};
 		
 		setContentView(R.layout.new_web_activity);
+		
+		topViewInit();
+		mapViewInit(savedInstanceState);
+		commentViewAndSubViewInit();
+		praiseAndCollectViewInit();
+		playViewInit();
+		bindListeners();
+		rootViewInit();
+	}
+	
+	private void topViewInit()
+	{
+		_titleFrm = (FrameLayout) findViewById(R.id.webTitle);
+		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) _titleFrm.getLayoutParams(); 
+		linearParams.height = dmHeight*3/40;
+		//webView.getSettings().setDomStorageEnabled(true);//2015.10.09 鏉庡痉鏄? 澧炲姞鏈湴缂撳瓨閰嶇疆锛岃В鍐冲箍鍦轰笂鐨勭綉椤碉紝涓?娈垫椂闂翠細娌℃湁鍝嶅簲鐨勯棶棰?
+		_title = (TextView)findViewById(R.id.web_title);
+		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
+		_more = (XImageBtn)findViewById(R.id.web_more);
+		
+		progressBar = (ProgressBar)findViewById(R.id.progressBar2);
+	}
+	
+	/*
+	 * 功能:根布局 root view初始化:
+	 * 1.支持google键盘取消键事件监听
+	 * 2.支持用户输入后，再取消事件监听
+	 * 3.支持android弹出软键盘，重新布局事件过滤
+	 * */
+	private void rootViewInit()
+	{
 		playLayout = (LinearLayout)findViewById(R.id.play_layout);
+		playLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+	        @Override
+	        public void onGlobalLayout() {
+	            // TODO Auto-generated method stub
+	        	/*if(bInput== true)
+	        	{
+	        		bInput = false;
+	        		return ;
+	        	}*/
+	        	
+	        	Rect r = new Rect();
+        		playLayout.getWindowVisibleDisplayFrame(r);
+	            int screenHeight = playLayout.getRootView().getHeight();
+	            
+	        	if(bGetBoardHeight == false)
+	            {
+	        		bGetBoardHeight = true;
+		            iBoardHeight = screenHeight - (r.bottom - r.top);
+	            }
+	        	
+	        	if(bFinish == false)
+	        	{
+	        		if(count < 1){
+	        			oldTime = System.currentTimeMillis();
+	        			count ++;
+	        			
+	        			return;
+	        		}
+	        		else{	
+	        			
+	        			long curTime = System.currentTimeMillis();
+	        			
+	        			if( curTime - oldTime <= 500)
+	        			{
+	        				//APP.ShowToast(Long.toString(curTime - oldTime));
+	        				return;
+	        			}
+	        
+	        			restoreCommentAndInfoView();
+	        		}
+	        	}
+	        	
+	        }
+	    });
+	}
+	
+	/*功能:播放页面webView ，全屏view初始化:
+	 * 1.支持全屏功能，
+	 * 2.支持进度显示
+	 * 3.支持刷新加载
+	 * 4.支持断网错误页面加载
+	*/
+	private void playViewInit()
+	{
+		video_fullView = (FrameLayout) findViewById(R.id.video_fullView);
+		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) video_fullView.getLayoutParams(); 
+		linearParams.height = dmWidth;
+		linearParams.width = dmHeight;
+		video_fullView.setLayoutParams(linearParams);
+		
+		videoWebViewInit(dmHeight);
 		
 		refresh = (Button) findViewById(R.id.refresh_web1);
 		refresh.setVisibility(View.GONE);
+		
 		refresh.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -226,41 +329,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			}
 		});
 		
-		video_fullView = (FrameLayout) findViewById(R.id.video_fullView);
-		
-		int height = dm.heightPixels ;//高度
-		int width = dm.widthPixels;
-		dmHeight =dm.heightPixels;
-		dmWidth = dm.widthPixels;
-		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) video_fullView.getLayoutParams(); 
-		linearParams.height = width;
-		linearParams.width = height;
-		video_fullView.setLayoutParams(linearParams);
-		
-		_titleFrm = (FrameLayout) findViewById(R.id.webTitle);
-		height = dm.heightPixels ;//高度
-		linearParams = (LinearLayout.LayoutParams) _titleFrm.getLayoutParams(); 
-		linearParams.height = height*3/40;
-		//webView.getSettings().setDomStorageEnabled(true);//2015.10.09 李德明 增加本地缓存配置，解决广场上的网页，一段时间会没有响应的问题
-		_title = (TextView)findViewById(R.id.web_title);
-		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
-		_more = (XImageBtn)findViewById(R.id.web_more);
-		
-		videoWebViewInit(height);
-		
-		getCommentNum();
-		//设备评论相关
-		commentOperation(height);
-		showSmallMap(savedInstanceState);
-		
-		progressBar = (ProgressBar)findViewById(R.id.progressBar2);
-		
-		collection = (ImageView)findViewById(R.id.collection);
-		like = (ImageView)findViewById(R.id.like);
-		squareShare = (ImageView)findViewById(R.id.square_share);
-		screenshot = (ImageView)findViewById(R.id.previously);
-		
-		initPraiseAndCollect();
 		webView.loadUrl(liveUrl);
 		webView.setWebViewClient(new WebViewClient(){
 			@Override
@@ -268,7 +336,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				  if(url.startsWith("http://") && getRespStatus(url)==404) {	
 					  
 					  	view.stopLoading();
-					  	//载入本地assets文件夹下面的错误提示页面404.html   
+					  	
 					  	//view.loadUrl("file:///android_asset/404.html");
 					  	//webView.setVisibility(View.GONE);
 						//refresh.setVisibility(View.VISIBLE);
@@ -280,7 +348,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				   }
 				  
 				   //view.loadUrl(url);
-				   Log.v(TAG, "-----直播地址-----------"+url);
 				   return true;
 			}   
 			
@@ -295,7 +362,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 
 		webView.setWebChromeClient(new WebChromeClient(){
-			// 播放网络视频时全屏会被调用的方法
 			@Override
 			public void onShowCustomView(View view, CustomViewCallback callback) {
 				
@@ -328,11 +394,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				video_fullView.setVisibility(View.VISIBLE);
 			}
 			
-			// 视频播放退出全屏会被调用的
 			@Override
 			public void onHideCustomView() {
 				
-				if (xCustomView == null)// 不是全屏播放状态
+				if (xCustomView == null)
 				{
 					return;
 				}
@@ -382,7 +447,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			@Override
 			public void onProgressChanged(WebView view, int newProgress) {
 				_title.setText(getString(R.string.loading___));
-				//_title.setText("加载中..."+newProgress);
 				setTitle("loading...");
 				setProgress(newProgress * 100);
 				
@@ -399,60 +463,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				}
 			}
 		});
-		
-		bindListeners();
-		
-		//百度地图相关
-		playLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-	        @Override
-	        public void onGlobalLayout() {
-	            // TODO Auto-generated method stub
-	        	/*if(bInput== true)
-	        	{
-	        		bInput = false;
-	        		return ;
-	        	}*/
-	        	
-	        	Rect r = new Rect();
-        		playLayout.getWindowVisibleDisplayFrame(r);
-	            int screenHeight = playLayout.getRootView().getHeight();
-	            
-	        	if(bGetBoardHeight == false)
-	            {
-	        		bGetBoardHeight = true;
-		            iBoardHeight = screenHeight - (r.bottom - r.top);
-	            }
-	        	
-	        	if(bFinish == false)
-	        	{
-	        		if(count < 1){
-	        			oldTime = System.currentTimeMillis();
-	        			count ++;
-	        			return;
-	        		}
-	        		else{	
-	        			
-	        			long curTime = System.currentTimeMillis();
-	        			
-	        			if( curTime - oldTime <= 500)
-	        			{
-	        				//APP.ShowToast(Long.toString(curTime - oldTime));
-	        				return;
-	        			}
-	        
-	        			restoreCommentAndInfoView();
-	        		}
-	        	}
-	        	
-	        }
-	    });
-		
 	}
 	
-	
-
-	
+	/*
+	 * 功能:软键盘弹出底层view重新布局
+	 */
 	private void resetCommentAndInfoView()
 	{    
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);	
@@ -463,8 +478,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		if(bComment == true)
 		{
 			commentView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
+			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 			commentView.setLayoutParams(linearParams);
 		}
 		else
@@ -472,8 +487,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			commentContent.setVisibility(View.GONE);
 			if(bType == 0)
 				mMapView.setVisibility(View.GONE);
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 当前界面高度-320
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); 	
+			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 			informationPage.setLayoutParams(linearParams);
 		}
 		if(bType == 0)
@@ -483,9 +498,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		bPopKey = true;
 		bFinish = false;
 	}
-	
-	
-	
+
+	/*
+	 * 功能:软键盘弹出底层view布局恢复*/
 	private void restoreCommentAndInfoView()
 	{
 		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -496,8 +511,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		if(bComment == true)
 		{
 			commentView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 			commentView.setLayoutParams(linearParams);
 		}
 		else
@@ -505,8 +520,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			commentContent.setVisibility(View.VISIBLE);
 			if(bType == 0)
 				mMapView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 			informationPage.setLayoutParams(linearParams);
 		}
 		
@@ -519,42 +534,27 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		bFinish = true;
 	}
 	
-	private void snapshotOperation()
-	{
-		destoryBitmap();
-		bmp = captureWebViewVisibleSize(webView);
-
-        Log.i(TAG, "comment_snapshot");
-        
-        String fileName = fileService.saveBitmapToSDCard("" + "commentSnapshot.png", bmp);
-        Toast.makeText(getApplicationContext(), getString(R.string.file) + fileName + getString(R.string.SUCCESS_SAVE), Toast.LENGTH_SHORT).show();
-	}
-	
 	private void videoWebViewInit(int height)
 	{
 		webView = (WebView)findViewById(R.id.webView02);
 		if(android.os.Build.VERSION.SDK_INT > 16)
 			webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		WebSettings ws = webView.getSettings();
-		ws.setBuiltInZoomControls(true);// 隐藏缩放按钮	
-		//ws.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);// 排版适应屏幕
-		ws.setUseWideViewPort(true);// 可任意比例缩放
-		ws.setLoadWithOverviewMode(true);// setUseWideViewPort方法设置webview推荐使用的窗口。setLoadWithOverviewMode方法是设置webview加载的页面的模式。
-		ws.setSavePassword(true);
-		ws.setSaveFormData(true);// 保存表单数据
+		ws.setBuiltInZoomControls(true);
+		//ws.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+		ws.setUseWideViewPort(true);
+		ws.setLoadWithOverviewMode(true);
+		ws.setSaveFormData(true);
 		ws.setJavaScriptEnabled(true);
-		ws.setGeolocationEnabled(true);// 启用地理定位
+		ws.setGeolocationEnabled(true);
 		ws.setDomStorageEnabled(true);
-		ws.setSupportMultipleWindows(true);// 新加
+		ws.setSupportMultipleWindows(true);
 		ws.setSupportZoom(true);
 		 
-		//2015.10.13 李德明 重新调整webView高度
-		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) webView.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = height*7/20-height/80;// height - 500;// 当前界面高度-320
-		webView.setLayoutParams(linearParams); // 使设置好的布局参数应用到控件webView
+		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) webView.getLayoutParams();	
+		linearParams.height = height*7/20-height/80;
+		webView.setLayoutParams(linearParams); 
 		
-		//webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);//2015.10.10 李德明临时屏蔽，会导致广场上视频播放不；了
-		//webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 		
 		webView.addJavascriptInterface(new Object(){
 			@JavascriptInterface
@@ -571,24 +571,35 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			}
 		}, "callAndroid");
 		
-		
 		webView.setDrawingCacheEnabled(true);
-        fileService = new FileService(this);  
+
 	}
 	
-	private void commentOperation(int height)
+
+	
+	/*
+	 * 功能:评论view和相关子view初始化：
+	 * 1.评论和地图切换工具条初始化
+	 * 2.评论工具条初始化
+	 * 3.评论页面初始化
+	 * 4.软键盘done事件监听
+	 * */
+	private void commentViewAndSubViewInit()
 	{
+		//getCommentNum();
+		commentTitle = (TextView)findViewById(R.id.comment_title);
+		commentContent = (TextView)findViewById(R.id.comment_content);
+		getDeviceInfo();
 		comEdit =(LinearLayout)findViewById(R.id.share_comment);
 		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) comEdit.getLayoutParams(); 
-		linearParams.height = height*3/40+dmHeight/320+dmHeight/50;
+		linearParams.height = dmHeight*3/40+dmHeight/320+dmHeight/50;
 		comEdit.setLayoutParams(linearParams); 
-		
 		
 		comment = (Button)findViewById(R.id.square_com);
 		squareTools = (LinearLayout)findViewById(R.id.square_tools);
 		
 		linearParams = (LinearLayout.LayoutParams) squareTools.getLayoutParams(); 
-		linearParams.height = height*3/40;
+		linearParams.height = dmHeight*3/40;
 		squareTools.setLayoutParams(linearParams); 
 		cancelC = (ImageView) findViewById(R.id.cancel_com);
 		editC = (EditTextPreIme) findViewById(R.id.edit_com);
@@ -596,8 +607,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		//height-500
 		commentTools = (LinearLayout)findViewById(R.id.comment_tools);
-		linearParams = (LinearLayout.LayoutParams) commentTools.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = height/20;// height - 500;// 当前界面高度-320
+		linearParams = (LinearLayout.LayoutParams) commentTools.getLayoutParams();
+		linearParams.height = dmHeight/20;
 		commentTools.setLayoutParams(linearParams);
 		
 		commentBar = (TextView)findViewById(R.id.comment_bar);
@@ -628,9 +639,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			}
 		});
 		
-		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = height/2 -height/20+height/40+height/80;// height - 500;// 当前界面高度-320
-		commentView.setLayoutParams(linearParams); // 使设置好的布局参数应用到控件webView
+		linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams();
+		linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;
+		commentView.setLayoutParams(linearParams); 
 		
 		commentView.setVerticalScrollBarEnabled(true);
 		commentView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
@@ -645,7 +656,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				   view.loadUrl(url);
-				   Log.v(TAG, "-----直播地址-----------"+url);
+				   Log.v(TAG, "-----鐩存挱鍦板潃-----------"+url);
 				   return true;
 			}
 			
@@ -653,9 +664,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			public void onPageFinished(WebView view, String url) 
 			{
 				if(bType == 0)
-					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + '0' + ")" );
+					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + 0 + ")" );
 				else
-					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + '1' + ")" );
+					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + 1 + ")" );
 				
 				super.onPageFinished(view, url);
 			}
@@ -678,14 +689,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 		
 		informationPage = (LinearLayout)findViewById(R.id.information_page);
-		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = height/2 - height/20 +height/40+height/80;
+		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams();
+		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;
 		informationPage.setLayoutParams(linearParams);
-		
-		commentTitle = (TextView)findViewById(R.id.comment_title);
-		commentContent = (TextView)findViewById(R.id.comment_content);
-		
-		getDeviceInfo();
 		
 		
 		editC.addTextChangedListener(new TextWatcher(){
@@ -718,8 +724,37 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 	}
 
-	private void showSmallMap(Bundle savedInstanceState)
+
+	@SuppressLint("HandlerLeak")
+	private void mapViewInit(Bundle savedInstanceState)
 	{	
+		handler = new Handler(){
+			@Override
+	    	public void handleMessage(Message msg) {
+	    		// TODO Auto-generated method stub
+	    		super.handleMessage(msg);
+	    		switch(msg.what)
+	    		{
+	    		case 0:
+	    			initAMapAndMovePosition();
+	    			getSurrroundDeviceLatLng();
+	    			break;
+	    		case 1:
+	    			initDevLatLngAndShowDevMarker();	
+	    			break;
+	    		case 2:
+	    			getCommentNum();
+	    			break;
+	    		case 3:
+	    			getSurrroundDeviceLatLng();
+	    			break;
+	    		default:
+	    			break;
+	    		}
+	    		
+	    	}
+		};
+		
 		try{
 				
 			mMapView = (MapView) findViewById(R.id.comment_map);
@@ -730,7 +765,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 	}
 	
-	public void initAMap()
+	public void initAMapAndMovePosition()
 	{
 		mAMap = mMapView.getMap();
 		mAMap.setOnMapClickListener(this);
@@ -751,15 +786,30 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			bounds = new LatLngBounds.Builder().include(new LatLng(devLat, devLng)).build();	
 		}
 		
+		if(bConfig == false)
+		{
+			ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
+			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+			MarkerOptions ooD = new MarkerOptions().position(new LatLng(30.297233, 120.047253)).title(getResources().getString(R.string.default_dev_title)).icons(giflist).draggable(true).period(3);
+			mAMap.addMarker(ooD).showInfoWindow();
+		}
+		else 
+		{
+			ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
+			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+			MarkerOptions ooD = new MarkerOptions().position(new LatLng(devLat, devLng)).title(liveName).icons(giflist).draggable(true).period(3);
+			mAMap.addMarker(ooD).showInfoWindow();
+		}	
+	
 		mAMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10));
+		mAMap.moveCamera(CameraUpdateFactory.zoomTo(13));
 	}
 	
-	public void initOverlay()
+	public void initDevLatLngAndShowDevMarker()
 	{
-		
-		
-		try{		
-			mAMap.clear();
+		try{	
 			MarkerOptions markerOption;
 			// add marker overlay
 			if(bHave == false)
@@ -771,21 +821,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llA);
-				markerOption.title("蛮牛云眼1号").snippet("坐标:30.267233, 120.347253");
+				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
 				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
 				mAMap.addMarker(markerOption);
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llB);
-				markerOption.title("蛮牛云眼2号").snippet("坐标:30.27233, 120.247253");
+				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
 				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
 				mAMap.addMarker(markerOption);
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llC);
-				markerOption.title("蛮牛云眼3号").snippet("坐标:30.287233, 120.147253");
+				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
 				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
 				mAMap.addMarker(markerOption);
@@ -801,7 +851,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				 	
 					markerOption = new MarkerOptions();
 					markerOption.position(new LatLng(devLatT, devLngT));
-					markerOption.title("蛮牛云眼1号");
+					markerOption.title(jpos.get("devname").toString());
 					markerOption.draggable(true);
 					markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
 					mAMap.addMarker(markerOption);
@@ -809,23 +859,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 			}
 			
-			if(bConfig == false)
-			{
-				ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
-				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
-				MarkerOptions ooD = new MarkerOptions().position(new LatLng(30.297233, 120.047253)).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
-				mAMap.addMarker(ooD).showInfoWindow();
-			}
-			else
-			{
-				ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
-				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-				giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
-				MarkerOptions ooD = new MarkerOptions().position(new LatLng(devLat, devLng)).title("蛮牛总部云眼").snippet("坐标:30.297233, 120.047253").icons(giflist).draggable(true).period(3);
-				mAMap.addMarker(ooD).showInfoWindow();
-			}	
-	
 		}catch(Exception e){
 			
 			LogUtil.d("NewWebActivity", "map operation");
@@ -853,14 +886,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		return  textView;    
 	}
 	
-	/**
-	 * 监听amap地图加载成功事件回调
-	 */
+	
 	@Override
 	public void onMapLoaded() {
 		return;
 	}
 	
+	/*功能:点击小地图，重新布局view弹出大地图，并设置大地图相关属性*/
 	private void resetViewAndMap()
 	{
 		try{	
@@ -870,10 +902,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			commentTitle.setVisibility(View.GONE);
 			commentContent.setVisibility(View.GONE);
 			LinearLayout.LayoutParams  linearParams;
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-			linearParams.height = dmHeight- dmHeight*3/40;// height - 500;// 当前界面高度-320
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+			linearParams.height = dmHeight- dmHeight*3/40;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 			informationPage.setLayoutParams(linearParams);
 	       
+			mAMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 			UiSettings uiSettings = mAMap.getUiSettings();
 			uiSettings.setCompassEnabled(true);
 			uiSettings.setZoomControlsEnabled(true);
@@ -896,10 +929,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		commentContent.setVisibility(View.VISIBLE);
 		_titleFrm.setVisibility(View.VISIBLE);
 		LinearLayout.LayoutParams  linearParams;
-		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 		informationPage.setLayoutParams(linearParams);
 
+		mAMap.moveCamera(CameraUpdateFactory.zoomTo(13));
 		UiSettings uiSettings = mAMap.getUiSettings();
 		uiSettings.setCompassEnabled(false);
 		uiSettings.setZoomControlsEnabled(false);
@@ -907,12 +941,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		uiSettings.setAllGesturesEnabled(false);
 		mAMap.setOnMapClickListener(this);
 	}
-	
+
+
 	@Override
 	public void onMapClick(LatLng point) {
 		
 		resetViewAndMap();
-			bSubView = true;
+		bSubView = true;
 
 	}
    
@@ -934,12 +969,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private void parseURL()
 	{
+		
 		liveUrl = getIntent().getStringExtra("url");
-
-//		LogUtil.d(TAG, "liveUrl:" + liveUrl);
-//		LogUtil.d(TAG, "Constants.hostUrl:" + Constants.hostUrl);
-//		liveUrl = liveUrl.replace(Constants.hostUrl, "http://10.12.6.121:8080/NineCloud");
-//		LogUtil.d(TAG, "............. liveUrl:" + liveUrl);
 		
 		if(liveUrl.indexOf("?")!=-1){
 			String str = liveUrl.split("\\?")[1];
@@ -976,29 +1007,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		 return status;   
 	}   
 
-	//全屏
-	private FrameLayout video_fullView;// 全屏时视频加载view
+
+	private FrameLayout video_fullView;
 	private CustomViewCallback xCustomViewCallback;
 	private View xCustomView;
 	
-	/**
-	 * 判断是否是全屏
-	 * 
-	 * @return
-	 */
+
 	public boolean inCustomView() {
 		return (xCustomView != null);
 	}
-	/**
-	 * 全屏时按返加键执行退出全屏方法
-	 */
+
 	public void hideCustomView() {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 	
-	/**
-	 * 方法必须重写
-	 */
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -1006,7 +1029,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		mMapView.onSaveInstanceState(outState);
 	}	
 	
-	//2015.10.13 李德明 添加，清理webView缓存(怀疑与webView无响应有关)
 	 @Override  
 	 protected void onDestroy() {  	 
        	 super.onDestroy();
@@ -1087,7 +1109,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private void createMenu(View v){
 		PopupMenu menu = new PopupMenu(context);
-		//menu.setHeaderTitle("用户菜单");
 		menu.setOnItemSelectedListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1097,28 +1118,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		menu.add(1, R.string.web_copy_link).setParams(webView.getUrl());
 		menu.add(2, R.string.web_on_browser).setParams(webView.getUrl());
 		menu.show(v);
-	}
-	
-	public  void  editPop()  {
-		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-		imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS); //显示软键盘
-		Builder  dialog  =  new  AlertDialog.Builder(this);
-		LayoutInflater  inflater  =  (LayoutInflater)  this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		LinearLayout  layout  =  (LinearLayout)inflater.inflate(R.layout.edit_dialog_view,  null);
-		
-		dialog.setView(layout);
-		AlertDialog ad = dialog.create();
-		WindowManager.LayoutParams lp = ad.getWindow().getAttributes();
-		WindowManager m = getWindowManager();
-		Display d = m.getDefaultDisplay();
-		lp.x = 0;
-		lp.y = dmHeight/2 -280;
-		lp.width = dmWidth; // 宽度
-		ad.getWindow().setAttributes(lp);
-		ad.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-		//ad.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM); 
-		ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-		ad.show();
 	}
 	
 	public void onClick(View v) {
@@ -1139,7 +1138,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			createMenu(v);
 			break;
 		case R.id.square_com:
-			//editPop();
 			editC.setText("");
 			editC.requestFocus();
 			editC.setCursorVisible(true);
@@ -1175,12 +1173,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			break;
 		case R.id.square_share:
 			{
-				/*//改用新的代码处理 2015.10.14 李德明
+				/*//鏀圭敤鏂扮殑浠ｇ爜澶勭悊 2015.10.14 鏉庡痉鏄?
 				ShareSDK.initSDK(this);				
 				OnekeyShare oks = new OnekeyShare();
 				oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-				oks.setTitle("蛮牛云视频");
-				oks.setText("快乐生活，分享精彩  "+liveUrl);
+				oks.setTitle("铔墰浜戣棰?");
+				oks.setText("蹇箰鐢熸椿锛屽垎浜簿褰?  "+liveUrl);
 				//oks.setViewToShare(webView);
 				//oks.setUrl(liveUrl);
 				oks.show(this);
@@ -1188,18 +1186,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				*/
 				
 				dwz();
-				/*ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,"家，与我同行",
-						"\t\t家，与我同行\r\n[蛮牛云分享视频]\r\n"+"<a href ='"+liveUrl+"'>请点击:"+_title.getText()+"</a>",
-						"\t\t家，与我同行\r\n[蛮牛云分享视频]\r\n"+_title.getText()+"\r\n"+liveUrl,
+				/*ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,"瀹讹紝涓庢垜鍚岃",
+						"\t\t瀹讹紝涓庢垜鍚岃\r\n[铔墰浜戝垎浜棰慮\r\n"+"<a href ='"+liveUrl+"'>璇风偣鍑?:"+_title.getText()+"</a>",
+						"\t\t瀹讹紝涓庢垜鍚岃\r\n[铔墰浜戝垎浜棰慮\r\n"+_title.getText()+"\r\n"+liveUrl,
 						liveImg,false,null);*/
 			}
 			break;
 		case R.id.previously:
 			//screenshot.setImageDrawable(getResources().getDrawable(R.drawable.previously_sel));
-			
-			//snapshotOperation();
-
-			//startActivity(new Intent(this.getApplicationContext(), LocMapActivity.class));
 			break;
 		case R.id.comment_bar:
 			bComment = true;
@@ -1210,8 +1204,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			{
 				commentView.setVisibility(View.VISIBLE);
 				LinearLayout.LayoutParams  linearParams;
-				linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 取控件webView当前的布局参数		
-				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+				linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 				commentView.setLayoutParams(linearParams);
 			}
 			
@@ -1234,8 +1228,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				commentContent.setVisibility(View.VISIBLE);
 				if(bType == 0)
 					mMapView.setVisibility(View.VISIBLE);
-				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 取控件webView当前的布局参数		
-				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 当前界面高度-320
+				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
 				informationPage.setLayoutParams(linearParams);
 			}
 			
@@ -1248,12 +1242,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			break;
 		}
 	}
-	/*
-	 *短网址处理
-	 * */
+
 	private void dwz(){
+		
 		RequestParams params = new RequestParams();
 		params.put("url", liveUrl);
+		
 		HttpUtil.post("http://dwz.cn/create.php", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(int statusCode, Header[] headers,
@@ -1267,11 +1261,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						e.printStackTrace();
 					}
 
-					//String imgPath = liveImg.replace("man-niu.oss-cn-hangzhou.aliyuncs.com/", "oss.mny9.com/");//设备封面的地址处理
-					String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";//默认分享图地址
+					//String imgPath = liveImg.replace("man-niu.oss-cn-hangzhou.aliyuncs.com/", "oss.mny9.com/");//璁惧灏侀潰鐨勫湴鍧?澶勭悊
+					String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";//榛樿鍒嗕韩鍥惧湴鍧?
 					Log.d(TAG, "image path:" + imgPath);
 					//String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n<a href ='"+liveUrl+"'>"+getString(R.string.Click_toplay)+":"+_title.getText()+"</a>";
-					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n请点击:"+short_url;//2015.11.01 李德明修改
+					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n璇风偣鍑?:"+short_url;//2015.11.01 鏉庡痉鏄庝慨鏀?
 					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
 					
 					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
@@ -1288,15 +1282,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				super.onFailure(statusCode, headers, responseString, throwable);
 			}
 		});
-		
 	}
-	
-	
-	
-	private void getSurrroundGp(){
+
+	private void getSurrroundDeviceLatLng(){
+		
 		RequestParams params = new RequestParams();
 		params.put("deviceId", liveId);
-		HttpUtil.get(Constants.hostUrl+ "/mobile/getSurrounGp", params, new JsonHttpResponseHandler(){
+		//Constants.hostUrl = "http://10.12.6.121:8080/NineCloud/";
+		HttpUtil.get( Constants.hostUrl+ "/mobile/getSurrounGp", params, new JsonHttpResponseHandler(){
 			
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
@@ -1314,7 +1307,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						
 						 Message message=new Message();
 						 message.what= 1;
-						 handler.sendMessage(message);//发送message信息 
+						 handler.sendMessage(message);//鍙戦?乵essage淇℃伅聽
 						 
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1324,40 +1317,52 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
+				if(getLatLngCount <3)
+				{
+					getSurrroundDeviceLatLng();
+					getLatLngCount ++;
+					return ;
+				}
+					
+				APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
 			}
 		});
 	}
 	
 	
 	private void getCommentNum(){
+		
 		RequestParams params = new RequestParams();
 		params.put("liveid", liveId);
+		
 		HttpUtil.get(Constants.hostUrl+ "/LiveAction_getLiveCWNum", params, new JsonHttpResponseHandler(){
 			
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
 				if(statusCode == 200){
 					try {
-						String result = json.get("commentNum").toString();
 						 commentNum = (Integer) json.get("commentNum");
-						 commentBar.setText("评论("+commentNum+")");
+						 commentBar.setText( sCommentTip +"("+commentNum+")");
+						 
 						 if(json.length() == 3)
 						 { 
 							 bConfig = false;
-						 }
-						 else{
+							 
+						 }else{
+							 
 							 if(bType == 0){ 
 								 devLng = Float.parseFloat(json.get("longitude").toString());
 								 devLat = Float.parseFloat(json.get("latitude").toString());
-								// APP.ShowToast(Float.toString(devLat));
 							 }
 						 }
 						 
-						 Message message=new Message();
-						 message.what= 0;
-						 handler.sendMessage(message);//发送message信息 
-						 
+						if(bType == 0)
+						{
+							 Message message=new Message();
+							 message.what= 0;
+							 handler.sendMessage(message);
+						}
+						
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -1366,6 +1371,15 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+				
+				if(getCommentNumCount <3)
+				{
+					getSurrroundDeviceLatLng();
+					getCommentNumCount ++;
+					
+					return;
+				}
+				
 				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
 			}
 		});
@@ -1381,32 +1395,37 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				if(statusCode == 200){
 					try {	
 						String title = json.get("livename").toString();
+						liveName = title;
 						String content = json.get("liveduction").toString();
 						String address = json.get("liveaddress").toString();
 						String username = json.get("username").toString();
 						String contentText;
 						
 						if(title == "null")
-						 commentTitle.setText("杭州蛮牛云视频");
+							 commentTitle.setText(sDefaultDevTitle);
 						else
 							commentTitle.setText(title);
 						
 						if(content == "null")
-							contentText ="介绍:" + "好视频，一辈子";
+							contentText = "\n"+sProfilePre +":" + sDefaultProfile ;
 						else
-							contentText ="介绍:" + content;
+							contentText = "\n"+sProfilePre +":" + content ;
 
 						if(address == "null")
-							contentText = contentText+"\n\n地址:" + "杭州荆长大道" ;
+							contentText = contentText+"\n\n"+sAddressPre+":" + sDefaultAddr;
 						else
-							contentText = contentText+"\n\n地址:" + address;
+							contentText = contentText+"\n\n"+ sAddressPre + ":"+ address;
 						
 						if(username == "null")
-							contentText = contentText + "\n\n发布者:" + "李大帅";
+							contentText = contentText + "\n\n"+ sPublisherPre+ ":"+ sDefaultPublisher;
 						else
-							contentText = contentText + "\n\n发布者:" + username;
+							contentText = contentText + "\n\n"+ sPublisherPre + ":"+ username;
+							
+							commentContent.setText(contentText);
 						
-						commentContent.setText(contentText);
+						 Message message=new Message();
+						 message.what= 2;
+						 handler.sendMessage(message);
 						
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1421,8 +1440,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 	}
 	
-	public void initPraiseAndCollect()
+	public void praiseAndCollectViewInit()
 	{
+		collection = (ImageView)findViewById(R.id.collection);
+		like = (ImageView)findViewById(R.id.like);
+		squareShare = (ImageView)findViewById(R.id.square_share);
+		screenshot = (ImageView)findViewById(R.id.previously);
 		if(true == SetSharePrefer.read_bool("collect_info", liveId))
 		{
 			collection.setImageDrawable(getResources().getDrawable(R.drawable.collection_sel));
@@ -1434,7 +1457,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		}
 	}
 	
-	/**保存收藏信息,成功返回后切换按钮背景图片*/
+
 	public void save(int id){
 		final String save_failure = getResources().getString(R.string.Err_CONNET);
 		final String collect_success = getResources().getString(R.string.SUCCESS_COLLECT);
@@ -1442,6 +1465,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 		params.put("liveid", liveId);
+		if(bType == 0)
+			params.put("type", 0);
+		else
+			params.put("type", 1);
+		//Constants.hostUrl = "http://10.12.6.121:8080/NineCloud/";
 		
 		switch(id)
 		{
@@ -1460,9 +1488,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								collection.setImageDrawable(getResources().getDrawable(R.drawable.collection_sel));
 								b_collection = true;	
 								//TODO
-							}else{
+							}/*else{
 								APP.ShowToast(save_failure);
-							}
+							}*/
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -1491,7 +1519,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								b_like = true;	
 								//TODO
 							}else{
-								APP.ShowToast("点赞失败!");
+								APP.ShowToast(save_failure);
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -1519,6 +1547,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 		params.put("liveid", liveId);
+		if(bType == 0)
+			params.put("type", 0);
+		else
+			params.put("type", 1);
+		//Constants.hostUrl = "http://10.12.6.121:8080/NineCloud/";
 		switch(id)
 		{
 		case R.id.collection:
@@ -1592,7 +1625,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			obj.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 			obj.put("liveId", liveId);
-			obj.put("position", "约300米");
+			obj.put("position", sDefaultAddr);
 			obj.put("content", str);
 			if(bType == 0)
 			{
@@ -1611,11 +1644,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 	
 	public void sendComMessage(){
-		//评论提交成功之后清空comEdit的内容
 		String str = getJsonStr(editC.getText().toString());
 		commentView.loadUrl("javascript:InsertComment('" + str + "')" );
 		commentNum = commentNum +1;
-		commentBar.setText("评论("+commentNum+")");
+		commentBar.setText(sCommentTip+"("+commentNum+")");
 		
 		editC.setText("");
 	}
@@ -1630,125 +1662,4 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		}
 	}
 	
-    /**
-     * 截取webView可视区域的截图
-     * @param webView 前提：WebView要设置webView.setDrawingCacheEnabled(true);
-     * @return
-     */
-	private Bitmap captureWebViewVisibleSize(WebView webView){
-		
-		webView.buildDrawingCache();
-		Bitmap bmp = webView.getDrawingCache();
-		
-		return bmp;
-	}
-    
-	/**
-	 * 回收图片
-	 */
-	public void destoryBitmap(){
-	    if((null != bmp) && (!bmp.isRecycled())){
-	    	bmp.recycle();  
-	    	System.out.println("回收图片！");
-	    }
-	    	
-	}
-	
-	public class FileService {
-		/**声明上下文*/
-		private Context context;
-		/**文件夹名字*/
-		private static final String FOLDER_NAME = "/manniu/snapshot";
-		
-		private static final String TAG = "FileService";
-		
-		// 构造函数
-		public FileService(Context context) {
-			this.context = context;
-		}
-
-		/**
-		 * 保存bitmap到文件
-		 * @param filename
-		 * @param bmp
-		 * @return
-		 */
-		public String saveBitmapToSDCard(String filename, Bitmap bmp) {
-			
-			// 文件相对路径
-			String fileName = null;
-			if (Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
-				// 文件保存的路径
-				String fileDir = Environment.getExternalStorageDirectory() + FOLDER_NAME;
-				
-				// 如果文件夹不存在，创建文件夹
-				if (!createDir(fileDir)) {
-					Log.e(TAG, "创建文件夹失败!");
-				}
-				// 声明文件对象
-				File file = null;
-				// 声明输出流
-				FileOutputStream outStream = null;
-				
-				try {
-					// 如果有目标文件，直接获得文件对象，否则创建一个以filename为名称的文件
-					file = new File(fileDir, filename);
-					
-					// 获得文件相对路径
-					fileName = file.toString();
-					// 获得输出流，如果文件中有内容，追加内容
-					outStream = new FileOutputStream(fileName);
-					if(outStream != null)
-	                {
-	                    bmp.compress(Bitmap.CompressFormat.PNG, 90, outStream);
-	                    outStream.close();
-	                }
-					
-				} catch (Exception e) {
-					Log.e(TAG, e.toString());
-				}finally{
-					// 关闭流
-					try {
-						if (outStream != null) {
-							outStream.close();
-						}
-					} catch (IOException e) {
-						Log.e(TAG, e.toString());
-					}
-				}
-			}
-			return fileName;
-		}
-		
-		/**
-		 * 创建指定路径的文件夹，并返回执行情况 ture or false
-		 * @param filePath
-		 * @return
-		 */
-		public boolean createDir(String filePath) {
-			File fileDir = new File(filePath); // 生成文件流对象
-			boolean bRet = true;
-			// 如果文件不存在，创建文件
-			if (!fileDir.exists()) {
-				// 获得文件或文件夹名称
-				String[] aDirs = filePath.split("/");
-				StringBuffer strDir = new StringBuffer();
-				for (int i = 0; i < aDirs.length; i++) {
-					// 获得文件上一级文件夹
-					fileDir = new File(strDir.append("/").append(aDirs[i]).toString());
-					// 是否存在
-					if (!fileDir.exists()) {
-						// 不存在创建文件失败返回FALSE
-						if (!fileDir.mkdir()) {
-							bRet = false;
-							break;
-						}
-					}
-				}
-			}
-
-			return bRet;
-		}
-
-	}
 }

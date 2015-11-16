@@ -7,6 +7,18 @@ import com.basic.APP;
 
 public class SetSharePrefer {
 
+	public static void  write(String file,String key, Object value){
+		@SuppressWarnings("static-access")
+		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(file, APP.GetMainActivity().MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		if("java.lang.String".equals(value.getClass().getName())){
+			editor.putString(key, value.toString());
+		}
+		if("java.lang.Integer".equals(value.getClass().getName())){
+			editor.putInt(key, (Integer)value);
+		}
+		editor.commit();
+	}
 	public static void  write(String file,String param, String value){
 		@SuppressWarnings("static-access")
 		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(file, APP.GetMainActivity().MODE_PRIVATE);

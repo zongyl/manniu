@@ -35,7 +35,7 @@
     </RelativeLayout>   
 
 	<LinearLayout style="@style/SetGroup" android:orientation="vertical" android:layout_marginTop="20dp">
-        <LinearLayout style="@style/SetGroupItem">
+        <!-- <LinearLayout style="@style/SetGroupItem">
 	        <TextView android:text="@string/flow_remaind" style="@style/DetailSetLeft"/>
 	        <ImageView 
 	            android:id="@+id/flow_switch"
@@ -49,12 +49,14 @@
 	        <TextView android:text="@string/flow_limit" style="@style/DetailSetLeft" />
 	        <TextView  android:id="@+id/flow_tipSize" android:text="20MB" style="@style/DetailCommenText"/>
 	        <ImageView  android:src="@drawable/face_right" style="@style/DetailSetRight"/>
-	    </LinearLayout>
+	    </LinearLayout> -->
 	</LinearLayout>
-
+<!-- 
    <LinearLayout  style="@style/SetLayout" android:background="#E6E6E6" >
         <TextView android:text="@string/flow_desc" style="@style/DetailCommenText"/>
-   </LinearLayout>
+   </LinearLayout>  -->
+   
+   
    <LinearLayout style="@style/SetGroup" android:orientation="vertical" >
        <!--  <LinearLayout android:paddingLeft="10dp" style="@style/SetGroupItem">
 		   <TextView android:text="@string/auto_check" style="@style/DetailSetLeft" />

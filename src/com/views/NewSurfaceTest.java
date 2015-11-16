@@ -160,7 +160,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		m_prevewview.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				alert("onLongClick!");
+				//alert("onLongClick!");
 				return false;
 			}
 		});
@@ -552,7 +552,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				LogUtil.d(TAG, " 退出app .time "+(t4-t3));
 				SDK.isInitDecoder = false;
 				if(isPlay){
-					LogUtil.d(TAG, " ........"+SDK._sessionId+"--"+getDeviceChannel());
+					LogUtil.i(TAG, "...isPlay = "+isPlay+"--"+SDK._sessionId+"--"+getDeviceChannel());
 					long t1= System.currentTimeMillis();
 					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
 					SDK.P2PClose(SDK._sessionId);
@@ -589,9 +589,10 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					//模拟目前不要发消息
 					if(NewMain.devType ==1)
 						_handler.sendEmptyMessageDelayed(XMSG.ON_PLAY,12000);//12秒收不到数据 提示打开视频失败!
-					_decoderDebugger.flag = 0;
+					if(_decoderDebugger != null) _decoderDebugger.flag = 0;
 					if(type == 0){
 						isPlay = true;
+						LogUtil.i(TAG,"..isPlay===="+isPlay);
 						if(_decoderQueue == null){
 							_decoderQueue = new DecoderQueue();
 							_decoderQueue.Start();
@@ -684,10 +685,13 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		}
 	}
 	void stopTimer() {
-		if (_timer != null) {
-			_timer.cancel();
-			_timer = null;
-			_runFlag = false;
+		try {
+			if (_timer != null) {
+				_timer.cancel();
+				_timer = null;
+				_runFlag = false;
+			}
+		} catch (Exception e) {
 		}
 	}
 	
@@ -895,10 +899,14 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	
 	@Override
 	protected void onStop() {
-		isStop = true;
-		closeWait();
-		stopTimer();
-		_handler.removeMessages(XMSG.ON_PLAY);
+		try {
+			isStop = true;
+			closeWait();
+			stopTimer();
+			_handler.removeMessages(XMSG.ON_PLAY);
+			LogUtil.i(TAG, "onDestroy.....ok..");
+		} catch (Exception e) {
+		}
 		super.onStop();
 	}
 	@Override
@@ -907,17 +915,16 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		try {
 			instance = null;
 			m_imageData = null;
-			if (!m_imageBitmap.isRecycled()) {  
-				m_imageBitmap.recycle();  
-				}  
-			//if(m_imageBitmap != null) m_imageBitmap.recycle();
+			if (m_imageBitmap != null && !m_imageBitmap.isRecycled()) {  
+				m_imageBitmap.recycle();
+			}
 			m_imageBitmap = null;
 			m_prevewview = null;
 			m_surfaceHolder = null;
 			_decoderDebugger = null;
 			_handler = null;
 			LogUtil.i(TAG, "onDestroy.....ok..");
-			System.gc();
+			//System.gc();
 		} catch (Exception e) {
 		}
     }

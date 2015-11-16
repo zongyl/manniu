@@ -178,6 +178,7 @@ public class NewMainAddDev extends Activity {
 						APP.ShowToast(getString(R.string.dev_addFail));
 					}else if("success".equals(msg)){
 						APP.ShowToast(getString(R.string.dev_addok));
+						finish();
 					}else if("existOtherUser".equals(msg)){
 						if(response.has("usmsg")){
 							msg = getStringByJson(response, "usmsg");

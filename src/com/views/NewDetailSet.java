@@ -14,9 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import cn.jpush.android.api.JPushInterface;
 
 import com.adapter.HttpUtil;
@@ -29,10 +26,10 @@ import com.utils.MD5Util;
 import com.utils.SetSharePrefer;
 
 public class NewDetailSet extends Activity implements OnClickListener {
-	private ImageView switch1/*,switch2*/,switch3,switch4,switch5;
-	private LinearLayout _flow;
+	private ImageView /*switch1,switch2,*/switch3,switch4,switch5;
+	//private LinearLayout _flow;
 	private String _tag;
-	private TextView _flowtipSize;
+	//private TextView _flowtipSize;
 	private View _line;
 	FlowBroadcastReceiver _broadcast;
 	private final String SetInfo ="Info_Set";
@@ -45,32 +42,32 @@ public class NewDetailSet extends Activity implements OnClickListener {
 	}
 	
 	private  void iniViewDatas(){
-		switch1 = (ImageView) findViewById(R.id.flow_switch);
+	//	switch1 = (ImageView) findViewById(R.id.flow_switch);
 	//	switch2 = (ImageView) findViewById(R.id.devi_switch);
 		switch3 = (ImageView) findViewById(R.id.push_switch);
 		switch4 = (ImageView) findViewById(R.id.zddl_switch);
 		switch5 = (ImageView) findViewById(R.id.bcmm_switch);
 		
 		//switch4 = (ImageView) findViewById(R.id.check_switch);
-		_flow = (LinearLayout) findViewById(R.id.flow_limit);
-		_flowtipSize =(TextView) findViewById(R.id.flow_tipSize);
+		//_flow = (LinearLayout) findViewById(R.id.flow_limit);
+		//_flowtipSize =(TextView) findViewById(R.id.flow_tipSize);
 		_line = (View) findViewById(R.id.set_line);
-		_flowtipSize.setText(getIntent().getStringExtra("tipsize")==null? getString(R.string.non_set):getIntent().getStringExtra("tipsize"));
+		//_flowtipSize.setText(getIntent().getStringExtra("tipsize")==null? getString(R.string.non_set):getIntent().getStringExtra("tipsize"));
 		readSetInfos();
 	}
 	
 	public void readSetInfos(){
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(SetInfo, APP.GetMainActivity().MODE_PRIVATE);
 		if(pre!=null){
-			switch1.setTag(pre.getString("traffictip", ""));
-			_flowtipSize.setText(pre.getString("tipsize", ""));
+			//switch1.setTag(pre.getString("traffictip", ""));
+			//flowtipSize.setText(pre.getString("tipsize", ""));
 			//switch2.setTag(pre.getString("recmsgauto", ""));
 			switch3.setTag(pre.getString("push", ""));
 			switch4.setTag(pre.getString("zddl", ""));
 			switch5.setTag(pre.getString("bcmm", ""));
 		}
 		//switch4.setTag(APP.GetMainActivity().getSharedPreferences("Info_Login", APP.GetMainActivity().MODE_PRIVATE).getString("auto_check", "on"));
-		setSwitch(switch1);
+		//setSwitch(switch1);
 		//setSwitch(switch2);
 		setSwitch(switch3);
 		setSwitch(switch4);
@@ -88,7 +85,7 @@ public class NewDetailSet extends Activity implements OnClickListener {
 	}
 	
 	private void setListeners(){
-		switch1.setOnClickListener(this);// 通过监听设置tag属性值,然后根据tag值加载开关切换
+		//switch1.setOnClickListener(this);// 通过监听设置tag属性值,然后根据tag值加载开关切换
 		//switch2.setOnClickListener(this);
 		switch3.setOnClickListener(this);
 		switch4.setOnClickListener(this);
@@ -96,7 +93,7 @@ public class NewDetailSet extends Activity implements OnClickListener {
 		//switch4.setOnClickListener(this);
 		// 绑定按钮监听
 		findViewById(R.id.set_back).setOnClickListener(this);
-		findViewById(R.id.flow_limit).setOnClickListener(this);
+	//	findViewById(R.id.flow_limit).setOnClickListener(this);
 		//findViewById(R.id.flow_count).setOnClickListener(this);
 		//findViewById(R.id.rece_login).setOnClickListener(this);
 	}
@@ -114,7 +111,7 @@ public class NewDetailSet extends Activity implements OnClickListener {
 			APP.GetMainActivity().ShowXView(Main.XV_NEW_MORE);
 			finish();
 			break;
-		case R.id.flow_switch:
+		/*case R.id.flow_switch:
 			_tag=switch1.getTag().toString();
 			switch1.setTag("on".equals(_tag)?"off":"on");
 			if ("on".equals(switch1.getTag().toString())) {
@@ -132,7 +129,7 @@ public class NewDetailSet extends Activity implements OnClickListener {
 			}
 		case R.id.flow_limit:
 			forward("tipSize",(String) _flowtipSize.getText(), NewFlowTipSet.class);
-			break;
+			break;*/
 		/*case R.id.devi_switch:
 			_tag=switch2.getTag().toString();
 			switch2.setTag("on".equals(_tag)?"off":"on");

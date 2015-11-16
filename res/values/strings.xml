@@ -71,8 +71,10 @@
 	<string name="SUCCESS_CANCEL">取消成功!</string>
 	<string name="FAIL_CANCEL">取消失败!</string>
 	<string name="CANCEL_LIKE">"取消点赞!"</string>
-	<string name="GET_C_FAILURE">"获取失败"</string>
-	<string name="GET_C_SUCCESS">"获取成功"</string>
+	<string name="GET_P_FAILURE">"获取位置信息失败"</string>
+	<string name="GET_P_SUCCESS">"获取位置信息成功"</string>
+	<string name="GET_C_FAILURE">"获取评论数失败"</string>
+	<string name="GET_C_SUCCESS">"获取评论数成功"</string>
 	<string name="cel_share">取消分享</string>
 	<string name="nosdcard">未找到存储卡，无法存储照片！</string>
 	<string name="delete_ask">确定删除吗?</string>
@@ -250,8 +252,18 @@
 	</string-array>
  	<!-- 码流 -->
  	<string-array name="devSetBitStream">
+ 	    <item>192 kbps</item>
+ 	    <item>224 kbps</item>
+ 	    <item>256 kbps</item>
+ 	    <item>320 kbps</item>
  	    <item>448 kbps</item>
- 	    <item>892 kbps</item>
+ 	    <item>512 kbps</item>
+ 	    <item>640 kbps</item>
+ 	    <item>768 kbps</item>
+ 	    <item>896 kbps</item>
+ 	    <item>1024 kbps</item>
+ 	    <item>1280 kbps</item>
+ 	    <item>1536 kbps</item>
  	</string-array>
  	
  	<string-array name="menuList0">
@@ -1112,6 +1124,13 @@
  	<string name="commentTip">评论</string>
  	<string name="profileTip">简介</string>
  	<string name="commentBtn">发表你的看法</string>
+ 	<string name="default_address">蛮牛云总部</string>
+ 	<string name="address_pre">地址</string>
+ 	<string name="publisher_pre">发布者</string>
+ 	<string name="default_publisher">蛮牛科技</string>
+ 	<string name="profile_pre">介绍</string>
+ 	<string name="default_profile">好视频，一辈子</string>
+ 	<string name="default_dev_title">蛮牛云眼</string>
  	
  	
 </resources>
