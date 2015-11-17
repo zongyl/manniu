@@ -20,6 +20,10 @@ public class DeviceParcel extends Device implements Parcelable{
 		logo = device.logo;
 		state = device.state;
 		type = device.type;
+		isowner = device.isowner;
+		online = device.online;
+		channels = device.channels;
+		channelNo = device.channelNo;
 	}
 	
 	public DeviceParcel(Parcel in){
@@ -38,6 +42,10 @@ public class DeviceParcel extends Device implements Parcelable{
 		logo = in.readString();
 		state = in.readInt();
 		type = in.readInt();
+		channels = in.readInt();
+		channelNo = in.readInt();
+		online = in.readInt();
+		isowner = in.readInt();
 		//return dp;
 	}
 	
@@ -45,22 +53,6 @@ public class DeviceParcel extends Device implements Parcelable{
 
 		@Override
 		public DeviceParcel createFromParcel(Parcel in) {
-			/*DeviceParcel dp = new DeviceParcel();
-			dp.devname = in.readString();
-			dp.sid = in.readString();
-			dp.dpassword = in.readString();
-			dp.createtime = in.readString();
-			dp.domainid = in.readString();
-			dp.userid = in.readString();
-			dp.pn = in.readString();
-			dp.vn = in.readString();
-			dp.sn = in.readString();
-			dp.model = in.readString();
-			dp.ver = in.readString();
-			dp.logo = in.readString();
-			dp.state = in.readInt();
-			dp.type = in.readInt();
-			return dp;*/
 			return new DeviceParcel(in);
 		}
 
@@ -91,6 +83,14 @@ public class DeviceParcel extends Device implements Parcelable{
 		out.writeString(logo);
 		out.writeInt(state);
 		out.writeInt(type);
+		out.writeInt(isowner);
+		out.writeInt(online);
+		if(channelNo != null){
+			out.writeInt(channelNo);
+		}
+		if(channels != null){
+			out.writeInt(channels);
+		}
 	}
 
 }

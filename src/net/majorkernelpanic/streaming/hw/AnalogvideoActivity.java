@@ -218,7 +218,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		if(_talkPlayer != null) _talkPlayer.Stop();//停止音频线程
 		//LogUtil.d(TAG, "停止编码线程");
 		stopEncode();
-    	SDK.Ffmpegh264Uninit();  			    	
+    	SDK.Ffmpegh264EncoderUninit();			    	
     	//LogUtil.d(TAG, "stopEncode...ok.. SDK._sessionId=="+SDK._sessionId); 
     }
     

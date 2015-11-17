@@ -101,7 +101,7 @@
 	<string name="file_count">文件大小:</string>
 	<string name="mostnew">您当前已经是最新版本</string>
 	<string name="net_tip">您正在使用使用移动网络，是否继续?</string>
-	<string name="move_alert">移动报警侦测</string>
+	<string name="move_alert">移动侦测报警</string>
 	<string name="time">时间:</string>
 	<string name="from">来自:</string>
 	<string name="select_all">全选</string>
@@ -230,7 +230,7 @@
  	<!-- 分辨率 -->
  	<string-array name="devSetResolution">
  	    <item>CIF(352 X 288)</item>
- 	    <item>VGA(640 X 480)</item>
+ 	   <!--  <item>VGA(640 X 480)</item> -->
  	    <item>D1(704 X 576)</item>
  	    <item>720P(1280 X 720)</item>
  	</string-array>
@@ -252,18 +252,27 @@
 	</string-array>
  	<!-- 码流 -->
  	<string-array name="devSetBitStream">
- 	    <item>192 kbps</item>
+ 	    <item>48 kbps</item>
+ 	    <item>96 kbps</item>
+ 	    <item>160 kbps</item>
  	    <item>224 kbps</item>
+ 	</string-array>
+ 	<!-- 码流 -->
+ 	<string-array name="devSetBitStream1">
+ 	    <item>128 kbps</item>
  	    <item>256 kbps</item>
- 	    <item>320 kbps</item>
- 	    <item>448 kbps</item>
+ 	    <item>384 kbps</item>
  	    <item>512 kbps</item>
+ 	    <item>640 kbps</item>
+ 	</string-array>
+ 	<!-- 码流 -->
+ 	<string-array name="devSetBitStream2">
+ 	    <item>224 kbps</item>
+ 	    <item>384 kbps</item>
  	    <item>640 kbps</item>
  	    <item>768 kbps</item>
  	    <item>896 kbps</item>
- 	    <item>1024 kbps</item>
  	    <item>1280 kbps</item>
- 	    <item>1536 kbps</item>
  	</string-array>
  	
  	<string-array name="menuList0">
@@ -1131,6 +1140,7 @@
  	<string name="profile_pre">介绍</string>
  	<string name="default_profile">好视频，一辈子</string>
  	<string name="default_dev_title">蛮牛云眼</string>
+ 	<string name="please_clicklink">请点击</string>
  	
  	
 </resources>

@@ -6,8 +6,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.views.bovine.Fun_AnalogVideo;
 
 import P2P.SDK;
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 public class FileUtil {
@@ -109,6 +115,23 @@ public class FileUtil {
 			}
 		}
 		return FILE;
+	}
+	
+	@SuppressLint("SimpleDateFormat")
+	public static String getFileName(String devName){
+		Calendar calendar = Calendar.getInstance();
+		Date date = calendar.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		String strDate = sdf.format(date);
+		String month = (calendar.get(Calendar.MONTH)+1) < 10 ?"0"+(calendar.get(Calendar.MONTH)+1):""+(calendar.get(Calendar.MONTH)+1);
+		String path = Fun_AnalogVideo.ImagePath +File.separator+ calendar.get(Calendar.YEAR)+ month + File.separator;
+		File dir = new File(path);
+		if(!dir.exists()) dir.mkdirs();
+		String fileName = path + strDate + devName + ".bmp";
+		fileName = fileName.replace(" ", "");
+		fileName = fileName.replace("-", "");
+		fileName = fileName.replace(":", "");
+		return fileName;
 	}
 	
 }

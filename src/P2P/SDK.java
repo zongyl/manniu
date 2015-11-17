@@ -8,9 +8,9 @@ import net.majorkernelpanic.streaming.video.VideoStream;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.backprocess.BackLoginThread;
 import com.basic.APP;
@@ -145,22 +145,24 @@ public class SDK {
 					screenHandler.sendMessage(msg);
 				}
 			}else if(jsonData.containsKey("action")&&"101".equals(jsonData.getString("action"))){//配置
-				
 				printJson(jsonData);
-				
-				Message msg = new Message();
-				msg.what = 1;
-				Bundle data = new Bundle();
-				data.putString("deviceId", strArr[0]);
-				data.putString("setting", jsonData.toJSONString());
-				msg.setData(data);
-				devSetHandler.sendMessage(msg);
-				
-				//Intent intent = new Intent("com.views.NewMainAddDev");
-				//intent.putExtras(msg.getData());
-				//sendBroadcast(intent);
-				//CFHandler cfhandler = new NewDeviceSet.CFHandler();
-				
+				if("0".equals(jsonData.getString("result"))){
+					Message msg = new Message();
+					if(jsonData.containsKey("cam_conf")){//用此属性判断 是获取的时候返回的 还是设置的时候返回的
+						msg.what = 1;
+						Bundle data = new Bundle();
+						data.putString("deviceId", strArr[0]);
+						data.putString("setting", jsonData.toJSONString());
+						msg.setData(data);
+					}else{
+						msg.what = 2;
+					}
+					devSetHandler.sendMessage(msg);
+				}else if("2".equals(jsonData.getString("result"))){
+					Message msg = new Message();
+					msg.what = 3;
+					devSetHandler.sendMessage(msg);
+				}
 			}
 		}else if(cmd == 903){ //ETS会自动下线原有链接
 			
@@ -468,8 +470,8 @@ public class SDK {
 	 * jint :   宽
 	 * jint ：     高
 	 * */
-	public static native int Ffmpegh264Init(int rate, int bitrate, int nWidth, int nHeigh);
-	public static native int Ffmpegh264Uninit();
+	public static native int Ffmpegh264EncoderInit(int rate, int bitrate, int nWidth, int nHeigh);
+	public static native int Ffmpegh264EncoderUninit();
 	
 	/*
 	 * jstring  h264文件绝对路径

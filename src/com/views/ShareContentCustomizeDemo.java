@@ -92,7 +92,14 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 		paramsToShare.setTitle(_titleInfo);
 		  if  ("Wechat". equals (strPN) )  {
 			  //微信好友正文处理
-			  paramsToShare. setText (_textInfo) ;			  
+			  if(_textInfo!=null && _textInfo.length()>0)
+			  {
+				  paramsToShare. setText (_textInfo) ;
+			  }
+			  if(_imageUrl!=null && _imageUrl.length()>0)
+			  {
+				  paramsToShare.setImageUrl(_imageUrl);	
+			  }
 		  }
 		  else if("WechatMoments".equals(strPN))
 		  {

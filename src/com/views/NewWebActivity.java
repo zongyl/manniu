@@ -1,7 +1,5 @@
 package com.views;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,17 +14,13 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -34,10 +28,8 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,6 +37,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
@@ -57,10 +50,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.adapter.HttpUtil;
 import com.amap.api.maps2d.AMap;
@@ -124,29 +117,26 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	ImageView screenshot;
 	
 	Button comment;
+	Button refresh;
 	
+	private String liveName;
 	String liveId;
 	String liveUrl;
 	String liveImg;
-	Button refresh;
-		
-	
-	boolean b_like = false;
-	boolean b_collection = false;
 
 	//add by zra
 	private ImageView image = null;
 	
 	//add by zra
 	LinearLayout playLayout;
-	boolean bPopKey;
+	
 	//add by zra
 	WebView  commentView;
 	LinearLayout commentTools;
 	TextView commentBar;
 	TextView informationBar;
 	LinearLayout  informationPage;
-	int commentNum;
+	
 	//add by zra
 	TextView commentTitle;
 	TextView commentContent;
@@ -156,17 +146,22 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	boolean bComment = true;
 	int dmHeight;
 	int dmWidth;
-	//add by zra
-	public  MapView mMapView;
-	public   AMap mAMap;
-	private boolean   bSubView = false;
+	int commentNum;
+	boolean b_like = false;
+	boolean b_collection = false;
+	
+	//soft keyboard operation
 	private int count =0;
-	//add by zra
 	private boolean bGetBoardHeight = false;
 	private int iBoardHeight;
 	private boolean bFinish = true;
-	private boolean bRestore = false;
-	private boolean bInput = false;
+	private static long oldTime;
+	boolean bPopKey;
+	
+	//map operation
+	public  MapView mMapView;
+	public   AMap mAMap;
+	private boolean   bSubView = false;
 	private int bType;
 	private boolean bHave = true;
 	private boolean bConfig = true;
@@ -174,12 +169,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private float devLat;
 	private JSONArray posArray;
 	private Handler  handler;
-	private static long oldTime;
 	
-	String shortUrl;
-	String mId;
-	String liveName;
- 
+	//string resources
 	private String sCommentTip ;
 	private String sProfileTip;
 	private String sDefaultAddr;
@@ -190,14 +181,44 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private String sDefaultProfile ;
 	private String sDefaultDevTitle ;
 	
+	//http request count
 	private int getLatLngCount = 0;
 	private int getCommentNumCount = 0;
+	private int getDeviceInfoCount = 0;
+	private int savePraiseCount = 0;
+	private int saveCollectCount = 0;
+	private int cancelPraiseCount = 0;
+	private int cancelCollectCount = 0;
 	
-	@SuppressWarnings("deprecation")
+	private PopupWindow popupWindow;
+	View popupWindow_view;
+	
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		globalParamsInit();
+		mapViewInit(savedInstanceState);
+		commentTitle = (TextView)findViewById(R.id.comment_title);
+		commentContent = (TextView)findViewById(R.id.comment_content);
+		
+		if(bType == 0)
+			getDeviceInfo();
+		else
+			getCommentNum();
+		
+		topViewInit();
+		popupWindowInit();
+		commentViewAndSubViewInit();
+		praiseAndCollectViewInit();
+		playViewInit();
+		bindListeners();
+		rootViewInit();
+	}
+	
+	private void globalParamsInit()
+	{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		NewMain._isOpen = true;
@@ -206,11 +227,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		context = this.getApplicationContext();
 		imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
-		int height = dm.heightPixels ;
-		int width = dm.widthPixels;
 		dmHeight =dm.heightPixels;
 		dmWidth = dm.widthPixels;
-		
 		sCommentTip = getResources().getString(R.string.commentTip);
 		sProfileTip = getResources().getString(R.string.profileTip);
 		sDefaultAddr = getResources().getString(R.string.default_address);
@@ -220,18 +238,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		sProfilePre = getResources().getString(R.string.profile_pre);
 		sDefaultProfile = getResources().getString(R.string.default_profile);
 		sDefaultDevTitle = getResources().getString(R.string.default_dev_title);
-		
 		parseURL();
-		
 		setContentView(R.layout.new_web_activity);
-		
-		topViewInit();
-		mapViewInit(savedInstanceState);
-		commentViewAndSubViewInit();
-		praiseAndCollectViewInit();
-		playViewInit();
-		bindListeners();
-		rootViewInit();
 	}
 	
 	private void topViewInit()
@@ -239,7 +247,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		_titleFrm = (FrameLayout) findViewById(R.id.webTitle);
 		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) _titleFrm.getLayoutParams(); 
 		linearParams.height = dmHeight*3/40;
-		//webView.getSettings().setDomStorageEnabled(true);//2015.10.09 鏉庡痉鏄? 澧炲姞鏈湴缂撳瓨閰嶇疆锛岃В鍐冲箍鍦轰笂鐨勭綉椤碉紝涓?娈垫椂闂翠細娌℃湁鍝嶅簲鐨勯棶棰?
 		_title = (TextView)findViewById(R.id.web_title);
 		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
 		_more = (XImageBtn)findViewById(R.id.web_more);
@@ -260,12 +267,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 
 	        @Override
 	        public void onGlobalLayout() {
-	            // TODO Auto-generated method stub
-	        	/*if(bInput== true)
-	        	{
-	        		bInput = false;
-	        		return ;
-	        	}*/
 	        	
 	        	Rect r = new Rect();
         		playLayout.getWindowVisibleDisplayFrame(r);
@@ -336,10 +337,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				  if(url.startsWith("http://") && getRespStatus(url)==404) {	
 					  
 					  	view.stopLoading();
-					  	
-					  	//view.loadUrl("file:///android_asset/404.html");
-					  	//webView.setVisibility(View.GONE);
-						//refresh.setVisibility(View.VISIBLE);
 						view.clearView();
 						String data = "NET DISCONNECT, PAGE NO FOUND";
 						view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
@@ -347,7 +344,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				     	view.loadUrl(url);  
 				   }
 				  
-				   //view.loadUrl(url);
 				   return true;
 			}   
 			
@@ -465,32 +461,47 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 	}
 	
+	/**
+	 * 创建PopupWindow
+	 */
+	protected void popupWindowInit() {
+		popupWindow_view = getLayoutInflater().inflate(R.layout.pop_up_window, null, false);
+		popupWindow_view.setVisibility(View.GONE);
+		cancelC = (ImageView) popupWindow_view.findViewById(R.id.cancel_com);
+		editC = (EditTextPreIme) popupWindow_view.findViewById(R.id.edit_com);
+		confrimC = (ImageView) popupWindow_view.findViewById(R.id.confirm_com);
+		comEdit =(LinearLayout)popupWindow_view.findViewById(R.id.share_comment);	
+		
+		popupWindow = new PopupWindow(popupWindow_view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, true); 
+		popupWindow.setFocusable(true);
+		popupWindow.setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+		popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		popupWindow_view.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				if (popupWindow != null && popupWindow.isShowing()) {
+					//popupWindow.dismiss();
+				}
+				return false;
+			}
+		});
+	
+	}
+
 	/*
 	 * 功能:软键盘弹出底层view重新布局
 	 */
-	private void resetCommentAndInfoView()
-	{    
+	private void resetCommentAndInfoView(View v)
+	{  
+		popupWindow_view.setVisibility(View.VISIBLE);
+		editC.setText("");
+		editC.requestFocus();
+		editC.setCursorVisible(true); 
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);	
-		squareTools.setVisibility(View.GONE);
-		comEdit.setVisibility(View.VISIBLE);
-		LinearLayout.LayoutParams  linearParams;
+		popupWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);
 		
-		if(bComment == true)
-		{
-			commentView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20- dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
-			commentView.setLayoutParams(linearParams);
-		}
-		else
-		{
-			commentContent.setVisibility(View.GONE);
-			if(bType == 0)
-				mMapView.setVisibility(View.GONE);
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); 	
-			linearParams.height = dmHeight/55;//dmHeight/2 -dmHeight/20-dmHeight/40 - dmHeight/320 -dmHeight/640-iBoardHeight;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
-			informationPage.setLayoutParams(linearParams);
-		}
 		if(bType == 0)
 			informationBar.setClickable(false);
 		commentBar.setClickable(false);
@@ -503,32 +514,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	 * 功能:软键盘弹出底层view布局恢复*/
 	private void restoreCommentAndInfoView()
 	{
-		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-		comEdit.setVisibility(View.GONE);
-		squareTools.setVisibility(View.VISIBLE);
-		LinearLayout.LayoutParams  linearParams;
-		
-		if(bComment == true)
-		{
-			commentView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
-			commentView.setLayoutParams(linearParams);
-		}
-		else
-		{
-			commentContent.setVisibility(View.VISIBLE);
-			if(bType == 0)
-				mMapView.setVisibility(View.VISIBLE);
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-			linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
-			informationPage.setLayoutParams(linearParams);
-		}
-		
+		popupWindow_view.setVisibility(View.GONE);
+		imm.hideSoftInputFromWindow(comEdit.getWindowToken(), 0);
+		popupWindow.dismiss();
 		if(bType == 0)
 			informationBar.setClickable(true);
 		commentBar.setClickable(true);
-		
 		bPopKey = false;
 		count = 0;
 		bFinish = true;
@@ -541,7 +532,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		WebSettings ws = webView.getSettings();
 		ws.setBuiltInZoomControls(true);
-		//ws.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
 		ws.setUseWideViewPort(true);
 		ws.setLoadWithOverviewMode(true);
 		ws.setSaveFormData(true);
@@ -558,7 +548,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		webView.addJavascriptInterface(new Object(){
 			@JavascriptInterface
-			public void close(){				
+			public void close(){	
 				finish();
 			}
 			@JavascriptInterface
@@ -572,10 +562,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		}, "callAndroid");
 		
 		webView.setDrawingCacheEnabled(true);
-
 	}
-	
-
 	
 	/*
 	 * 功能:评论view和相关子view初始化：
@@ -585,27 +572,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	 * 4.软键盘done事件监听
 	 * */
 	private void commentViewAndSubViewInit()
-	{
-		//getCommentNum();
-		commentTitle = (TextView)findViewById(R.id.comment_title);
-		commentContent = (TextView)findViewById(R.id.comment_content);
-		getDeviceInfo();
-		comEdit =(LinearLayout)findViewById(R.id.share_comment);
-		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) comEdit.getLayoutParams(); 
-		linearParams.height = dmHeight*3/40+dmHeight/320+dmHeight/50;
-		comEdit.setLayoutParams(linearParams); 
-		
-		comment = (Button)findViewById(R.id.square_com);
+	{		
 		squareTools = (LinearLayout)findViewById(R.id.square_tools);
-		
-		linearParams = (LinearLayout.LayoutParams) squareTools.getLayoutParams(); 
+		LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) squareTools.getLayoutParams(); 
 		linearParams.height = dmHeight*3/40;
 		squareTools.setLayoutParams(linearParams); 
-		cancelC = (ImageView) findViewById(R.id.cancel_com);
-		editC = (EditTextPreIme) findViewById(R.id.edit_com);
-		confrimC = (ImageView) findViewById(R.id.confirm_com);
-		
-		//height-500
+		comment = (Button)findViewById(R.id.square_com);
+
 		commentTools = (LinearLayout)findViewById(R.id.comment_tools);
 		linearParams = (LinearLayout.LayoutParams) commentTools.getLayoutParams();
 		linearParams.height = dmHeight/20;
@@ -656,7 +629,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				   view.loadUrl(url);
-				   Log.v(TAG, "-----鐩存挱鍦板潃-----------"+url);
 				   return true;
 			}
 			
@@ -693,30 +665,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;
 		informationPage.setLayoutParams(linearParams);
 		
-		
-		editC.addTextChangedListener(new TextWatcher(){
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-					bInput = true;
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s){
-				
-			}
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int before, int count){
-				
-			}
-		});	
-		
-		
 		editC.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					restoreCommentAndInfoView();
+					sendComMessage();
 				}
 
 				return false;
@@ -902,8 +857,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			commentTitle.setVisibility(View.GONE);
 			commentContent.setVisibility(View.GONE);
 			LinearLayout.LayoutParams  linearParams;
-			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-			linearParams.height = dmHeight- dmHeight*3/40;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
+			linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); 	
+			linearParams.height = dmHeight- dmHeight*3/40;
 			informationPage.setLayoutParams(linearParams);
 	       
 			mAMap.moveCamera(CameraUpdateFactory.zoomTo(15));
@@ -929,8 +884,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		commentContent.setVisibility(View.VISIBLE);
 		_titleFrm.setVisibility(View.VISIBLE);
 		LinearLayout.LayoutParams  linearParams;
-		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
+		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); 	
+		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;
 		informationPage.setLayoutParams(linearParams);
 
 		mAMap.moveCamera(CameraUpdateFactory.zoomTo(13));
@@ -1007,7 +962,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		 return status;   
 	}   
 
-
 	private FrameLayout video_fullView;
 	private CustomViewCallback xCustomViewCallback;
 	private View xCustomView;
@@ -1020,7 +974,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	public void hideCustomView() {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
-	
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -1028,6 +981,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		if(bType == 0)
 		mMapView.onSaveInstanceState(outState);
 	}	
+	
+	@Override
+	protected void onStop() {
+		Squ_LiveActivity.bLiveStart = false;//广场视频点击标志位
+		super.onStop();
+	}
 	
 	 @Override  
 	 protected void onDestroy() {  	 
@@ -1097,7 +1056,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				hideCustomView();
 			
 			}else{
-				
+				webView.loadUrl("about:blank");
 				this.finish();	
 			}
 			
@@ -1130,6 +1089,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			}
 			else
 			{
+				webView.loadUrl("about:blank");
 				this.finish();
 			}
 			
@@ -1138,10 +1098,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			createMenu(v);
 			break;
 		case R.id.square_com:
-			editC.setText("");
-			editC.requestFocus();
-			editC.setCursorVisible(true);
-			resetCommentAndInfoView();
+			resetCommentAndInfoView(v);
 			break;
 		case R.id.cancel_com:
 			restoreCommentAndInfoView();
@@ -1173,23 +1130,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			break;
 		case R.id.square_share:
 			{
-				/*//鏀圭敤鏂扮殑浠ｇ爜澶勭悊 2015.10.14 鏉庡痉鏄?
-				ShareSDK.initSDK(this);				
-				OnekeyShare oks = new OnekeyShare();
-				oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-				oks.setTitle("铔墰浜戣棰?");
-				oks.setText("蹇箰鐢熸椿锛屽垎浜簿褰?  "+liveUrl);
-				//oks.setViewToShare(webView);
-				//oks.setUrl(liveUrl);
-				oks.show(this);
-				squareShare.setImageDrawable(getResources().getDrawable(R.drawable.square_share));
-				*/
-				
 				dwz();
-				/*ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,"瀹讹紝涓庢垜鍚岃",
-						"\t\t瀹讹紝涓庢垜鍚岃\r\n[铔墰浜戝垎浜棰慮\r\n"+"<a href ='"+liveUrl+"'>璇风偣鍑?:"+_title.getText()+"</a>",
-						"\t\t瀹讹紝涓庢垜鍚岃\r\n[铔墰浜戝垎浜棰慮\r\n"+_title.getText()+"\r\n"+liveUrl,
-						liveImg,false,null);*/
 			}
 			break;
 		case R.id.previously:
@@ -1204,8 +1145,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			{
 				commentView.setVisibility(View.VISIBLE);
 				LinearLayout.LayoutParams  linearParams;
-				linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
+				linearParams = (LinearLayout.LayoutParams) commentView.getLayoutParams(); 	
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;
 				commentView.setLayoutParams(linearParams);
 			}
 			
@@ -1226,10 +1167,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			//if(bPopKey == true)
 			{
 				commentContent.setVisibility(View.VISIBLE);
+				
 				if(bType == 0)
+				{
 					mMapView.setVisibility(View.VISIBLE);
-				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); // 鍙栨帶浠秝ebView褰撳墠鐨勫竷灞?鍙傛暟		
-				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;// height - 500;// 褰撳墠鐣岄潰楂樺害-320
+				}
+				
+				LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams();
+				linearParams.height = dmHeight/2 -dmHeight/20+dmHeight/40+dmHeight/80;
 				informationPage.setLayoutParams(linearParams);
 			}
 			
@@ -1261,11 +1206,15 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						e.printStackTrace();
 					}
 
-					//String imgPath = liveImg.replace("man-niu.oss-cn-hangzhou.aliyuncs.com/", "oss.mny9.com/");//璁惧灏侀潰鐨勫湴鍧?澶勭悊
-					String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";//榛樿鍒嗕韩鍥惧湴鍧?
+					String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";
+					if(liveImg != null && liveImg.isEmpty()==false && liveImg.length()>0)
+					{
+						imgPath = liveImg.replace("man-niu.oss-cn-hangzhou.aliyuncs.com/", "oss.mny9.com/");
+					}
+					//String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";
 					Log.d(TAG, "image path:" + imgPath);
 					//String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n<a href ='"+liveUrl+"'>"+getString(R.string.Click_toplay)+":"+_title.getText()+"</a>";
-					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n璇风偣鍑?:"+short_url;//2015.11.01 鏉庡痉鏄庝慨鏀?
+					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;//2015.11.01 鏉庡痉鏄庝慨鏀?
 					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
 					
 					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
@@ -1307,7 +1256,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						
 						 Message message=new Message();
 						 message.what= 1;
-						 handler.sendMessage(message);//鍙戦?乵essage淇℃伅聽
+						 handler.sendMessage(message);
+						 
+						 getLatLngCount = 0;
 						 
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1321,7 +1272,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				{
 					getSurrroundDeviceLatLng();
 					getLatLngCount ++;
+					
 					return ;
+				}else{
+					getLatLngCount = 0;
 				}
 					
 				APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
@@ -1334,6 +1288,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		RequestParams params = new RequestParams();
 		params.put("liveid", liveId);
+		
+		if(bType == 0)
+			params.put("type", 0);
+		else
+			params.put("type", 1);
 		
 		HttpUtil.get(Constants.hostUrl+ "/LiveAction_getLiveCWNum", params, new JsonHttpResponseHandler(){
 			
@@ -1363,6 +1322,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 							 handler.sendMessage(message);
 						}
 						
+						getCommentNumCount = 0;
+						
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -1374,10 +1335,13 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 				if(getCommentNumCount <3)
 				{
-					getSurrroundDeviceLatLng();
+					getCommentNum();
 					getCommentNumCount ++;
 					
 					return;
+				}else{
+					
+					getCommentNumCount = 0;
 				}
 				
 				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
@@ -1426,6 +1390,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						 Message message=new Message();
 						 message.what= 2;
 						 handler.sendMessage(message);
+						 
+						 getDeviceInfoCount = 0;
 						
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1435,6 +1401,17 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+				
+				if(getDeviceInfoCount <3)
+				{
+					getDeviceInfoCount ++;
+					getDeviceInfo();
+					
+				}else{
+					
+					getDeviceInfoCount = 0;
+				}
+				
 				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
 			}
 		});
@@ -1486,7 +1463,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								APP.ShowToast(collect_success);
 								SetSharePrefer.write_bool("collect_info", liveId, true);
 								collection.setImageDrawable(getResources().getDrawable(R.drawable.collection_sel));
-								b_collection = true;	
+								b_collection = true;
+								saveCollectCount = 0;
 								//TODO
 							}/*else{
 								APP.ShowToast(save_failure);
@@ -1499,6 +1477,19 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					
+					if(saveCollectCount < 3)
+					{
+						saveCollectCount ++;
+						save(R.id.like);
+						
+						return;
+					}
+					else
+					{
+						saveCollectCount = 0;
+					}
+					
 					APP.ShowToast(save_failure);
 				}
 			});
@@ -1516,7 +1507,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								APP.ShowToast(like_success);
 								SetSharePrefer.write_bool("praise_info", liveId, true);
 								like.setImageDrawable(getResources().getDrawable(R.drawable.like_sel));
-								b_like = true;	
+								b_like = true;
+								
+								savePraiseCount = 0;
 								//TODO
 							}else{
 								APP.ShowToast(save_failure);
@@ -1529,6 +1522,19 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					
+					if(savePraiseCount < 3)
+					{
+						savePraiseCount ++;
+						save(R.id.like);
+						
+						return;
+					}
+					else
+					{
+						savePraiseCount = 0;
+					}
+					
 					APP.ShowToast(save_failure);
 				}
 				
@@ -1568,6 +1574,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								SetSharePrefer.write_bool("collect_info", liveId, false);
 								collection.setImageDrawable(getResources().getDrawable(R.drawable.collection));
 								b_collection = false;
+								cancelCollectCount = 0;
 								//TODO
 							}else{
 								APP.ShowToast(cancel_failure);
@@ -1580,6 +1587,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					
+					if(cancelCollectCount<3)
+					{
+						cancelCollectCount ++;
+						cancel(R.id.collection);
+						
+						return;
+					}else{
+						
+						cancelCollectCount = 0;
+					}
+					
 					APP.ShowToast(cancel_failure);
 				}
 			});
@@ -1597,6 +1616,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								SetSharePrefer.write_bool("praise_info", liveId, false);
 								like.setImageDrawable(getResources().getDrawable(R.drawable.like));
 								b_like = false;
+								cancelPraiseCount = 0;
 								//TODO
 							}else{
 								APP.ShowToast(cancel_failure);
@@ -1609,6 +1629,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					
+					if(cancelPraiseCount < 3)
+					{
+						cancelPraiseCount ++;
+						cancel(R.id.like);
+						
+						return;
+					}else{
+						
+						cancelPraiseCount = 0;
+					}
+					
 					APP.ShowToast(cancel_failure);
 				}
 			});
@@ -1620,13 +1652,15 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 	
 	public  String getJsonStr(String str){
+		
 		try{
-			JSONObject obj = new JSONObject();
 			
+			JSONObject obj = new JSONObject();
 			obj.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 			obj.put("liveId", liveId);
 			obj.put("position", sDefaultAddr);
 			obj.put("content", str);
+			
 			if(bType == 0)
 			{
 				obj.put("topictype", 0);
@@ -1635,7 +1669,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			{
 				obj.put("topictype", 1);
 			}
+			
 			return obj.toString();
+			
 		} catch( JSONException e){
 			e.printStackTrace();
 		}
@@ -1644,11 +1680,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 	
 	public void sendComMessage(){
-		String str = getJsonStr(editC.getText().toString());
+		
+		String editStr = editC.getText().toString();
+		
+		if(editStr.length() == 0)
+		{
+			return;
+		}
+		
+		String str = getJsonStr(editStr);		
 		commentView.loadUrl("javascript:InsertComment('" + str + "')" );
 		commentNum = commentNum +1;
 		commentBar.setText(sCommentTip+"("+commentNum+")");
-		
 		editC.setText("");
 	}
 	

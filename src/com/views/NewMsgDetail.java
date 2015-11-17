@@ -1,5 +1,6 @@
 package com.views;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -46,7 +48,9 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.utils.BitmapUtils;
 import com.utils.Constants;
+import com.utils.FileUtil;
 import com.utils.LogUtil;
 
 
@@ -58,6 +62,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	private TextView _title;
 	private TextView _time;
 	private TextView _devName;
+	private String _strDevName="";
 	private int _curIndex;
 	private ImageView _imageview;
 	private View _imageLayout;
@@ -273,6 +278,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 		return _msgs;
 	}
 	
+	
 	@Override
 	public void onClick(View view) {
 		switch(view.getId()){
@@ -286,23 +292,41 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			APP.GetMainActivity().ShowXView(Main.XV_NEW_MAIN);
 			finish();
 			break;
-	/*	case R.id.ontime_video:
-			APP.ShowToast("click on pop:play ontime video");
+		case R.id.ontime_video:
+			//APP.ShowToast("click on pop:play ontime video");
+			//TODO:实现报警录像回放
 			_pWindow.dismiss();
 			break;
 		case R.id.msg_save:
-			APP.ShowToast("click on pop:save msgImage to local");
+			//APP.ShowToast("click on pop:save msgImage to local");
+			//TODO:实现报警图片下载			
+			String filePath = FileUtil.getFileName(_strDevName);
+			Bitmap bitmap = ImageLoader.getInstance().loadImageSync(_url);
+			BitmapUtils.saveBitmap(bitmap, filePath);
 			_pWindow.dismiss();
-			break;*/
+			break;
 		case R.id.msg_shareImg:
 			_pWindow.dismiss();
 			//forward(NewMsgImgShare.class);
-			ShareSDK.initSDK(this);
-			OnekeyShare oks = new OnekeyShare();
-			oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-			oks.setText(getString(R.string.app_name));
-			oks.setImageUrl(_url);
-			oks.show(this);
+			String strAlarmInfo = "";
+//			strAlarmInfo += getString(R.string.famliy_around_withme)+"\r\n";
+//			strAlarmInfo += "[";
+			strAlarmInfo += _devName.getText()+" ";			
+			strAlarmInfo += _title.getText()+" ";
+			strAlarmInfo += _time.getText();	
+//			strAlarmInfo += "]";
+			//2015.11.17 李德明修改 			
+			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
+					"",
+					strAlarmInfo,
+					_url
+					,false,null);
+//			ShareSDK.initSDK(this);
+//			OnekeyShare oks = new OnekeyShare();
+//			oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
+//			oks.setText(getString(R.string.app_name));
+//			oks.setImageUrl(_url);
+//			oks.show(this);
 			break;
 		case R.id.msg_image:
 			show(header);
@@ -338,8 +362,8 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 					return true;
 				}
 		 });
-		 //vPopupWindow.findViewById(R.id.ontime_video).setOnClickListener(this);
-		// vPopupWindow.findViewById(R.id.msg_save).setOnClickListener(this);
+		 vPopupWindow.findViewById(R.id.ontime_video).setOnClickListener(this);
+		 vPopupWindow.findViewById(R.id.msg_save).setOnClickListener(this);
 		 vPopupWindow.findViewById(R.id.msg_shareImg).setOnClickListener(this);
 	}
 	/**更新Message显示*/
@@ -384,6 +408,8 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			 _title.setText(getString(R.string.move_alert));
 			_time.setText(getString(R.string.time).concat(_msgs.get(location).logtime));
 			_devName.setText(getString(R.string.from).concat(_msgs.get(location).devicename));
+			_strDevName = _msgs.get(location).devicename;
+			
 		}
 		
 	}

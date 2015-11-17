@@ -82,14 +82,16 @@ public class AlbumHelper {
 				File[] imgFiles = new File(file.getPath()).listFiles();
 				List<ImageItem> imglist = new ArrayList<ImageItem>();
 				for(int i = imgFiles.length - 1; i > -1; --i){
-					bucket.count++;
-					ImageItem imageItem = new ImageItem();
-					imageItem.imageId = "001";
-					imageItem.imagePath = imgFiles[i].getPath();
-					imageItem.thumbnailPath = imgFiles[0].getPath();
-					imglist.add(imageItem);
-					bucket.imageList = imglist;
-					bucketList.put(file.getName(), bucket);
+					if(imgFiles[i].length() > 0){
+						bucket.count++;
+						ImageItem imageItem = new ImageItem();
+						imageItem.imageId = "001";
+						imageItem.imagePath = imgFiles[i].getPath();
+						imageItem.thumbnailPath = imgFiles[0].getPath();
+						imglist.add(imageItem);
+						bucket.imageList = imglist;
+						bucketList.put(file.getName(), bucket);
+					}
 				}
 			}else{
 				if(bucketList != null){

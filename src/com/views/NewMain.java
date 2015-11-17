@@ -150,7 +150,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				XListViewRewrite.dismissPopWindow();//切换时关闭本地的删除按钮
 				APP.GetMainActivity().tab(arg0);
 				switch (arg0) {
-				case 0:
+				case 0://设备
 					loadDevList();
 					break;
 				case 1://报警消息 

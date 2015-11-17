@@ -116,25 +116,26 @@ public class BitmapCache{
 	}
 
 	public Bitmap revitionImageSize(String path) throws IOException {
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-				new File(path)));
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(in, null, options);
-		in.close();
-		int i = 0;
 		Bitmap bitmap = null;
-		while (true) {
-			if ((options.outWidth >> i <= 256)
-					&& (options.outHeight >> i <= 256)) {
-				in = new BufferedInputStream(
-						new FileInputStream(new File(path)));
-				options.inSampleSize = (int) Math.pow(2.0D, i);
-				options.inJustDecodeBounds = false;
-				bitmap = BitmapFactory.decodeStream(in, null, options);
-				break;
+		try {
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+					new File(path)));
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(in, null, options);
+			in.close();
+			int i = 0;
+			while (true) {
+				if ((options.outWidth >> i <= 256)&& (options.outHeight >> i <= 256)) {
+					in = new BufferedInputStream(new FileInputStream(new File(path)));
+					options.inSampleSize = (int) Math.pow(2.0D, i);
+					options.inJustDecodeBounds = false;
+					bitmap = BitmapFactory.decodeStream(in, null, options);
+					break;
+				}
+				i += 1;
 			}
-			i += 1;
+		} catch (Exception e) {
 		}
 		return bitmap;
 	}

@@ -79,7 +79,7 @@ public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSh
 					//String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n<a href ='"+Constants.hostUrl+"/downLoadAndroidApp.jsp' >";
 					//strText+=getString(R.string.Click_download)+":"+getString(R.string.APP_download_title)+"</a>";
 					String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title);
-					strText+="\r\n请点击:"+short_url;
+					strText+="\r\n"+getString(R.string.please_clicklink)+":"+short_url;
 				String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
 
 				ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),

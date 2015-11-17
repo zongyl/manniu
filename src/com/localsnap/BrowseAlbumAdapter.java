@@ -30,21 +30,24 @@ public class BrowseAlbumAdapter extends BaseAdapter {
 	}
 	
 	public int UpdateList(String dir) {
-		_fileList.clear();
-		String path;
-		File baseFile = new File(dir);
-		if (baseFile != null && baseFile.exists()) {
-			File[] file = baseFile.listFiles();
-			if(file != null){
-				for(int i = file.length - 1; i > -1; --i){
-					path = file[i].getPath();
-					if (file[i].isFile()) {
-						_fileList.add(path);
+		try {
+			_fileList.clear();
+			String path;
+			File baseFile = new File(dir);
+			if (baseFile != null && baseFile.exists()) {
+				File[] file = baseFile.listFiles();
+				if(file != null){
+					for(int i = file.length - 1; i > -1; --i){
+						path = file[i].getPath();
+						if (file[i].isFile() && file[i].length() > 0) {
+							_fileList.add(path);
+						}
 					}
 				}
 			}
+			this.notifyDataSetChanged();
+		} catch (Exception e) {
 		}
-		this.notifyDataSetChanged();
 		return _fileList.size();
 	}
 

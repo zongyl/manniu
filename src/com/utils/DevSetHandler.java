@@ -45,7 +45,12 @@ public class DevSetHandler extends Handler{
 			Intent intent = new Intent("com.views.NewDeviceSet");
 			APP.GetMainActivity().sendBroadcast(intent);
 			break;
-
+		case 2://
+			APP.ShowToast("设置成功!");
+			break;
+		case 3://设备不在线
+			APP.ShowToast("设备不在线!");
+			break;
 		default:
 			break;
 		}

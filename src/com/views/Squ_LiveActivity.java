@@ -29,7 +29,7 @@ public class Squ_LiveActivity extends Fragment{
 	WebView webView;
 	Button refresh;
 	Context context;
-	boolean bLiveStart = false;
+	public static boolean bLiveStart = false;//打开视频标识位
 	/**SDK版本号*/
 	private int sdk_int;
 	@Override
@@ -51,7 +51,7 @@ public class Squ_LiveActivity extends Fragment{
 			}
 		});
 		
-		//webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);//2015.10.13 李德明去除该代码，怀疑与webView没有响应有关
+		
 		try {
 			WebSettings settings = webView.getSettings();
 			settings.setJavaScriptEnabled(true);
@@ -64,12 +64,7 @@ public class Squ_LiveActivity extends Fragment{
 		} catch (Exception e) {
 		}
 		
-		/*
-		//String webUrl = "http://10.12.6.107:8080/NineCloud/sharesquare.jsp";
-		String webUrl = Constants.hostUrl+"/sharesquare.jsp";
-		//String webUrl = Constants.hostUrl+"/LiveAction_toPlays?lc.deviceId=Q04hAQEAbDAwMjkzZjBkAAAAAAAA";
-		webView.loadUrl(webUrl);
-		 */
+		
 		LoadURL();//2015.10.19 李德明，改为LoadURL()加载URL处理
 		refresh.setVisibility(View.GONE);
 		webView.setWebViewClient(new WebViewClient(){
@@ -82,33 +77,18 @@ public class Squ_LiveActivity extends Fragment{
 						APP.GetMainActivity().startActivity(intent);
 					}else{
 						
-						//intent.setAction("android.intent.action.VIEW");
-						//intent.setData(Uri.parse(url));						
-						//http://120.26.56.240:7001/live/Q04hAQEAbDAwMjkzZjU2AAAAAAAA.m3u8?live_id=Q04BAQYAAGM0NTQyZTJhMDM3YzEx'
-						//intent.setData(Uri.parse("http://120.26.56.240:7001/live/Q04hAQEAbDAwMjkzZjU2AAAAAAAA.m3u8?live_id=Q04BAQYAAGM0NTQyZTJhMDM3YzEx"));
-						//startActivity(intent);
-						if(false == bLiveStart)
-						{	bLiveStart = true;
+						if(!bLiveStart){
+							bLiveStart = true;
 							Intent intent = new Intent(Intent.ACTION_VIEW);
 					        intent.setClassName(context, "com.views.NewWebActivity"); 
 					        intent.putExtra("url", url);
 					        intent.putExtra("playType", "0");
 							APP.GetMainActivity().startActivity(intent);
-							
 							return true;
 						}
-						
-						bLiveStart = false;
-						//webView.loadUrl("http://www.mny9.com/LiveAction_toPlays?lc.deviceId=Q04hAQEAbDAwMjkzZjBkAAAAAAAA");
+	
 					}
 					
-					/*if(url.contains("LiveAction_toPlays")){
-						String[] tempArr = URLDecoder.decode(url).split("=");
-						deviceId = tempArr[1].split("&")[0];
-						Intent intent = new Intent(getActivity(),VlcVideoActivity.class);
-						intent.putExtra("LiveInfo", new String[]{deviceId,tempArr[2]});
-						APP.GetMainActivity().startActivity(intent);
-					}*/
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -118,13 +98,12 @@ public class Squ_LiveActivity extends Fragment{
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
-				//view.loadUrl("javascript:try{autoplay();}catch(e){}");
+
 			}
 			
 			@Override
 			public void onReceivedError(WebView view, int errorCode,
 					String description, String failingUrl) {
-				// TODO Auto-generated method stub
 				super.onReceivedError(view, errorCode, description, failingUrl);
 				webView.setVisibility(View.GONE);
 				refresh.setVisibility(View.VISIBLE);

@@ -31,9 +31,11 @@ public class AlbumBucketAdapter extends BaseAdapter {
 		@Override
 		public void imageLoad(ImageView imageView, Bitmap bitmap,
 				Object... params) {
-			if (imageView != null && bitmap != null) {
+			try
+			{
+			if (imageView != null && bitmap != null && params!=null && params.length>0 && bitmap.getRowBytes()*bitmap.getHeight()>0/*此处需要这么写才能更好兼容Android版本*/) {
 				String url = (String) params[0];
-				if (url != null && url.equals((String) imageView.getTag())) {
+				if (url != null && url.equals((String) imageView.getTag()) ) {
 					((ImageView) imageView).setImageBitmap(bitmap);
 					listbit.add(bitmap);
 				} else {
@@ -41,6 +43,9 @@ public class AlbumBucketAdapter extends BaseAdapter {
 				}
 			} else {
 				Log.e(TAG, "callback, bmp null");
+			}
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
 	};

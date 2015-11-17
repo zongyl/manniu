@@ -817,7 +817,7 @@ public abstract class VideoStream extends MediaStream {
 			//mCamera.autoFocus(null);//只有加上了这一句，才会自动对焦。
 			// Estimates the framerate of the camera
 			measureFramerate();
-			SDK.Ffmpegh264Init(mRequestedQuality.framerate, mRequestedQuality.bitrate,mRequestedQuality.resX, mRequestedQuality.resY);
+			SDK.Ffmpegh264EncoderInit(mRequestedQuality.framerate, mRequestedQuality.bitrate,mRequestedQuality.resX, mRequestedQuality.resY);
 		} catch (Exception e) {
 			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}

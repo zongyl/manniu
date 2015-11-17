@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xgps="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    android:orientation="vertical"
+    android:gravity="bottom">
+	<LinearLayout 
+        android:id="@+id/share_comment"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#eeeeee"
+        android:orientation="vertical">
+    	
+  	    <LinearLayout 
+  	        android:orientation="horizontal"
+        	android:layout_width="fill_parent"
+        	android:layout_height="0dp"
+        	android:layout_weight="2">
+	  	    <TextView
+	    	    android:gravity="center"
+	    	    android:text="@string/sendComment"
+	    	    android:visibility="visible"
+	            android:layout_gravity="center_vertical"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"/>    
+  	    </LinearLayout>
+  	    
+  	    <LinearLayout
+  	        android:orientation="horizontal"
+        	android:layout_width="match_parent"
+        	android:layout_height="0dp"
+        	android:layout_weight="4">
+	  	    
+	        <ImageView android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:src="@drawable/common_title_cancel"
+	            android:id="@+id/cancel_com"/>
+	        
+	        <com.views.EditTextPreIme
+	            android:inputType="text"
+	            android:imeOptions="actionDone" 
+	            android:singleLine="true"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:textSize="18sp"
+	            android:textColor="@color/black"
+	            android:layout_gravity="center_vertical"
+	            android:background="@drawable/radius_corner"
+	            android:id="@+id/edit_com"/>
+	        
+	        <ImageView android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:src="@drawable/common_title_confirm"
+	            android:id="@+id/confirm_com"/>
+        </LinearLayout>
+  	    <TextView
+			android:gravity="center"
+			android:text=" "
+			android:visibility="visible"
+			android:layout_gravity="center_vertical"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"/>    
+    </LinearLayout>
+</RelativeLayout>

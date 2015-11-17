@@ -11,6 +11,10 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,7 +28,10 @@ import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.adapter.HttpUtil;
 import com.basic.APP;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -139,6 +146,7 @@ public class BitmapUtils extends XViewBasic {
 		
 		return a.replaceAll("\\\\","/");
 	}
+	
 	public static Bitmap getBitmapFromUri(Context mContext,Uri uri)
     {
 	     try
@@ -217,6 +225,10 @@ public class BitmapUtils extends XViewBasic {
 	}
    	/** 保存方法 */
    	public static void saveBitmap(Bitmap bitmap, String filename) {
+   		if(bitmap==null && bitmap.getRowBytes()*bitmap.getHeight()>0/*此处需要这么写才能更好兼容Android版本*/)
+   		{
+   			return;
+   		}
    		File f = new File(filename);
    		if (f.exists()) {
    			f.delete();

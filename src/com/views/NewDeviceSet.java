@@ -85,7 +85,7 @@ public class NewDeviceSet extends Activity {
 		return instance;
 	}
 	
-	String devicesid;
+	//String devicesid;
 	
     public static String[] STR_PICTURE_TYPE = null;
 	
@@ -123,8 +123,12 @@ public class NewDeviceSet extends Activity {
 		//quality = (Spinner) findViewById(R.id.quality);
 		frameRate = (Spinner) findViewById(R.id.frameRate);
 		bitStream = (Spinner) findViewById(R.id.bitStream);
+
+		adapter(resolution, R.array.devSetResolution);
+		adapter(frameRate, R.array.devSetFrameRate);
+		adapter(bitStream, R.array.devSetBitStream);
 		
-		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
+		/*adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
 				getResources().getStringArray(R.array.devSetResolution));
 		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
 		resolution.setAdapter(adapter);
@@ -146,7 +150,7 @@ public class NewDeviceSet extends Activity {
 		bitStream.setAdapter(adapter);
 		bitStream.setOnItemSelectedListener(new SelectedListener());
 		bitStream.setSelection(0);
-		adapter.notifyDataSetChanged();
+		adapter.notifyDataSetChanged();*/
 		
 		dev_item_version = (TextView) findViewById(R.id.dev_item_ver_version);
 		//dev_item_upver = (TextView) findViewById(R.id.dev_item_ver_upver);
@@ -179,16 +183,15 @@ public class NewDeviceSet extends Activity {
 		//Q04hAQEAbDAwMTIzN2E4AAAAAAAA ...37a8
 		//Q04hAQEAbDAwMDEwYmMzAAAAAAAA manniu202
 		//Q04hAQEAbDAwMDEwYmY4AAAAAAAA manniu203
-		devicesid = "Q04hAQEAbDAwMDEwYmY4AAAAAAAA";
+		//devicesid = "Q04hAQEAbDAwMTIzN2E4AAAAAAAA";
 		
 		registerReceiver(receiver, intentFilter);
 		
-		String str1 = getSetting(devicesid);//device.sid 
+		String str1 = getSetting(device.sid);//device.sid 
 		Log.d(TAG, "device sets:"+str1);
 		SDK.SendJsonPck(0, str1);
 		//readSetInfos();
 		findViewById(R.id.device_set_network).setOnClickListener(new Click());
-		
 	}
 	
 	/**
@@ -215,10 +218,11 @@ public class NewDeviceSet extends Activity {
 		} 
 		writeInfo("method", 0);
 		writeInfo("type", 1);
+		set(0, "overlay_text", et_dev_name.getText().toString());
+		
 		String sets = getSets();
 		LogUtil.d(TAG, "save config json:"+sets);
 		send(sets);
-		close();
 	}
 	
 	//获取配置 发送请求的json
@@ -261,7 +265,7 @@ public class NewDeviceSet extends Activity {
 		
 		//printJson(obj);
 		paramStr = cvtJson(obj);
-		params.put("configJson", devicesid + "|" + paramStr);// configJson
+		params.put("configJson", device.sid + "|" + paramStr);// configJson
 		LogUtil.d(TAG, "set Confiog params:" + params.toString());
 		HttpUtil.get(getServerAddress()+"/device/saveDesConfig", params, new JsonHttpResponseHandler(){
 			@Override
@@ -272,7 +276,17 @@ public class NewDeviceSet extends Activity {
 				try {
 					if("true".equals(response.getString("return"))){
 						LogUtil.d(TAG, "QWE:"+paramStr);
-						SDK.SendJsonPck(0, paramStr);
+						Map<String, Object> maps = new HashMap<String, Object>();
+						maps.put("type", 1);
+						maps.put("method", 0);
+						maps.put("sid", device.sid);
+						maps.put("action", 101);
+						
+						String str = new JSONObject(maps).toString();
+						//JSON.parseObject(maps.toString()).toJSONString()
+						LogUtil.d(TAG, "QWE:"+str);
+						SDK.SendJsonPck(0, device.sid + "|" + str);
+						close();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -427,8 +441,24 @@ public class NewDeviceSet extends Activity {
 	}
 	
 	private String getSets(){
-		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		return JSON.toJSONString(pre.getAll());
+	}
+	
+	/**
+	 * 设置属性 
+	 * @param cannelNo 通道号  
+	 * @param key  属性
+	 * @param value 值
+	 */
+	private void set(int channelNo, String key, Object value){
+		String cam_conf = readInfo("cam_conf");
+		com.alibaba.fastjson.JSONArray array = JSON.parseArray(cam_conf);
+		com.alibaba.fastjson.JSONObject obj = array.getJSONObject(channelNo);
+		obj.put(key, value);
+		//array.remove(channelNo);
+		array.set(channelNo, obj);
+		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
 	}
 	
 	/**
@@ -437,31 +467,28 @@ public class NewDeviceSet extends Activity {
 	 * @param value
 	 */
 	private void writeInfo(String key, String value){
-		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, value);
+		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, key, value);
 	}
 	
 	private void writeInfo(String key, Object value){
-		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, value);
+		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, key, value);
 	}
 	
 	private String readInfo(String key){
-		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		return pre.getString(key, "");
 	}
 	
 	public void readSetInfos(){
 		LogUtil.d(TAG, "readSetInfos!");
-		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(devicesid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		if(pre!=null){
 			//switch1.setTag(pre.getString(SW1_KEY, ""));//动检
 			//switch2.setTag(pre.getString(SW2_KEY, ""));//遮挡
 			
 			String cam_conf = pre.getString("cam_conf", "");
-			
 			JSONArray sets = JSON.parseArray(cam_conf);
-			
 			com.alibaba.fastjson.JSONObject set;
-			
 			if((sets !=null) && sets.size() > 0){
 				for(int i = 0;i < sets.size();i++){
 					set = sets.getJSONObject(i);
@@ -477,34 +504,6 @@ public class NewDeviceSet extends Activity {
 			fps = set.getString("fps");
 			width = set.getString("width");
 			
-			if("192".equals(bps)){
-				bitStream.setSelection(0);
-			}else if("224".equals(bps)){
-				bitStream.setSelection(1);
-			}else if("256".equals(bps)){
-				bitStream.setSelection(2);
-			}else if("320".equals(bps)){
-				bitStream.setSelection(3);
-			}else if("448".equals(bps)){
-				bitStream.setSelection(4);
-			}else if("512".equals(bps)){
-				bitStream.setSelection(5);
-			}else if("640".equals(bps)){
-				bitStream.setSelection(6);
-			}else if("768".equals(bps)){
-				bitStream.setSelection(7);
-			}else if("896".equals(bps)){
-				bitStream.setSelection(8);
-			}else if("1024".equals(bps)){
-				bitStream.setSelection(9);
-			}else if("1280".equals(bps)){
-				bitStream.setSelection(10);
-			}else if("1536".equals(bps)){
-				bitStream.setSelection(11);
-			}else {
-				
-			} 
-			
 			if("1".equals(fps)){
 				frameRate.setSelection(0);
 			}else if("5".equals(fps)){
@@ -514,37 +513,62 @@ public class NewDeviceSet extends Activity {
 			}else if("15".equals(fps)){
 				frameRate.setSelection(3);
 			}else {
-				
 			}
 			
 			if("352".equals(width)){
 				resolution.setSelection(0);
-			}else if("640".equals(width)){
-				resolution.setSelection(1);
+				if("48".equals(bps)){
+					bitStream.setSelection(0);
+				}else if("96".equals(bps)){
+					bitStream.setSelection(1);
+				}else if("160".equals(bps)){
+					bitStream.setSelection(2);
+				}else if("224".equals(bps)){
+					bitStream.setSelection(3);
+				}else{
+					bitStream.setSelection(0);
+				}
 			}else if("704".equals(width)){
-				resolution.setSelection(2);
+				resolution.setSelection(1);
+				if("128".equals(bps)){
+					bitStream.setSelection(0);
+				}else if("256".equals(bps)){
+					bitStream.setSelection(1);
+				}else if("384".equals(bps)){
+					bitStream.setSelection(2);
+				}else if("512".equals(bps)){
+					bitStream.setSelection(3);
+				}else if("640".equals(bps)){
+					bitStream.setSelection(4);
+				}else{
+					bitStream.setSelection(0);
+				} 
 			}else if("1280".equals(width)){
-				resolution.setSelection(3);
-			}else{
-				
+				resolution.setSelection(2);
+				if("224".equals(bps)){
+					bitStream.setSelection(0);
+				}else if("384".equals(bps)){
+					bitStream.setSelection(1);
+				}else if("640".equals(bps)){
+					bitStream.setSelection(2);
+				}else if("768".equals(bps)){
+					bitStream.setSelection(3);
+				}else if("896".equals(bps)){
+					bitStream.setSelection(4);
+				}else if("1280".equals(bps)){
+					bitStream.setSelection(5);
+				}else{
+					bitStream.setSelection(0);
+				}
+			}else{ 
 			} 
 			
-//			resolution.setSelection(3);
-//			frameRate.setSelection(2);
-//			bitStream.setSelection(1);
-			
+			if("0".equals(set.getString("alert_type"))){
+				LogUtil.d(TAG, "报警未开启!");
+				switchTag(switch1, "alert_type");
+			}
 		}else{
 			LogUtil.d(TAG, "readSetInfos perperences is null!");
-		}
-		//setSwitch(switch1);
-		//setSwitch(switch2);
-	}
-	public void setSwitch(View v){
-		String value = v.getTag().toString();
-		if("on".equals(value)){
-			v.setBackgroundResource(R.drawable.my_switch_on);
-		}else{
-			v.setBackgroundResource(R.drawable.my_switch_off);
 		}
 	}
 	
@@ -567,18 +591,18 @@ public class NewDeviceSet extends Activity {
 				com.alibaba.fastjson.JSONObject obj = array.getJSONObject(0);
 				obj.put("alert_type", 9);
 				array.set(0, obj);
-				SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, "cam_conf", array.toJSONString());
+				SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
 			}else if("off".equals(iv_switch.getTag().toString())){
 				String cam_conf = readInfo("cam_conf");
 				com.alibaba.fastjson.JSONArray array = JSON.parseArray(cam_conf);
 				com.alibaba.fastjson.JSONObject obj = array.getJSONObject(0);
 				obj.put("alert_type", 0);
 				array.set(0, obj);
-				SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, "cam_conf", array.toJSONString());
+				SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
 			}
 		}
 		
-		SetSharePrefer.write(MD5Util.MD5(devicesid) + FILE, key, iv_switch.getTag().toString());
+		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, key, iv_switch.getTag().toString());
 	}
 	
 	/**
@@ -586,13 +610,90 @@ public class NewDeviceSet extends Activity {
 	 * @return
 	 */
 	public String getDeviceId(){
-		return devicesid;
+		return device.sid;
+	}
+	
+	private void adapter(Spinner spinner, int resId){
+		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
+				getResources().getStringArray(resId));
+		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(new SelectedListener());
+		spinner.setSelection(0);
+		adapter.notifyDataSetChanged();
 	}
 	
 	class SelectedListener implements OnItemSelectedListener{
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
+			
+			switch (parent.getId()) {
+			case R.id.resolution:
+				switch (position) {
+				case 0:
+					adapter(bitStream, R.array.devSetBitStream);
+					if(view != null){
+						set(0, "width", 325);
+						set(0, "height", 288);
+					}
+					break;
+				case 1:
+					adapter(bitStream, R.array.devSetBitStream1);
+					if(view != null){
+						set(0, "width", 704);
+						set(0, "height", 576);
+					}
+					break;
+				case 2:
+					adapter(bitStream, R.array.devSetBitStream2);
+					if(view != null){
+						set(0, "width", 1280);
+						set(0, "height", 720);
+					}
+					break;
+				default:
+					break;
+				}
+				break;
+			case R.id.frameRate:
+				LogUtil.d(TAG, "...frameRate...");
+				if(view != null){
+					switch (position) {
+					case 0:
+						set(0, "fps", 1);
+						break;
+					case 1:
+						set(0, "fps", 5);
+						break;
+					case 2:
+						set(0, "fps", 10);
+						break;
+					case 3:
+						set(0, "fps", 15);
+						break;
+					default:
+						break;
+					}
+				}
+				break;
+			case R.id.bitStream:
+				LogUtil.d(TAG, "...bitStream...");
+				if(view != null){
+					String bps = bitStream.getSelectedItem().toString();
+					LogUtil.d(TAG, "当前码流:" + bps);
+					set(0, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
+				}
+				break;
+			default:
+				break;
+			}
+
+			if(view == null){
+				Log.d(TAG, "view is null!");
+			}else{
+				Log.d(TAG, "viewId:" + view.getId());
+			}
 			Log.d(TAG, "position:"+position+" id:"+id);
 		}
 		@Override
@@ -663,7 +764,7 @@ public class NewDeviceSet extends Activity {
 				break;
 			case R.id.device_set_network:
 				Bundle data = new Bundle();
-				data.putString("deviceId", devicesid);
+				data.putString("deviceId", device.sid);
 				forward(NewDeviceSetNetWork.class, data, 1);
 				break;
 			case R.id.dev_set_item_switch1:
