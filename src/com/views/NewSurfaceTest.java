@@ -529,6 +529,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public void stop(){
 		if(isStop){
 			try {
+				LogUtil.d(TAG, "start...stop...");
 				isStop = false;
 				long t3= System.currentTimeMillis();
 				if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
@@ -843,6 +844,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	
 	public void stopPause(){
 		try {
+			LogUtil.d(TAG, "start...stopPause...");
 			if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
 				stopRecordingVideo();
 			}

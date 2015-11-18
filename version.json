@@ -1,8 +1,8 @@
 ﻿{"appname":"ManNiu",
-"apkname":"ManNiuV1.0.7.8.apk",
-"verName":"1.0.7.8",
+"apkname":"ManNiuV1.0.7.9.apk",
+"verName":"1.0.7.9",
 "updateLog":"
-1.修复打开本地图片崩的问题-
-2.支持设备设置功能
+1.修复打开本地图片崩的问题
+2.修复设备设置码流显示不准的BUG
 ",
-"verCode":78}
+"verCode":79}

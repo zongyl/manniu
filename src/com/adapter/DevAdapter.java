@@ -197,53 +197,54 @@ public class DevAdapter extends BaseAdapter{
 			
 			RequestParams params = new RequestParams();
 			params.put("sid", device.sid);//"Q04hAQEAbDAwMjk0MTYwAAAAAAAA"
-			
-			HttpUtil.get(Constants.hostUrl + "/mobile/getScreen", params, new JsonHttpResponseHandler(){
-				@Override
-				public void onSuccess(int statusCode, Header[] headers,
-						JSONObject response) {
-					//Log.d(TAG, response.toString());
-					String result = "";
-					try {
-						result = response.getString("result");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					if(result.startsWith("http")){
-						Log.d(TAG, device.devname + "的封面:" + result);
-						String name = result.substring(result.indexOf("aliyuncs.com")+12, result.length());
-						
-						file = new File(rootPath+device.sid+name);
-						if(file.exists()){
-							Log.d(TAG, device.devname + "的封面本地已存在!");
-							holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
-						}else{
-							Log.d(TAG, device.devname + "的封面本地不存在,正在下载...");
-							byte[] bytes = HttpUtil.executeGetBytes(result);
-							FileUtil.toFile(bytes, rootPath+device.sid+name);
-							holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
+			try {
+				HttpUtil.get(Constants.hostUrl + "/mobile/getScreen", params, new JsonHttpResponseHandler(){
+					@Override
+					public void onSuccess(int statusCode, Header[] headers,
+							JSONObject response) {
+						//Log.d(TAG, response.toString());
+						String result = "";
+						try {
+							result = response.getString("result");
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
-						
-						//volley image load
-						/*ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
-						ImageListener listener = ImageLoader.getImageListener(holder.iv, R.drawable.lock_bg1, R.drawable.ic_launcher);
-						imageLoader.get(result, listener);*/
-						
-						/*DisplayImageOptions options = new DisplayImageOptions.Builder()
-						.cacheOnDisk(true)
-						.showImageOnLoading(context.getResources().getDrawable(R.drawable.lock_bg1))
-						.build();
-						ImageLoader.getInstance().displayImage(result, holder.iv, options);*/
+						if(result.startsWith("http")){
+							Log.d(TAG, device.devname + "的封面:" + result);
+							String name = result.substring(result.indexOf("aliyuncs.com")+12, result.length());
+							
+							file = new File(rootPath+device.sid+name);
+							if(file.exists()){
+								Log.d(TAG, device.devname + "的封面本地已存在!");
+								holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
+							}else{
+								Log.d(TAG, device.devname + "的封面本地不存在,正在下载...");
+								byte[] bytes = HttpUtil.executeGetBytes(result);
+								FileUtil.toFile(bytes, rootPath+device.sid+name);
+								holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
+							}
+							
+							//volley image load
+							/*ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
+							ImageListener listener = ImageLoader.getImageListener(holder.iv, R.drawable.lock_bg1, R.drawable.ic_launcher);
+							imageLoader.get(result, listener);*/
+							
+							/*DisplayImageOptions options = new DisplayImageOptions.Builder()
+							.cacheOnDisk(true)
+							.showImageOnLoading(context.getResources().getDrawable(R.drawable.lock_bg1))
+							.build();
+							ImageLoader.getInstance().displayImage(result, holder.iv, options);*/
+						}
 					}
-				}
-				@Override
-				public void onFailure(int statusCode, Header[] headers,
-						String responseString, Throwable throwable) {
-					super.onFailure(statusCode, headers, responseString, throwable);
-				}
-			});
-			
-			holder.iv.setImageDrawable(context.getResources().getDrawable(R.drawable.lock_bg1));
+					@Override
+					public void onFailure(int statusCode, Header[] headers,
+							String responseString, Throwable throwable) {
+						super.onFailure(statusCode, headers, responseString, throwable);
+					}
+				});
+				holder.iv.setImageDrawable(context.getResources().getDrawable(R.drawable.lock_bg1));
+			} catch (Exception e) {
+			}
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}

@@ -95,8 +95,7 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 			  if(_textInfo!=null && _textInfo.length()>0)
 			  {
 				  paramsToShare. setText (_textInfo) ;
-			  }
-			  if(_imageUrl!=null && _imageUrl.length()>0)
+			  }else if(_imageUrl!=null && _imageUrl.length()>0)
 			  {
 				  paramsToShare.setImageUrl(_imageUrl);	
 			  }

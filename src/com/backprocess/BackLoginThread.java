@@ -115,7 +115,7 @@ public class BackLoginThread implements Runnable{
 							if(nRet == 0){
 								APP.dismissProgressDialog();
 								state = 200;
-								//SDK._isRun = true;
+								SDK._isRun = true;
 								//如果正在播放视频，要起一个线程不断的连接
 								if(NewSurfaceTest.isPlay){
 									NewSurfaceTest.instance.startTimer(1);
@@ -142,7 +142,7 @@ public class BackLoginThread implements Runnable{
 							if(status == 0){
 								APP.dismissProgressDialog();
 								state = 200;
-								//SDK._isRun = true;
+								SDK._isRun = true;
 								runFlag = false;//连接成功置成false 
 								_thread.wait();//
 							}else{

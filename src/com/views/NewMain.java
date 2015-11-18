@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -342,6 +341,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 			        String url = Constants.hostUrl + "/LiveAction_toPlays?lc.deviceId="+device.sid;
 			        Log.d(TAG, "play live url:" + url);
 			        intent.putExtra("url", url);
+			        intent.putExtra("playType", "0");
 					APP.GetMainActivity().startActivity(intent);
 					break;
 				default:

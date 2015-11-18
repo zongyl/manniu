@@ -192,6 +192,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private PopupWindow popupWindow;
 	View popupWindow_view;
+	private BitmapDescriptor bitmapOtherDes;
+	private BitmapDescriptor bitmapMeDes;
 	
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
@@ -226,7 +228,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		context = this.getApplicationContext();
 		imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
+		
 		dmHeight =dm.heightPixels;
 		dmWidth = dm.widthPixels;
 		sCommentTip = getResources().getString(R.string.commentTip);
@@ -240,6 +242,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		sDefaultDevTitle = getResources().getString(R.string.default_dev_title);
 		parseURL();
 		setContentView(R.layout.new_web_activity);
+		if(null ==getIntent().getStringExtra("playType"))
+		{
+			bType = 0;
+		}
+		
+		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
 	}
 	
 	private void topViewInit()
@@ -487,9 +495,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				return false;
 			}
 		});
-	
 	}
-
+	
 	/*
 	 * 功能:软键盘弹出底层view重新布局
 	 */
@@ -732,6 +739,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		uiSettings.setScaleControlsEnabled(false);
 		uiSettings.setAllGesturesEnabled(false);
 		
+		bitmapOtherDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_other);
+		bitmapMeDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_me);
+		
 		LatLngBounds bounds= null;
 		if(bConfig == false)
 		{
@@ -744,16 +754,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		if(bConfig == false)
 		{
 			ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
-			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+			giflist.add(bitmapOtherDes);
+			giflist.add(bitmapMeDes);
 			MarkerOptions ooD = new MarkerOptions().position(new LatLng(30.297233, 120.047253)).title(getResources().getString(R.string.default_dev_title)).icons(giflist).draggable(true).period(3);
 			mAMap.addMarker(ooD).showInfoWindow();
 		}
 		else 
 		{
 			ArrayList<BitmapDescriptor> giflist = new ArrayList<BitmapDescriptor>();
-			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
-			giflist.add(BitmapDescriptorFactory.fromResource(R.drawable.camera_me));
+			giflist.add(bitmapOtherDes);
+			giflist.add(bitmapMeDes);
 			MarkerOptions ooD = new MarkerOptions().position(new LatLng(devLat, devLng)).title(liveName).icons(giflist).draggable(true).period(3);
 			mAMap.addMarker(ooD).showInfoWindow();
 		}	
@@ -766,6 +776,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	{
 		try{	
 			MarkerOptions markerOption;
+			
 			// add marker overlay
 			if(bHave == false)
 			{
@@ -778,21 +789,21 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				markerOption.position(llA);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
-				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llB);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
-				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llC);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
 				markerOption.draggable(true);
-				markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
 			}
 			else{
@@ -808,7 +819,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					markerOption.position(new LatLng(devLatT, devLngT));
 					markerOption.title(jpos.get("devname").toString());
 					markerOption.draggable(true);
-					markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.camera_other));
+					markerOption.icon(bitmapOtherDes);
 					mAMap.addMarker(markerOption);
 				}
 				
@@ -989,7 +1000,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 	
 	 @Override  
-	 protected void onDestroy() {  	 
+	 protected void onDestroy() {  	
+		
        	 super.onDestroy();
        	 clearVideoAndComentWebView();
        	 video_fullView.removeAllViews();
@@ -997,8 +1009,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
        	 playLayout.removeView(commentView);
        	 webView.destroy();
        	 commentView.destroy();
-       	if(bType == 0)
-       		mMapView.onDestroy();	       	
+       	 
+       	 if(bType == 0)
+       	 {
+        	 mMapView.onDestroy();	 
+       	 }
+       	 	
 	 }
 	
 	public void bindListeners(){
@@ -1214,7 +1230,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					//String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";
 					Log.d(TAG, "image path:" + imgPath);
 					//String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n<a href ='"+liveUrl+"'>"+getString(R.string.Click_toplay)+":"+_title.getText()+"</a>";
-					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;//2015.11.01 鏉庡痉鏄庝慨鏀?
+					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;
 					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
 					
 					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
@@ -1558,6 +1574,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		else
 			params.put("type", 1);
 		//Constants.hostUrl = "http://10.12.6.121:8080/NineCloud/";
+		
 		switch(id)
 		{
 		case R.id.collection:

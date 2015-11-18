@@ -263,7 +263,7 @@ public class XVideoAdapter extends BaseAdapter {
 									int ret = 0;
 									String str = "";
 									if(tem != null){
-										ret = FileUtil.readFile(path);
+										ret = FileUtil.readFile(path);//调用上传方法
 										str  = ret+","+path.replace(".mp4", ".bmp")+","+new String(tem)+","+Constants.data.get(position).get(KEY_TITLE);
 									}else{
 										ret = -1;

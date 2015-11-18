@@ -49,6 +49,7 @@ public class DevSetHandler extends Handler{
 			APP.ShowToast("设置成功!");
 			break;
 		case 3://设备不在线
+			LogUtil.d(TAG, "设备不在线!");
 			APP.ShowToast("设备不在线!");
 			break;
 		default:

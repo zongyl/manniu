@@ -2401,18 +2401,19 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0b0001;
-        public static final int DetailBaseline=0x7f0b0013;
-        public static final int DetailCommenText=0x7f0b0018;
-        public static final int DetailSetLeft=0x7f0b0016;
-        public static final int DetailSetRight=0x7f0b0017;
+        public static final int DetailBaseline=0x7f0b0014;
+        public static final int DetailBaselineLive=0x7f0b0013;
+        public static final int DetailCommenText=0x7f0b0019;
+        public static final int DetailSetLeft=0x7f0b0017;
+        public static final int DetailSetRight=0x7f0b0018;
         public static final int DeviceShare=0x7f0b0003;
         public static final int Dialog_Fullscreen=0x7f0b0009;
         public static final int MyDialogStyle=0x7f0b0007;
         public static final int SetGroup=0x7f0b0010;
         public static final int SetGroupItem=0x7f0b0011;
-        public static final int SetGroupItemDescText=0x7f0b0014;
+        public static final int SetGroupItemDescText=0x7f0b0015;
         public static final int SetGroupItemLeftText=0x7f0b0012;
-        public static final int SetGroupItemRightText=0x7f0b0015;
+        public static final int SetGroupItemRightText=0x7f0b0016;
         public static final int SetLayout=0x7f0b000f;
         public static final int UpdateDialog=0x7f0b0008;
         public static final int dialog=0x7f0b0006;
@@ -2420,7 +2421,7 @@ containing a value of this type.
          <item name="android:windowBackground">@color/red</item>  
          */
         public static final int dialog1=0x7f0b0005;
-        public static final int forceInput=0x7f0b0019;
+        public static final int forceInput=0x7f0b001a;
         public static final int menuTextStyle=0x7f0b000a;
         public static final int menushow=0x7f0b000b;
         /**   <item name="android:button">@drawable/check_state_btn</item>
@@ -2433,7 +2434,7 @@ containing a value of this type.
         public static final int popwindow_delete_btn_anim_style=0x7f0b000c;
         /**  spinner 
          */
-        public static final int spinner_style=0x7f0b001a;
+        public static final int spinner_style=0x7f0b001b;
     }
     public static final class styleable {
         /** Attributes that can be used with a BottomCheck.

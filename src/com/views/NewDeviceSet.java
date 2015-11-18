@@ -17,7 +17,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -69,23 +70,39 @@ public class NewDeviceSet extends Activity {
 	
 	ArrayAdapter<CharSequence> adapter;
 	
-	int[] pixels;
+	boolean init = true;
+	
+	//int[] pixels;
 	
 	public static final String FILE = "_device_set";
 
 	private static final String SW1_KEY = "dynamic-detection";
 	private static final String SW2_KEY = "cloud-storage";
 	
-	private static NewDeviceSet instance;
+	/*private static NewDeviceSet instance;
 	
 	public static NewDeviceSet getInstance(){
 		if(instance==null){
 			instance = new NewDeviceSet();
 		}
 		return instance;
-	}
+	}*/
 	
 	//String devicesid;
+	
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 1:
+				init = false;
+				break;
+			default:
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
 	
     public static String[] STR_PICTURE_TYPE = null;
 	
@@ -95,7 +112,7 @@ public class NewDeviceSet extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.new_device_set);
 
-		pixels = getSize();
+	//	pixels = getSize();
 		
 		device = getIntent().getParcelableExtra("device");
 		
@@ -108,61 +125,18 @@ public class NewDeviceSet extends Activity {
 		switch1 = (ImageView) findViewById(R.id.dev_set_item_switch1);
 		switch2 = (ImageView) findViewById(R.id.dev_set_item_switch2);
 		
-//		show_position = (Spinner) findViewById(R.id.show_position);
-//		show_position.setDropDownWidth(pixels[0]/2);
-//		STR_PICTURE_TYPE = getResources().getStringArray(R.array.devSetPosition);
-//		
-//		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item, STR_PICTURE_TYPE);
-//		adapter.setDropDownViewResource(R.layout.spinner_checked_text);//simple_spinner_item
-//		show_position.setAdapter(adapter);
-//		show_position.setOnItemSelectedListener(new SelectedListener());
-//		show_position.setSelection(0);
-//		adapter.notifyDataSetChanged();
-		
 		resolution = (Spinner) findViewById(R.id.resolution);
 		//quality = (Spinner) findViewById(R.id.quality);
 		frameRate = (Spinner) findViewById(R.id.frameRate);
 		bitStream = (Spinner) findViewById(R.id.bitStream);
 
-		adapter(resolution, R.array.devSetResolution);
-		adapter(frameRate, R.array.devSetFrameRate);
-		adapter(bitStream, R.array.devSetBitStream);
-		
-		/*adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
-				getResources().getStringArray(R.array.devSetResolution));
-		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
-		resolution.setAdapter(adapter);
-		resolution.setOnItemSelectedListener(new SelectedListener());
-		resolution.setSelection(0);
-		adapter.notifyDataSetChanged();
-
-		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
-				getResources().getStringArray(R.array.devSetFrameRate));
-		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
-		frameRate.setAdapter(adapter);
-		frameRate.setOnItemSelectedListener(new SelectedListener());
-		frameRate.setSelection(0);
-		adapter.notifyDataSetChanged();
-
-		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
-				getResources().getStringArray(R.array.devSetBitStream));
-		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
-		bitStream.setAdapter(adapter);
-		bitStream.setOnItemSelectedListener(new SelectedListener());
-		bitStream.setSelection(0);
-		adapter.notifyDataSetChanged();*/
+		adapter(resolution, R.array.devSetResolution, 0);
+		adapter(frameRate, R.array.devSetFrameRate, 0);
+		adapter(bitStream, R.array.devSetBitStream, 0);
 		
 		dev_item_version = (TextView) findViewById(R.id.dev_item_ver_version);
 		//dev_item_upver = (TextView) findViewById(R.id.dev_item_ver_upver);
 		btn_update = (Button) findViewById(R.id.dev_item_update);
-//		dev_set_base = (TextView) findViewById(R.id.dev_set_base);
-//		dev_set_advanced = (TextView) findViewById(R.id.dev_set_advanced);
-		
-//		dev_set_base.setWidth(pixels[0]/2);
-//		dev_set_advanced.setWidth(pixels[0]/2);
-//		
-//		dev_set_base.setOnClickListener(new Click());
-//		dev_set_advanced.setOnClickListener(new Click());
 		btn_update.setOnClickListener(new Click());
 
 		switch1.setOnClickListener(new Click());
@@ -190,26 +164,36 @@ public class NewDeviceSet extends Activity {
 		String str1 = getSetting(device.sid);//device.sid 
 		Log.d(TAG, "device sets:"+str1);
 		SDK.SendJsonPck(0, str1);
-		//readSetInfos();
+		//testLoad();
 		findViewById(R.id.device_set_network).setOnClickListener(new Click());
+		Message msg = new Message();
+		msg.what = 1;
+		handler.sendMessageDelayed(msg, 9000);
 	}
+	
+	@Override
+	protected void onResume() {
+		LogUtil.d(TAG, "...onResume...");
+		super.onResume();
+	}
+	
 	
 	/**
 	 * 以数组形式返回 尺寸 [0] = width, [1] = height
 	 * @return
 	 */
-	private int[] getSize(){
+	/*private int[] getSize(){
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int[] pixels = new int[2];
 		pixels[0] = dm.widthPixels;
 		pixels[1] = dm.heightPixels;
 		return pixels;
-	}
+	}*/
 	
 	private void close(){
 		this.finish();
-		//Main.Instance.NewMainreLoad();
+		Main.Instance.NewMainreLoad();
 	}
 
 	private void save(){
@@ -249,6 +233,71 @@ public class NewDeviceSet extends Activity {
 		}
 	}
 	
+	private void testLoad(){
+
+		String fps = "15";
+		String bps = "384";
+		String width = "704";
+		
+		if("1".equals(fps)){
+			frameRate.setSelection(0);
+		}else if("5".equals(fps)){
+			frameRate.setSelection(1);
+		}else if("10".equals(fps)){
+			frameRate.setSelection(2);
+		}else if("15".equals(fps)){
+			frameRate.setSelection(3);
+		}else {
+		}
+
+		if("352".equals(width)){
+			resolution.setSelection(0);
+			if("48".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 0);
+			}else if("96".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 1);
+				adapter(bitStream, R.array.devSetBitStream, 2);
+			}else if("224".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 3);
+			}else{
+				bitStream.setSelection(0);
+			}
+		}else if("704".equals(width)){
+			resolution.setSelection(1);
+			if("128".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 0);
+			}else if("256".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 1);
+			}else if("384".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 2);
+			}else if("512".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 3);
+			}else if("640".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 4);
+			}else{
+				bitStream.setSelection(0);
+			} 
+		}else if("1280".equals(width)){
+			resolution.setSelection(2);
+			if("224".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 0);
+			}else if("384".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 1);
+			}else if("640".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 2);
+			}else if("768".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 3);
+			}else if("896".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 4);
+			}else if("1280".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 5);
+			}else{
+				bitStream.setSelection(0);
+			}
+		}else{ 
+		} 
+	}
+	
 	private String getServerAddress(){
 		return Constants.hostUrl;
 	}
@@ -263,7 +312,6 @@ public class NewDeviceSet extends Activity {
 		
 		com.alibaba.fastjson.JSONObject obj = JSON.parseObject(configJson);
 		
-		//printJson(obj);
 		paramStr = cvtJson(obj);
 		params.put("configJson", device.sid + "|" + paramStr);// configJson
 		LogUtil.d(TAG, "set Confiog params:" + params.toString());
@@ -453,12 +501,24 @@ public class NewDeviceSet extends Activity {
 	 */
 	private void set(int channelNo, String key, Object value){
 		String cam_conf = readInfo("cam_conf");
-		com.alibaba.fastjson.JSONArray array = JSON.parseArray(cam_conf);
-		com.alibaba.fastjson.JSONObject obj = array.getJSONObject(channelNo);
-		obj.put(key, value);
-		//array.remove(channelNo);
-		array.set(channelNo, obj);
-		SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
+
+		com.alibaba.fastjson.JSONArray array;
+		com.alibaba.fastjson.JSONObject obj;
+		
+		if("".equals(cam_conf)||cam_conf==null){
+			obj = new com.alibaba.fastjson.JSONObject();
+			array = new com.alibaba.fastjson.JSONArray();
+			obj.put(key, value);
+			array.add(obj);
+			SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
+		}else{
+			array = JSON.parseArray(cam_conf);
+			obj = array.getJSONObject(channelNo);
+			obj.put(key, value);
+			//array.remove(channelNo);
+			array.set(channelNo, obj);
+			SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
+		}
 	}
 	
 	/**
@@ -483,20 +543,17 @@ public class NewDeviceSet extends Activity {
 		LogUtil.d(TAG, "readSetInfos!");
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
 		if(pre!=null){
-			//switch1.setTag(pre.getString(SW1_KEY, ""));//动检
-			//switch2.setTag(pre.getString(SW2_KEY, ""));//遮挡
-			
 			String cam_conf = pre.getString("cam_conf", "");
 			JSONArray sets = JSON.parseArray(cam_conf);
+			LogUtil.d(TAG, "channel count is:" + sets.size());
 			com.alibaba.fastjson.JSONObject set;
-			if((sets !=null) && sets.size() > 0){
+			/*if((sets !=null) && sets.size() > 0){
 				for(int i = 0;i < sets.size();i++){
 					set = sets.getJSONObject(i);
 					LogUtil.d(TAG, "toJSONString:" + set.toJSONString());
 					LogUtil.d(TAG, "toString:" + set.toString());
 				}
-			}
-			
+			}*/
 			set = sets.getJSONObject(0);
 
 			String bps,fps,width;
@@ -504,6 +561,7 @@ public class NewDeviceSet extends Activity {
 			fps = set.getString("fps");
 			width = set.getString("width");
 			
+
 			if("1".equals(fps)){
 				frameRate.setSelection(0);
 			}else if("5".equals(fps)){
@@ -514,49 +572,48 @@ public class NewDeviceSet extends Activity {
 				frameRate.setSelection(3);
 			}else {
 			}
-			
+
 			if("352".equals(width)){
 				resolution.setSelection(0);
 				if("48".equals(bps)){
-					bitStream.setSelection(0);
+					adapter(bitStream, R.array.devSetBitStream, 0);
 				}else if("96".equals(bps)){
-					bitStream.setSelection(1);
-				}else if("160".equals(bps)){
-					bitStream.setSelection(2);
+					adapter(bitStream, R.array.devSetBitStream, 1);
+					adapter(bitStream, R.array.devSetBitStream, 2);
 				}else if("224".equals(bps)){
-					bitStream.setSelection(3);
+					adapter(bitStream, R.array.devSetBitStream, 3);
 				}else{
 					bitStream.setSelection(0);
 				}
 			}else if("704".equals(width)){
 				resolution.setSelection(1);
 				if("128".equals(bps)){
-					bitStream.setSelection(0);
+					adapter(bitStream, R.array.devSetBitStream1, 0);
 				}else if("256".equals(bps)){
-					bitStream.setSelection(1);
+					adapter(bitStream, R.array.devSetBitStream1, 1);
 				}else if("384".equals(bps)){
-					bitStream.setSelection(2);
+					adapter(bitStream, R.array.devSetBitStream1, 2);
 				}else if("512".equals(bps)){
-					bitStream.setSelection(3);
+					adapter(bitStream, R.array.devSetBitStream1, 3);
 				}else if("640".equals(bps)){
-					bitStream.setSelection(4);
+					adapter(bitStream, R.array.devSetBitStream1, 4);
 				}else{
 					bitStream.setSelection(0);
 				} 
 			}else if("1280".equals(width)){
 				resolution.setSelection(2);
 				if("224".equals(bps)){
-					bitStream.setSelection(0);
+					adapter(bitStream, R.array.devSetBitStream2, 0);
 				}else if("384".equals(bps)){
-					bitStream.setSelection(1);
+					adapter(bitStream, R.array.devSetBitStream2, 1);
 				}else if("640".equals(bps)){
-					bitStream.setSelection(2);
+					adapter(bitStream, R.array.devSetBitStream2, 2);
 				}else if("768".equals(bps)){
-					bitStream.setSelection(3);
+					adapter(bitStream, R.array.devSetBitStream2, 3);
 				}else if("896".equals(bps)){
-					bitStream.setSelection(4);
+					adapter(bitStream, R.array.devSetBitStream2, 4);
 				}else if("1280".equals(bps)){
-					bitStream.setSelection(5);
+					adapter(bitStream, R.array.devSetBitStream2, 5);
 				}else{
 					bitStream.setSelection(0);
 				}
@@ -565,24 +622,70 @@ public class NewDeviceSet extends Activity {
 			
 			if("0".equals(set.getString("alert_type"))){
 				LogUtil.d(TAG, "报警未开启!");
-				switchTag(switch1, "alert_type");
+				switchTag(switch1, false);
+			}else if("3".equals(set.getString("alert_type"))){
+				LogUtil.d(TAG, "报警已开启!");
+				switchTag(switch1, true);
 			}
 		}else{
 			LogUtil.d(TAG, "readSetInfos perperences is null!");
 		}
 	}
-	
-	public void switchTag(View iv_switch, String key){
+
+	/**
+	 * 设置开关按钮的状态     反选 (与当前状态相反)
+	 * @param iv_switch
+	 */
+	public void switchTag(View iv_switch){
 		if("on".equals(iv_switch.getTag())){
 			iv_switch.setTag("off");
 			iv_switch.setBackgroundResource(R.drawable.my_switch_off);
-			write(iv_switch, key);
 		}else{
 		iv_switch.setTag("on");
 		iv_switch.setBackgroundResource(R.drawable.my_switch_on);
-		write(iv_switch, key);
 		}
 	}
+	
+	/**
+	 * 设置开关按钮的状态
+	 * @param iv_switch
+	 * @param status
+	 */
+	public void switchTag(View iv_switch, boolean status){
+		if(status && "off".equals(iv_switch.getTag())){//设置为开启且当前状态为关闭 
+			iv_switch.setTag("on");
+			iv_switch.setBackgroundResource(R.drawable.my_switch_on);
+		}else if((!status) && "on".equals(iv_switch.getTag())){//设置为 关闭且当前账号为开启
+			iv_switch.setTag("off");
+			iv_switch.setBackgroundResource(R.drawable.my_switch_off);
+		}else {
+			
+		}
+	}
+	
+	/**
+	 * 设置开关按钮的状态  附带值 
+	 * @param iv_switch
+	 * @param key 键 
+	 * @param onValue 开启的值
+	 * @param offValue 关闭的值
+	 */
+	public void switchTag(View iv_switch, String key, Object onValue, Object offValue){
+		if("off".equals(iv_switch.getTag())){ 
+			iv_switch.setTag("on");
+			iv_switch.setBackgroundResource(R.drawable.my_switch_on);
+			//write(iv_switch, key);
+			set(0, key, onValue);
+		}else if("on".equals(iv_switch.getTag())){
+			iv_switch.setTag("off");
+			iv_switch.setBackgroundResource(R.drawable.my_switch_off);
+			//write(iv_switch, key);
+			set(0, key, offValue);
+		}else {
+			
+		}
+	}
+	
 	public void write(View iv_switch, String key){
 		if("alert_type".equals(key)){
 			if("on".equals(iv_switch.getTag().toString())){
@@ -613,14 +716,16 @@ public class NewDeviceSet extends Activity {
 		return device.sid;
 	}
 	
-	private void adapter(Spinner spinner, int resId){
+	private void adapter(Spinner spinner, int resId, int index){
+		LogUtil.d(TAG, "adapter start:" + spinner.getId() + " index:" + index);
 		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
 				getResources().getStringArray(resId));
 		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(new SelectedListener());
-		spinner.setSelection(0);
+		spinner.setSelection(index);
 		adapter.notifyDataSetChanged();
+		LogUtil.d(TAG, "adapter end:" + spinner.getId());
 	}
 	
 	class SelectedListener implements OnItemSelectedListener{
@@ -630,24 +735,32 @@ public class NewDeviceSet extends Activity {
 			
 			switch (parent.getId()) {
 			case R.id.resolution:
+				LogUtil.d(TAG, "...resolution...");
+				//init = false;
 				switch (position) {
 				case 0:
-					adapter(bitStream, R.array.devSetBitStream);
 					if(view != null){
+						if(!init){
+							adapter(bitStream, R.array.devSetBitStream, 0);
+						}
 						set(0, "width", 325);
 						set(0, "height", 288);
 					}
 					break;
 				case 1:
-					adapter(bitStream, R.array.devSetBitStream1);
 					if(view != null){
+						if(!init){
+							adapter(bitStream, R.array.devSetBitStream1, 0);
+						}
 						set(0, "width", 704);
 						set(0, "height", 576);
 					}
 					break;
 				case 2:
-					adapter(bitStream, R.array.devSetBitStream2);
 					if(view != null){
+						if(!init){
+							adapter(bitStream, R.array.devSetBitStream2, 0);
+						}
 						set(0, "width", 1280);
 						set(0, "height", 720);
 					}
@@ -681,7 +794,7 @@ public class NewDeviceSet extends Activity {
 				LogUtil.d(TAG, "...bitStream...");
 				if(view != null){
 					String bps = bitStream.getSelectedItem().toString();
-					LogUtil.d(TAG, "当前码流:" + bps);
+					//LogUtil.d(TAG, "当前码流:" + bps);
 					set(0, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
 				}
 				break;
@@ -768,10 +881,10 @@ public class NewDeviceSet extends Activity {
 				forward(NewDeviceSetNetWork.class, data, 1);
 				break;
 			case R.id.dev_set_item_switch1:
-				switchTag(v, "alert_type");
+				switchTag(v, "alert_type", 3, 0 );
 				break;
 			case R.id.dev_set_item_switch2:
-				switchTag(v, "default");
+				switchTag(v, "default", "default", "default");
 				break;
 			default:
 				break;

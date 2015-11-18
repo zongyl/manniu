@@ -159,6 +159,7 @@ public class SDK {
 					}
 					devSetHandler.sendMessage(msg);
 				}else if("2".equals(jsonData.getString("result"))){
+					LogUtil.d("SDK", "/设备不在线");
 					Message msg = new Message();
 					msg.what = 3;
 					devSetHandler.sendMessage(msg);
@@ -232,29 +233,29 @@ public class SDK {
 	// 对于手机、OCX客户端：停止播放音视频，并提示链接断线
 	C_STATUS_SVR_DISCONNECTED,		
 	 * */
-	//public static boolean _isRun = true; //是否发送登录IDM
+	public static boolean _isRun = true; //是否发送登录IDM或ETS 保证只执行一次
 	public static long _sessionId = 0;
 	public static boolean _isLogout = true;
 	public void OnStatus(int value, long sessionId, int status, String dst_uuid){
 		switch (value) {
-//		case 0:
-//			if(status == -4999){//牛眼-停止发送视频  云端 -关闭连接(IDM掉线 移到后台管理)
-//				LogUtil.d("SDK", "value = 0 IDM  onStatus:"+status);
-//				if(_isRun) {
-//					_isRun = false;
-//					BackLoginThread.state = 1;
-//					Main.Instance._loginThead.start();
-//				}
-//			}
-//			break;
+		case 0:
+			if(status == -4999){//牛眼-停止发送视频  云端 -关闭连接(IDM掉线 移到后台管理)
+				LogUtil.d("SDK", "value = 0 IDM  onStatus:"+status);
+				if(_isRun) {
+					_isRun = false;
+					BackLoginThread.state = 1;
+					Main.Instance._loginThead.start();
+				}
+			}
+			break;
 		case 1:
 			if(status == -4999){//牛眼-停止发送视频 //云端 -关闭连接
 				LogUtil.d("SDK", "value = 1 ETS onStatus:"+status);
-				//if(_isRun) {
-					//_isRun = false;
+				if(_isRun) {
+					_isRun = false;
 					BackLoginThread.state = 1;
 					Main.Instance._loginThead.start();
-				//}
+				}
 			}
 			break;
 		case 2:
