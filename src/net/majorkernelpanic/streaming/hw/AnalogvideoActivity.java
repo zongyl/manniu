@@ -6,7 +6,9 @@ import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +23,7 @@ import com.utils.BitmapUtils;
 import com.utils.Constants;
 import com.utils.DateUtil;
 import com.utils.ExceptionsOperator;
+import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 import com.utils.SdCardUtils;
 import com.views.BaseApplication;
@@ -232,14 +235,14 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     	//if(_talkPlayer != null) _talkPlayer.Stop();
     	//如果正在录像编码标志位不变
     	if(!_encoderQueue._isRecording) _encoderQueue._isEncord = false;
-    	_talkPlayer._startEncodeNow = false;
+    	//_talkPlayer._startEncodeNow = false;
     	
     }
     //开始编码
     public void startEncode(){
     	try {
     		_encoderQueue._isEncord = true;
-    		_talkPlayer._startEncodeNow = true;
+    		//_talkPlayer._startEncodeNow = true;
 			//_talkPlayer.Start();
 		} catch (Exception e) {
 			LogUtil.i(TAG, ExceptionsOperator.getExceptionInfo(e));
@@ -330,7 +333,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 	
 	//public boolean _recordShow = false;		// 录像显示状态
 	public String _recordfileName = "";//录像文件名
-	private boolean safeToTakePicture = true;//截图片标志
+	//private boolean safeToTakePicture = true;//截图片标志
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -400,6 +403,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		if(SDK._sessionId == 0 && SDK._createChnlFlag == -1){
 			_encoderQueue._isEncord = false;
 		}
+		_talkPlayer._recoderQueue.stopRecordAAC();
 		_encoderQueue.h264ToMp4();
 	}
 	
@@ -485,6 +489,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 				File efile = new File(_recordfileName + ".bmp");
 				if(efile.exists()){
 					_encoderQueue.recordFile(_recordfileName + ".h264");
+					_talkPlayer._recoderQueue.recordFile(_recordfileName + ".aac");
 				}else{
 					_btnRecord.SetImages(R.drawable.btn_record0, R.drawable.btn_record0);
 					_encoderQueue._isRecording = false;
@@ -553,7 +558,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 
 	} 
 	
-	private String location,nlatitude="",nlongitude="";//返回字符串，纬度，经度
+	private String location,nlatitude="",nlongitude="",analogAddress="";//返回字符串，纬度，经度
 	private JSONObject locationJson;
 	BroadcastReceiver receiver = new BroadcastReceiver(){
 		@Override
@@ -566,6 +571,8 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 				locationJson = new JSONObject(location);
 				nlongitude = locationJson.getString("longitude");
 				nlatitude = locationJson.getString("latitude");
+				analogAddress = locationJson.getString("address");
+				sendLocatin(nlongitude,nlatitude,analogAddress);
 			} catch (JSONException e) {
 				LogUtil.d(TAG, "parse location :" + e.getMessage());
 			}
@@ -573,7 +580,35 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 	};
 	IntentFilter filter = new IntentFilter("com.views.NewMainAddDev");
 	
-
+	
+	//发送地理位置
+	private void sendLocatin(String nlongitude,String nlatitude,String address){
+		JSONObject json = null;
+		try {
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("sid", deviceSid);
+			params.put("type", "0");
+			params.put("longitude", nlongitude);
+			params.put("latitude", nlatitude);
+			params.put("address", address);
+			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/mobile/saveGeographic",params);
+			if (Integer.parseInt(map.get("code").toString()) != 200) {
+				json = new JSONObject(map.get("data").toString());
+				try {
+					String str = json.getString("result");
+					if("success".equals(str)){
+						LogUtil.d(TAG, "/mobile/saveGeographic send ok....");
+					}
+				} catch (JSONException e) {
+					LogUtil.d(TAG, "/mobile/saveGeographic...error..json:"+json.toString()+"\n"+e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			LogUtil.d(TAG, ExceptionsOperator.getExceptionInfo(e));
+		}
+	}
+	
+	
 
 
 }

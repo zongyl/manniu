@@ -115,7 +115,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		long t1 = System.currentTimeMillis();
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.new_surface_test);
 		instance = this;
@@ -178,9 +177,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			_dlgWait = new Dlg_WaitForActivity(this,R.style.dialog);
 			_dlgWait.setCancelable(true);
 		}
-		//ProgressDialog MyDialog = ProgressDialog.show(this, " " , " 正在打开视频 ... ", true);
 		// 解码器
-		m_decoder = H264Dec.InitDecoder();
+		//m_decoder = H264Dec.InitDecoder();
+		
 		//_deThead = new decoderThead();
 //		try {
 //			if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
@@ -188,8 +187,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 //		}
 		NewMain._isOpen = true;//打开视频标志位
 		_handler = new MyHandler();
-		long t2 = System.currentTimeMillis();
-		LogUtil.d(TAG, " ..............oncreate time "+(t2-t1));
 		_btnGpu.setClickable(true);
 		cut.setClickable(true);
 		
@@ -246,14 +243,12 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		try {
 			if(_decoderDebugger == null){
 				_decoderDebugger = new DecoderDebugger(holder.getSurface(),NewSurfaceTest.this);
-				//SDK.start();
 			}
-			_sQueue = new AudioQueue();
-			//init();
+			//_sQueue = new AudioQueue();
 			_dlgWait.show();
 			_dlgWait.UpdateText(getText(R.string.P2PConnect).toString());
 			_handler.sendEmptyMessage(XMSG.P2PConnect);
-			LogUtil.i(TAG, "surfaceCreated");
+			//LogUtil.i(TAG, "surfaceCreated");
 		} catch (Exception e) {
 		}
 	}
@@ -307,20 +302,18 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			if(_snapImg){
 				screenCount++;
 				if(screenCount < 20){
-					try {
-						if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
-					} catch (Exception e) {
-					}
-					m_imageBitmap = BitmapUtils.getScreenBitmap(m_decoderLock,m_decoder, data, m_imageData, len);
+					if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
+					//m_imageBitmap = BitmapUtils.Bytes2Bimap(data);
+					m_imageBitmap = BitmapUtils.getScreenBitmap(data, m_imageData, len);
 					if(m_imageBitmap != null){
 						long fileLong = snapPic(m_imageBitmap, _fileName);
-						if(fileLong >= 204800){
+						//if(fileLong >= 204800){
 							_decoderQueue._startSnap = false;
 							_snapImg = false;
 							screenCount=0;
 							m_imageBitmap = null;
 							cut.setClickable(true);
-						}
+						//}
 					}
 				}else{
 					_decoderQueue._startSnap = false;
@@ -439,29 +432,17 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	}
 	
 	//软解码方法
-	public synchronized void h264Decoder2(byte[] data,int len){
+	public synchronized void h264Decoder2(byte[] outBytes,int len){
 		try {
 			if(!_decoderDebugger.canDecode){
-				int[] frameParam = new int[4];
+				Bitmap bmp = null;
 				byte[] bmpBuff = null;
 				ByteBuffer bytBuffer = null;
-				Bitmap bmp = null;
-
-				long handle = m_decoder;
-				try {
-					if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
-				} catch (Exception e) {
-				}
-				byte[] outBytes = m_imageData;
-				m_decoderLock.lock();
-				int nRet = H264Dec.DecoderNal(handle, data, len, frameParam, outBytes);
-				m_decoderLock.unlock();
-
-				if (nRet > 0) {
-					int width_frame = frameParam[2];//352
-					int height_frame = frameParam[3];//288
+				if (len > 0) {
+					int width_frame = SDK._width;//352
+					int height_frame = SDK._height;//288
 					if (width_frame > 0 && height_frame > 0) {
-						bmpBuff = new byte[width_frame * height_frame * 2];
+						bmpBuff = new byte[width_frame * height_frame * 3];
 
 						bmp = Bitmap.createBitmap(width_frame, height_frame,
 								android.graphics.Bitmap.Config.RGB_565);
@@ -470,7 +451,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 							bytBuffer = ByteBuffer.wrap(outBytes);
 							bmp.copyPixelsFromBuffer(bytBuffer);
 						}
-						//Canvas videoCanvas = null;
+						
 						try {
 							videoCanvas = m_surfaceHolder.lockCanvas();
 							if (videoCanvas != null) {
@@ -490,20 +471,22 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					}
 				}
 				if(_snapImg){
-					_decoderQueue._startSnap = false;
-					_snapImg = false;
+//					_decoderQueue._startSnap = false;
+//					_snapImg = false;
 					//_handler.sendEmptyMessage(100);
 					long fileLong = snapPic(m_imageBitmap, _fileName);
 					if(fileLong >= 204800){// || NewMain.devType == 4
 						_decoderQueue._startSnap = false;
 						_snapImg = false;
+						cut.setClickable(true);
 					}
 				}
 				if (!bmp.isRecycled()) {
 					bmp.recycle();
-					}
+				}
 			}
 		} catch (Exception e) {
+			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 	
@@ -529,7 +512,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public void stop(){
 		if(isStop){
 			try {
-				LogUtil.d(TAG, "start...stop...");
+				//LogUtil.d(TAG, "start...stop...");
 				isStop = false;
 				long t3= System.currentTimeMillis();
 				if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
@@ -548,12 +531,12 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					if(_decoderDebugger.isCanDecode()) _decoderDebugger.close();
 					_decoderDebugger = null;
 				}
-				H264Dec.UninitDecoder(m_decoder);
+				//H264Dec.UninitDecoder(m_decoder);
 				long t4= System.currentTimeMillis();
-				LogUtil.d(TAG, " 退出app .time "+(t4-t3));
+				LogUtil.d(TAG, " 退出app .time= "+(t4-t3));
 				SDK.isInitDecoder = false;
 				if(isPlay){
-					LogUtil.i(TAG, "...isPlay = "+isPlay+"--"+SDK._sessionId+"--"+getDeviceChannel());
+					//LogUtil.i(TAG, "...isPlay = "+isPlay+"--"+SDK._sessionId+"--"+getDeviceChannel());
 					long t1= System.currentTimeMillis();
 					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
 					SDK.P2PClose(SDK._sessionId);
@@ -578,13 +561,13 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			long t1 = System.currentTimeMillis();
 			int nRet = SDK.P2PConnect(devSid,_sessionId);
 			long t2 = System.currentTimeMillis();
-			LogUtil.d(TAG, "SDK.P2PConnect time :"+(t2-t1) +" ret= "+nRet);
+			LogUtil.d(TAG, "SDK.P2PConnect return= "+nRet+" time= "+(t2-t1)+" devSid = "+devSid +" devName = "+devName);
 			if(nRet == 0){
 				SDK._sessionId = _sessionId[0];
 				long t3 = System.currentTimeMillis();
 				_playId = SDK.P2PCreateChannel(SDK._sessionId,getDeviceChannel(),1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
-				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionId+" time="+(t4-t3));
+				LogUtil.i(TAG,"SDK.P2PCreateChannel return="+_playId+" sessionId= "+SDK._sessionId+" time="+(t4-t3));
 				stopTimer();
 				if(_playId > 0){
 					//模拟目前不要发消息
@@ -593,13 +576,15 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					if(_decoderDebugger != null) _decoderDebugger.flag = 0;
 					if(type == 0){
 						isPlay = true;
-						LogUtil.i(TAG,"..isPlay===="+isPlay);
+						//LogUtil.i(TAG,"..isPlay===="+isPlay);
 						if(_decoderQueue == null){
 							_decoderQueue = new DecoderQueue();
 							_decoderQueue.Start();
 						}
-						//_deThead.de_start();
-						_sQueue.Start();
+						if(NewMain.devType == 4){//模拟打开音频队列，IPC目前没有音频 
+							_sQueue = new AudioQueue();
+							_sQueue.Start();
+						}
 					}else if(type == 1){
 						closeWait();
 					}
@@ -608,8 +593,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					msg.what = XMSG.CREATECHANLL;
 					msg.obj = _playId;
 					_handler.sendMessage(msg);
-					closeWait();
-					SDK._sessionId = 0;
 				}
 			}else{//连接失败消息处理
 				//连接3次不成功关闭
@@ -722,7 +705,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public long snapPic(Bitmap bitmap,String fileName) {
 		BitmapUtils.saveBitmap(bitmap, fileName);
 		File file = new File(fileName);
-		if(file.isFile() && file.exists() && file.length() >= 204800){
+		if(file.isFile() && file.exists()){// && file.length() >= 204800 夜间抓图会小于200K 
 			if(fileName.indexOf("images") != -1){
 				_handler.sendEmptyMessage(XMSG.PLAY_SNAP);
 			}
@@ -791,7 +774,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				}
 				break;
 			case R.id.btn_play_gpu://软硬解切换
-				//_decoderQueue.i_flag = 0;
 				if(isGpu){
 					_btnGpu.setClickable(false);
 					_decoderQueue.Stop();
@@ -807,14 +789,14 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					_decoderQueue.Start();
 					APP.ShowToast(getText(R.string.Video_stop_gpu).toString());
 					_btnGpu.setClickable(true);
+					SDK.SetDecoderModel(1);
 				}else{
 					_btnGpu.setClickable(false);
-					LogUtil.i(TAG, "硬解start....");
 					isGpu = true;
 					_decoderDebugger.canDecode = true;
 					stopPause();
+					SDK.SetDecoderModel(0);
 					NewSurfaceTest.this.recreate();
-					LogUtil.i(TAG, "硬解end....");
 				}
 				break;
 			default:
@@ -848,8 +830,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
 				stopRecordingVideo();
 			}
-			_sQueue.Stop();
-			//_deThead.de_stop();
+			if(_sQueue != null) _sQueue.Stop();
 			if(_decoderQueue != null){
 				_decoderQueue.Stop();
 				_decoderQueue = null;
@@ -858,10 +839,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				_decoderDebugger.close();
 				_decoderDebugger = null;
 			}
+			SDK.isInitDecoder = false;
 			if(isPlay){
-				//if(isCloseChannel){
-					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
-				//} 
+				SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
 				SDK.P2PClose(SDK._sessionId);
 				SDK._sessionId = 0;
 				isPlay = false;
@@ -885,7 +865,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i("debug", ".......onResume........");
+		//Log.i("debug", ".......onResume........");
 		if(isResume){
 			playPause(0);
 			isResume = false;
@@ -895,18 +875,23 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i("debug", ".......onPause........");
+		//Log.i("debug", ".......onPause........");
 		playPause(1);
 	}
 	
 	@Override
 	protected void onStop() {
 		try {
+			if(!isGpu){
+				SDK.SetDecoderModel(0);
+			}
+			SDK._flag = 0;
+			SDK.Ffmpegh264DecoderUninit();
 			isStop = true;
 			closeWait();
 			stopTimer();
 			_handler.removeMessages(XMSG.ON_PLAY);
-			LogUtil.i(TAG, "onDestroy.....ok..");
+			LogUtil.i(TAG, "onStop.....end..");
 		} catch (Exception e) {
 		}
 		super.onStop();
@@ -925,7 +910,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			m_surfaceHolder = null;
 			_decoderDebugger = null;
 			_handler = null;
-			LogUtil.i(TAG, "onDestroy.....ok..");
+			LogUtil.i(TAG, "onDestroy.....end..");
 			//System.gc();
 		} catch (Exception e) {
 		}
@@ -972,7 +957,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			try {
 				switch (msg.what) {
 				case XMSG.CREATECHANLL://创建通道失败
+					closeWait();
 					APP.ShowToast(SDK.GetErrorStr(_playId));
+					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
+					SDK.P2PClose(SDK._sessionId);
+					SDK._sessionId = 0;
 					NewSurfaceTest.this.finish();
 					break;
 				case XMSG.SMS_P2PConnect:
@@ -1002,6 +991,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				case XMSG.ON_PLAY:
 					if(!SDK.isInitDecoder && _playId > 0 && isPlay){
 						APP.ShowToast(getText(R.string.video_failopen).toString());
+						LogUtil.d(TAG, "12秒未收到数据调 stop()....");
 						stop();
 					}
 					break;

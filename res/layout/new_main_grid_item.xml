@@ -19,6 +19,7 @@
             android:layout_gravity="center_vertical"
             android:padding="10dp"
             android:textColor="@color/black"
+            android:text="NVR设备"
             android:id="@+id/device_txt">
        </TextView>
        
@@ -30,7 +31,7 @@
            android:background="@drawable/new_main_item_more_selector"/>
        	</FrameLayout>
         
-      <RelativeLayout 
+     <!--  <RelativeLayout 
         android:layout_width="fill_parent"
         android:layout_height="280dp"
         android:layout_marginLeft="5dp"
@@ -43,14 +44,14 @@
               android:layout_height="fill_parent"
               android:scaleType="fitXY"
               />
-          <!-- <TextView android:id="@+id/device_status"
+          <TextView android:id="@+id/device_status"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentRight="true"
               android:layout_marginRight="5dp"
               android:layout_marginBottom="5dp"
               android:textColor="@color/white"
-              android:layout_alignParentBottom="true"/> -->
+              android:layout_alignParentBottom="true"/>
           
           <ImageView android:id="@+id/device_type_ic"
               android:layout_width="30dp"
@@ -70,7 +71,7 @@
               android:layout_alignParentBottom="true"
               />
           
-      </RelativeLayout>
+      </RelativeLayout> -->
     <!-- <ImageView 
         android:layout_width="fill_parent"
         android:layout_height="280dp"
@@ -80,8 +81,8 @@
         android:id="@+id/device_img"
         android:adjustViewBounds="true"/>  -->
     
-    <!-- <GridView 
-        android:id="@+id/gridView"
+   <GridView 
+        android:id="@+id/nvr_grid_view"
         android:background="@color/black"
         android:layout_height="200dp"
         android:layout_width="fill_parent"
@@ -90,6 +91,6 @@
         android:horizontalSpacing="1dp"
         android:verticalSpacing="1dp"
         android:numColumns="4"
-        android:columnWidth="30dp"></GridView> -->
+        android:columnWidth="30dp"></GridView> 
     
 </LinearLayout>

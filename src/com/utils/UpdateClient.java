@@ -6,12 +6,9 @@ import java.net.URL;
 import java.text.DecimalFormat;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.adapter.HttpUtil;
 import com.alibaba.fastjson.JSON;
-
-import com.basic.APP;
 import com.bean.Update;
 import com.manniu.manniu.R;
 import com.views.BaseApplication;

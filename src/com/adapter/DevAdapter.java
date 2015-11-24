@@ -1,7 +1,10 @@
 package com.adapter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.json.JSONException;
@@ -28,7 +31,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -66,7 +71,7 @@ public class DevAdapter extends BaseAdapter{
 	
 	LayoutInflater inflater;
 	//图片缓存目录 
-	private String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/manniu/devices/";
+	public static String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/manniu/devices/";
 	//缓存文件
 	private File file;
 	//设备ID 当缓存文件文件名
@@ -85,15 +90,14 @@ public class DevAdapter extends BaseAdapter{
 	final LruCache<String, Bitmap> lrnCache = new LruCache<String, Bitmap>(maxMemory/8);
 	
 	ImageCache imageCache;
+	public DevImageLoader _imageLoader;
 	
 	public static class ViewHolder{
-		public TextView tv;
-		public ImageView iv;
-		public Button more_btn;
-		public Button msg_btn;
-		public TextView status;
-		public ImageView type_ic;
-		public ImageView status_ic;
+		public TextView tv;//显示设备名称
+		public ImageView iv;//显示设备封面图片
+		public Button more_btn;//更多按钮
+		public ImageView type_ic;//设备类型图标
+		public ImageView status_ic;//设备状态图标
 	}
 	
 	public DevAdapter(Context _context, List<?> _items){
@@ -111,6 +115,7 @@ public class DevAdapter extends BaseAdapter{
 			}};
 		
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		_imageLoader=new DevImageLoader(context);
 	}
 	
 	@Override
@@ -133,118 +138,143 @@ public class DevAdapter extends BaseAdapter{
 		
 		final ViewHolder holder;
 		if(convertView == null){
-			
 			final Device device = (Device)items.get(position);
 			holder = new ViewHolder();
-		//	if(device.channelNo == null){//单通道
+			if(device.channels == null){
+				device.channels = 0;
+			}
+			if(device.channels > 1){//NVR 多通道
+				convertView = inflater.inflate(R.layout.new_main_grid_item, null);
+				
+				GridView nvrGrid = (GridView)convertView.findViewById(R.id.nvr_grid_view);
+
+				List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
+
+		//String[] textArr = context.getResources().getStringArray(R.array.dialog_text);
+		//String[] tagArr = context.getResources().getStringArray(R.array.dialog_tag);
+		//TypedArray imgs = context.getResources().obtainTypedArray(R.array.dialog_ic);
+
+				Log.d(TAG, "SID:"+device.sid);
+				Log.d(TAG, "channels:"+device.channels);
+
+				Map<String, Object> map = null;
+				for(int i = 0; i < device.channels; i++){
+					map = new HashMap<String, Object>();
+					map.put("tag", "tag");
+					map.put("text", i);
+					map.put("image", R.drawable.lock_bg);
+					items.add(map);
+				}
+
+				SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.gridview_item, 
+				new String[]{"tag", "image", "text"}, new int[]{R.id.tag, R.id.ItemImage, R.id.ItemText});
+				
+//				ListAdapter adapter = new NVRAdapter();
+				nvrGrid.setAdapter(adapter);
+				
+				
+			}else{//单通道
 				convertView = inflater.inflate(R.layout.new_main_item, null);
 				holder.tv = (TextView)convertView.findViewById(R.id.device_txt);
 				holder.iv = (ImageView)convertView.findViewById(R.id.device_img);
-				//holder.msg_btn = (Button)convertView.findViewById(R.id.device_msg);
 				holder.more_btn = (Button)convertView.findViewById(R.id.device_btn);
-				//holder.status = (TextView) convertView.findViewById(R.id.device_status);
 				holder.status_ic = (ImageView)convertView.findViewById(R.id.device_status_ic);
 				holder.type_ic = (ImageView)convertView.findViewById(R.id.device_type_ic);
 				convertView.setTag(holder);
-//			}else{
-//				convertView = inflater.inflate(R.layout.new_main_grid_item, null);
-//			}
-			
-			holder.tv.setText(device.devname + (device.channelNo==null?"":" 通道:"+(device.channelNo+1)));
-			
-			switch (device.type) {
-			case 1:
-				holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc));
-				break;
-			case 4:
-				holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.common_bar_eye_2));
-				break;
-			case 100:
-				holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.collection));
-				break;
-			default:
-				break;
-			}
-			
-			if(device.online==0){
-				holder.status_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc_noline1));
-			}else{
-				holder.status_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc_online1));
-			}
-			
-			if(device.type == 100){
-				holder.status_ic.setVisibility(View.GONE);
-			}else{
-				holder.status_ic.setVisibility(View.VISIBLE);
-			}
-			
-			holder.more_btn.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if(device.type == 1 && device.isowner == 1){
-						dlg = Sheet(device, holder.iv);
-					}else if(device.type == 1 && device.isowner == 0){
-						dlg = DelSheet(device, holder.iv);
-					}else if(device.type == 4){
-						dlg = AnalogSheet(device, holder.iv);
-					}else if(device.type == 100){
-						dlg = CollectSheet(device, holder.iv);
-					}else{
-						
-					}
+				
+				holder.tv.setText(device.devname);
+				
+				switch (device.type) {
+				case 1:
+					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc));
+					break;
+				case 4:
+					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.common_bar_eye_2));
+					break;
+				case 100:
+					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.collection));
+					break;
+				default:
+					break;
 				}
-			});
-			
-			RequestParams params = new RequestParams();
-			params.put("sid", device.sid);//"Q04hAQEAbDAwMjk0MTYwAAAAAAAA"
-			try {
-				HttpUtil.get(Constants.hostUrl + "/mobile/getScreen", params, new JsonHttpResponseHandler(){
+				
+				if(device.online==0){
+					holder.status_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc_noline1));
+				}else{
+					holder.status_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc_online1));
+				}
+				
+				if(device.type == 100){
+					holder.status_ic.setVisibility(View.GONE);
+				}else{
+					holder.status_ic.setVisibility(View.VISIBLE);
+				}
+				
+				holder.more_btn.setOnClickListener(new OnClickListener() {
 					@Override
-					public void onSuccess(int statusCode, Header[] headers,
-							JSONObject response) {
-						//Log.d(TAG, response.toString());
-						String result = "";
-						try {
-							result = response.getString("result");
-						} catch (JSONException e) {
-							e.printStackTrace();
+					public void onClick(View v) {
+						if(device.type == 1 && device.isowner == 1){
+							dlg = Sheet(device, holder.iv);
+						}else if(device.type == 1 && device.isowner == 0){
+							dlg = DelSheet(device, holder.iv);
+						}else if(device.type == 4){
+							dlg = AnalogSheet(device, holder.iv);
+						}else if(device.type == 100){
+							dlg = CollectSheet(device, holder.iv);
+						}else{
+							
 						}
-						if(result.startsWith("http")){
-							Log.d(TAG, device.devname + "的封面:" + result);
-							String name = result.substring(result.indexOf("aliyuncs.com")+12, result.length());
-							
-							file = new File(rootPath+device.sid+name);
-							if(file.exists()){
-								Log.d(TAG, device.devname + "的封面本地已存在!");
-								holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
-							}else{
-								Log.d(TAG, device.devname + "的封面本地不存在,正在下载...");
-								byte[] bytes = HttpUtil.executeGetBytes(result);
-								FileUtil.toFile(bytes, rootPath+device.sid+name);
-								holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
-							}
-							
-							//volley image load
-							/*ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
-							ImageListener listener = ImageLoader.getImageListener(holder.iv, R.drawable.lock_bg1, R.drawable.ic_launcher);
-							imageLoader.get(result, listener);*/
-							
-							/*DisplayImageOptions options = new DisplayImageOptions.Builder()
-							.cacheOnDisk(true)
-							.showImageOnLoading(context.getResources().getDrawable(R.drawable.lock_bg1))
-							.build();
-							ImageLoader.getInstance().displayImage(result, holder.iv, options);*/
-						}
-					}
-					@Override
-					public void onFailure(int statusCode, Header[] headers,
-							String responseString, Throwable throwable) {
-						super.onFailure(statusCode, headers, responseString, throwable);
 					}
 				});
-				holder.iv.setImageDrawable(context.getResources().getDrawable(R.drawable.lock_bg1));
-			} catch (Exception e) {
+				
+				//异步加载图片
+				_imageLoader.DisplayImage(device.logo, holder.iv,device.sid);
+				
+				/*RequestParams params = new RequestParams();
+				params.put("sid", device.sid);//"Q04hAQEAbDAwMjk0MTYwAAAAAAAA"
+				System.out.println("........."+device.sid+"--"+device.devname);
+				try {
+					HttpUtil.get(Constants.hostUrl + "/mobile/getScreen", params, new JsonHttpResponseHandler(){
+						@Override
+						public void onSuccess(int statusCode, Header[] headers,
+								JSONObject response) {
+							//Log.d(TAG, response.toString());
+							String result = "";
+							try {
+								result = response.getString("result");
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							if(result.startsWith("http")){
+								Log.d(TAG, device.devname + "的封面:" + result);
+								String name = result.substring(result.indexOf("aliyuncs.com")+12, result.length());
+								
+								file = new File(rootPath+device.sid+name);
+								LogUtil.d(TAG, rootPath+device.sid+name);
+								if(file.exists()){
+									Log.d(TAG, device.devname + "的封面本地已存在!");
+									holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
+								}else{
+									Log.d(TAG, device.devname + "的封面本地不存在,正在下载...");
+									byte[] bytes = HttpUtil.executeGetBytes(result);
+									FileUtil.toFile(bytes, rootPath+device.sid+name);
+									holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
+								}
+							}
+						}
+						@Override
+						public void onFailure(int statusCode, Header[] headers,
+								String responseString, Throwable throwable) {
+							super.onFailure(statusCode, headers, responseString, throwable);
+						}
+					});
+					Resources rs = context.getResources();
+					Drawable dw = rs.getDrawable(R.drawable.lock_bg1);				
+					holder.iv.setImageDrawable(dw);
+				} catch (Exception e) {
+				}*/
 			}
+			
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
@@ -386,16 +416,26 @@ public class DevAdapter extends BaseAdapter{
 					}
 				}else if("dialog5".equals(tag.getText())){
 					dlg.dismiss();
-					ShowPromptDialog("添加辅用户", "请输入用户名", 
+					ShowPromptDialog(context.getString(R.string.add_assist_user), context.getString(R.string.please_input_userID), 
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
 									final EditText userInput = (EditText) promptView.findViewById(R.id.editTextDialog);
 									prompt_text = userInput.getText().toString();
+									//此处需要增加判断不能添加子用户为自身 2015.11.20 李德明修改									
+									String strUserName = "";
+									String strPhoneNumber = "";
+									strUserName =  APP.GetSharedPreferences(NewLogin.SAVEFILE, "username", "");
+									strPhoneNumber = APP.GetSharedPreferences(NewLogin.SAVEFILE, "phonenumber", "");
 									if("".equals(prompt_text.trim())||prompt_text==null){
-										APP.ShowToast("用户名不能为空!");
-									}else{
+										APP.ShowToast(context.getString(R.string.userID_cant_empty));
+									}
+									else if(strUserName.equals(prompt_text) || strPhoneNumber.equals(prompt_text))
+									{
+										APP.ShowToast(context.getString(R.string.userID_cant_sameasower));
+									}
+									else{
 										appointUser(device, prompt_text);
 									}
 								}
@@ -629,17 +669,17 @@ public class DevAdapter extends BaseAdapter{
 						e.printStackTrace();
 					}
 					if("nodev".equals(msg)){
-						APP.ShowToast("没有该设备!");
+						APP.ShowToast(context.getString(R.string.no_device));
 					}else if("failure".equals(msg)){
-						APP.ShowToast("添加失败!");
+						APP.ShowToast(context.getString(R.string.add_failure));
 					}else if("maximum".equals(msg)){
-						APP.ShowToast("超过最大绑定数!");
+						APP.ShowToast(context.getString(R.string.binding_maxinum));
 					}else if("success".equals(msg)){
-						APP.ShowToast("添加成功!");
+						APP.ShowToast(context.getString(R.string.add_success));
 					}else if("norit".equals(msg)){
-						APP.ShowToast("没有权限!");
+						APP.ShowToast(context.getString(R.string.right_lessness));
 					}else if("nouser".equals(msg)){
-						APP.ShowToast("没有找到该用户!");
+						APP.ShowToast(context.getString(R.string.user_donot_exits));
 					}
 				}
 			}

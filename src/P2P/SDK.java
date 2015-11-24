@@ -39,7 +39,7 @@ public class SDK {
 	//isIFrame		1：i帧，否则为p帧
 	//static byte[] newbuf = new byte[60*1024];
 	public void onData(int chnl,int type,int isIFrame,byte[] data, int length) {
-		if(NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
+		if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
 		//if(NewSurfaceTest.instance != null){
 			if(NewMain.devType == 1 && data.length > 1){
 				//Log.i("SDK", "接收数据.........................."+length);
@@ -114,10 +114,14 @@ public class SDK {
 	protected static VideoQuality mRequestedQuality = VideoQuality.DEFAULT_VIDEO_QUALITY.clone();
 	//protected VideoQuality mQuality = mRequestedQuality.clone(); 
 	//public static List<Long> lessionList = new ArrayList<Long>();
-	public static boolean isInitDecoder = false;//收到宽高标识位判断通道是否创建成功
+	public static boolean isInitDecoder = false;//收到宽高标识位判断通道是否创建成功/以这个来判断要不要送数据到解码器
 	public static int _createChnlFlag = -1;//_createChnlFlag 标志位 0成功
 	public static boolean analogPic = false;//模拟抓图
 	public static int nFrameRate = 20;//帧率
+	public static int _bitrate = 80000000;//码率
+	public static int _width = 352;//
+	public static int _height = 288;//
+	public static int _flag = 0;//收到宽高只处理一次
 	public void OnCommand(int cmd, long param1, int param2, int param3,
 			int param4,int param5 ,int param6,int param7, String str1, String str2, String str3) {
 		LogUtil.d("SDK", "OnCommand:"+cmd + " -- " + param1 + "-- " + param2 + "--" + param3+ "--" + param4 + "--" + str1 + "--" + str2 + "--" + str3);
@@ -195,9 +199,15 @@ public class SDK {
 			if(cmd == 10){//获取宽高  第3  4  5 个参数分别是帧率  宽 高
 				LogUtil.d("SDK","收到宽高：    "+param2+"--"+param3 + "--" + param4+ "--" + param5+"--"+param6+"--"+param7);
 				if(param3 != 0) nFrameRate = param3;
+				_width = param5;
+				_height = param6;
 				//NewSurfaceTest.instance._decoderDebugger.configureDecoder(param3,param4,param5,param6);
-//				start();
 				isInitDecoder = true;
+				if(NewSurfaceTest.isPlay && _flag == 0){
+					_flag = 1;
+					BackLoginThread.state = 4;
+					Main.Instance._loginThead.start();
+				}
 			}else if(cmd == 26){//设备状态 == 1设备不在线
 				if(param2 == 1 && NewSurfaceTest.instance != null) NewSurfaceTest.instance.closeNewSurface(param2);
 			}
@@ -462,9 +472,11 @@ public class SDK {
 	 * jintArray: send buf data
 	 * jint :     data len
 	 * framerate 帧类型
+	 * jint   :   channel
+	 *	jint   :   发送标志
 	*  返回值 >0 成功
 	 * */
-	public static native int Ffmpegh264EnCoder(byte[] buf, int len,byte[] data,int[] bIFrame);
+	public static native int Ffmpegh264EnCoder(byte[] buf, int len,byte[] data,int[] bIFrame,int channel,int isSend);
 	/*
 	 * jint :   帧率
 	 * jint ：       码率
@@ -477,8 +489,9 @@ public class SDK {
 	/*
 	 * jstring  h264文件绝对路径
 	 * jstring  mp4文件绝对路径
+	 * jint     是否存在音频1存在 0不存在
 	 * */
-	public static native int Ffmpegh264ToMp4(String h246Path,String mp4Path);
+	public static native int Ffmpegh264ToMp4(String h246Path,String aacPath,String mp4Path,int flag);
 	
 	/*
 	 * jint  截图数据格式 1 nv12 2nv21
@@ -606,9 +619,24 @@ public class SDK {
 	//public static native int  NgxEncodeTea(JNIEnv *, jclass,jstring, jint, jstring, jint, jstring, jint);
 	
 	/*
-	 * jint  1 是软解  我们自己的软解 暂时不用
+	 * jint  1 是软解  0 硬解 我们自己的软解 暂时不用
 	 * */
 	public static native int SetDecoderModel(int type);
+	/*
+	 * jint  宽
+	 * jint  高
+	 * jint  帧率
+	 * jint  码率
+	 * */
+	public static native int Ffmpegh264DecoderInit(int width,int heigth,int framerate,int bitrate);
+	public static native int Ffmpegh264DecoderUninit();
+	/*硬解码 截图
+	 *jbyteArray 输入数据
+	 *jint       输入数据的长度
+	 *jbyteArray 输出数据
+	 *jint  	 返回值 输出数据的长度
+	 * */
+	public static native int ScreenShots(byte[] indata,int len,byte[] outdata);
 	
 	//之前的错误码 全部作废  阮少说的
     

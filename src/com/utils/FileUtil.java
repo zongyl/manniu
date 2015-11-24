@@ -55,25 +55,29 @@ public class FileUtil {
 	public static int readFile(String fileName){
 		int nRet = 0;
 		try {
-			//Thread.sleep(5000);
 			File file = new File(fileName);
 			FIS = new FileInputStream(fileName);
-			BAOS = new ByteArrayOutputStream(1024*1024);
 			fileLong = file.length();
-			//System.out.println(file.length()+"--");
 			byte[] b = new byte[1024*1024];
 			int n;
+			int nRetLength = 0;
 			while ((n = FIS.read(b)) != -1) {
-				BAOS.write(b, 0, n);
-				if(fileLong == BAOS.toByteArray().length){
-					nRet = SDK.upLoadLocalMedia(BAOS.toByteArray(),n,true);
+				nRetLength += n;
+				if(fileLong == nRetLength){
+					nRet = SDK.upLoadLocalMedia(b,n,true);
+					//如果发送失败在重发一次
+					if(nRet != 0){
+						SDK.upLoadLocalMedia(b,n,true);
+					}
 				}else{
-					nRet = SDK.upLoadLocalMedia(BAOS.toByteArray(),n,false);
+					nRet = SDK.upLoadLocalMedia(b,n,false);
+					//如果发送失败在重发一次
+					if(nRet != 0){
+						SDK.upLoadLocalMedia(b,n,false);
+					}
 				}
-				//System.out.println(".........."+BAOS.toByteArray().length+"---"+n);
 			}
 			FIS.close();
-			BAOS.close();
 		} catch (Exception e) {
 			LogUtil.e(TAG, "getBytes exception!");
 		}

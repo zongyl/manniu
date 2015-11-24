@@ -817,11 +817,11 @@
  	    <item >@drawable/more_account</item>
  	    <item >@drawable/user_exit</item>
  	</integer-array>
- 	<string-array name="msgMenu">
+ 	<!-- <string-array name="msgMenu">
  	    <item>实时视频</item>
  	    <item>存至本地</item>
  	    <item>分享图片</item>
- 	</string-array>
+ 	</string-array> -->
  	<integer-array name ="msgImgs">
  	    <item>@drawable/title_down_play</item>
  	    <item>@drawable/title_down_download</item>
@@ -1141,6 +1141,17 @@
  	<string name="default_profile">好视频，一辈子</string>
  	<string name="default_dev_title">蛮牛云眼</string>
  	<string name="please_clicklink">请点击</string>
+ 	<string name="add_assist_user">添加辅助用户</string>
+ 	<string name="please_input_userID">请输入用户名</string>
+ 	<string name="userID_cant_empty">用户名不能为空！</string>
+ 	<string name="userID_cant_sameasower">用户名不能为当前用户！</string>
+ 	<string name="no_device">没有该设备！</string>
+ 	<string name="add_failure">添加失败！</string>
+ 	<string name="binding_maxinum">超过最大绑定数！</string>
+ 	<string name="add_success">添加成功！</string>
+ 	<string name="right_lessness">没有权限！</string>
+ 	<string name="user_donot_exits">用户不存在！</string>
+ 	<string name="channel">通道</string>
  	
  	
 </resources>

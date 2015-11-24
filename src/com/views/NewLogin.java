@@ -136,7 +136,7 @@ public class NewLogin extends Activity implements OnClickListener{
 		_ipPreferences = getSharedPreferences(SplashScreen.HOSTIP, this.MODE_PRIVATE);
 		Constants.hostUrl = _ipPreferences.getString("hostIP", "");
 		//连本地服务
-		//Constants.hostUrl = "http://10.12.6.121:8080/NineCloud";
+//		Constants.hostUrl = "http://10.12.6.121:8080/NineCloud";
 	}
 	
 	//内置SD卡

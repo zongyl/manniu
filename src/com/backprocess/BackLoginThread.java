@@ -33,7 +33,7 @@ public class BackLoginThread implements Runnable{
 	public final static int QUERY_OK = 200;
 	private String TAG = BackLoginThread.class.getSimpleName();
 	public static boolean runFlag;
-	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼
+	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高
 	public static int state = 0;
 	Thread _thread = null;
 	public int error_Count= 0;
@@ -125,12 +125,12 @@ public class BackLoginThread implements Runnable{
 								_thread.wait();//
 							}else{
 								Thread.sleep(10000);
-								error_Count ++;
-								if(error_Count > 2){
-									error_Count = 0;
-									runFlag = false;
-									_handler.sendEmptyMessage(LOGIN_SEND_MSG);
-								}
+//								error_Count ++;
+//								if(error_Count > 2){
+//									error_Count = 0;
+//									runFlag = false;
+//									_handler.sendEmptyMessage(LOGIN_SEND_MSG);
+//								}
 							}
 							break;
 						case 3:
@@ -147,12 +147,13 @@ public class BackLoginThread implements Runnable{
 								_thread.wait();//
 							}else{
 								Thread.sleep(10000);
-								error_Count ++;
-								if(error_Count > 2){
-									error_Count = 0;
-									runFlag = false;
-									_handler.sendEmptyMessage(LOGIN_SEND_MSG);
-								}
+								//登录不上就一直登录 直到用户点击退出
+//								error_Count ++;
+//								if(error_Count > 2){
+//									error_Count = 0;
+//									runFlag = false;
+//									_handler.sendEmptyMessage(LOGIN_SEND_MSG);
+//								}
 							}
 							break;
 						case 1:
@@ -184,6 +185,12 @@ public class BackLoginThread implements Runnable{
 							}
 							String tempStr = "?username="+Constants.userName+"&password="+MD5Util.MD5(MD5Util.MD5(APP.GetSharedPreferences(NewLogin.SAVEFILE, "pwd0", "")))+"&registrationId="+1+"&deviceInfo="+2+"&time_token="+3;
 							loginForETS(tempStr);
+							break;
+						case 4:
+							SDK.Ffmpegh264DecoderInit(SDK._width,SDK._height,SDK.nFrameRate,SDK._bitrate);
+							state = 200;
+							runFlag = false;//连接成功置成false 
+							_thread.wait();//
 							break;
 						}
 					}

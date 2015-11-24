@@ -77,21 +77,24 @@ public class LogUtil {
      * @since v 1.0 
      */  
     private static void log(String tag, String msg, char level) {  
-        if (MYLOG_SWITCH) {  
-            if ('e' == level && ('e' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) { // 输出错误信息  
-                Log.e(tag, msg);  
-            } else if ('w' == level && ('w' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
-                Log.w(tag, msg);  
-            } else if ('d' == level && ('d' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
-                Log.d(tag, msg);  
-            } else if ('i' == level && ('d' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
-                Log.i(tag, msg);  
-            } else {  
-                Log.v(tag, msg);  
-            }  
-            if (MYLOG_WRITE_TO_FILE)  
-                writeLogtoFile(String.valueOf(level), tag, msg);  
-        }  
+    	try {
+    		if (MYLOG_SWITCH) {
+                if ('e' == level && ('e' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) { // 输出错误信息  
+                    Log.e(tag, msg);  
+                } else if ('w' == level && ('w' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
+                    Log.w(tag, msg);  
+                } else if ('d' == level && ('d' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
+                    Log.d(tag, msg);  
+                } else if ('i' == level && ('d' == MYLOG_TYPE || 'v' == MYLOG_TYPE)) {  
+                    Log.i(tag, msg);  
+                } else {  
+                    Log.v(tag, msg);  
+                }  
+                if (MYLOG_WRITE_TO_FILE)  
+                    writeLogtoFile(String.valueOf(level), tag, msg);  
+            }
+		} catch (Exception e) {
+		}
     }  
   
     /** 
@@ -102,42 +105,50 @@ public class LogUtil {
     public static void writeLogtoFile(String mylogtype, String tag, String text) {// 新建或打开日志文件  
 //    	File dir = new File(LOG_PATH);
 //    	if(!dir.exists()) dir.mkdir();
-        Date nowtime = new Date();  
-        String needWriteFiel = logfile.format(nowtime);  
-        String needWriteMessage = myLogSdf.format(nowtime) + "    " + mylogtype  
-                + "    " + tag + "    " + text;  
-        
-        File file2 = checkLogFileIsExist();
-        file2 = new File(NewLogin.logPath, needWriteFiel + _LogName);  
         try {  
-            FileWriter filerWriter = new FileWriter(file2, true);//后面这个参数代表是不是要接上文件中原来的数据，不进行覆盖  
-            BufferedWriter bufWriter = new BufferedWriter(filerWriter);  
-            bufWriter.write(needWriteMessage);  
-            bufWriter.newLine();  
-            bufWriter.close();  
-            filerWriter.close();  
+        	Date nowtime = new Date();  
+            String needWriteFiel = logfile.format(nowtime);  
+            String needWriteMessage = myLogSdf.format(nowtime) + "    " + mylogtype  
+                    + "    " + tag + "    " + text;  
+            
+            //File file = new File(NewLogin.logPath, needWriteFiel + _LogName);
+            
+            File file2 = checkLogFileIsExist();
+            if(file2 != null && file2.isFile()){
+            	file2 = new File(NewLogin.logPath, needWriteFiel + _LogName); 
+                
+                FileWriter filerWriter = new FileWriter(file2, true);//后面这个参数代表是不是要接上文件中原来的数据，不进行覆盖  
+                BufferedWriter bufWriter = new BufferedWriter(filerWriter);  
+                bufWriter.write(needWriteMessage);  
+                bufWriter.newLine();  
+                bufWriter.close();  
+                filerWriter.close(); 
+            }
+             
         } catch (IOException e) {  
-            //e.printStackTrace();  
         }  
     }  
     
     /**检查日志文件是否存在*/
 	public static File checkLogFileIsExist() {
 		File file = new File(NewLogin.logPath);
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-		
-		String dateStr = DateUtil.getCurrentStringDate();
-		file = new File(NewLogin.logPath + dateStr + _LogName);
-		if (!isLogExist(file)) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				//e.printStackTrace();
+		try {
+			if (!file.exists()) {
+				file.mkdirs();
 			}
+			
+			String dateStr = DateUtil.getCurrentStringDate();
+			file = new File(NewLogin.logPath + dateStr + _LogName);
+			if (!isLogExist(file)) {
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+				}
+			}
+			return file;
+		} catch (Exception e) {
+			return null;
 		}
-		return file;
 	}
     
     /**
@@ -162,23 +173,26 @@ public class LogUtil {
      * 删除内存下过期的日志
      */
 	public static void deleteSDcardExpiredLog() {
-		File file = new File(NewLogin.logPath);
-		if (file.isDirectory()) {
-			File[] allFiles = file.listFiles();
-			for (File logFile : allFiles) {
-				String fileName = logFile.getName();
-				if (_LogName.equals(fileName)) {
-					continue;
-				}
-				String createDateInfo = getFileNameWithoutExtension(fileName);
-				if (canDeleteSDLog(createDateInfo)) {
-					logFile.delete();
-					LogUtil.d(TAG, "delete expired log success,the log path is:"+ logFile.getAbsolutePath());
-
+		try {
+			File file = new File(NewLogin.logPath);
+			if (file.isDirectory()) {
+				File[] allFiles = file.listFiles();
+				for (File logFile : allFiles) {
+					String fileName = logFile.getName();
+					if (_LogName.equals(fileName)) {
+						continue;
+					}
+					String createDateInfo = getFileNameWithoutExtension(fileName);
+					if (canDeleteSDLog(createDateInfo)) {
+						logFile.delete();
+						//LogUtil.d(TAG, "delete expired log success,the log path is:"+ logFile.getAbsolutePath());
+					}
 				}
 			}
+		} catch (Exception e) {
 		}
 	}
+	
     /**
      * 判断sdcard上的日志文件是否可以删除
      * @param createDateStr

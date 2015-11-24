@@ -9,12 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.concurrent.locks.Lock;
-
-import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import P2P.SDK;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,21 +22,11 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.widget.ImageView;
-
-import com.adapter.HttpUtil;
-import com.basic.APP;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.views.XViewBasic;
-import com.vss.vssmobile.decoder.H264Dec;
 
 
 public class BitmapUtils extends XViewBasic { 
@@ -78,6 +63,23 @@ public class BitmapUtils extends XViewBasic {
         ((Activity) context).startActivityForResult(intent, REQUE_CODE_PHOTO);
  
     }
+	
+	/**
+	 *以最省内存的方式读取本地资源的图片
+	 * @return
+	 */
+	public static Bitmap getBitMap(String path){
+		Bitmap bitmap = null;
+		try {
+			BitmapFactory.Options opt = new BitmapFactory.Options();
+			opt.inPreferredConfig = Bitmap.Config.RGB_565;
+			opt.inPurgeable = true;
+			opt.inInputShareable = true;
+			bitmap = BitmapFactory.decodeFile(path, opt);
+		} catch (Exception e) {
+		}
+		return bitmap;
+	}
 	
 	public static void startPhotoZoom(Context context, Uri uri,
             int REQUE_CODE_CROP) {
@@ -269,37 +271,37 @@ public class BitmapUtils extends XViewBasic {
 	
 	
 	/**软解码获取当前帧的Bitmap*/
-	public static Bitmap getScreenBitmap(Lock lock,long handle,byte[] data,byte[] outBytes,int len){
-		int[] frameParam = new int[4];
-		byte[] bmpBuff = null;
-		ByteBuffer byteBuffer = null;
+	public static Bitmap getScreenBitmap(byte[] data,byte[] outBytes,int len){
 		Bitmap bmp = null;
-		if(outBytes==null)
-			return null;
-		lock.lock();
-		int nRet = H264Dec.DecoderNal(handle, data, len,frameParam, outBytes);
-		lock.unlock();
-		if(nRet>0){
-			int width_frame = frameParam[2];
-			int height_frame = frameParam[3];
-			if (width_frame > 0 && height_frame > 0) {
-				bmpBuff = new byte[width_frame * height_frame * 2];
+		try {
+			byte[] bmpBuff = null;
+			ByteBuffer byteBuffer = null;
+			if(outBytes==null)
+				return null;
+			int nRet = SDK.ScreenShots(data, len,outBytes);
+			if(nRet > 0){
+				int width_frame = SDK._width;
+				int height_frame = SDK._height;
+				if (width_frame > 0 && height_frame > 0) {
+					bmpBuff = new byte[width_frame * height_frame * 3];
 
-				bmp = Bitmap.createBitmap(width_frame,
-						height_frame,
-						android.graphics.Bitmap.Config.RGB_565);
+					bmp = Bitmap.createBitmap(width_frame,
+							height_frame,
+							android.graphics.Bitmap.Config.RGB_565);
 
-				if (bmpBuff != null) {
-					System.arraycopy(outBytes, 0, bmpBuff, 0,
-							width_frame * height_frame * 2);
-					byteBuffer = ByteBuffer.wrap(outBytes);
-					bmp.copyPixelsFromBuffer(byteBuffer);
-//					BitmapUtils.saveBitmap(bmp, NewSurfaceTest.instance._fileName);
+					if (bmpBuff != null) {
+						System.arraycopy(outBytes, 0, bmpBuff, 0,width_frame * height_frame * 2);
+						byteBuffer = ByteBuffer.wrap(outBytes);
+						bmp.copyPixelsFromBuffer(byteBuffer);
+					}
 				}
 			}
+		} catch (Exception e) {
+			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}
 		return bmp;
 	}
+	
 	
 }
 

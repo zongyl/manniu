@@ -15,6 +15,7 @@ public class LiveVideo implements Parcelable{
 	private String lasttime;//开始分享时间
 	private int type;//直播类型
 	private int state;//直播状态
+	private String img;//封面
 	
 	
 	public String getSid() {
@@ -65,6 +66,13 @@ public class LiveVideo implements Parcelable{
 	public void setState(int state) {
 		this.state = state;
 	}
+	
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
+	}
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
@@ -76,7 +84,7 @@ public class LiveVideo implements Parcelable{
 		return "LiveVideo [did=" + sid + ", livename=" + livename
 				+ ", introduction=" + introduction + ", userid=" + userid
 				+ ", starttime=" + starttime + ", lasttime=" + lasttime
-				+ ", type=" + type + ", state=" + state + "]";
+				+ ", type=" + type + ", state=" + state + ", img=" + img + "]";
 	}
 
 	public static final Parcelable.Creator<LiveVideo> CREATOR = new Creator<LiveVideo>(){
@@ -91,6 +99,7 @@ public class LiveVideo implements Parcelable{
 			video.starttime = source.readString();
 			video.state = source.readInt();
 			video.type = source.readInt();
+			video.img = source.readString();
 			return video;
 		}
 
@@ -109,5 +118,6 @@ public class LiveVideo implements Parcelable{
 		dest.writeString(starttime);
 		dest.writeInt(state);
 		dest.writeInt(type);
+		dest.writeString(img);
 	}
 }	

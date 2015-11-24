@@ -166,9 +166,17 @@ public class NewDeviceSet extends Activity {
 		SDK.SendJsonPck(0, str1);
 		//testLoad();
 		findViewById(R.id.device_set_network).setOnClickListener(new Click());
-		Message msg = new Message();
-		msg.what = 1;
-		handler.sendMessageDelayed(msg, 9000);
+//		Message msg = new Message();
+//		msg.what = 1;
+//		handler.sendMessageDelayed(msg, 9000);
+	}
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if(hasFocus){
+			LogUtil.d(TAG, "...loaded!...");
+			init = false;
+		}
 	}
 	
 	@Override
@@ -579,6 +587,7 @@ public class NewDeviceSet extends Activity {
 					adapter(bitStream, R.array.devSetBitStream, 0);
 				}else if("96".equals(bps)){
 					adapter(bitStream, R.array.devSetBitStream, 1);
+				}else if("160".equals(bps)){
 					adapter(bitStream, R.array.devSetBitStream, 2);
 				}else if("224".equals(bps)){
 					adapter(bitStream, R.array.devSetBitStream, 3);
@@ -686,7 +695,8 @@ public class NewDeviceSet extends Activity {
 		}
 	}
 	
-	public void write(View iv_switch, String key){
+	@Deprecated
+	public void write1(View iv_switch, String key){
 		if("alert_type".equals(key)){
 			if("on".equals(iv_switch.getTag().toString())){
 				String cam_conf = readInfo("cam_conf");
@@ -743,7 +753,7 @@ public class NewDeviceSet extends Activity {
 						if(!init){
 							adapter(bitStream, R.array.devSetBitStream, 0);
 						}
-						set(0, "width", 325);
+						set(0, "width", 352);
 						set(0, "height", 288);
 					}
 					break;

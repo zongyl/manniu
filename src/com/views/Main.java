@@ -238,6 +238,8 @@ public class Main extends Activity implements OnClickListener {
 		//_handler.sendEmptyMessageDelayed(XMSG.UPDATEA_APP, 10000); //延迟发送升级提示  -- 测试注了,打包时开启来
 		MyReceiver.isCloseApp = true;
 		initLocation();
+		//删除过期的日志
+		LogUtil.deleteSDcardExpiredLog();
 	}
 	
 	/**
@@ -328,6 +330,18 @@ public class Main extends Activity implements OnClickListener {
 	
 	public void NewMainreLoad(){
 		((NewMain)_xViews[XV_NEW_MAIN]).loadDevList();
+	}
+	
+	/**
+	 * 
+	 * @param index 0 1 2 分别代表  设备、报警、本地
+	 */
+	public void NewMainItem(int index){
+		APP.SendMsg(R.layout.main, XMSG.SELECTED_FUN, Main.XV_NEW_MAIN);
+		change(R.id.btn_mes, R.drawable.common_bar_cloud_sel);
+		change(btn_qrcode, btn_add);
+		tab(index);
+		((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(index);
 	}
 	
 	public void NewMainreLoadImg(){

@@ -23,8 +23,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -194,6 +192,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	View popupWindow_view;
 	private BitmapDescriptor bitmapOtherDes;
 	private BitmapDescriptor bitmapMeDes;
+	private  boolean bCommentClickable = false;
+	
 	
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
@@ -242,7 +242,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		sDefaultDevTitle = getResources().getString(R.string.default_dev_title);
 		parseURL();
 		setContentView(R.layout.new_web_activity);
-		if(null ==getIntent().getStringExtra("playType"))
+		
+		if(null == getIntent().getStringExtra("playType"))
 		{
 			bType = 0;
 		}
@@ -363,6 +364,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				String data = "NET DISCONNECT, PAGE NO FOUND";
 				view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
 			}
+			
+		/*	@Override
+			public void onPageFinished(WebView view, String url) { 			
+				view.loadUrl("javascript:(function() { " +
+						"var videos = document.getElementsByTagName('video'); " +
+						"for(var i=0;i<videos.length;i++){" +
+							"videos[i].play();" +
+						"}" +
+				"})()"); 
+			}*/
 		});
 
 		webView.setWebChromeClient(new WebChromeClient(){
@@ -641,14 +652,17 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			@Override
 			public void onPageFinished(WebView view, String url) 
-			{
+			{	
+				super.onPageFinished(view, url);
+				
 				if(bType == 0)
 					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + 0 + ")" );
 				else
 					commentView.loadUrl("javascript:setLiveId('" + liveId + "'," + 1 + ")" );
 				
-				super.onPageFinished(view, url);
+				bCommentClickable = true;
 			}
+			
 			@Override
 			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
 			{
@@ -937,7 +951,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	{
 		
 		liveUrl = getIntent().getStringExtra("url");
-		
+		//liveUrl = "http://10.12.6.116:80/live_video.html";
+		//liveUrl = "http://10.12.6.121:8020/Video/video.html";
 		if(liveUrl.indexOf("?")!=-1){
 			String str = liveUrl.split("\\?")[1];
 			String[] strs = str.split("&");
@@ -1012,7 +1027,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
        	 
        	 if(bType == 0)
        	 {
-        	 mMapView.onDestroy();	 
+        	 mMapView.onDestroy();	
+        	 if(bitmapOtherDes != null)
+        		 bitmapOtherDes.recycle();
+        	 if(bitmapMeDes != null)
+        		 bitmapMeDes.recycle();
        	 }
        	 	
 	 }
@@ -1114,6 +1133,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			createMenu(v);
 			break;
 		case R.id.square_com:
+			
+			if(bCommentClickable == false)
+			{
+				return;
+			}
+			
 			resetCommentAndInfoView(v);
 			break;
 		case R.id.cancel_com:
@@ -1127,10 +1152,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			
 			if(false == b_collection)	
 			{
+				LogUtil.d(TAG, "collection button action save()!");
 				save(R.id.collection);
 			}
 			else
 			{
+				LogUtil.d(TAG, "collection button action cancel()!");
 				cancel(R.id.collection);
 			}
 			break;
@@ -1288,13 +1315,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				{
 					getSurrroundDeviceLatLng();
 					getLatLngCount ++;
-					
-					return ;
 				}else{
 					getLatLngCount = 0;
+					APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
 				}
-					
-				APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
 			}
 		});
 	}
@@ -1353,14 +1377,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				{
 					getCommentNum();
 					getCommentNumCount ++;
-					
-					return;
 				}else{
-					
 					getCommentNumCount = 0;
+					APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
 				}
-				
-				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
 			}
 		});
 	}
@@ -1424,11 +1444,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					getDeviceInfo();
 					
 				}else{
-					
 					getDeviceInfoCount = 0;
+					APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
 				}
 				
-				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
+				
 			}
 		});
 	}
@@ -1449,7 +1469,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			like.setImageDrawable(getResources().getDrawable(R.drawable.like_sel));
 		}
 	}
-	
 
 	public void save(int id){
 		final String save_failure = getResources().getString(R.string.Err_CONNET);
@@ -1467,6 +1486,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		switch(id)
 		{
 		case R.id.collection:
+			LogUtil.d(TAG, "collection params:" + params);
 			HttpUtil.get(Constants.hostUrl+"/android/saveCollect", params, new JsonHttpResponseHandler(){
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
@@ -1482,9 +1502,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 								b_collection = true;
 								saveCollectCount = 0;
 								//TODO
-							}/*else{
-								APP.ShowToast(save_failure);
-							}*/
+							}
+							
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -1498,15 +1517,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					{
 						saveCollectCount ++;
 						save(R.id.like);
-						
-						return;
 					}
 					else
 					{
 						saveCollectCount = 0;
+						APP.ShowToast(save_failure);
 					}
-					
-					APP.ShowToast(save_failure);
 				}
 			});
 			break;
@@ -1543,15 +1559,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					{
 						savePraiseCount ++;
 						save(R.id.like);
-						
-						return;
 					}
 					else
 					{
 						savePraiseCount = 0;
+						APP.ShowToast(save_failure);
 					}
-					
-					APP.ShowToast(save_failure);
 				}
 				
 			});	
@@ -1609,14 +1622,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					{
 						cancelCollectCount ++;
 						cancel(R.id.collection);
-						
-						return;
 					}else{
 						
 						cancelCollectCount = 0;
+						APP.ShowToast(cancel_failure);
 					}
-					
-					APP.ShowToast(cancel_failure);
 				}
 			});
 			break;
@@ -1651,14 +1661,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					{
 						cancelPraiseCount ++;
 						cancel(R.id.like);
-						
-						return;
 					}else{
 						
 						cancelPraiseCount = 0;
+						APP.ShowToast(cancel_failure);
 					}
-					
-					APP.ShowToast(cancel_failure);
 				}
 			});
 			break;

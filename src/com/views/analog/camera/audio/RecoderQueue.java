@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -95,9 +96,36 @@ public class RecoderQueue implements Runnable{
 				while (queue.size() > 0) {
 					queue.poll();
 				}
+				stopRecordAAC();
 			}
 		} catch (Exception e) {
 			return;
+		}
+	}
+	
+	public boolean _isRecordingAAC = false;//录像
+	private RandomAccessFile raf = null;
+	public void recordFile(String filePath){
+        try {  
+            File file = new File(filePath);   
+            if (file.exists()){
+            	file.delete();  
+            }  
+            raf = new RandomAccessFile(file, "rw"); 
+            _isRecordingAAC = true;
+        } catch (Exception e) {   
+            LogUtil.v("RecoderQueue", ExceptionsOperator.getExceptionInfo(e));   
+        }
+	}
+	
+	public void stopRecordAAC(){
+		try {
+			_isRecordingAAC = false;
+			if(raf != null){
+				raf.close();
+				raf = null;
+			}
+		} catch (Exception e) {
 		}
 	}
 	 
@@ -109,15 +137,13 @@ public class RecoderQueue implements Runnable{
 					synchronized (queue) {
 						if(queue != null && queue.size() > 0 && aacEncoder != null){
 							byte[] _data = queue.poll();
-							if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
-								//开始编码
-								byte[] data = aacEncoder.Write(longRet[0],(int)longRet[1],(int)longRet[2],_data);
-								if(data != null && data.length > 0){
-									//outsStream.write(data);
-									//发送数据
+							//开始编码
+							byte[] data = aacEncoder.Write(longRet[0],(int)longRet[1],(int)longRet[2],_data);
+							if(data != null && data.length > 0){
+								if(_isRecordingAAC) raf.write(data);
+								//发送数据
+								if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
 				            		SDK.SendData(data,data.length,1,0,1);
-//					            		LogUtil.d("SDK", "AAC发送音频数据..."+data.length+" -- "+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
-//												+"------"+data[data.length-6]+","+data[data.length-7]+","+data[data.length-8]+","+data[data.length-9]+","+data[data.length-10]);
 								}
 							}
 						}

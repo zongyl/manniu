@@ -104,52 +104,54 @@ public class XListViewRewrite extends ListView {
 		int action = ev.getAction();
 		int x = (int) ev.getX();
 		int y = (int) ev.getY();
-		switch (action) {
-
-		case MotionEvent.ACTION_DOWN:
-			xDown = x;
-			yDown = y;
-			/**
-			 * 如果当前popupWindow显示，则直接隐藏，然后屏蔽ListView的touch事件的下传
-			 */
-			if (mPopupWindow.isShowing()) {
-				dismissPopWindow();
-				return false;
+		try {
+			switch (action) {
+			case MotionEvent.ACTION_DOWN:
+				xDown = x;
+				yDown = y;
+				/**
+				 * 如果当前popupWindow显示，则直接隐藏，然后屏蔽ListView的touch事件的下传
+				 */
+				if (mPopupWindow.isShowing()) {
+					dismissPopWindow();
+					return false;
+				}
+				// 获得当前手指按下时的item的位置
+				mCurrentViewPos = pointToPosition(xDown, yDown);
+				// 获得当前手指按下时的item
+				View view = getChildAt(mCurrentViewPos - getFirstVisiblePosition());
+				mCurrentView = view;
+				
+				if (mCurrentView.equals(_lastClieckView)) {
+					_nClickedCount++;
+				} else {
+					_nClickedCount = 1;
+					android.os.Message msg = new android.os.Message();
+					msg.what = DOUBLE_CLICKED;
+					msg.obj = mCurrentView;
+					msg.arg1 = mCurrentViewPos;
+					_handler.sendMessageDelayed(msg, 300);
+				}
+				_lastClieckView = mCurrentView;
+				
+				break;
+			case MotionEvent.ACTION_MOVE:
+				xMove = x;
+				yMove = y;
+				int dx = xMove - xDown;
+				int dy = yMove - yDown;
+				/**
+				 * 判断是否是从右到左的滑动
+				 */
+				if (xMove < xDown && Math.abs(dx) > touchSlop
+						&& Math.abs(dy) < touchSlop) {
+					// Log.e(TAG, "touchslop = " + touchSlop + " , dx = " + dx +
+					// " , dy = " + dy);
+					isSliding = true;
+				}
+				break;
 			}
-			// 获得当前手指按下时的item的位置
-			mCurrentViewPos = pointToPosition(xDown, yDown);
-			// 获得当前手指按下时的item
-			View view = getChildAt(mCurrentViewPos - getFirstVisiblePosition());
-			mCurrentView = view;
-			
-			if (mCurrentView.equals(_lastClieckView)) {
-				_nClickedCount++;
-			} else {
-				_nClickedCount = 1;
-				android.os.Message msg = new android.os.Message();
-				msg.what = DOUBLE_CLICKED;
-				msg.obj = mCurrentView;
-				msg.arg1 = mCurrentViewPos;
-				_handler.sendMessageDelayed(msg, 300);
-			}
-			_lastClieckView = mCurrentView;
-			
-			break;
-		case MotionEvent.ACTION_MOVE:
-			xMove = x;
-			yMove = y;
-			int dx = xMove - xDown;
-			int dy = yMove - yDown;
-			/**
-			 * 判断是否是从右到左的滑动
-			 */
-			if (xMove < xDown && Math.abs(dx) > touchSlop
-					&& Math.abs(dy) < touchSlop) {
-				// Log.e(TAG, "touchslop = " + touchSlop + " , dx = " + dx +
-				// " , dy = " + dy);
-				isSliding = true;
-			}
-			break;
+		} catch (Exception e) {
 		}
 		return super.dispatchTouchEvent(ev);
 	}

@@ -714,15 +714,15 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				for(int i = 0; i < array.size(); i++){
 					Device dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
 					//TODO 多通道显示多个
-					if(dev1.channels > 1){
-						for(int j=0;j<dev1.channels;j++){
-							dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
-							dev1.channelNo = j;
-							devList.add(dev1);
-						}
-					}else{
+//					if(dev1.channels > 1){
+//						for(int j=0;j<dev1.channels;j++){
+//							dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
+//							dev1.channelNo = j;
+//							devList.add(dev1);
+//						}
+//					}else{
 						devList.add(dev1);
-					}
+//					}
 				}
 			}
 			
@@ -734,6 +734,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 					Device dev = new Device();
 					dev.devname = live.getLivename();
 					dev.sid = live.getSid();
+					dev.logo = live.getImg();
 					dev.online = 0;
 					dev.userid = "";
 					dev.type = 100;//收藏 

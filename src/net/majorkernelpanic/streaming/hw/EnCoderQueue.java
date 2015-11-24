@@ -1,31 +1,20 @@
 package net.majorkernelpanic.streaming.hw;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import net.majorkernelpanic.streaming.rtp.H264Packetizer;
-
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
-import com.views.NewSurfaceTest;
-import com.views.bovine.Fun_AnalogVideo;
-import com.zl.faac.AacEncoder;
 import P2P.SDK;
 import android.os.Environment;
-import android.util.Log;
 /**
  * @author: li_jianhua Date: 2015-8-28 上午8:55:26
  * To change this template use File | Settings | File Templates.
  * @Description：//视频软编码
  */
 public class EnCoderQueue implements Runnable{
-	protected final static String TAG = "EnCoderQueue";
-	private final static int MAX_SIZE = 500;
+	protected final String TAG = "EnCoderQueue";
 	public static boolean runFlag;
 	public boolean _isRecording = false;//录像
 	public boolean _isEncord = false;//是否编码
@@ -35,7 +24,6 @@ public class EnCoderQueue implements Runnable{
     private String fileName = "";
     public RandomAccessFile raf = null;
     
-	private long time;
 	public EnCoderQueue(){
 		runFlag = true;
 		//time = 10;
@@ -72,10 +60,12 @@ public class EnCoderQueue implements Runnable{
 	public void h264ToMp4(){
 		try {
 			if(fileName != null && !fileName.equals("")){
-				int ret = SDK.Ffmpegh264ToMp4(fileName, fileName.replace(".h264", ".mp4"));
+				int ret = SDK.Ffmpegh264ToMp4(fileName,fileName.replace(".h264", ".aac"), fileName.replace(".h264", ".mp4"),1);
 				if(ret == 0){
 					File file = new File(fileName); 
 					if(file.exists()) file.delete();
+					File file2 = new File(fileName.replace(".h264", ".aac"));
+					if(file2.exists()) file2.delete();
 				}
 			}
 			if(raf != null){
@@ -87,42 +77,31 @@ public class EnCoderQueue implements Runnable{
 		}
 	}
 	
-	public static Queue<byte[]> queue = new LinkedList<byte[]>();
-	
-	public static void addSound(byte[] data){
-		synchronized (queue) {
-			if(queue.size() < MAX_SIZE){
-				queue.offer(data);			
-			}
-		}		
+	private byte[] tempData;
+	private Lock lock = new ReentrantLock();
+	public void addSound(byte[] data){
+		lock.lock();
+		tempData = data;
+		lock.unlock();
 	}
 	
 	public Thread _thread = null;
 	public void Start() {
 		try {
-			synchronized (queue) {
-				runFlag = true;
-				if(_thread == null){
-					_thread = new Thread(this);
-				}
-				_thread.start();
-				LogUtil.i(TAG, "视频_thread id = "+_thread.getId());
+			runFlag = true;
+			if(_thread == null){
+				_thread = new Thread(this);
 			}
+			_thread.start();
 		} catch (Exception e) {
-			System.out.println("打开失败!");
 		}
 	}
 	
 	public void Stop() {
 		try {
-			synchronized (queue) {
-				runFlag = false;
-				_isRecording = false;
-				_thread = null;
-				while (queue.size() > 0) {
-					queue.poll();
-				}
-			}
+			runFlag = false;
+			_isRecording = false;
+			_thread = null;
 		} catch (Exception e) {
 			return;
 		}
@@ -138,48 +117,44 @@ public class EnCoderQueue implements Runnable{
 	byte[] newData = new byte[1024*750];
 	int[] framerate = new int[1]; 
 	private int i_flag = 0; //录像第一帧不I帧标识
+	private int isSend = 0;//是否发送数据
 	@Override
-	public void run() {	
+	public void run() {
 		while(runFlag){
 			try {
-				synchronized (queue) {
-					if(queue != null && queue.size() > 0){
-						byte[] _data = queue.poll();
-						if(_isEncord){
-							//开始编码
-							int dataLenth = SDK.Ffmpegh264EnCoder(_data,_data.length,newData,framerate);
-							//LogUtil.d(TAG,"end.."+dataLenth+":"+newData[0]+":"+newData[1]+":"+newData[2]+":"+newData[3]+":"+newData[4]+":"+newData[5]+":"+newData[20]+":"+newData[21]);
-							if(dataLenth > 0){
-								if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
-//									outsStream.write(newData);
-									int ret = SDK.SendData(newData,dataLenth,0,0,framerate[0]);
-									if(ret < 0){
-										LogUtil.e(TAG,"sdk.sendDate error....");
-									}
-									//LogUtil.d(TAG, "SDK.SendData....");
-								}
-								if(_isRecording){
-									if(i_flag == 0 && framerate[0] == 1) i_flag = 1;
-									if(i_flag == 1){
-										byte[] newbuf = new byte[dataLenth-32];
-										System.arraycopy(newData, 24, newbuf, 0, dataLenth-32);
-										raf.write(newbuf);
-									}
-								}
+				if(tempData != null && tempData.length > 0){
+					if(_isEncord){
+						if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
+							isSend = 1;
+						}
+						lock.lock();
+						byte[] myData = tempData;
+						lock.unlock();
+						//开始编码
+						long t1 = System.currentTimeMillis();
+						int dataLenth = SDK.Ffmpegh264EnCoder(myData,myData.length,newData,framerate,0,isSend);
+						long t2 = System.currentTimeMillis();
+						//LogUtil.d(TAG,"end.."+dataLenth+":"+newData[0]+":"+newData[1]+":"+newData[2]+":"+newData[3]+":"+newData[4]+":"+newData[5]+":"+newData[20]+":"+newData[21]);
+						if(dataLenth > 0 && _isRecording){
+							if(i_flag == 0 && framerate[0] == 1) i_flag = 1;
+							if(i_flag == 1){
+								byte[] newbuf = new byte[dataLenth-36];
+								System.arraycopy(newData, 28, newbuf, 0, dataLenth-36);
+								raf.write(newbuf);
 							}
 						}
+						if((t2-t1) < 100){
+							Thread.sleep(100-(t2-t1));
+						}
 					}
-				} 
+				}
 			}catch (Exception e) {
 				LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 			}
 		}
-	}	
+	}
 	
-	public long getTime() {
-		return time;
-	}
-	public void setTime(long time) {
-		this.time = time;
-	}
+	
+	
+	
 }

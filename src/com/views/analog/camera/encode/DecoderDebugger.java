@@ -135,7 +135,7 @@ public class DecoderDebugger {
 	
 	public synchronized void close() {
 		if(mediaCodecDecode != null){
-			long t3= System.currentTimeMillis();
+			//long t3= System.currentTimeMillis();
 			try{ 
 				mediaCodecDecode.flush();
 			}catch(IllegalStateException e){}
@@ -144,8 +144,8 @@ public class DecoderDebugger {
 		        mediaCodecDecode.release();
 		        mediaCodecDecode = null;
 		        _surface = null;
-		        long t4= System.currentTimeMillis();
-		        LogUtil.d(TAG, " mediaCodecDecode.stop() time: "+(t4-t3));
+		        //long t4= System.currentTimeMillis();
+		        //LogUtil.d(TAG, " 解码退出  mediaCodecDecode.stop() time= "+(t4-t3));
 		    } catch (Exception e){
 		    	LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		    }
@@ -193,13 +193,6 @@ public class DecoderDebugger {
 		int generateIndex = 0;
 		try {
 			if(mediaCodecDecode == null) return 0;
-			//软解start......
-			/*if(canDecode){
-				canDecode = false;
-				release();
-			}*/
-			//end.....
-			
 			if(flag == 0){
 				flag = 1;
 //				_handler.sendEmptyMessage(XMSG.PLAY_CLOSE_WAIT);
@@ -209,6 +202,15 @@ public class DecoderDebugger {
 //					Thread.sleep(1000);
 //				}
 			}
+			
+			//软解start......
+			/*if(canDecode){
+				canDecode = false;
+				release();
+				SDK.SetDecoderModel(1);
+			}*/
+			//end.....
+			
 			
 			//if(_isRecording){
 				//outputStream.write(input, 0, length);
@@ -246,7 +248,7 @@ public class DecoderDebugger {
 					}
 					mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
 					outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
-				}
+			}
 			
 			//end.....
 		} catch (Exception e) {
@@ -257,6 +259,7 @@ public class DecoderDebugger {
 				release();
 				//不支持硬解 图标变成不可点击
 				NewSurfaceTest.instance.showGpu();
+				SDK.SetDecoderModel(1);
 			}else{
 				flag = 0;
 				ret = -1;

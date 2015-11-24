@@ -78,7 +78,6 @@ import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 import com.utils.SdCardUtils;
-import com.views.About_MobilephoneActivity;
 import com.views.DeviceOnlineShare;
 import com.views.Main;
 import com.views.NewLogin;
@@ -135,7 +134,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	public String _devSid = "",_devName = "";
 //	public int[] _bitrate = {700,400,200};
 //	public int[] _framerate = {30,20,15};
-	public int _bitrateAndFramerate[][] = {{300,200,100},{25,20,15}};
+	public int _bitrateAndFramerate[][] = {{300,200,100},{20,15,10}};
 	/** Default quality of video streams. */
 	public VideoQuality videoQuality = new VideoQuality(352,288,20,500000);
 	
@@ -242,7 +241,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 //			}
 //		});
 		
-    	STR_PICTURE_TYPE = new String[] { "352x288","640x480","1280x720"};
+    	STR_PICTURE_TYPE = new String[] { "352x288","640x480"};//,"1280x720"   目前暂时不支持
 		NUM_PICTURE_TYPE = new int[] { 0, 1, 2};
 		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(ACT, R.layout.my_spinner_item, STR_PICTURE_TYPE);
 		adapter.setDropDownViewResource(R.layout.simple_spinner_item);//android.R.layout.simple_spinner_dropdown_item  R.layout.simple_spinner_item
@@ -780,24 +779,24 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 				_bitrateAndFramerate[0][0] = 300;
 				_bitrateAndFramerate[0][1] = 200;
 				_bitrateAndFramerate[0][2] = 100;
-				_bitrateAndFramerate[1][0] = 25;
-				_bitrateAndFramerate[1][1] = 20;
-				_bitrateAndFramerate[1][2] = 15;
+				_bitrateAndFramerate[1][0] = 20;
+				_bitrateAndFramerate[1][1] = 15;
+				_bitrateAndFramerate[1][2] = 10;
 				newValue = "352*288";
 			}else if (value == 1) {
 				_bitrateAndFramerate[0][0] = 700;
 				_bitrateAndFramerate[0][1] = 400;
 				_bitrateAndFramerate[0][2] = 200;
-				_bitrateAndFramerate[1][0] = 25;
-				_bitrateAndFramerate[1][1] = 20;
-				_bitrateAndFramerate[1][2] = 15;
+				_bitrateAndFramerate[1][0] = 20;
+				_bitrateAndFramerate[1][1] = 15;
+				_bitrateAndFramerate[1][2] = 10;
 				newValue = "640*480";
 			}else if (value == 2) {
 				_bitrateAndFramerate[0][0] = 2000;
 				_bitrateAndFramerate[0][1] = 1000;
 				_bitrateAndFramerate[0][2] = 700;
-				_bitrateAndFramerate[1][0] = 20;
-				_bitrateAndFramerate[1][1] = 15;
+				_bitrateAndFramerate[1][0] = 15;
+				_bitrateAndFramerate[1][1] = 10;
 				_bitrateAndFramerate[1][2] = 5;
 				newValue = "1280*720";
 			}

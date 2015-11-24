@@ -68,6 +68,7 @@ public class MyReceiver extends BroadcastReceiver {
             //APP.ShowToast("JPUSH:"+str);
             try{
             	APP.GetMainActivity().ShowXView(Main.XV_NEW_MAIN);
+            	APP.GetMainActivity().Instance.NewMainItem(1);
             }catch(Exception e){
             	Log.v(TAG, "APP IS NULL!");
             	Intent i = new Intent(context, com.views.SplashScreen.class);

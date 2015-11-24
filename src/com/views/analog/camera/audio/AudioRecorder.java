@@ -18,8 +18,8 @@ public class AudioRecorder implements Runnable {
 	// CHANNEL_IN_STEREO：双声道，CHANNEL_CONFIGURATION_MONO：单声道
 	AudioRecord _recorder;	// 音频录制
 	byte[] _tempBuffer;		// 临时Buffer
-	RecoderQueue _recoderQueue;//编码队列
-	public Boolean _startEncodeNow = false; //是否编码并发送数据
+	public RecoderQueue _recoderQueue;//编码队列
+	//public Boolean _startEncodeNow = false; //是否编码并发送数据
 	
 	public void intAudioRecorder() {
 		android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
@@ -85,10 +85,10 @@ public class AudioRecorder implements Runnable {
 		while (this.isRecording) {
 			bufferRead = _recorder.read(_tempBuffer, 0, bufferSize);
 
-			if (bufferRead > 0 && _startEncodeNow) {
-	        	if(SDK._sessionId != 0){
+			if (bufferRead > 0) {// && _startEncodeNow
+	        	//if(SDK._sessionId != 0){
 	        		_recoderQueue.addSound(_tempBuffer);
-	        	}
+	        	//}
 			}
 			try {
 				Thread.sleep(10);

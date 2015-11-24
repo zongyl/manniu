@@ -102,6 +102,7 @@ public class AudioQueue implements Runnable{
 	
 	public void Stop() {
 		try {
+			long t1= System.currentTimeMillis();
 			synchronized (queue) {
 				runFlag = false;
 				_thread = null;
@@ -109,13 +110,15 @@ public class AudioQueue implements Runnable{
 				_talkAudio.stop();
 				//_talkAudio = null;
 				isDecorderOpen = false;
-				if(aacdncoder != null)					
+				if(aacdncoder != null && long_decoderRet != null)					
 					aacdncoder.Close(long_decoderRet[0],long_decoderRet[1],long_decoderRet[2]); //关闭解码
 				aacdncoder = null;
 				while (queue.size() > 0) {
 					queue.poll();
 				}
 			}
+			long t2= System.currentTimeMillis();
+			LogUtil.d("AudioQueue", "..音频退出..AudioQueue.stop()....time = "+(t2-t1));
 		} catch (Exception e) {
 			return;
 		}

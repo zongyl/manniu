@@ -50,7 +50,6 @@ import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
@@ -890,11 +889,8 @@ public abstract class VideoStream extends MediaStream {
 		            }
 				}
 				
-				//if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
 				if(EnCoderQueue.runFlag && AnalogvideoActivity.instance != null)
 					AnalogvideoActivity.instance._encoderQueue.addSound(data);
-					//System.out.println(".....数据长度..."+data.length);
-				//}
 			}
 		};
 		mCamera.setPreviewCallback(callback);

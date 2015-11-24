@@ -93,7 +93,7 @@ public class DecoderQueue implements Runnable{
 				}
 				_thread.start();
 			}
-			LogUtil.d("DecoderQueue", "....DecoderQueue.start()....");
+			//LogUtil.d("DecoderQueue", "....DecoderQueue.start()....");
 		} catch (Exception e) {
 			System.out.println("打开失败!");
 		}
@@ -101,14 +101,16 @@ public class DecoderQueue implements Runnable{
 	
 	public void Stop() {
 		try {
+			//long t1= System.currentTimeMillis();
 			synchronized (queue) {
 				runFlag = false;
 				_thread.interrupt(); //外围调用关闭
 				_thread = null;
 				i_flag = 0;
 				clearQueue();
+				//long t2= System.currentTimeMillis();
+				//LogUtil.d("DecoderQueue", "..数据队列..DecoderQueue.stop()....time = "+(t2-t1));
 			}
-			LogUtil.d("DecoderQueue", "....DecoderQueue.stop()....");
 		} catch (Exception e) {
 			return;
 		}
@@ -156,7 +158,7 @@ public class DecoderQueue implements Runnable{
 	public void h264ToMp4(){
 		try {
 			if(fileName != null && !fileName.equals("")){
-				int ret = SDK.Ffmpegh264ToMp4(fileName + ".h264",fileName + ".mp4");
+				int ret = SDK.Ffmpegh264ToMp4(fileName + ".h264","",fileName + ".mp4",0);
 				if(ret == 0){
 					File file = new File(fileName + ".h264"); 
 					if(file.exists()) file.delete();
