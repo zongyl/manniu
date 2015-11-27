@@ -50,6 +50,18 @@
             android:textColor="@color/black"
             android:id="@+id/msg_title">
        </TextView>
+       
+        <!-- 进入播放 -->    
+     	<Button
+	    android:id="@+id/record_play"
+	    android:layout_width="50dp"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/img_list_play"
+	    android:layout_gravity="right|center_horizontal"
+	    android:layout_marginTop="15dp"
+	    android:layout_marginRight="5dp"
+     	/>
+     
         <!-- <TextView   android:layout_marginLeft="105dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

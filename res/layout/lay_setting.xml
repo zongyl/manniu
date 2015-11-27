@@ -34,7 +34,7 @@
           	android:id="@+id/device_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设备信息 :"
+            android:text="@string/niuyan_dev_info"
             android:textColor="@color/text_color"
             android:textSize="16dp"
             android:gravity="left|center_vertical"
@@ -56,7 +56,7 @@
 	        <TextView
 	            android:layout_width="wrap_content"
 	            android:layout_height="match_parent"
-	            android:text="设备名称"
+	            android:text="@string/niuyan_dev_name"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_15"
 	            android:gravity="left|center_vertical"
@@ -67,7 +67,7 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="40dp"
 	            android:layout_marginLeft="15dp"
-	            android:text="设备名称"
+	            android:text="@string/niuyan_dev_info"
 	            android:gravity="center_vertical"/>
 	    </TableRow>
 	    
@@ -103,7 +103,7 @@
              <TextView
 	            android:layout_width="wrap_content"
 	            android:layout_height="match_parent"
-	            android:text="二维码 "
+	            android:text="@string/niuyan_qrcode"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_15"
 	            android:gravity="left|center_vertical"
@@ -126,7 +126,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设备配置 :        "
+            android:text="@string/niuyan_config"
             android:textColor="@color/text_color"
             android:textSize="16dp"
             android:gravity="left|center_vertical"
@@ -148,7 +148,7 @@
 	        <TextView
 	            android:layout_width="wrap_content"
 	            android:layout_height="45dp"
-	            android:text="分辩率"
+	            android:text="@string/niuyan_resolution"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_15"
 	            android:gravity="left|center_vertical"
@@ -226,7 +226,7 @@
 	        <TextView
 	            android:layout_width="wrap_content"
 	            android:layout_height="45dp"
-	            android:text="存储位置"
+	            android:text="@string/niuyan_storage_position"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_15"
 	            android:gravity="left|center_vertical"
@@ -244,12 +244,12 @@
 		            android:id="@+id/sto_sdk"
 		            android:textColor="#FF333333"
 		            android:textSize="@dimen/text_size_15"
-		            android:text="存储卡"/>
+		            android:text="@string/niuyan_storage_card"/>
 		        <RadioButton 
 		            android:id="@+id/sto_mobile"
 		            android:textColor="#FF333333"
 		            android:textSize="@dimen/text_size_15"
-		            android:text="手机 "/>
+		            android:text="@string/niuyan_storage_sj"/>
 		    </RadioGroup>
 	    </TableRow>
 	    <!-- <View android:layout_width="fill_parent"
@@ -298,7 +298,7 @@
 		      android:layout_height="40dp" 
 		      android:layout_weight="1.0"  
 		      android:textSize="16dp"
-		      android:text="打  开" 
+		      android:text="@string/analog_video_open1" 
 		      android:textColor="@color/white"
 	   		  android:layout_marginLeft="10.0dip" 
 	   		  android:layout_marginRight="10.0dip"
@@ -310,7 +310,7 @@
 		      android:layout_height="40dp" 
 		      android:layout_weight="1.0"  
 		      android:textSize="16dp"
-		      android:text="分享到广场" 
+		      android:text="@string/analog_video_open_ok_share" 
 		      android:textColor="@color/white"
 			  android:layout_marginLeft="10.0dip" 
 			  android:layout_marginRight="10.0dip"

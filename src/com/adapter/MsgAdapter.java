@@ -1,17 +1,24 @@
 package com.adapter;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import P2P.SDK;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -19,9 +26,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.basic.APP;
+import com.basic.XMSG;
+import com.localmedia.Fun_RecordplayActivity_MediaPlayer;
 import com.manniu.manniu.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.utils.Constants;
+import com.utils.ExceptionsOperator;
+import com.utils.HttpURLConnectionTools;
+import com.utils.LogUtil;
 import com.views.NewMsg;
+import com.views.bovine.Fun_AnalogVideo;
 
 public class MsgAdapter extends BaseAdapter{
 	
@@ -48,6 +62,7 @@ public class MsgAdapter extends BaseAdapter{
 		TextView time;
 		ImageView iv;
 		CheckBox ck;
+		Button play_image;
 	}
 	
 	public MsgAdapter(Context _context, List<?> _items){
@@ -72,7 +87,7 @@ public class MsgAdapter extends BaseAdapter{
 	}  
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		Set<String> keys = null;
 		if(isSelected!=null){
@@ -94,6 +109,7 @@ public class MsgAdapter extends BaseAdapter{
 			//holder.time = (TextView)convertView.findViewById(R.id.msg_time);
 			holder.iv = (ImageView)convertView.findViewById(R.id.msg_img);
 			holder.ck = (CheckBox)convertView.findViewById(R.id.cb);
+			holder.play_image = (Button) convertView.findViewById(R.id.record_play);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder)convertView.getTag();
@@ -150,6 +166,37 @@ public class MsgAdapter extends BaseAdapter{
 				Log.v(TAG, "...OnClickListener...");
 				if(isSelected!=null){
 					//APP.ShowToast("OnClickListener：已选中:"+sumByChecked(isSelected, true));
+				}
+			}
+		});
+		
+		//录像回放
+		holder.play_image.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					Message msg = (Message)items.get(position);
+					System.out.println(msg.devicename+"--"+msg.logtime);
+					System.out.println(msg.evt_video);
+					
+					JSONObject json = null;
+					String params = "?ossUrl="+msg.evt_video+"&timeMillis=0";
+					Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl+"/android/getUrl"+params);
+					if (Integer.parseInt(map.get("code").toString()) == 200) {
+						json = new JSONObject(map.get("data").toString());
+						try {
+							String str = json.getString("url");
+							if(str.equals("NoSuchKey")){//地址错误
+								APP.ShowToast(SDK.GetErrorStr(-1));
+							}else{
+								//播放
+							}
+						} catch (JSONException e) {
+						}
+					}
+				} catch (Exception e) {
+					LogUtil.d("MsgAdapter", ExceptionsOperator.getExceptionInfo(e));
+					return;
 				}
 			}
 		});

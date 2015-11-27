@@ -230,7 +230,6 @@
  	<!-- 分辨率 -->
  	<string-array name="devSetResolution">
  	    <item>CIF(352 X 288)</item>
- 	   <!--  <item>VGA(640 X 480)</item> -->
  	    <item>D1(704 X 576)</item>
  	    <item>720P(1280 X 720)</item>
  	</string-array>
@@ -588,6 +587,29 @@
 	
 	<string name="mKnow">我知道了</string>
 	<string name="mTip">攻城狮正在攻城中...</string>
+	
+	<string name="login_lab_user">输入用户名/手机号</string>
+	<string name="login_lab_pwd">输入密码</string>
+	<string name="login_btn_log">登 录</string>
+	<string name="login_tv_reg">注册帐号</string>
+	<string name="login_tv_pwd">忘记密码</string>
+	
+	<string name="add_dev_title">添加设备</string>
+	<string name="add_dev_sn">序列号</string>
+	<string name="add_dev_vn">验证码</string>
+	<string name="add_dev_dw">定位中...</string>
+	
+	<string name="local_video">本地视频</string>
+	<string name="local_img">本地图片</string>
+	
+	<string name="niuyan_dev_info">设备信息</string>
+	<string name="niuyan_dev_name">设备名称</string>
+	<string name="niuyan_qrcode">二维码</string>
+	<string name="niuyan_config">设备配置</string>
+	<string name="niuyan_resolution">分辨率</string>
+	<string name="niuyan_storage_position">存储位置</string>
+	<string name="niuyan_storage_card">存储卡</string>
+	<string name="niuyan_storage_sj">手机</string>
 	
  	<string-array name="jazzy_effects">
         <item>Standard</item>
@@ -953,12 +975,6 @@
  	<string name="chg_pwd">修改密码</string>
  	<string name="non_set">未设置</string>
  	<string name="non_bound">未绑定</string>
- 	
- 	<string name="mail_hint">请输入邮箱地址</string>
- 	<string name="mail_desc">请输入邮箱地址</string>
- 	<string name="hot_hint">昵称在2~20个字符之间</string>
- 	<string name="hot_desc">简洁好听的名字可以更容易让你的朋友记住你~</string>
- 	<string name="pho_hint">请输入11位手机号码</string>
  
  	<string name="no_empty">输入内容不能为空</string>
  	<string name="mail_tip">请输入正确的邮箱格式</string>

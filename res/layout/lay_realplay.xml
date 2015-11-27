@@ -16,7 +16,7 @@
            android:id="@+id/btn_video"
            android:layout_width="match_parent"
            android:layout_height="match_parent"
-           android:text="点击屏幕，可重新加载"
+           android:text="@string/analog_video_click_reload"
            android:textSize="18dp"
            />
     </LinearLayout>

@@ -95,9 +95,15 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 //	private RealHandler _realHandler = null;
 //	private BaseApplication mAPP = null;
     
-    private int getDeviceChannel(){
-    	return getIntent().getExtras().getInt("channel");
+    private int channelNo = 0;
+    
+    private boolean isNvr(){
+    	if(getIntent().getExtras().containsKey("nvr")){
+    		return true;
+    	}
+    	return false;
     }
+    
 	/**
 	 * 以数组形式返回 尺寸 [0] = width, [1] = height
 	 * @return
@@ -121,6 +127,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		
 		devName = getIntent().getExtras().getString("deviceName");//设备名称
 		devSid = getIntent().getExtras().getString("deviceSid");
+		channelNo = getIntent().getExtras().getInt("channel");
 				
 		framelayout = (FrameLayout)findViewById(R.id.frame);
 		//_hreadframeLayout = (LinearLayout) this.findViewById(R.id.hhheader);
@@ -140,7 +147,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		video = (Button)findViewById(R.id.btn_play_video);
 		_btnGpu = (Button) findViewById(R.id.btn_play_gpu);
 		_devName = (TextView)findViewById(R.id.dev_name);
-		_devName.setText(devName);
+		if(isNvr()){
+			_devName.setText(devName +" channel:"+ (channelNo+1));
+		}else{
+			_devName.setText(devName);
+		}
 		play.setOnClickListener(this);
 		fullscreen.setOnClickListener(this);
 		//back.setOnClickListener(this);
@@ -538,7 +549,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				if(isPlay){
 					//LogUtil.i(TAG, "...isPlay = "+isPlay+"--"+SDK._sessionId+"--"+getDeviceChannel());
 					long t1= System.currentTimeMillis();
-					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
+					SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 					SDK.P2PClose(SDK._sessionId);
 					SDK._sessionId = 0;
 					isPlay = false;
@@ -561,11 +572,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			long t1 = System.currentTimeMillis();
 			int nRet = SDK.P2PConnect(devSid,_sessionId);
 			long t2 = System.currentTimeMillis();
-			LogUtil.d(TAG, "SDK.P2PConnect return= "+nRet+" time= "+(t2-t1)+" devSid = "+devSid +" devName = "+devName);
+			LogUtil.d(TAG, "SDK.P2PConnect return= "+nRet+" time= "+(t2-t1)+" devSid = "+devSid +" devName = "+devName +" channelNo = "+channelNo);
 			if(nRet == 0){
 				SDK._sessionId = _sessionId[0];
 				long t3 = System.currentTimeMillis();
-				_playId = SDK.P2PCreateChannel(SDK._sessionId,getDeviceChannel(),1,20,10000, 352,288);
+				_playId = SDK.P2PCreateChannel(SDK._sessionId, channelNo,1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
 				LogUtil.i(TAG,"SDK.P2PCreateChannel return="+_playId+" sessionId= "+SDK._sessionId+" time="+(t4-t3));
 				stopTimer();
@@ -841,7 +852,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			}
 			SDK.isInitDecoder = false;
 			if(isPlay){
-				SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
+				SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 				SDK.P2PClose(SDK._sessionId);
 				SDK._sessionId = 0;
 				isPlay = false;
@@ -959,7 +970,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				case XMSG.CREATECHANLL://创建通道失败
 					closeWait();
 					APP.ShowToast(SDK.GetErrorStr(_playId));
-					SDK.P2PCloseChannel(SDK._sessionId,getDeviceChannel());
+					SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 					SDK.P2PClose(SDK._sessionId);
 					SDK._sessionId = 0;
 					NewSurfaceTest.this.finish();

@@ -42,7 +42,7 @@
                  android:layout_marginTop="40dp"
                  android:layout_marginLeft="50dp"
                  android:layout_marginRight="50dp" 
-                 android:hint="输入用户名/手机号" 
+                 android:hint="@string/login_lab_user" 
                  android:textColorHint="#888888"
                  android:textSize="@dimen/text_size_16" 
                  android:maxLines="1" 
@@ -66,7 +66,7 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp" 
                 android:textSize="@dimen/text_size_16" 
-                android:hint="输入密码" 
+                android:hint="@string/login_lab_pwd" 
                 android:textColorHint="#888888"
                 android:maxLines="1" 
                 android:password="true" 
@@ -86,7 +86,7 @@
 		      android:layout_height="wrap_content"
 		      android:layout_marginTop="10dp" 
 		      android:textSize="@dimen/text_size_20"
-		      android:text="登 录" 
+		      android:text="@string/login_btn_log" 
 		      android:textColor="@color/white"
 	   		  android:layout_marginLeft="50dp" 
 			  android:layout_marginRight="50dp" 
@@ -102,14 +102,14 @@
 			      android:layout_height="wrap_content" 
 			      android:layout_marginLeft="50.0dip" 
 			      android:layout_gravity="left|center" 
-			      android:text="注册帐号" />
+			      android:text="@string/login_tv_reg" />
 	         <TextView 
 	              android:id="@+id/login_a_retrieve"
 			      android:layout_width="wrap_content" 
 			      android:layout_height="wrap_content" 
 			      android:layout_alignParentRight="true"
 			      android:layout_marginRight="50dp"
-			      android:text="忘记密码" />
+			      android:text="@string/login_tv_pwd" />
 	      </RelativeLayout>
         <!-- android:layout_marginLeft="20.0dip"  -->
         

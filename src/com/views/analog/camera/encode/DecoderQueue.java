@@ -31,6 +31,7 @@ public class DecoderQueue implements Runnable{
 	private final static int MAX_SIZE = 100;
 	public boolean runFlag;
 	public int i_flag = 0;//I帧标志位
+	private int b_flag = 0;//录像也要从I帧开始
 	
     String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //    private BufferedOutputStream outputStream;
@@ -168,6 +169,7 @@ public class DecoderQueue implements Runnable{
 				raf.close();
 				raf = null;
 			}
+			b_flag = 0;
 		} catch (Exception e) {
 		}
 	}
@@ -212,13 +214,19 @@ public class DecoderQueue implements Runnable{
 										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
 										NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen);
 										if(_isRecording){//录像
-											raf.write(newbuf);
+											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
+											if(b_flag == 1){
+												raf.write(newbuf);
+											}
 										}
 									}else{ //模拟不用去头
 										byte[] newbuf = new byte[bean.getLength()-32];
 										System.arraycopy(bean.getData(), 24, newbuf, 0, bean.getLength()-32);
 										if(_isRecording){//录像
-											raf.write(newbuf);
+											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
+											if(b_flag == 1){
+												raf.write(newbuf);
+											}
 										}
 										if(NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, newbuf.length) == -1) i_flag = 0;
 									}
@@ -227,12 +235,15 @@ public class DecoderQueue implements Runnable{
 									//软解码 直接送数据
 									NewSurfaceTest.instance.h264Decoder2(bean.getData(), bean.getLength());
 									if(_isRecording){//录像
-										int exHead = (int)bean.getData()[22];
-										int realHead = 24 + exHead;
-										int realLen = bean.getLength() - realHead - 8;
-										byte[] newbuf = new byte[realLen];
-										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
-										raf.write(newbuf);
+										if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
+										if(b_flag == 1){
+											int exHead = (int)bean.getData()[22];
+											int realHead = 24 + exHead;
+											int realLen = bean.getLength() - realHead - 8;
+											byte[] newbuf = new byte[realLen];
+											System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
+											raf.write(newbuf);
+										}
 									}
 									//异步
 									//NewSurfaceTest.instance.setData(bean.getData(), bean.getLength());

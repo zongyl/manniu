@@ -1,10 +1,7 @@
 ﻿{"appname":"ManNiu",
-"apkname":"ManNiuV1.0.8.1.apk",
-"verName":"1.0.8.1",
+"apkname":"ManNiuV1.0.8.3.apk",
+"verName":"1.0.8.3",
 "updateLog":"
-1.修改收藏设备封面不显示-
-2.牛眼录像MP4添加音频-
-3.修复设备设置页面,分辨率和码流关联不及时的bug-
-4.支持点击报警消息，跳转到报警页面
+
 ",
-"verCode":81}
+"verCode":83}

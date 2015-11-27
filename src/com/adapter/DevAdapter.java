@@ -55,6 +55,7 @@ import com.views.DeviceOnlineShare;
 import com.views.Main;
 import com.views.NewDeviceSet;
 import com.views.NewLogin;
+import com.views.NewSurfaceTest;
 
 /**
  * 设备列表
@@ -145,32 +146,62 @@ public class DevAdapter extends BaseAdapter{
 			}
 			if(device.channels > 1){//NVR 多通道
 				convertView = inflater.inflate(R.layout.new_main_grid_item, null);
+				holder.tv = (TextView)convertView.findViewById(R.id.nvr_device_txt);
+				final GridView nvrGrid = (GridView)convertView.findViewById(R.id.nvr_grid_view);
 				
-				GridView nvrGrid = (GridView)convertView.findViewById(R.id.nvr_grid_view);
-
-				List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-
-		//String[] textArr = context.getResources().getStringArray(R.array.dialog_text);
-		//String[] tagArr = context.getResources().getStringArray(R.array.dialog_tag);
-		//TypedArray imgs = context.getResources().obtainTypedArray(R.array.dialog_ic);
-
+				holder.tv.setText(device.devname);
 				Log.d(TAG, "SID:"+device.sid);
 				Log.d(TAG, "channels:"+device.channels);
 
-				Map<String, Object> map = null;
-				for(int i = 0; i < device.channels; i++){
-					map = new HashMap<String, Object>();
-					map.put("tag", "tag");
-					map.put("text", i);
-					map.put("image", R.drawable.lock_bg);
-					items.add(map);
-				}
+				RequestParams params = new RequestParams();
+				params.put("sid", device.sid);
+				HttpUtil.get(Constants.hostUrl + "/mobile/getDeviceChannel", params, new JsonHttpResponseHandler(){
+					public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+						LogUtil.d(TAG, device.sid + " getDeviceChannels response:" + response.toString());
+						List<Map<String, Object>> items = new ArrayList<Map<String, Object>>(16);
+						Map<String, Object> map = null;
+						for(int i = 0; i < device.channels; i++){
+							map = new HashMap<String, Object>();
+							map.put("tag", "tag");
+							map.put("text", i+1);
+							map.put("image", R.drawable.lock_bg1);
+							items.add(map);
+						}
 
-				SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.gridview_item, 
-				new String[]{"tag", "image", "text"}, new int[]{R.id.tag, R.id.ItemImage, R.id.ItemText});
+						if(items.size() < 16){
+							int count = 16 - items.size();
+							for(int i = 0; i < count; i++){
+								map = new HashMap<String, Object>();
+								map.put("tag", "tag");
+								map.put("text", null);
+								map.put("image", R.color.graywhite);
+								items.add(map);
+							}
+						}
+						
+						SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.gridview_item, 
+						new String[]{"tag", "image", "text"}, new int[]{R.id.tag, R.id.ItemImage, R.id.ItemText});
+						nvrGrid.setAdapter(adapter);
+						
+						nvrGrid.setOnItemClickListener(new OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> parent,
+									View view, int position, long id) {
+								Intent intent = new Intent(context, NewSurfaceTest.class);
+								intent.putExtra("channel", position);
+								intent.putExtra("deviceSid", device.sid);
+								intent.putExtra("deviceName", device.devname);
+								intent.putExtra("nvr", "");
+								context.startActivity(intent);
+							}
+						});
+					};
+					
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						
+					};
+				});
 				
-//				ListAdapter adapter = new NVRAdapter();
-				nvrGrid.setAdapter(adapter);
 				
 				
 			}else{//单通道

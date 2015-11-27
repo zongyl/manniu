@@ -103,11 +103,10 @@ public class LogUtil {
      * @return 
      * **/  
     public static void writeLogtoFile(String mylogtype, String tag, String text) {// 新建或打开日志文件  
-//    	File dir = new File(LOG_PATH);
-//    	if(!dir.exists()) dir.mkdir();
         try {  
         	Date nowtime = new Date();  
-            String needWriteFiel = logfile.format(nowtime);  
+            //String needWriteFiel = logfile.format(nowtime);  
+            String needWriteFiel = DateUtil.getCurrentStringDate();
             String needWriteMessage = myLogSdf.format(nowtime) + "    " + mylogtype  
                     + "    " + tag + "    " + text;  
             

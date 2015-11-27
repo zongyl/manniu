@@ -2,6 +2,7 @@ package com.views;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -58,6 +59,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.AMap.InfoWindowAdapter;
 import com.amap.api.maps2d.AMap.OnMapClickListener;
 import com.amap.api.maps2d.AMap.OnMapLoadedListener;
+import com.amap.api.maps2d.AMap.OnMarkerClickListener;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.UiSettings;
@@ -79,7 +81,7 @@ import com.utils.LogUtil;
 import com.utils.SetSharePrefer;
 
 @SuppressLint({ "SetJavaScriptEnabled", "ResourceAsColor", "NewApi" })
-public class NewWebActivity extends Activity implements OnClickListener, OnMapLoadedListener, OnMapClickListener, InfoWindowAdapter{
+public class NewWebActivity extends Activity implements OnClickListener, OnMapLoadedListener, OnMapClickListener, InfoWindowAdapter, OnMarkerClickListener{
 	
 	private static final String TAG = "NewWebActivity";
 	private FrameLayout _titleFrm;
@@ -122,9 +124,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	String liveUrl;
 	String liveImg;
 
-	//add by zra
-	private ImageView image = null;
-	
 	//add by zra
 	LinearLayout playLayout;
 	
@@ -194,6 +193,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private BitmapDescriptor bitmapMeDes;
 	private  boolean bCommentClickable = false;
 	
+	private Marker mMarkerMe;
+	private boolean isResume = false;
 	
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
@@ -268,7 +269,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	 * 1.支持google键盘取消键事件监听
 	 * 2.支持用户输入后，再取消事件监听
 	 * 3.支持android弹出软键盘，重新布局事件过滤
-	 * */
+	 */
 	private void rootViewInit()
 	{
 		playLayout = (LinearLayout)findViewById(R.id.play_layout);
@@ -480,9 +481,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		});
 	}
 	
-	/**
-	 * 创建PopupWindow
-	 */
+	/*
+	 * 功能:创建popupwindow,帮助显示软键盘。
+	 * */
 	protected void popupWindowInit() {
 		popupWindow_view = getLayoutInflater().inflate(R.layout.pop_up_window, null, false);
 		popupWindow_view.setVisibility(View.GONE);
@@ -509,7 +510,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 	
 	/*
-	 * 功能:软键盘弹出底层view重新布局
+	 * 功能:软键盘弹出底层view重新布局。
 	 */
 	private void resetCommentAndInfoView(View v)
 	{  
@@ -694,7 +695,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					restoreCommentAndInfoView();
 					sendComMessage();
 				}
-
+				
 				return false;
 			}
 		});
@@ -747,11 +748,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		mAMap.setOnMapClickListener(this);
 		mAMap.setOnMapLoadedListener(this);
 		mAMap.setInfoWindowAdapter(this);
+		mAMap.setOnMarkerClickListener(this);
 		UiSettings uiSettings = mAMap.getUiSettings();
 		uiSettings.setCompassEnabled(false);
 		uiSettings.setZoomControlsEnabled(false);
 		uiSettings.setScaleControlsEnabled(false);
 		uiSettings.setAllGesturesEnabled(false);
+		uiSettings.setZoomGesturesEnabled(false);
+		uiSettings.setZoomControlsEnabled(false);
 		
 		bitmapOtherDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_other);
 		bitmapMeDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_me);
@@ -771,7 +775,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			giflist.add(bitmapOtherDes);
 			giflist.add(bitmapMeDes);
 			MarkerOptions ooD = new MarkerOptions().position(new LatLng(30.297233, 120.047253)).title(getResources().getString(R.string.default_dev_title)).icons(giflist).draggable(true).period(3);
-			mAMap.addMarker(ooD).showInfoWindow();
+			mMarkerMe = mAMap.addMarker(ooD);
+			mMarkerMe.showInfoWindow();
 		}
 		else 
 		{
@@ -779,11 +784,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			giflist.add(bitmapOtherDes);
 			giflist.add(bitmapMeDes);
 			MarkerOptions ooD = new MarkerOptions().position(new LatLng(devLat, devLng)).title(liveName).icons(giflist).draggable(true).period(3);
-			mAMap.addMarker(ooD).showInfoWindow();
+			mMarkerMe = mAMap.addMarker(ooD);
+			mMarkerMe.showInfoWindow();
 		}	
-	
+		
 		mAMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10));
-		mAMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+		mAMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 	}
 	
 	public void initDevLatLngAndShowDevMarker()
@@ -794,7 +800,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			// add marker overlay
 			if(bHave == false)
 			{
-				LatLng llD = new LatLng(30.297233, 120.047253);
 				LatLng llB = new LatLng(30.287233, 120.147253);
 				LatLng llC = new LatLng(30.27233, 120.247253);  
 				LatLng llA = new LatLng(30.267233, 120.347253);
@@ -802,21 +807,19 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				markerOption = new MarkerOptions();
 				markerOption.position(llA);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
-				markerOption.draggable(true);
 				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
+				
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llB);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
-				markerOption.draggable(true);
 				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
 				
 				markerOption = new MarkerOptions();
 				markerOption.position(llC);
 				markerOption.title(getResources().getString(R.string.default_dev_title));
-				markerOption.draggable(true);
 				markerOption.icon(bitmapOtherDes);
 				mAMap.addMarker(markerOption);
 			}
@@ -832,11 +835,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					markerOption = new MarkerOptions();
 					markerOption.position(new LatLng(devLatT, devLngT));
 					markerOption.title(jpos.get("devname").toString());
-					markerOption.draggable(true);
 					markerOption.icon(bitmapOtherDes);
-					mAMap.addMarker(markerOption);
 				}
-				
 			}
 			
 		}catch(Exception e){
@@ -892,8 +892,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			uiSettings.setZoomControlsEnabled(true);
 			uiSettings.setScaleControlsEnabled(true);
 			uiSettings.setAllGesturesEnabled(true);
-			mAMap.setOnMapClickListener(null);
-			
+			uiSettings.setZoomGesturesEnabled(true);
+			uiSettings.setZoomControlsEnabled(true);
+			mAMap.setOnMapClickListener(null);	
 		} catch(Exception e){		
 			LogUtil.d("NewWebActivity", ExceptionsOperator.getExceptionInfo(e));
 		}	
@@ -907,44 +908,92 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		squareTools.setVisibility(View.VISIBLE);
 		commentTitle.setVisibility(View.VISIBLE);
 		commentContent.setVisibility(View.VISIBLE);
-		_titleFrm.setVisibility(View.VISIBLE);
 		LinearLayout.LayoutParams  linearParams;
 		linearParams = (LinearLayout.LayoutParams) informationPage.getLayoutParams(); 	
 		linearParams.height = dmHeight/2 - dmHeight/20 +dmHeight/40+dmHeight/80;
 		informationPage.setLayoutParams(linearParams);
 
-		mAMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+		mAMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 		UiSettings uiSettings = mAMap.getUiSettings();
 		uiSettings.setCompassEnabled(false);
 		uiSettings.setZoomControlsEnabled(false);
 		uiSettings.setScaleControlsEnabled(false);
 		uiSettings.setAllGesturesEnabled(false);
+		uiSettings.setZoomGesturesEnabled(false);
+		uiSettings.setZoomControlsEnabled(false);
 		mAMap.setOnMapClickListener(this);
+		
+		List<Marker> saveMarkerList = mAMap.getMapScreenMarkers();
+		if (saveMarkerList == null || saveMarkerList.size() <= 0)
+		{
+			return;
+		}
+		
+		for (Marker marker : saveMarkerList) {
+			if(marker != mMarkerMe)
+			{
+				marker.hideInfoWindow();
+			}
+		}
+		
+		mMarkerMe.showInfoWindow();
 	}
-
-
+	
+	@Override
+    public boolean onMarkerClick(final Marker marker) {
+            
+		if(bSubView == false)
+		{
+			return true;
+		}
+			
+		return false;
+    }
+	
 	@Override
 	public void onMapClick(LatLng point) {
 		
 		resetViewAndMap();
 		bSubView = true;
-
 	}
    
 	@Override
 	protected void onPause() {
-		
 		super.onPause();
 		if(bType == 0)
 			mMapView.onPause();
+		playPause(1);
 	}
 
 	@Override
 	protected void onResume() {
-	
 		super.onResume();
+		if(isResume){
+			isResume = false;
+		}
 		if(bType == 0)
 			mMapView.onResume();
+	}
+	
+	//暂停/恢复
+	public void playPause(int bPause){
+		if(bPause == 0){
+		}
+		if(bPause == 1){
+			if(bPopKey == true){
+				restoreCommentAndInfoView();
+			}
+			if(bSubView == true){
+				restoreViewAndMap();
+				bSubView = false;
+			}
+			if (inCustomView()) {
+				hideCustomView();
+			}else{
+				this.finish();
+			}
+			isResume = true;
+		}
 	}
 	
 	private void parseURL()
@@ -992,7 +1041,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private CustomViewCallback xCustomViewCallback;
 	private View xCustomView;
 	
-
 	public boolean inCustomView() {
 		return (xCustomView != null);
 	}
@@ -1287,7 +1335,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
 				if(statusCode == 200){
 					try {
-						String result = null;
+						
 						if(json.has("data"))
 						{
 							bHave = false;

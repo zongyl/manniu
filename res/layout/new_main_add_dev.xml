@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:text="添加设备 "
+        android:text="@string/add_dev_title"
         android:textSize="18dp"
         android:textColor="@color/black"
         android:textStyle="bold" 
@@ -42,7 +42,7 @@
         android:id="@+id/new_dev_sn"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:hint="序列号"
+        android:hint="@string/add_dev_sn"
         android:textColor="@color/black"
         android:layout_marginTop="15dp"
         android:textCursorDrawable="@null"
@@ -52,7 +52,7 @@
         android:id="@+id/new_dev_pn"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:hint="验证码"
+        android:hint="@string/add_dev_vn"
         android:textColor="@color/black"
         android:layout_marginTop="15dp"
         android:textCursorDrawable="@null"
@@ -63,7 +63,7 @@
         android:id="@+id/location_tv" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="定位中..."
+        android:text="@string/add_dev_dw"
         />
     
     <!-- <TextView
