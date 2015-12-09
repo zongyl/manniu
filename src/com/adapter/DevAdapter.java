@@ -545,7 +545,7 @@ public class DevAdapter extends BaseAdapter{
 	 * @return
 	 */
 	private Dialog CollectSheet(final Device device, final ImageView imv){
-		return CollectSheet.showSheet(context, device, new OnItemClickListener() {
+		return CollectSheet.showSheet(context, device, context.getString(R.string.dev_cancelColl), new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -582,7 +582,7 @@ public class DevAdapter extends BaseAdapter{
 	 * @return
 	 */
 	private Dialog DelSheet(final Device device, final ImageView imv){
-		return CollectSheet.showSheet(context, device, new OnItemClickListener() {
+		return CollectSheet.showSheet(context, device, context.getString(R.string.delete), new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {

@@ -350,10 +350,10 @@ public class NewSurfaceTest2 extends XViewBasic{
 			try {
 				isStop = false;
 				long t3= System.currentTimeMillis();
-				if (_decoderDebugger._isRecording) {
-					_decoderDebugger._isRecording = false;
-					video.setBackgroundResource(R.drawable.control_icon_small_video_n);
-				}
+//				if (_decoderDebugger._isRecording) {
+//					_decoderDebugger._isRecording = false;
+//					video.setBackgroundResource(R.drawable.control_icon_small_video_n);
+//				}
 				_sQueue.Stop();
 				if(_decoderQueue != null){
 					_decoderQueue.Stop();
@@ -556,10 +556,9 @@ public class NewSurfaceTest2 extends XViewBasic{
 //			}
 
 			// 如果正在录像，则停止
-			if (_decoderDebugger._isRecording && isPlay) {
+			if (isPlay) {
 				video.setBackgroundResource(R.drawable.control_icon_small_video_n);
 				APP.ShowToast(APP.GetMainActivity().getText(R.string.Video_record_end).toString());
-				_decoderDebugger._isRecording = false;
 			} else {	// 开始录像
 				video.setBackgroundResource(R.drawable.control_icon_small_video_p);
 				String strDate = DateUtil.getCurrentStringDate(DateUtil.DEFAULT_DATE_TIME_FORMAT);
@@ -573,7 +572,7 @@ public class NewSurfaceTest2 extends XViewBasic{
 //					if(efile.exists()){
 //						Fun_AnalogVideo.instance.h.mPacketizer.recordFile(fileName + ".h264");
 //					}
-					_decoderDebugger.recordFile(fileName + ".h264");
+					//_decoderDebugger.recordFile(fileName + ".h264");
 				}else{
 					APP.ShowToast(APP.GetMainActivity().getText(R.string.Video_Storage_space_err).toString());
 				}

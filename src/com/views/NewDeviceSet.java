@@ -20,8 +20,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -58,13 +60,13 @@ public class NewDeviceSet extends Activity {
 	
 	DeviceParcel device;
 	
-	TextView tv_dev_name, dev_item_version/*, dev_set_base, dev_set_advanced*/;
+	TextView tv_dev_name, dev_item_version;
 	
 	EditText et_dev_name;
 	
 	Button btn_update ;
 	
-	Spinner /*show_position,*/ resolution, /*quality*/frameRate, bitStream;
+	Spinner resolution, frameRate, bitStream;
 	
 	ImageView switch1, switch2;
 	
@@ -72,24 +74,8 @@ public class NewDeviceSet extends Activity {
 	
 	boolean init = true;
 	
-	//int[] pixels;
-	
 	public static final String FILE = "_device_set";
 
-	private static final String SW1_KEY = "dynamic-detection";
-	private static final String SW2_KEY = "cloud-storage";
-	
-	/*private static NewDeviceSet instance;
-	
-	public static NewDeviceSet getInstance(){
-		if(instance==null){
-			instance = new NewDeviceSet();
-		}
-		return instance;
-	}*/
-	
-	//String devicesid;
-	
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -112,8 +98,6 @@ public class NewDeviceSet extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.new_device_set);
 
-	//	pixels = getSize();
-		
 		device = getIntent().getParcelableExtra("device");
 		
 //		tv_dev_name = (TextView) findViewById(R.id.dev_name);
@@ -126,7 +110,6 @@ public class NewDeviceSet extends Activity {
 		switch2 = (ImageView) findViewById(R.id.dev_set_item_switch2);
 		
 		resolution = (Spinner) findViewById(R.id.resolution);
-		//quality = (Spinner) findViewById(R.id.quality);
 		frameRate = (Spinner) findViewById(R.id.frameRate);
 		bitStream = (Spinner) findViewById(R.id.bitStream);
 
@@ -171,33 +154,19 @@ public class NewDeviceSet extends Activity {
 //		handler.sendMessageDelayed(msg, 9000);
 	}
 	
-	@Override
+	/*@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if(hasFocus){
 			LogUtil.d(TAG, "...loaded!...");
 			init = false;
 		}
-	}
+	}*/
 	
 	@Override
 	protected void onResume() {
 		LogUtil.d(TAG, "...onResume...");
 		super.onResume();
 	}
-	
-	
-	/**
-	 * 以数组形式返回 尺寸 [0] = width, [1] = height
-	 * @return
-	 */
-	/*private int[] getSize(){
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int[] pixels = new int[2];
-		pixels[0] = dm.widthPixels;
-		pixels[1] = dm.heightPixels;
-		return pixels;
-	}*/
 	
 	private void close(){
 		this.finish();
@@ -733,10 +702,31 @@ public class NewDeviceSet extends Activity {
 		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(new SelectedListener());
+		spinner.setOnTouchListener(touch);
 		spinner.setSelection(index);
 		adapter.notifyDataSetChanged();
 		LogUtil.d(TAG, "adapter end:" + spinner.getId());
 	}
+	
+	OnTouchListener touch = new OnTouchListener(){
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			init = false;
+			switch (v.getId()) {
+			case R.id.resolution:
+				LogUtil.d(TAG, "...onTouch...resolution");
+				break;
+			case R.id.frameRate:
+				LogUtil.d(TAG, "...onTouch...frameRate");
+				break;
+			case R.id.bitStream:
+				LogUtil.d(TAG, "...onTouch...bitStream");
+				break;
+			default:
+				break;
+			}
+			return false;
+		}};
 	
 	class SelectedListener implements OnItemSelectedListener{
 		@Override
@@ -868,10 +858,6 @@ public class NewDeviceSet extends Activity {
 //				dev_set_advanced.setTextColor(getResources().getColor(R.color.blue_menu));
 //				break;
 			case R.id.dev_info://设备改名不能点进去
-				/*Bundle extras = new Bundle();
-				extras.putString("devicesname", device.devname);
-				extras.putString("sid", device.sid);
-				forward(NewDeviceSetInfo.class, extras, 1);*/
 				break;
 			case R.id.dev_set_back:
 				close();

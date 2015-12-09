@@ -11,14 +11,6 @@
     android:orientation="vertical"
     >
     
-<!-- <?xml version="1.0" encoding="utf-8"?> -->
-<!-- <com.views.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    		android:id="@+id/logindialog_space"
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:background="@drawable/bg_main"
-		    android:orientation="vertical" > -->
-	
 	<RelativeLayout style="@style/SetLayout" android:background="#ffffff">
         <ImageView 
             android:id="@+id/set_back"

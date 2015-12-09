@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.manniu.manniu"
-    android:versionCode="83"
-    android:versionName="1.0.8.3" >
+    android:versionCode="88"
+    android:versionName="1.0.8.8" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -247,9 +247,10 @@
        <activity android:name="com.views.bovine.Fra_SnapActivity"/>
        <activity android:name="com.localsnap.Fun_ImgGridActivity"/>
        <activity android:name="com.localsnap.BrowseAlbumActivity"/>
-       <!-- 回放 -->
-       <activity android:name="com.localmedia.Fun_RecordplayActivity"/>
+       <!-- 本地回放 <activity android:name="com.localmedia.Fun_RecordplayActivity"/> -->
        <activity android:name="com.localmedia.Fun_RecordplayActivity_MediaPlayer"/>
+       <!-- 报警录像回放 -->
+       <activity android:name="com.views.Fun_RecordPlay" android:screenOrientation="portrait"/>
        
        
        <activity

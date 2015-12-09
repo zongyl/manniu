@@ -507,7 +507,7 @@ public class Main extends Activity implements OnClickListener {
 		        intent2.setClassName(this, "com.views.About_MobilephoneActivity");  
 		        startActivity(intent2);
 				break;
-			case R.id.btn_qrcode://添加
+			case R.id.btn_qrcode://扫一扫
 				forward("com.mining.app.zxing.decoding.QRcode_DecodeActivity");
 				break;
 			//广场分类点击事件
@@ -682,7 +682,7 @@ public class Main extends Activity implements OnClickListener {
 		btn_msgedit.setVisibility(View.GONE);
 		main_tab.setVisibility(View.GONE);
 		btn_qrcode.setVisibility(View.GONE);
-		if(v.getText().toString().equals("个人")){
+		if(v.getText().toString().equals(context.getString(R.string.personel))){
 			titleMore.setVisibility(View.VISIBLE);
 			titleSqu.setVisibility(View.GONE);
 		}else{

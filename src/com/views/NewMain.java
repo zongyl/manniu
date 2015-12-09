@@ -1,5 +1,6 @@
 package com.views;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v4.view.PagerAdapter;
@@ -194,11 +194,12 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent intent = new Intent(ACT,NewMsgDetail.class);
-				Bundle bd = new Bundle();
-				bd.putParcelableArrayList("msgList", msgList);
-				intent.putExtras(bd);
 				intent.putExtra("position", position);
-				APP.GetMainActivity().startActivity(intent);
+//				Bundle bd = new Bundle();
+//				bd.putParcelableArrayList("msgList", msgList);
+//				intent.putExtras(bd);
+				intent.putExtra("msgList",(Serializable) msgList);
+				ACT.startActivity(intent);
 			}
 		});
 		
@@ -619,14 +620,15 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 						}else{
 							JSONArray array = JSON.parseArray(json.getString("data"));
 							for(int i = 0; i < array.size(); i++){
-								Message msg = JSON.toJavaObject((JSON)array.get(i), Message.class);
+								String str = array.get(i).toString();
+								Message msg = JSON.toJavaObject((JSON)JSON.parseObject(str), Message.class);
 								msgList.add(msg);
 							}
 							cache.put(userId + "_msgList", msgList);
 							Log.d(TAG, "用户:" + userId + ", 已缓存!");
 							msgRender(isrefresh);
 						}
-					} catch (JSONException e) {
+					} catch (Exception e) {
 						LogUtil.e(TAG, "/android/getMessage...error.."+e.getMessage());
 					}
 				}

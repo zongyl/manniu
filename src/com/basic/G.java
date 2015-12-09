@@ -24,6 +24,38 @@ public class G {
 		return (ia[3] << 24 | ia[2] << 16 | ia[1] << 8 | ia[0]);
 	}
 	
+	/**
+     * 注释：字节数组到int的转换！
+     * @param b
+     * @return
+     */
+    public static int byteToInt(byte[] b, int start) {
+        int s = 0;
+        int s0 = b[start+0] & 0xff;// 最低位
+        int s1 = b[start+1] & 0xff;
+        int s2 = b[start+2] & 0xff;
+        int s3 = b[start+3] & 0xff;
+        s3 <<= 24;
+        s2 <<= 16;
+        s1 <<= 8;
+        s = s0 | s1 | s2 | s3;
+        return s;
+    }
+    
+    /**
+     * 注释：字节数组到short的转换！
+     * @param b
+     * @return
+     */
+    public static short byteToShort(byte[] b, int start) {
+        short s = 0;
+        short s0 = (short) (b[start+0] & 0xff);// 最低位
+        short s1 = (short) (b[start+1] & 0xff);
+        s1 <<= 8;
+        s = (short) (s0 | s1);
+        return s;
+    }
+	
 	public static int oneByte2Int(byte byteNum) {
 		return byteNum > 0 ? byteNum : (128 + (128 + byteNum));  
 	}

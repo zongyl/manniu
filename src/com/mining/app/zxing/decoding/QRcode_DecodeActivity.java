@@ -53,7 +53,7 @@ import com.views.NewLogin;
  */
 public class QRcode_DecodeActivity extends Activity implements Callback {
 
-	public static final String TAG = "QRcode_DecodeActivity";
+	public final String TAG = "QRcode_DecodeActivity";
 	
 	private CaptureActivityHandler handler;
 	private boolean hasSurface;
@@ -201,6 +201,9 @@ public class QRcode_DecodeActivity extends Activity implements Callback {
 	@Override
 	protected void onDestroy() {
 		inactivityTimer.shutdown();
+		mContainer = null;
+		mCropLayout = null;
+		mediaPlayer = null;
 		super.onDestroy();
 	}
 

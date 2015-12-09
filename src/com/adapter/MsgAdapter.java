@@ -1,6 +1,5 @@
 package com.adapter;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,16 +25,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.basic.APP;
-import com.basic.XMSG;
-import com.localmedia.Fun_RecordplayActivity_MediaPlayer;
 import com.manniu.manniu.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
+import com.views.Fun_RecordPlay;
 import com.views.NewMsg;
-import com.views.bovine.Fun_AnalogVideo;
 
 public class MsgAdapter extends BaseAdapter{
 	
@@ -116,7 +113,7 @@ public class MsgAdapter extends BaseAdapter{
 		}
 		
 		final Message msg = (Message)items.get(position);
-		holder.title.setText(/*msg.title+*/"\n"+context.getString(R.string.from)+msg.devicename+"\n"+msg.logtime);
+		holder.title.setText(/*msg.title+*/"\n"+context.getString(R.string.from)+msg.devicename+"\n"+msg.evt_time);
 		//holder.time.setText(msg.logtime);
 		
 		//报警图片加载
@@ -176,7 +173,7 @@ public class MsgAdapter extends BaseAdapter{
 			public void onClick(View v) {
 				try {
 					Message msg = (Message)items.get(position);
-					System.out.println(msg.devicename+"--"+msg.logtime);
+					System.out.println(msg.devicename+"--"+msg.logtime+"--"+msg.evt_vsize);
 					System.out.println(msg.evt_video);
 					
 					JSONObject json = null;
@@ -190,6 +187,13 @@ public class MsgAdapter extends BaseAdapter{
 								APP.ShowToast(SDK.GetErrorStr(-1));
 							}else{
 								//播放
+								//SDK.CurlSetOperation(str, msg.evt_vsize, 0);
+								
+								Intent intent = new Intent(APP.GetMainActivity(), Fun_RecordPlay.class);
+								intent.putExtra("evt_vsize", msg.evt_vsize);
+								intent.putExtra("evt_video", str);
+								intent.putExtra("deviceName", msg.devicename);
+								APP.GetMainActivity().startActivity(intent);
 							}
 						} catch (JSONException e) {
 						}

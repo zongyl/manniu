@@ -3,11 +3,9 @@ package com.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -76,12 +74,12 @@ public class HttpURLConnectionTools {
 			URL mURL = new URL(url);
 			// 调用URL的openConnection()方法,获取HttpURLConnection对象
 			conn = (HttpURLConnection) mURL.openConnection();
-
 			conn.setRequestMethod("POST");// 设置请求方法为post
 			conn.setReadTimeout(5000);// 设置读取超时为5秒
 			conn.setConnectTimeout(10000);// 设置连接网络超时为10秒
 			conn.setDoOutput(true);// 设置此方法,允许向服务器输出内容
 			conn.setDoInput(true);
+//			conn.setRequestProperty("contentType", "utf-8");
 			// 获得一个输出流,向服务器写数据,默认情况下,系统不允许向服务器输出内容
 			// 获取URLConnection对象对应的输出流
 			printWriter = new PrintWriter(conn.getOutputStream());
@@ -98,7 +96,6 @@ public class HttpURLConnectionTools {
 			map.put("code", responseCode);
 			if (responseCode == 200) {
 				map.put("data", state);
-				System.out.println(state);
 			} else {
 				LogUtil.i("httpClientUtils", "访问失败" + responseCode);
 			}

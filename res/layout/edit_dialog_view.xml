@@ -12,7 +12,7 @@
        	android:layout_height="45dp">
   	    <TextView
     	    android:gravity="center"
-    	    android:text="@string/sendComment"
+    	    android:text="@string/send_comment"
     	    android:visibility="visible"
             android:layout_gravity="center_vertical"
             android:layout_width="fill_parent"

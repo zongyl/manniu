@@ -130,7 +130,7 @@ public class NewDeviceSetNetWork extends Activity{
 				finish();
 				break;
 			case R.id.dev_set_network_submit:
-				save();
+				save();finish();
 				break;
 			case R.id.dev_set_net_base:
 				getFragmentView(0);

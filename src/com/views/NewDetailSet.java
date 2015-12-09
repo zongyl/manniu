@@ -59,12 +59,15 @@ public class NewDetailSet extends Activity implements OnClickListener {
 	public void readSetInfos(){
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(SetInfo, APP.GetMainActivity().MODE_PRIVATE);
 		if(pre!=null){
-			//switch1.setTag(pre.getString("traffictip", ""));
-			//flowtipSize.setText(pre.getString("tipsize", ""));
-			//switch2.setTag(pre.getString("recmsgauto", ""));
-			switch3.setTag(pre.getString("push", ""));
-			switch4.setTag(pre.getString("zddl", ""));
-			switch5.setTag(pre.getString("bcmm", ""));
+			if(!"".equals(pre.getString("push", ""))){
+				switch3.setTag(pre.getString("push", ""));
+			}
+			if(!"".equals(pre.getString("zddl", ""))){
+				switch4.setTag(pre.getString("zddl", ""));
+			}
+			if(!"".equals(pre.getString("bcmm", ""))){
+				switch5.setTag(pre.getString("bcmm", ""));
+			}
 		}
 		//switch4.setTag(APP.GetMainActivity().getSharedPreferences("Info_Login", APP.GetMainActivity().MODE_PRIVATE).getString("auto_check", "on"));
 		//setSwitch(switch1);

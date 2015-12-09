@@ -95,8 +95,8 @@ public class Fun_RecordplayActivity extends Activity implements SurfaceHolder.Ca
 		_layout = (RelativeLayout) this.findViewById(R.id.record_footer);
 		_btnstop = (XImageBtn) this.findViewById(R.id.btnStopVideo);
 		_btnpause = (XImageBtn) this.findViewById(R.id.btn_play);
-		_btnSlow = (XImageBtn) this.findViewById(R.id.btn_slow);
-		_btnFast = (XImageBtn) this.findViewById(R.id.btn_fast);
+//		_btnSlow = (XImageBtn) this.findViewById(R.id.btn_slow);
+//		_btnFast = (XImageBtn) this.findViewById(R.id.btn_fast);
 		_btnstop.setOnClickListener(this);
 		_btnSlow.setOnClickListener(this);
 		_btnpause.setOnClickListener(this);
@@ -516,14 +516,14 @@ public class Fun_RecordplayActivity extends Activity implements SurfaceHolder.Ca
 		case R.id.btn_back_video:
 			onClick(_btnstop);
 			break;
-		case R.id.btn_slow:
-			float slow = mMediaPlayer.getRate();
-        	mMediaPlayer.setRate(slow/2);
-			break;
-		case R.id.btn_fast:
-			float fast = mMediaPlayer.getRate();
-        	mMediaPlayer.setRate(fast*2);
-			break;
+//		case R.id.btn_slow:
+//			float slow = mMediaPlayer.getRate();
+//        	mMediaPlayer.setRate(slow/2);
+//			break;
+//		case R.id.btn_fast:
+//			float fast = mMediaPlayer.getRate();
+//        	mMediaPlayer.setRate(fast*2);
+//			break;
 		case R.id.record_video:
 			show(_layout);
 			break;

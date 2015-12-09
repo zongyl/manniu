@@ -1,6 +1,7 @@
 package com.localmedia;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -350,7 +351,7 @@ public class XVideoAdapter extends BaseAdapter {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("imgUrl", param.split(",")[1]);
 			params.put("videoUrl", param.split(",")[2]);
-			params.put("videoName", param.split(",")[3]);
+			params.put("videoName", param.split(",")[3]);//URLEncoder.encode(param.split(",")[3],"utf-8")
 			params.put("videoInfo", param.split(",")[3]);
 			params.put("userId", Constants.userid);
 			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/android/uploadVideo",params);

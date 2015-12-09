@@ -8,19 +8,18 @@ import net.majorkernelpanic.streaming.video.VideoStream;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.backprocess.BackLoginThread;
 import com.basic.APP;
 import com.manniu.manniu.R;
-import com.nmbb.vlc.ui.VlcVideoActivity;
 import com.utils.DevSetHandler;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.utils.ScreenHandler;
 import com.views.BaseApplication;
+import com.views.Fun_RecordPlay;
 import com.views.Main;
 import com.views.NewMain;
 import com.views.NewSurfaceTest;
@@ -38,7 +37,7 @@ public class SDK {
 	//type:类型   0：视频 1：音频 2：语音对讲
 	//isIFrame		1：i帧，否则为p帧
 	//static byte[] newbuf = new byte[60*1024];
-	public void onData(int chnl,int type,int isIFrame,byte[] data, int length) {
+	public void onData(int width,int heigth,int chnl,int type,int isIFrame,byte[] data, int length) {
 		if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
 		//if(NewSurfaceTest.instance != null){
 			if(NewMain.devType == 1 && data.length > 1){
@@ -53,6 +52,10 @@ public class SDK {
 				
 				//硬、软解方法
 				if(NewSurfaceTest.instance._decoderQueue != null) {
+					if(_width != width && _height != heigth){
+						_width = width;
+						_height = heigth;
+					}
 					NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
 				}
 				
@@ -70,6 +73,10 @@ public class SDK {
 				if(NewSurfaceTest.instance._decoderQueue == null) return;
 				if(type == 0){//视频
 					if(data != null && data.length > 0){
+						if(_width != width && _height != heigth){
+							_width = width;
+							_height = heigth;
+						}
 						NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
 						
 //						LogUtil.d("SDK", "收视频..."+data.length+" type: "+type+"--"+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
@@ -199,8 +206,8 @@ public class SDK {
 			if(cmd == 10){//获取宽高  第3  4  5 个参数分别是帧率  宽 高
 				LogUtil.d("SDK","收到宽高：    "+param2+"--"+param3 + "--" + param4+ "--" + param5+"--"+param6+"--"+param7);
 				if(param3 != 0) nFrameRate = param3;
-				_width = param5;
-				_height = param6;
+//				_width = param5;
+//				_height = param6;
 				//NewSurfaceTest.instance._decoderDebugger.configureDecoder(param3,param4,param5,param6);
 				isInitDecoder = true;
 				if(NewSurfaceTest.isPlay && _flag == 0){
@@ -299,10 +306,14 @@ public class SDK {
 						AnalogvideoActivity.instance.clearAnalog();
 						AnalogvideoActivity.instance.finish();
 					}
-					//判断如果正在播放广场视频关闭
-					if(VlcVideoActivity.instance != null && VlcVideoActivity.instance.isVlcPlaying()){
-						VlcVideoActivity.instance.release();
+					//关闭报警回放
+					if(Fun_RecordPlay.instance != null && Fun_RecordPlay.instance.is != null){
+						Fun_RecordPlay.instance.stop();
 					}
+					//判断如果正在播放广场视频关闭
+//					if(VlcVideoActivity.instance != null && VlcVideoActivity.instance.isVlcPlaying()){
+//						VlcVideoActivity.instance.release();
+//					}
 					LogUtil.d("SDK", "关闭资源....");
 					
 					Intent intent = new Intent();
@@ -510,6 +521,22 @@ public class SDK {
 	public static native int SendSnapshotData(int chnl, byte[] data, int length);
 	
 	/*
+	 * url 地址
+	 * len 拖放时从多少字节开始播放
+	 * rate 快放时的帧率
+	 * */
+	public static native int CurlSetOperation(String url,int len,int rate);
+	
+	/*硬解码 截图
+	 *
+	 *jbyteArray 输入数据
+	 *jint       输入数据的长度
+	 *jbyteArray 输出数据
+	 *jint  	 返回值 输出数据的长度
+	 * */
+	public static native int AlarmDataPlayBack(byte[] indata,int len,byte[] outdata);
+	
+	/*
 	 * 输出参数 ----牛眼主动截图
 	 * jbyteArray url
 	 * 输入参数
@@ -627,6 +654,7 @@ public class SDK {
 	 * jint  高
 	 * jint  帧率
 	 * jint  码率
+	 * ret = 0 初始化成功
 	 * */
 	public static native int Ffmpegh264DecoderInit(int width,int heigth,int framerate,int bitrate);
 	public static native int Ffmpegh264DecoderUninit();

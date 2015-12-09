@@ -6,6 +6,7 @@
     android:orientation="vertical" 
     android:background="@color/white">
 
+    <!-- 录像回放 -->
     <FrameLayout android:id="@+id/record_frmheader"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -23,18 +24,10 @@
        	    android:id="@+id/dev_name"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="本地回放"
+        	android:text="recordplay"
         	android:textSize="18dp"
         	android:textColor="@color/black"
         	android:layout_gravity="center|center_horizontal"/>
-         
-         <!-- <Button
-       	    android:id="@+id/btn_upload_video"
-       	    android:layout_width="wrap_content"
-       	    android:layout_height="wrap_content"
-       	    android:text="上传"
-       	    android:layout_marginRight="5dp"
-       	    android:layout_gravity="right"/> -->
          
     </FrameLayout>
     
@@ -45,15 +38,12 @@
         android:id="@+id/record_video"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_centerInParent="true"
-        android:fitsSystemWindows="true"
         />
-
-    <!-- 录像回放播放 -->
+     <!-- 录像回放播放  工具条 -->
     <RelativeLayout 
         android:id="@+id/record_footer"
         android:layout_width="fill_parent"
-        android:layout_height="95dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom|center"
         android:background="#ae000000"
         android:paddingTop="5dp"
@@ -72,15 +62,7 @@
 	    android:layout_height="wrap_content"
 	    android:gravity="center_vertical|center_horizontal"
 	    android:orientation="horizontal" 
-	    android:paddingBottom="10dp"
-	    android:paddingTop="8dp">
-		     
-			<com.ctrl.XImageBtn
-			    android:id="@+id/btn_slow"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    xgps:NormalImage="@drawable/slow"
-			    xgps:SelectedImage="@drawable/slow" />
+	    android:paddingTop="5dp">
 		     
 			<com.ctrl.XImageBtn
 			    android:id="@+id/btn_play"
@@ -88,15 +70,7 @@
 			    android:layout_height="wrap_content"
 			    xgps:NormalImage="@drawable/play"
 			    xgps:SelectedImage="@drawable/play" 
-			    android:layout_marginLeft="30dp"
-			    android:layout_marginRight="30dp"/>
-			
-			<com.ctrl.XImageBtn
-			    android:id="@+id/btn_fast"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    xgps:NormalImage="@drawable/fast"
-			    xgps:SelectedImage="@drawable/fast" />
+			    />
 			
 			<com.ctrl.XImageBtn
 			    android:id="@+id/btnStopVideo"

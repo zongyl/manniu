@@ -31,12 +31,17 @@ public class Message implements Parcelable{
 	public int evt_type;
 	
 	public String evt_video;
+	public int evt_vsize;
 	
 	public String kid;
-	
+
 	public String logtime;
 	
+	public String uuid;
 	
+	public String evt_time;
+	
+	/*
 	public String getTitle() {
 		return title;
 	}
@@ -67,8 +72,12 @@ public class Message implements Parcelable{
 	public void setVideoPath(String videoPath) {
 		this.videoPath = videoPath;
 	}
-	
-	
+	public int getEvt_vsize() {
+		return evt_vsize;
+	}
+	public void setEvt_vsize(int evt_vsize) {
+		this.evt_vsize = evt_vsize;
+	}
 	public String getDevicename() {
 		return devicename;
 	}
@@ -110,10 +119,9 @@ public class Message implements Parcelable{
 	}
 	public void setLogtime(String logtime) {
 		this.logtime = logtime;
-	}
+	}*/
 	@Override
 	public int describeContents() {
-		
 		return 0;
 	}
 	
@@ -130,6 +138,9 @@ public class Message implements Parcelable{
 			msg.devicename =source.readString();
 			msg.evt_picture= source.readString();
 			msg.logtime = source.readString();
+			msg.uuid = source.readString();
+			msg.evt_time = source.readString();
+			msg.evt_vsize = source.readInt();
 			return msg;
 		}
 
@@ -173,5 +184,8 @@ public class Message implements Parcelable{
 		dest.writeString(devicename);
 		dest.writeString(evt_picture);
 		dest.writeString(logtime);
+		dest.writeString(uuid);
+		dest.writeString(evt_time);
+		dest.writeInt(evt_vsize);
 	}
 }

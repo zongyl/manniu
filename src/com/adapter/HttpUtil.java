@@ -171,6 +171,31 @@ public class HttpUtil  {
 	        return byteArray;
 	    }
 	
+	public static InputStream getFileInputStream(String weburl,boolean isRange,int startPosition,int contentLength) {
+		InputStream in = null;
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(weburl);
+            if(isRange){//多线程下载  
+            	//httpGet.addHeader("Range", "bytes="+startPosition+"-"+contentLength);  
+            	httpGet.addHeader("Range", "bytes="+startPosition+"-"+(contentLength-1)); 
+            } 
+            HttpResponse response = client.execute(httpGet);
+            in = response.getEntity().getContent();
+        } catch (Exception e) {
+        } /*finally {
+            if (in != null) {
+                try {
+                    in.close();
+                    in = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }*/
+        return in;
+    }
+	
 	public static void get(Context context, String url, RequestParams params){
 		HttpUtil.get(context.getResources().getString(R.string.server_address)+url, 
 				params, new JsonHttpResponseHandler(){

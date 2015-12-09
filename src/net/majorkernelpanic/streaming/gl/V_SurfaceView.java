@@ -37,14 +37,17 @@ import android.view.SurfaceHolder;
 //自定义 surfaceView 用于录制 mp4文件的 预览
 public class V_SurfaceView extends android.view.SurfaceView implements SurfaceHolder.Callback {
 
-	public final static String TAG = "GLSurfaceView";
+	public final String TAG = "GLSurfaceView";
 
 	private TextureManager mTextureManager = null;
 	
 
 	public V_SurfaceView(Context context) {
 		super(context);
-		getHolder().addCallback(this);
+		try {
+			getHolder().addCallback(this);
+		} catch (Exception e) {
+		}
 	}	
 
 	public SurfaceTexture getSurfaceTexture() {

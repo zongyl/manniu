@@ -41,7 +41,7 @@ public class CollectSheet {
 	static List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
 	
 	@SuppressLint("Recycle")
-	public static Dialog showSheet(final Context context, Device device, OnItemClickListener itemClickListener,
+	public static Dialog showSheet(final Context context, Device device, String text, OnItemClickListener itemClickListener,
 			OnCancelListener cancelListener) {
 		items.clear();
 		
@@ -60,7 +60,7 @@ public class CollectSheet {
 		Map<String, Object> map = null;
 			map = new HashMap<String, Object>();
 			map.put("tag", tagArr[0]);
-			map.put("text", context.getString(R.string.dev_cancelColl));
+			map.put("text", text);
 			map.put("image", imgs.getResourceId(0, 0));
 			items.add(map);
 		

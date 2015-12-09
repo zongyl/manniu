@@ -146,28 +146,31 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	
     public Fun_AnalogVideo(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
-		context = activity;
-		instance = this;
-	    	
-//        InitImageView();  
-//        InitTextView();  
-//        InitViewPager(); 
-		initContext();
-    	String tmp = getFilePath();
-		setFilePath(tmp);
-		h = new H264Stream();
-		
-		SharedPreferences settings = APP.GetMainActivity().getSharedPreferences(SAVEFILE, APP.GetMainActivity().MODE_PRIVATE);
-		videoQuality = new VideoQuality(
-				settings.getInt("video_resX", videoQuality.resX),
-				settings.getInt("video_resY", videoQuality.resY), 
-				settings.getInt("video_framerate", videoQuality.framerate), 
-				settings.getInt("video_bitrate", videoQuality.bitrate/1000)*1000);
-		h.setVideoQuality(videoQuality);
-		_handler.sendEmptyMessageDelayed(XMSG.CHECK_DEVICE, 2000); //延迟发送检查是否开通
-		
-		//COPY文件
-		copyAssetFile();
+		try {
+			context = activity;
+			instance = this;
+		    	
+//	        InitImageView();  
+//	        InitTextView();  
+//	        InitViewPager(); 
+			initContext();
+	    	String tmp = getFilePath();
+			setFilePath(tmp);
+			h = new H264Stream();
+			
+			SharedPreferences settings = APP.GetMainActivity().getSharedPreferences(SAVEFILE, APP.GetMainActivity().MODE_PRIVATE);
+			videoQuality = new VideoQuality(
+					settings.getInt("video_resX", videoQuality.resX),
+					settings.getInt("video_resY", videoQuality.resY), 
+					settings.getInt("video_framerate", videoQuality.framerate), 
+					settings.getInt("video_bitrate", videoQuality.bitrate/1000)*1000);
+			h.setVideoQuality(videoQuality);
+			_handler.sendEmptyMessageDelayed(XMSG.CHECK_DEVICE, 2000); //延迟发送检查是否开通
+			
+			//COPY文件
+			copyAssetFile();
+		} catch (Exception e) {
+		}
     }  
     
     
@@ -205,130 +208,131 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     
     
     private void initContext(){
-    	_rectype = (Spinner) findViewById(R.id.sp_rec_Type);
-    	_radGroup = (RadioGroup) findViewById(R.id.rg_storage);
-    	
-		_storageSDK = (RadioButton) findViewById(R.id.sto_sdk);
-		_storageMobile = (RadioButton) findViewById(R.id.sto_mobile);
-		//画质先隐掉  帧率目前不能固定
-		/*_streamType = (RadioGroup) findViewById(R.id.streamType);
-		_pictureHigh = (RadioButton) findViewById(R.id.picture_high);
-		_pictureIn = (RadioButton) findViewById(R.id.picture_in);
-		_pictureMin = (RadioButton) findViewById(R.id.picture_min);*/
-		_devTite = (TextView) findViewById(R.id.device_info);
-		_QRcodeRow = (TableRow) findViewById(R.id.qrcode_row);
-		//_tvPwd = (EditText) findViewById(R.id.tv_pwd);
-    	_btnSub = (Button) findViewById(R.id.btn_sub);
-    	_btnShare = (Button) findViewById(R.id.btn_share);
-    //	isShare();
-    	
-    	//录MP4文件VIEW
-    	RelativeLayout layout = (RelativeLayout) findViewById(R.id.my_camera_view);
-    	m_prevewview = new V_SurfaceView(context);
-		layout.addView(m_prevewview);
-		
-		initSetting();
-		_analogName = (TextView) findViewById(R.id.devName_tv);
-		
-//		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
-//		_qrcodetDevice.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View arg0) {
-//				Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
-//				intent.putExtra("sn", _sn);
-//				intent.putExtra("vn", _vn);
-//				ACT.startActivity(intent);
-//			}
-//		});
-		
-    	STR_PICTURE_TYPE = new String[] { "352x288","640x480"};//,"1280x720"   目前暂时不支持
-		NUM_PICTURE_TYPE = new int[] { 0, 1, 2};
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(ACT, R.layout.my_spinner_item, STR_PICTURE_TYPE);
-		adapter.setDropDownViewResource(R.layout.simple_spinner_item);//android.R.layout.simple_spinner_dropdown_item  R.layout.simple_spinner_item
-		_rectype.setAdapter(adapter);
-		//分辨率-添加事件Spinner事件监听  
-		_rectype.setOnItemSelectedListener(new SpinnerSelectedListener());
-		_rectype.setSelection(resolution);
-		adapter.notifyDataSetChanged();
-		//画质选择
-		/*_streamType.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId==_pictureHigh.getId()){
-                	SaveConfigInfo(1,3);
-                }else if(checkedId==_pictureIn.getId()){
-                	SaveConfigInfo(1,2);
-                }else if(checkedId==_pictureMin.getId()){
-                	SaveConfigInfo(1,1);
-                }
-            }
-        });*/
-		//存储路径选择
-		_radGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId==_storageSDK.getId()){
-                    String tmp = getExternalPath();
-                    if(tmp != null){
-                    	setFilePath(tmp);
-                		SaveConfigInfo(3,0);
-                    }else{
-                    	_storageSDK.setChecked(false);
-                    	_storageMobile.setChecked(true);
-                    	APP.ShowToastLong(context.getString(R.string.nothave_SDCard));
-                    	return;
+    	try {
+    		_rectype = (Spinner) findViewById(R.id.sp_rec_Type);
+        	_radGroup = (RadioGroup) findViewById(R.id.rg_storage);
+        	
+    		_storageSDK = (RadioButton) findViewById(R.id.sto_sdk);
+    		_storageMobile = (RadioButton) findViewById(R.id.sto_mobile);
+    		//画质先隐掉  帧率目前不能固定
+    		/*_streamType = (RadioGroup) findViewById(R.id.streamType);
+    		_pictureHigh = (RadioButton) findViewById(R.id.picture_high);
+    		_pictureIn = (RadioButton) findViewById(R.id.picture_in);
+    		_pictureMin = (RadioButton) findViewById(R.id.picture_min);*/
+    		_devTite = (TextView) findViewById(R.id.device_info);
+    		_QRcodeRow = (TableRow) findViewById(R.id.qrcode_row);
+    		//_tvPwd = (EditText) findViewById(R.id.tv_pwd);
+        	_btnSub = (Button) findViewById(R.id.btn_sub);
+        	_btnShare = (Button) findViewById(R.id.btn_share);
+        //	isShare();
+        	
+        	//录MP4文件VIEW
+        	RelativeLayout layout = (RelativeLayout) findViewById(R.id.my_camera_view);
+        	m_prevewview = new V_SurfaceView(context);
+    		layout.addView(m_prevewview);
+    		
+    		initSetting();
+    		_analogName = (TextView) findViewById(R.id.devName_tv);
+    		
+//    		_qrcodetDevice = (TextView) findViewById(R.id.qrcode_tv);
+//    		_qrcodetDevice.setOnClickListener(new OnClickListener() {
+//    			@Override
+//    			public void onClick(View arg0) {
+//    				Intent intent = new Intent(ACT, About_MobilephoneActivity.class);
+//    				intent.putExtra("sn", _sn);
+//    				intent.putExtra("vn", _vn);
+//    				ACT.startActivity(intent);
+//    			}
+//    		});
+    		
+        	STR_PICTURE_TYPE = new String[] { "352x288","640x480"};//,"1280x720"   目前暂时不支持
+    		NUM_PICTURE_TYPE = new int[] { 0, 1, 2};
+    		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(ACT, R.layout.my_spinner_item, STR_PICTURE_TYPE);
+    		adapter.setDropDownViewResource(R.layout.simple_spinner_item);//android.R.layout.simple_spinner_dropdown_item  R.layout.simple_spinner_item
+    		_rectype.setAdapter(adapter);
+    		//分辨率-添加事件Spinner事件监听  
+    		_rectype.setOnItemSelectedListener(new SpinnerSelectedListener());
+    		_rectype.setSelection(resolution);
+    		adapter.notifyDataSetChanged();
+    		//画质选择
+    		/*_streamType.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if(checkedId==_pictureHigh.getId()){
+                    	SaveConfigInfo(1,3);
+                    }else if(checkedId==_pictureIn.getId()){
+                    	SaveConfigInfo(1,2);
+                    }else if(checkedId==_pictureMin.getId()){
+                    	SaveConfigInfo(1,1);
                     }
-                }else if(checkedId==_storageMobile.getId()){
-                	String tmp = getFilePath();
-                	setFilePath(tmp);
-                	SaveConfigInfo(3,1);
                 }
-            }
-        });
-		
-		_btnShare.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(isshare){
-					cancelShare();
-				}else{
-					share();
-				}
-			}
-		});
-		//打开
-    	_btnSub.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				//修改分辨率之后更新数据
-				h.setVideoQuality(videoQuality);
-				/*//保存MP4文件(软编码不需要--苹果需要)
-				if(resolution == 0){ //352
-					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_352.mp4";
-				}else if(resolution == 1){//640
-					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_640.mp4";
-				}else if(resolution == 2){//1280
-					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_1280.mp4";
-				}
-				File file = new File(h.TESTFILE);
-				if(!file.exists()){
-					//如果分辨率没有变化不生成 MP4
-					APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.set_pwd, 1, 0);
-				}else{*/
-					initAnalog();
-					if(!isDevice){
-						addOrUpdateDevice("123456");
-					}
-					_btnSub.setClickable(false);
-				//}
-			}
-		});
+            });*/
+    		//存储路径选择
+    		_radGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if(checkedId==_storageSDK.getId()){
+                        String tmp = getExternalPath();
+                        if(tmp != null){
+                        	setFilePath(tmp);
+                    		SaveConfigInfo(3,0);
+                        }else{
+                        	_storageSDK.setChecked(false);
+                        	_storageMobile.setChecked(true);
+                        	APP.ShowToastLong(context.getString(R.string.nothave_SDCard));
+                        	return;
+                        }
+                    }else if(checkedId==_storageMobile.getId()){
+                    	String tmp = getFilePath();
+                    	setFilePath(tmp);
+                    	SaveConfigInfo(3,1);
+                    }
+                }
+            });
+    		
+    		_btnShare.setOnClickListener(new OnClickListener() {
+    			@Override
+    			public void onClick(View v) {
+    				if(isshare){
+    					cancelShare();
+    				}else{
+    					share();
+    				}
+    			}
+    		});
+    		//打开
+        	_btnSub.setOnClickListener(new OnClickListener() {
+    			@Override
+    			public void onClick(View arg0) {
+    				//修改分辨率之后更新数据
+    				h.setVideoQuality(videoQuality);
+    				/*//保存MP4文件(软编码不需要--苹果需要)
+    				if(resolution == 0){ //352
+    					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_352.mp4";
+    				}else if(resolution == 1){//640
+    					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_640.mp4";
+    				}else if(resolution == 2){//1280
+    					h.TESTFILE = Fun_AnalogVideo.temMP4Path+"manniu_1280.mp4";
+    				}
+    				File file = new File(h.TESTFILE);
+    				if(!file.exists()){
+    					//如果分辨率没有变化不生成 MP4
+    					APP.ShowWaitDlg(Fun_AnalogVideo.this, R.string.set_pwd, 1, 0);
+    				}else{*/
+    					initAnalog();
+    					if(!isDevice){
+    						addOrUpdateDevice("123456");
+    					}
+    					_btnSub.setClickable(false);
+    				//}
+    			}
+    		});
 
-		rqcodeImg = (ImageView) findViewById(R.id.qrcode_img);
-		//rqcodeImg.setBackgroundColor(context.getResources().getColor(R.color.red_btn));
-		genBitmap("");
-		
-		//rqcodeImg.setBackgroundResource(R.drawable.default_img);
+    		rqcodeImg = (ImageView) findViewById(R.id.qrcode_img);
+    		genBitmap("");
+		} catch (Exception e) {
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
+		}
     }
   
     //string gen rqcode IMG
@@ -921,7 +925,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
     public void startExperience() {
 //    	//在登录模拟的
 		//int status = SDK.Login("cms.9wingo.com", 9511, 4, _devSid, Constants.userName, "pwd");
-		if(BackLoginThread.state == 200){
+		if(BackLoginThread.state == 201){
 			stopTimer();
 			Intent intent = new Intent(ACT, AnalogvideoActivity.class);
 			intent.putExtra("deviceSid", _devSid);
@@ -953,7 +957,9 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	        	}
 				break;
 			case XMSG.CHECK_DEVICE:
+				LogUtil.d(TAG, "44444....");
 				backgroundExecution();
+				LogUtil.d(TAG, "55555....");
 				break;
 			case XMSG.CHECK_DEVICE_SHARE:
 				isShare();

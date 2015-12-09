@@ -3,84 +3,8 @@
 	<string name="object_name">蛮牛云视频</string>
     <string name="app_name">蛮牛云视频</string>
     <string name="object_null">"object null"</string>
-    <string name="action_settings">Settings</string>
-    <string name="creat_file_error">创建文件失败，请检查存储卡是否正常！</string>
-    <string name="openning_stream">正在打开视频</string>
-    <string name="openning_Registered">正在注册,请稍候……</string>
-    <string name="openning_ReloadData">正在加载数据,请稍候……</string>
-    <string name="set_pwd">操作中,请稍候……</string>
-    <string name="openning_realDate">正在打开实时数据</string>
-    <string name="stop_stream">关闭视频</string>
-    <string name="end_stream">播放结束，关闭视频连接……</string>
-    <string name="logining">"登录中,请稍候……"</string>
-    <string name="netWake_mobile">"当前处于移动网络,网络不稳定请耐心等待哟……"</string>
-    <string name="uploading">"上传中,请稍候……"</string>
-    <string name="P2PConnect">"正在创建连接……"</string>
     <string name="reopen_stream">"正在打开视频……"</string>
-    <string name="querying">"正在查询……"</string>
     <string name="Err_Error_Unknow">"操作失败!"</string>
-    <string name="Device:">"设备："</string>
-    <string name="Time:">"时间："</string>
-    <string name="Type:">"类型："</string>
-    <string name="Length:">"长度："</string>
-    <string name="Success">"成功"</string>
-	<string name="Err_Error">"错误"</string>		
-	<string name="Err_Param">"参数错误"</string>
-	<string name="Err_Timeout">"操作超时"</string>
-	<string name="Err_NetConnect">"网络连接不可用，请检查网络"</string>
-	<string name="Err_NetSendData">"网络错误,数据发送失败"</string>
-	<string name="Err_NetRecvData">"网络错误,数据接收失败"</string>
-	<string name="Err_System_Tip">很抱歉,程序出现异常,即将退出！</string>
-	<string name="Err_NoObject">"对像不存在"</string>
-	<string name="Err_Unknow">"未知错误"</string>
-	<string name="Err_NewBuffer">"创建缓存失败出错"</string>
-	<string name="Err_NoBuffer">"未创建缓存"</string>
-	<string name="Err_NetSetNoBlock">"设置NoBlock失败"</string>
-	<string name="Err_NetSetNoDelay">"设置NoDelay失败"</string>
-	<string name="Err_NoConnect">"未连接"</string>
-	<string name="Err_Protocol">"协议解析失败"</string>
-	<string name="Err_ReadData">"读取数据失败"</string>
-	<string name="Err_DataParser">"数据分析错误"</string>
-	<string name="Err_OutBuffer">"超过最大缓存"</string>
-	<string name="Err_OpenFile">"打开文件失败"</string>
-	<string name="Err_NoRight">"没有权限"</string>
-	<string name="Err_NO_USER_ID">"用户ID不存在"</string>
-	<string name="Err_USER_NULL">"用户名或密码不能为空"</string>
-	<string name="Err_USER_ERROR">"用户名或密码不正确!"</string>
-	<string name="Err_USER_DISABLE">"该用户已禁用!"</string>
-	<string name="Err_NO_DATA_RECORD">"用户不存在"</string>
-	<string name="Err_NO_USER_NAME_TO_ID">"该用户名匹配不到ID"</string>
-	<string name="Err_NO_USER_NAME">"用户名不存在"</string>
-	<string name="Err_PASSWORD_INVALID">"密码无效"</string>
-	<string name="Err_INVALID_USER_ID">"无效的用户ID"</string>
-	<string name="Err_USER_LOCKED">"用户被锁定"</string>
-	<string name="Err_SESSION_EXIST">"用户已经存在登录会话"</string>
-	<string name="Err_OFF_LINE">"不在线"</string>
-	<string name="Err_DeviceLogin">"注册失败"</string>
-	<string name="Err_Registration_Timeout">"注册超时"</string>
-	<string name="Err_CONNET">"网络连接失败"</string>
-	<string name="Err_UPLOAD">"上传失败!"</string>
-	<string name="IN_UPLOAD">"上传中"</string>
-	<string name="SUCCESS_Operation">"操作成功!"</string>
-	<string name="SUCCESS_UPLOAD">"上传成功!"</string>
-	<string name="SUCCESS_COLLECT">"收藏成功!"</string>
-	<string name="SUCCESS_MODIFY">"修改成功!"</string>
-	<string name="SUCCESS_LOGIN">登录成功</string>
-	<string name="CANCEL_COLLECT">"取消收藏!"</string>
-	<string name="SUCCESS_LIKE">"点赞成功!"</string>
-	<string name="SUCCESS_CANCEL">取消成功!</string>
-	<string name="FAIL_CANCEL">取消失败!</string>
-	<string name="CANCEL_LIKE">"取消点赞!"</string>
-	<string name="GET_P_FAILURE">"获取位置信息失败"</string>
-	<string name="GET_P_SUCCESS">"获取位置信息成功"</string>
-	<string name="GET_C_FAILURE">"获取评论数失败"</string>
-	<string name="GET_C_SUCCESS">"获取评论数成功"</string>
-	<string name="cel_share">取消分享</string>
-	<string name="nosdcard">未找到存储卡，无法存储照片！</string>
-	<string name="delete_ask">确定删除吗?</string>
-	<string name="cancelColle_ask">确定取消收藏吗?</string>
-	<string name="cancelShare_ask">确定取消分享吗?</string>
-	<string name="delDev_ask">确定删除设备吗?</string>
 	
 	<string name="Video_play_fail">播放失败</string>
 	<string name="Video_play_stop">播放停止</string>
@@ -148,7 +72,7 @@
     <string name="GW_ERRCODE_P2P_TIMEOUT">网络超时</string>
     
     <string name="GW_ERRCODE_TRANS_FAILD">转发失败</string>
-    <string name="GW_ERRCODE_TRANS_UNSUPPORT_TYPE">设备不支持P2P转发</string>
+    <string name="GW_ERRCODE_TRANS_UNSUPPORT_TYPE">设备不支持P2P转发</string><!-- 设备转发受限制 -->
     <string name="GW_ERRCODE_TRANS_INIT_FAILD">链接失败</string>
     <string name="GW_ERRCODE_TRANS_DISCONNECT">设备掉线</string>
     <string name="GW_ERRCODE_TRANS_LINK_FAILD">链接失败</string>
@@ -219,6 +143,14 @@
  	
  	<string name="dev_set_base">基本设置</string>
  	<string name="dev_set_advanced">高级设置</string>
+ 	
+ 	<string name="SUCCESS_UPLOAD">上传成功!</string>
+ 	<string name="Err_CONNET">网络连接失败!</string>
+ 	<string name="cancelShare_ask">确认取消分享吗?</string>
+ 	<string name="delDev_ask">确认删除设备吗?</string>
+ 	<string name="SUCCESS_Operation">操作成功!</string>
+ 	<string name="GET_C_FAILURE">获取评论数失败!</string>
+ 	<string name="GET_P_FAILURE">获取位置信息失败!</string>
  	
  	<!-- 显示位置 -->
  	<string-array name="devSetPosition">
@@ -626,7 +558,7 @@
         <item>Accordion</item>
     </string-array>
 
-   <string name="action_settings">Settings</string>
+    <string name="action_settings">Settings</string>
     <string name="creat_file_error">创建文件失败，请检查存储卡是否正常！</string>
     <string name="openning_stream">正在打开视频</string>
     <string name="openning_Registered">正在注册,请稍候……</string>
@@ -681,6 +613,10 @@
 	<string name="Err_Registration_Timeout">"注册超时"</string>
 	<string name="Err_UPLOAD">"上传失败!"</string>
 	<string name="IN_UPLOAD">"上传中……"</string>
+	<string name="FAIL_ADD_LIKE">"点赞失败"</string>
+	<string name="FAIL_ADD_COLLECT">"收藏失败"</string>
+	<string name="FAIL_CANCEL_LIKE">"取消点赞失败"</string>
+	<string name="FAIL_CANCEL_COLLECT">"取消收藏失败"</string>
 	<string name="SUCCESS_COLLECT">"收藏成功!"</string>
 	<string name="SUCCESS_MODIFY">"修改成功!"</string>
 	<string name="SUCCESS_LOGIN">登录成功</string>
@@ -694,14 +630,6 @@
 	<string name="delete_ask">确定删除吗?</string>
 	<string name="cancelColle_ask">确定取消收藏吗?</string>
 	
-	<string name="Video_play_fail">播放失败</string>
-	<string name="Video_play_stop">播放停止</string>
-	<string name="Video_play_crash">用户设备关闭或网络不稳定引起播放停止</string>
-	<string name="Video_record_end">"录像结束!"</string>
-	<string name="Video_Storage_space_err">"剩余存储空间不足!"</string>
-	<string name="Video_NetWork_Err">"网络连接失败，关闭连接"</string>
-	<string name="Video_NetWork_reload">"联网失败，正在重新连接"</string>
-	<string name="Video_Dviece_BUSY">"设备忙!"</string>
 	<string name="checking">正在检查，请稍后……</string>
 	<string name="new_version">发现新版本</string>
 	<string name="file_count">文件大小:</string>
@@ -712,108 +640,12 @@
 	<string name="from">来自:</string>
 	<string name="select_all">全选</string>
 	<string name="select_allno">全不选</string>
-	<string name="markasread">全部标记为已读</string>
-	<string name="err_tip">错误提示</string>
 	
-	<string name="fail_refresh">刷新失败,稍后再试!</string>
-	<string name="request_timeout">请求超时!</string>
-	<string name="exit_monitor_alert">正在采集视频不能退出……</string>
-	<string name="register_success_tip">感谢您注册蛮牛云!验证码为:</string>
-	<string name="register_wrongcode">验证码错误!</string>
-	<string name="register_getcode">获取验证码</string>
-	<string name="register_serverErr">服务异常，工程师正在努力攻城!</string>
-	<string name="registerCode_in">输入验证码</string>
-	<string name="register">"注  册"</string>
-	
-	<string name="choosepic_alert">请选择一张图片</string>
-	<string name="del_chose_ask">要删除所选内容吗？</string>
-    
-     <string name="GW_ERRCODE_SUCESS">成功</string>
-    
-    <string name="GW_SESSION_UNLINK">设备掉线</string>
-    <string name="GW_ERRCODE_UNLOGIN">设备未登录</string>
-    
-    <string name="GW_ERRCODE_LOGIN_FAILED">登录失败</string>
-    <string name="GW_ERRCODE_LOGIN_TIMEOUT">登录超时</string>
-    <string name="GW_ERRCODE_LOGIN_IDM_TIMEOUT">登录超时</string>
-    <string name="GW_ERRCODE_IDM_INIT_FAILD">初始化失败</string>
-    <string name="GW_ERRCODE_IDM_REGISTER_CONFLICT">注册冲突</string>
-   
-    <string name="GW_ERRCODE_P2P_FAILD">打开视频失败</string>
-    <string name="GW_ERRCODE_P2P_UNSUPPORT_TYPE">打开设备视频受限制</string>
-    <string name="GW_ERRCODE_P2P_INIT_FAILD">链接失败</string>
-    <string name="GW_ERRCODE_P2P_DISCONNECT">设备掉线</string>
-    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">设备不在线</string>
-    <string name="GW_ERRCODE_P2P_LINK_FAILD">链接失败</string>
-    <string name="GW_ERRCODE_P2P_TIMEOUT">网络超时</string>
-    
-    <string name="GW_ERRCODE_TRANS_FAILD">转发失败</string>
-    <string name="GW_ERRCODE_TRANS_UNSUPPORT_TYPE">设备转发受限制</string>
-    <string name="GW_ERRCODE_TRANS_INIT_FAILD">链接失败</string>
-    <string name="GW_ERRCODE_TRANS_DISCONNECT">设备掉线</string>
-    <string name="GW_ERRCODE_TRANS_LINK_FAILD">链接失败</string>
-    <string name="GW_ERRCODE_TRANS_TIMEOUT">网络超时</string>
-
-    <string name="GW_ERRCODE_P2P_SEND_MSG_FAILD">发送消息失败</string>
-    
-    <string name="GW_ERRCODE_P2P_SEND_DATA_FAILD">发送数据失败</string>
-    <string name="GW_ERRCODE_P2P_SEND_DATA_DISCONNECT">链接不存在或者已经断开</string>
-    
-    <string name="GW_ERRCODE_ALARM_FAILD">发送警报失败</string>
-    <string name="GW_ERRCODE_ALARM_WAIT">上次报警未处理完成</string>
-    <string name="GW_ERRCODE_ALARM_UPLOAD_FAILD">上传报警图片失败</string>
-    <string name="GW_ERRCODE_ALARM_TIMEOUT">发送报警超时</string>
-    
-    <string name="GW_ERRCODE_MEDIA_UPLOAD_FAILD">发送视频失败</string>
-    
-    <string name="GW_ERRCODE_SNAPSHOT_FAILD">发送抓图失败</string>
-    <string name="GW_ERRCODE_SNAPSHOT_UPLOAD_FAILD">上传抓图失败</string>
-    
-    <string name="GW_ERRCODE_HEARTBEAT_FAILD">上传抓图失败</string>
-    <string name="GW_ERRCODE_HEARTBEAT_SEND_FAILD">上传抓图失败</string>
-    
-    <string name="GW_ERRCODE_SEND_JSON_PKT_FAID">上传抓图失败</string>
-    
-    <string name="GW_ERRCODE_START_UPGRADE_FAILD">上传抓图失败</string>
-    <string name="GW_ERRCODE_START_UPGRADE_WAIT">上传抓图失败</string>
-    
- 	<!-- -->
- 	<string name="web_refresh">刷新</string>
-    <string name="web_copy_link">复制链接</string>
- 	<string name="web_on_browser">在浏览器中打开</string>
- 	<string name="clip_show">显示剪切板文本</string>
- 	
-	<!-- <string name="pull_to_refresh">下拉可以刷新</string>
-	<string name="release_to_refresh">释放立即刷新</string>
-	<string name="refreshing">正在刷新……</string> -->
-	<string name="not_updated_yet">暂未更新过</string>
-	<string name="updated_at">上次更新于%1$s前</string>
-	<string name="updated_just_now">刚刚更新</string>
-	<string name="time_error">时间有问题</string>
-
-   	<string name="server_address">http://www.mny9.com</string>
-	<string name="E_SER_FAIL">当前网络不好,请稍后再试!</string>
-
-  	<string name ="default_photo">./images/users/users.jpg</string>
-	<string name="scan_text">将二维码放入框内,即可自动扫描</string>
- 	
- 	<string name="temp_17">21&#176;c </string>
- 	<string name="temp_31">30&#176;c </string>
- 	
  	<string name="devciesJSON">
  	    <![CDATA[
  	    [{\"sid\":\"001237a8\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"c1(001237a8)\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2014-11-15 03:06:15.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"0019420a\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"0019420a\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[1,2],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"12345678901\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"12345678901\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":4,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"18158113714\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"18158113714\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQEAADg1Mjc4YTk2MDM3ZjEx\",\"logo\":null,\"sn\":\"4\",\"model\":null,\"devicesname\":\"devices05\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":\"123456\",\"createtime\":\"2015-01-28 05:21:26.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQEAADkwN2VjYzU3MDM3ZjEx\",\"logo\":null,\"sn\":\"8\",\"model\":null,\"devicesname\":\"c1(001237a8)\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[10001,10002,10003,10004,10005,10006,10007,10008],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":\"123456\",\"createtime\":\"2015-01-28 01:47:55.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQQAAGE4ZDA2NWZiMDM3ZjEx\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"模拟IPC\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":4,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-13 14:04:33.0\",\"typeimg\":null,\"pn\":null}]
  	    ]]>
  	    </string>
- 	<string name="set">设置</string>    
- 	<string name="base_set">基本设置</string>
- 	<string name="suggest">意见反馈</string>
- 	<string name="ver_check">版本检测</string>
- 	<string name="about">关于</string>
- 	<string name="exitApp">关闭蛮牛</string>
- 	<string name="setphoto">头像设置</string>
- 	<string name="camera">拍照</string>
- 	
  	<string-array name="menuList0">
  	    <item >@string/base_set</item>
  	</string-array>
@@ -1100,21 +932,6 @@
 	
 	<string name="file_tip">请选择正确的文件夹</string>
 	
- 	<string-array name="jazzy_effects">
-        <item>Standard</item>
-        <item>Tablet</item>
-        <item>CubeIn</item>
-        <item>CubeOut</item>
-        <item>FlipVertical</item>
-        <item>FlipHorizontal</item>
-        <item>Stack</item>
-        <item>ZoomIn</item>
-        <item>ZoomOut</item>
-        <item>RotateUp</item>
-        <item>RotateDown</item>
-        <item>Accordion</item>
-    </string-array>
-
  	<string name="video_layout_loading">加载资源中...</string>
  	<string name="video_layout_starting">准备播放中...</string>
  	<string name="famliy_around_withme">家，与我同行</string>
@@ -1145,10 +962,10 @@
  	<string name="file">文件</string>
  	<string name="SUCCESS_SAVE">保存成功</string>
  	
- 	<string name="sendComment">发送评论</string>
- 	<string name="commentTip">评论</string>
- 	<string name="profileTip">简介</string>
- 	<string name="commentBtn">发表你的看法</string>
+ 	<string name="send_comment">发送评论</string>
+ 	<string name="comment_tip">评论</string>
+ 	<string name="profile_tip">简介</string>
+ 	<string name="comment_btn">发表你的看法</string>
  	<string name="default_address">蛮牛云总部</string>
  	<string name="address_pre">地址</string>
  	<string name="publisher_pre">发布者</string>
@@ -1169,5 +986,11 @@
  	<string name="user_donot_exits">用户不存在！</string>
  	<string name="channel">通道</string>
  	
- 	
+ 	<!-- 牛眼 -->
+	<string name="analog_video_update">修改</string>
+	<string name="analog_video_open">开通</string>
+	<string name="analog_video_open1">打  开</string>
+	<string name="analog_video_cancel_share">取消分享</string>
+	<string name="analog_video_open_ok_share">分享到广场</string>
+	<string name="analog_video_click_reload">点击屏幕，可重新加载</string>
 </resources>

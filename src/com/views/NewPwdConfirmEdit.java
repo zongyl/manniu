@@ -7,10 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -114,7 +111,7 @@ public class NewPwdConfirmEdit extends Activity implements OnClickListener{
 									APP.ShowToast(getString(R.string.pwd_modiFail));
 								}else{
 									//UpdateUserInfo();
-									forward(NewDetailEdit.class);
+									//forward(NewDetailEdit.class);
 									finish();
 									APP.ShowToast(getString(R.string.pwd_mofiSucc));
 								}

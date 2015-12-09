@@ -63,6 +63,7 @@ import com.utils.httpClientUtils;
 public class NewLogin extends Activity implements OnClickListener{
 
 	public final static String SAVEFILE = "Info_Login";
+	public final static String SETFILE = "Info_Set";
 //	public static NewLogin instance = null;
 	AutoCompleteTextView  _user;
 	EditText _pwd;
@@ -96,8 +97,6 @@ public class NewLogin extends Activity implements OnClickListener{
 				return imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);  
 			}  
 		});  
-		
-		
 		
 		_dlgWait = new Dlg_Wait(this, R.style.dialog);
 		BaseApplication.getInstance().addActivity(this);
@@ -136,7 +135,7 @@ public class NewLogin extends Activity implements OnClickListener{
 		_ipPreferences = getSharedPreferences(SplashScreen.HOSTIP, this.MODE_PRIVATE);
 		Constants.hostUrl = _ipPreferences.getString("hostIP", "");
 		//连本地服务
-//		Constants.hostUrl = "http://10.12.6.121:8080/NineCloud";
+//		Constants.hostUrl = "http://10.12.6.118:8080/NineCloud";
 	}
 	
 	//内置SD卡
@@ -408,11 +407,19 @@ public class NewLogin extends Activity implements OnClickListener{
 		String strPwd = preferences.getString("pwd0", "");
 		Constants.userName = strUser;
 		_user.setText(strUser);
-		_pwd.setText(strPwd);
+		
+		String bcmm = getSharedPreferences(SETFILE, this.MODE_PRIVATE).getString("bcmm", "");
+		if(!"off".equals(bcmm)){
+			_pwd.setText(strPwd);
+		}
+		
 		LogUtil.d(TAG, "ReadUserInfo");
 		if(preferences != null){
 			if(preferences.getString("user0", "")!=""){
-				onClick(_btnLogin);
+				String zddl = getSharedPreferences(SETFILE, this.MODE_PRIVATE).getString("zddl", "");
+				if(!"off".equals(zddl)){
+					onClick(_btnLogin);
+				}
 			}
 		}
 	}
@@ -508,6 +515,9 @@ public class NewLogin extends Activity implements OnClickListener{
 				showToast(getText(R.string.Err_CONNET).toString());
 				break;
 			case XMSG.Alias:
+				
+				String str = getRegistrationId();
+				
 				String param = (String) msg.obj;
 				if(param.split(",").length > 0){
 					//String tempStr = "?registrationId="+param.split(",")[0]+"&alias="+param.split(",")[1]+"&time_token="+param.split(",")[2]+"&sessionId="+Constants.sessionId;

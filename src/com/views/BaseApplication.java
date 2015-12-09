@@ -58,7 +58,7 @@ public class BaseApplication extends Application {
 		// 注册crashHandler
 		crashHandler.init(getApplicationContext());
 
-		//JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
+		JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
 		JPushInterface.init(this); // 初始化 JPushe
 
 		singleton = this;
@@ -148,7 +148,10 @@ public class BaseApplication extends Application {
 		try {
 			MyReceiver.isCloseApp = false;
 			if("exit".equals(flag)){
-				clearSharedPre(new String[]{NewLogin.SAVEFILE,VlcVideoActivity.COLLECT_PRE,VlcVideoActivity.PRAISE_PRE});
+				//String bcmm = getSharedPreferences("Info_Set", this.MODE_PRIVATE).getString("bcmm", "");
+				//if(!"on".equals(bcmm)){
+					clearSharedPre(new String[]{NewLogin.SAVEFILE,VlcVideoActivity.COLLECT_PRE,VlcVideoActivity.PRAISE_PRE});
+				//}
 			}else if("play".equals(flag)){
 				SharedPreferences preferences = getSharedPreferences(NewLogin.SAVEFILE, this.MODE_PRIVATE);
 				preferences.edit().putString("pwd0", "").commit();

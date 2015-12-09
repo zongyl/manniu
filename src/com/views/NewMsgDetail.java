@@ -39,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 import com.basic.APP;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager.TransitionEffect;
+import com.localsnap.ImageItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
@@ -50,12 +51,13 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListe
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.utils.BitmapUtils;
 import com.utils.Constants;
+import com.utils.ExceptionsOperator;
 import com.utils.FileUtil;
 import com.utils.LogUtil;
 
 
 public class NewMsgDetail extends Activity implements OnClickListener,OnTouchListener{
-	private final static String TAG ="NewMegDetail";
+	private final String TAG ="NewMegDetail";
 	private JazzyViewPager _viewPager;
 	private PopupWindow _pWindow;
 	private ArrayList<Message> _msgs =new ArrayList<Message>();
@@ -63,7 +65,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	private TextView _time;
 	private TextView _devName;
 	private String _strDevName="";
-	private int _curIndex;
+	private int _curIndex = 0;
 	private ImageView _imageview;
 	private View _imageLayout;
 	private View _spinner;
@@ -126,24 +128,29 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	
 	/**加载视图数据*/
 	public void findViews(){
-		_title = (TextView) findViewById(R.id.msg_title);
-		_time = (TextView) findViewById(R.id.msg_time);
-		_devName = (TextView) findViewById(R.id.msg_devName);
-		_curIndex = getIntent().getIntExtra("position", 0);
-		_viewPager = (JazzyViewPager) findViewById(R.id.new_pager_list);
-		getMessageList();
-		/*_imageLayout =LayoutInflater.from(this).inflate(R.layout.item_pager_image,null);
-		_imageview = (ImageView) _imageLayout.findViewById(R.id.msg_image);
-		_spinner = _imageLayout.findViewById(R.id.loading);*/
-		initImageList();
-		//getCurrentMsg(_curIndex);
-		//getImageViews();
-		//transforUrl(imgUrls);
-		bindingAdpater();
-		header =(View)findViewById(R.id.msg_detail_header);
-		footer =(View)findViewById(R.id.msg_detail_footer);
-		//show(header);
-		//show(footer);
+		try {
+			_title = (TextView) findViewById(R.id.msg_title);
+			_time = (TextView) findViewById(R.id.msg_time);
+			_devName = (TextView) findViewById(R.id.msg_devName);
+			_curIndex = getIntent().getIntExtra("position", 0);
+			_viewPager = (JazzyViewPager) findViewById(R.id.new_pager_list);
+			getMessageList();
+			/*_imageLayout =LayoutInflater.from(this).inflate(R.layout.item_pager_image,null);
+			_imageview = (ImageView) _imageLayout.findViewById(R.id.msg_image);
+			_spinner = _imageLayout.findViewById(R.id.loading);*/
+			initImageList();
+			//getCurrentMsg(_curIndex);
+			//getImageViews();
+			//transforUrl(imgUrls);
+			bindingAdpater();
+			header =(View)findViewById(R.id.msg_detail_header);
+			footer =(View)findViewById(R.id.msg_detail_footer);
+			//show(header);
+			//show(footer);
+		} catch (Exception e) {
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
+		}
+		
 	}
 	public void initImageList(){
 		_imageLayouts = new ArrayList<View>();
@@ -273,6 +280,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	}
 	
 	private List<Message> getMessageList() {
+		//dataList = (List<ImageItem>) getIntent().getSerializableExtra(EXTRA_IMAGE_LIST);
 		ArrayList<Message> serializable = (ArrayList<Message>)getIntent().getExtras().getSerializable("msgList");	
 		_msgs = serializable;
 		return _msgs;
@@ -292,11 +300,10 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			APP.GetMainActivity().ShowXView(Main.XV_NEW_MAIN);
 			finish();
 			break;
-		case R.id.ontime_video:
-			//APP.ShowToast("click on pop:play ontime video");
-			//TODO:实现报警录像回放
-			_pWindow.dismiss();
-			break;
+//		case R.id.ontime_video:
+//			//TODO:实现报警录像回放
+//			_pWindow.dismiss();
+//			break;
 		case R.id.msg_save:
 			//APP.ShowToast("click on pop:save msgImage to local");
 			//TODO:实现报警图片下载			
@@ -307,6 +314,17 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			break;
 		case R.id.msg_shareImg:
 			_pWindow.dismiss();
+			APP.ShowToast("share image!");
+			
+			/*String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title);
+			//strText+="\r\n"+getString(R.string.please_clicklink)+":"+short_url;
+		String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
+
+		ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
+				strText,
+				strPYQText,
+				Constants.hostUrl+"/images/WechatMomentsqrcode.png",false,null);*/
+			
 			//forward(NewMsgImgShare.class);
 			String strAlarmInfo = "";
 //			strAlarmInfo += getString(R.string.famliy_around_withme)+"\r\n";
@@ -321,12 +339,6 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 					strAlarmInfo,
 					_url
 					,false,null);
-//			ShareSDK.initSDK(this);
-//			OnekeyShare oks = new OnekeyShare();
-//			oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-//			oks.setText(getString(R.string.app_name));
-//			oks.setImageUrl(_url);
-//			oks.show(this);
 			break;
 		case R.id.msg_image:
 			show(header);
@@ -362,7 +374,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 					return true;
 				}
 		 });
-		 vPopupWindow.findViewById(R.id.ontime_video).setOnClickListener(this);
+		 //vPopupWindow.findViewById(R.id.ontime_video).setOnClickListener(this);
 		 vPopupWindow.findViewById(R.id.msg_save).setOnClickListener(this);
 		 vPopupWindow.findViewById(R.id.msg_shareImg).setOnClickListener(this);
 	}

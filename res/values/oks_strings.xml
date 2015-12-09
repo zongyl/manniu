@@ -21,12 +21,4 @@
 	<string name="shake2share">摇晃手机！</string>
 	<string name="select_a_friend">请选择一个朋友</string>
 	<string name="video_share">视频分享</string>
-	<!-- 牛眼 -->
-	<string name="analog_video_update">修改</string>
-	<string name="analog_video_open">开通</string>
-	<string name="analog_video_open1">打  开</string>
-	<string name="analog_video_cancel_share">取消分享</string>
-	<string name="analog_video_open_ok_share">分享到广场</string>
-	<string name="analog_video_click_reload">点击屏幕，可重新加载</string>
-	
 </resources>

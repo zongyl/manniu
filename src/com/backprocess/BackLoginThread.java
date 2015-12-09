@@ -33,7 +33,7 @@ public class BackLoginThread implements Runnable{
 	public final static int QUERY_OK = 200;
 	private String TAG = BackLoginThread.class.getSimpleName();
 	public static boolean runFlag;
-	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高
+	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高 201:牛眼登录成功
 	public static int state = 0;
 	Thread _thread = null;
 	public int error_Count= 0;
@@ -111,7 +111,7 @@ public class BackLoginThread implements Runnable{
 							//long t1 = System.currentTimeMillis();
 							int nRet = SDK.Login("cms.9wingo.com", 9511, 3, Constants.userid, Constants.userName, "pwd");
 							//long t2 = System.currentTimeMillis();
-							//LogUtil.d("BackLoginThread", Constants.userid+"-----IDM登录中--------"+Constants.userName +" nRet= "+nRet + " time="+(t2-t1));
+							LogUtil.d("BackLoginThread", Constants.userid+"-----IDM登录中--------"+Constants.userName +" nRet= "+nRet);
 							if(nRet == 0){
 								APP.dismissProgressDialog();
 								state = 200;
@@ -141,7 +141,7 @@ public class BackLoginThread implements Runnable{
 							LogUtil.d("BackLoginThread", Constants.userid+"-----IDM登录中--------"+Constants.userName +" nRet= "+status + " time="+(t2-t1));
 							if(status == 0){
 								APP.dismissProgressDialog();
-								state = 200;
+								state = 201;
 								SDK._isRun = true;
 								runFlag = false;//连接成功置成false 
 								_thread.wait();//
@@ -187,7 +187,7 @@ public class BackLoginThread implements Runnable{
 							loginForETS(tempStr);
 							break;
 						case 4:
-							SDK.Ffmpegh264DecoderInit(SDK._width,SDK._height,SDK.nFrameRate,SDK._bitrate);
+							//SDK.Ffmpegh264DecoderInit(SDK._width,SDK._height,SDK.nFrameRate,SDK._bitrate);
 							state = 200;
 							runFlag = false;//连接成功置成false 
 							_thread.wait();//

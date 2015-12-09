@@ -39,8 +39,10 @@ public class ExitService extends Service {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
 						LogUtil.d(TAG, "start ..踢出账号....");
-						Main.Instance.stopUpdateCheck();
-						Main.Instance._loginThead.stop();//停止IDM线程
+						if(Main.Instance!= null && Main.Instance._loginThead != null){
+							Main.Instance.stopUpdateCheck();
+							Main.Instance._loginThead.stop();//停止IDM线程
+						}
 						SDK.Logout();
 						SDK.UnInit();
 						BaseApplication.getInstance().exitApp("play");

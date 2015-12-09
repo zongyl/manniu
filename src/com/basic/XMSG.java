@@ -47,6 +47,9 @@ public class XMSG {
 	public final static int PLAY_CLOSE_WAIT = 301;
 	public final static int DEVICE_LIST_ISREFRESH = 302;
 	
+	//回放
+	//public final static int RECORD_UPDATE_SEEKBAR = 400;
+	
 	public final static int LOGIN_USER_ERROR = -1;
 	public final static int LOGIN_USER_DISABLE = -2;
 	public final static int LOGIN_NETWORK_ERROR = -3;

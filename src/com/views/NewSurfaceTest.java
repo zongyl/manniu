@@ -547,14 +547,14 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				LogUtil.d(TAG, " 退出app .time= "+(t4-t3));
 				SDK.isInitDecoder = false;
 				if(isPlay){
-					//LogUtil.i(TAG, "...isPlay = "+isPlay+"--"+SDK._sessionId+"--"+getDeviceChannel());
+					LogUtil.i(TAG, "start p2pclose ...isPlay = "+isPlay+"--"+SDK._sessionId);
 					long t1= System.currentTimeMillis();
 					SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 					SDK.P2PClose(SDK._sessionId);
 					SDK._sessionId = 0;
 					isPlay = false;
 					long t2= System.currentTimeMillis();
-					LogUtil.d(TAG, " 退出SDK.time "+(t2-t1));
+					LogUtil.d(TAG, "end p2pclose 退出SDK.time "+(t2-t1));
 				}
 				finish();
 				System.gc();
@@ -897,7 +897,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				SDK.SetDecoderModel(0);
 			}
 			SDK._flag = 0;
-			SDK.Ffmpegh264DecoderUninit();
+			//SDK.Ffmpegh264DecoderUninit();
 			isStop = true;
 			closeWait();
 			stopTimer();

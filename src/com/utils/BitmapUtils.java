@@ -106,6 +106,7 @@ public class BitmapUtils extends XViewBasic {
 	public static void loadImage(String imgname,String userid,ImageView imagetarget){
 		try {
 			if(imgname.equals("")){
+				if(Constants.userid.equals("")) return;
 				imgname = "images/users/"+Constants.userid +".jpg";
 			}
 			if(getContext().getResources().getString(R.string.default_photo).equals(imgname)){
@@ -141,6 +142,7 @@ public class BitmapUtils extends XViewBasic {
 //				}
 			}
 		} catch (Exception e) {
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 	//反斜杠处理

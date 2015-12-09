@@ -35,8 +35,11 @@ import com.manniu.manniu.R;
 import com.utils.BitmapUtils;
 import com.utils.Constants;
 import com.utils.DateUtil;
+import com.utils.ExceptionsOperator;
+import com.utils.LogUtil;
 import com.utils.SetSharePrefer;
 import com.utils.UpdateManager;
+import com.views.bovine.Fun_AnalogVideo;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -134,6 +137,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			_userid = preferences.getString("sid", "");
 			BitmapUtils.loadImage(_img, _userid, _headImage);
 		} catch (Exception e) {
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 	
@@ -168,10 +172,6 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
 		TextView tv = (TextView) ((LinearLayout) view).findViewById(R.id.menu_txt);
-		if (tv.getText().equals(ACT.getString(R.string.logout))) {//logout
-			logout =true;
-			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
-		}
 		if (tv.getText().equals(ACT.getString(R.string.base_set))) {//set
 			forwardTo(PER_DETAIL_SET);//跳转到基本配置页面
 		}
@@ -186,22 +186,11 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			SetSharePrefer.write("Info_Login", "check_time", timeNow);
 			UpdateManager.getUpdateManger().checkAppUpdate(ACT, true,false);
 		}
+		if (tv.getText().equals(ACT.getString(R.string.logout))) {//logout
+			logout =true;
+			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
+		}
 		if(tv.getText().equals(ACT.getString(R.string.exitApp))){//close app
-			/*tipDialog = new UpdateDialog(ACT, R.style.UpdateDialog, "关闭后将收不到任何报警和推送", "确定", "取消",
-					new UpdateDialog.DialogClickListener() {
-
-				@Override
-				public void onRightBtnClick(Dialog dialog) {
-					dialog.dismiss();
-				}
-				@Override
-				public void onLeftBtnClick(Dialog dialog) {
-					dialog.dismiss();
-					APP.GetMainActivity().finish();
-					BaseApplication.getInstance().exitApp("close");
-				}
-			});
-			tipDialog.show();*/
 			exitApp = true;
 			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
 		}
@@ -250,16 +239,16 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			 case R.id.logout_confirm:
 				 if(logout){//退出登录
 					 _mydilog.dismiss();
-					//APP.GetMainActivity().finish();
-					Main.Instance.ExitApp("exit");
-					//BaseApplication.getInstance().exitApp("exit");
-					forwardTo(PRE_LOG_IN);
-					break;
+					 //APP.GetMainActivity().finish();
+					 Fun_AnalogVideo.instance.m_prevewview = null;
+					 Fun_AnalogVideo.instance = null;
+					 Main.Instance.ExitApp("exit");
+					 forwardTo(PRE_LOG_IN);
+					 break;
 				 }else{//关闭蛮牛
 					 _mydilog.dismiss();
 					 APP.GetMainActivity().finish();
 					 Main.Instance.ExitApp("close");
-					// BaseApplication.getInstance().exitApp("close");
 					 break;
 				 }
 					

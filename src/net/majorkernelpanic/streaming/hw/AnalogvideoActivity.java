@@ -137,10 +137,9 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		if(_dlgWait == null){
 			_dlgWait = new Dlg_WaitForActivity(this,R.style.dialog);
 		}
-		isOpenAnalog = true;
+//		isOpenAnalog = true;
 		Main.Instance.startLocation();
 		registerReceiver(receiver, filter);
-		startHeartBeat();
 //		phoReceiver = new PhoneStatReceiver();
 //		_dlgWait.start();
 //		_dlgWait.show();
@@ -254,22 +253,36 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     @Override
 	protected void onResume() {
 		super.onResume();
+		isOpenAnalog = true;
 		if(isResume){
 			show(_layout);
+			playPause(0);
 			isResume = false;
 		}
-		//LogUtil.i(TAG, ".......onResume........");
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		isResume = true;
-		//LogUtil.i(TAG, ".......onPause........");
+		playPause(1);
+	}
+	
+	//暂停/恢复
+	public void playPause(int bPause){
+		if(bPause == 0 && BackLoginThread.state == 200){//如果掉线登录到APP的IDM则要重新登录到牛眼
+			SDK.Logout();
+	    	BackLoginThread.state = 3;
+	    	Main.Instance._loginThead.start();
+		}
+		if(bPause == 1 && SDK._createChnlFlag == 0){
+			clearAnalog();
+			isResume = true;
+		}
 	}
 	
 	public void onStart(){
 		super.onStart();
+		startHeartBeat();
         //注册广播接收器
 //		IntentFilter intentFilter = new IntentFilter(); 
 //		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); 

@@ -1,36 +1,19 @@
 package com.views.analog.camera.encode;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-
-import com.basic.XMSG;
-import com.utils.BitmapUtils;
 import com.utils.ColorFormatUtil;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
-import com.views.BaseApplication;
 import com.views.NewMain;
 import com.views.NewSurfaceTest;
-import com.views.analog.camera.encode.Fun_RealPlay.RealHandler;
-import com.vss.vssmobile.decoder.Mp4Enc;
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 import android.view.Surface;
 
 
@@ -54,23 +37,22 @@ public class DecoderDebugger {
 	private byte[] _data;
 	//private BufferedOutputStream outputStream;
 	Thread _sthread = null;
-	public boolean _isRecording = false;//录像
-	public Boolean _startSnap = false;//截图片
+	//public boolean _isRecording = false;//录像
 	public String _fileName = "";//文件名
 	//public boolean isInitDecoder = false;
 	/** 是否支持硬解码 */
 	public boolean canDecode = true;
 	
-	private RealHandler _handler = null;
-	private BaseApplication mAPP = null;
+//	private RealHandler _handler = null;
+//	private BaseApplication mAPP = null;
 	
 	public DecoderDebugger(Surface surface,Context context){
 		this._surface = surface;
 		configureDecoder(FRAMERATE,BITRATE,width,height);
 		
-		mAPP = (BaseApplication) context.getApplicationContext();
+//		mAPP = (BaseApplication) context.getApplicationContext();
 		// 获得该共享变量实例
-		_handler = mAPP.getRedlandler();
+//		_handler = mAPP.getRedlandler();
 		
 //		File f = new File(Environment.getExternalStorageDirectory(), "/IPC_test.264");
 //	    touch (f);
@@ -83,17 +65,17 @@ public class DecoderDebugger {
 	}
 	
 	//写文件可以不用SPS PPS 头
-	public void recordFile(String filePath){
+	/*public void recordFile(String filePath){
         try {   
             File file = new File(filePath);   
             if (file.exists())   
                 file.delete();   
             //outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
-            _isRecording = true;
+            //_isRecording = true;
         } catch (Exception ex) {   
             Log.v("System.out", ex.toString());   
         }
-	}
+	}*/
 	
 	public void touch(File f) {
 		try {
@@ -195,12 +177,8 @@ public class DecoderDebugger {
 			if(mediaCodecDecode == null) return 0;
 			if(flag == 0){
 				flag = 1;
-//				_handler.sendEmptyMessage(XMSG.PLAY_CLOSE_WAIT);
 				NewSurfaceTest.instance.showGpu();
 				NewSurfaceTest.instance.closeWait();
-//				if(NewMain.devType == 4){
-//					Thread.sleep(1000);
-//				}
 			}
 			
 			//软解start......
@@ -211,11 +189,6 @@ public class DecoderDebugger {
 			}*/
 			//end.....
 			
-			
-			//if(_isRecording){
-				//outputStream.write(input, 0, length);
-				//Mp4Enc.InsertVideoBuffer(Mp4Enc.handle, input, len);
-			//}
 			//硬解 start.....
 			ByteBuffer[] inputBuffers = mediaCodecDecode.getInputBuffers();
 			ByteBuffer[] outputBuffers = mediaCodecDecode.getOutputBuffers();
@@ -234,21 +207,25 @@ public class DecoderDebugger {
 			MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 			//获得你接收到结果的ByteBuffer的索引位置 排一个输出buffer,如果等待timeoutUs时间还没响应则跳过，返回TRY_AGAIN_LATER
 			int outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,10000);
-			//ret = outputBufferIndex;
 			while (outputBufferIndex >= 0) {
 					//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
 					//释放所有权 这个output buffer将被返回到解码器中
-					if(_startSnap && length > 100){
-						_startSnap = false;
-						ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
-						byte[] outData = new byte[bufferInfo.size];
-						outputBuffer.get(outData);
-				        YuvImage image = new YuvImage(outData,ImageFormat.NV21, 704,576,null);
-				        setData(image,704,576);
-					}
 					mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
 					outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
 			}
+			
+			/*if(outputBufferIndex >= 0) {
+				errorCount = 0;
+				//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
+				//释放所有权 这个output buffer将被返回到解码器中
+				mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
+				outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
+			}else if(outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER){
+				errorCount ++;
+			}else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+				errorCount = 0;
+				outputBuffers = mediaCodecDecode.getOutputBuffers();
+			}*/
 			
 			//end.....
 		} catch (Exception e) {
@@ -269,7 +246,7 @@ public class DecoderDebugger {
 		return ret;
 	}
 	
-	private void setData(final YuvImage image , final int w , final int h){
+	/*private void setData(final YuvImage image , final int w , final int h){
 		Bitmap bmp = null;
 		try {
 			if(image!=null){
@@ -289,7 +266,7 @@ public class DecoderDebugger {
 			// TODO: handle exception
 		}
 		bmp = null;
-	}
+	}*/
 	
 	/**
      * Generates the presentation time for frame N, in microseconds.

@@ -177,7 +177,14 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	private String sProfilePre ;
 	private String sDefaultProfile ;
 	private String sDefaultDevTitle ;
-	
+	private String sCancelCollectFailure ;
+	private String sCancelCollectSuccess;
+	private String sCancelLikeSuccess ;
+	private String sCancelLikeFailure;
+	private String sAddCollectFailure;
+	private String sAddCollectSuccess;
+	private String sAddLikeSuccess;
+	private String sAddLikeFailure;
 	//http request count
 	private int getLatLngCount = 0;
 	private int getCommentNumCount = 0;
@@ -195,6 +202,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	private Marker mMarkerMe;
 	private boolean isResume = false;
+	private boolean mIsShareFinish = true;
+	private int countShare = 0;
 	
 	@SuppressLint({ "JavascriptInterface", "NewApi" })
 	@Override
@@ -232,8 +241,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		dmHeight =dm.heightPixels;
 		dmWidth = dm.widthPixels;
-		sCommentTip = getResources().getString(R.string.commentTip);
-		sProfileTip = getResources().getString(R.string.profileTip);
+		sCommentTip = getResources().getString(R.string.comment_tip);
+		sProfileTip = getResources().getString(R.string.profile_tip);
 		sDefaultAddr = getResources().getString(R.string.default_address);
 		sAddressPre = getResources().getString(R.string.address_pre);
 		sPublisherPre = getResources().getString(R.string.publisher_pre);
@@ -250,6 +259,16 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		}
 		
 		bType = Integer.parseInt(getIntent().getStringExtra("playType"));
+		
+		sCancelCollectFailure = getResources().getString(R.string.FAIL_CANCEL_COLLECT);
+		sCancelCollectSuccess = getResources().getString(R.string.CANCEL_COLLECT);
+		sCancelLikeSuccess = getResources().getString(R.string.CANCEL_LIKE);
+		sCancelCollectFailure = getResources().getString(R.string.FAIL_CANCEL_LIKE);
+		
+		sAddLikeFailure = getResources().getString(R.string.FAIL_ADD_LIKE);
+		sAddCollectFailure = getResources().getString(R.string.FAIL_ADD_COLLECT);
+		sAddCollectSuccess = getResources().getString(R.string.SUCCESS_COLLECT);
+		sAddLikeSuccess = getResources().getString(R.string.SUCCESS_LIKE);
 	}
 	
 	private void topViewInit()
@@ -260,7 +279,6 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		_title = (TextView)findViewById(R.id.web_title);
 		_cancel = (XImageBtn)findViewById(R.id.web_cancel);
 		_more = (XImageBtn)findViewById(R.id.web_more);
-		
 		progressBar = (ProgressBar)findViewById(R.id.progressBar2);
 	}
 	
@@ -281,6 +299,20 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	        	Rect r = new Rect();
         		playLayout.getWindowVisibleDisplayFrame(r);
 	            int screenHeight = playLayout.getRootView().getHeight();
+	            
+	            if(mIsShareFinish == false)
+	            {
+	            	if(countShare == 0)
+	            	{
+	            		countShare ++;
+	            	}
+	            	else
+	            	{
+	            		countShare =0;
+	            		mIsShareFinish = true;
+	            	}
+	            	
+	            }
 	            
 	        	if(bGetBoardHeight == false)
 	            {
@@ -350,6 +382,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						view.clearView();
 						String data = "NET DISCONNECT, PAGE NO FOUND";
 						view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
+						NewWebActivity.this.finish();
 				   } else {  
 				     	view.loadUrl(url);  
 				   }
@@ -364,6 +397,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				view.clearView();
 				String data = "NET DISCONNECT, PAGE NO FOUND";
 				view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
+				NewWebActivity.this.finish();
 			}
 			
 		/*	@Override
@@ -671,6 +705,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				view.clearView();
 				String data = "NET DISCONNECT, PAGE NO FOUND";
 				view.loadUrl("javascript:document.body.innerHTML=\"" + data + "\"");
+				NewWebActivity.this.finish();
 			}
 		});
 		
@@ -757,8 +792,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		uiSettings.setZoomGesturesEnabled(false);
 		uiSettings.setZoomControlsEnabled(false);
 		
-		bitmapOtherDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_other);
-		bitmapMeDes = BitmapDescriptorFactory.fromResource(R.drawable.camera_me);
+		bitmapOtherDes = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+		bitmapMeDes = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
 		
 		LatLngBounds bounds= null;
 		if(bConfig == false)
@@ -836,6 +871,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					markerOption.position(new LatLng(devLatT, devLngT));
 					markerOption.title(jpos.get("devname").toString());
 					markerOption.icon(bitmapOtherDes);
+					mAMap.addMarker(markerOption);
 				}
 			}
 			
@@ -886,7 +922,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			linearParams.height = dmHeight- dmHeight*3/40;
 			informationPage.setLayoutParams(linearParams);
 	       
-			mAMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+			mAMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 			UiSettings uiSettings = mAMap.getUiSettings();
 			uiSettings.setCompassEnabled(true);
 			uiSettings.setZoomControlsEnabled(true);
@@ -990,7 +1026,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			if (inCustomView()) {
 				hideCustomView();
 			}else{
-				this.finish();
+				if(mIsShareFinish == true)
+				{
+					this.finish();
+				}
 			}
 			isResume = true;
 		}
@@ -1279,7 +1318,12 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		}
 	}
 
+	//分享到朋友圈
 	private void dwz(){
+		if(mIsShareFinish == false){
+			return;
+		}
+		mIsShareFinish = false;
 		
 		RequestParams params = new RequestParams();
 		params.put("url", liveUrl);
@@ -1314,7 +1358,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 							imgPath
 							,false,null);
 				}
-				
+
 			}
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
@@ -1353,24 +1397,31 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						 
 					} catch (JSONException e) {
 						e.printStackTrace();
+						getSurrroundDeviceLatLngFailAndExceptionProc();
 					}
 				}
 			}
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				if(getLatLngCount <3)
-				{
-					getSurrroundDeviceLatLng();
-					getLatLngCount ++;
-				}else{
-					getLatLngCount = 0;
-					APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
-				}
+				getSurrroundDeviceLatLngFailAndExceptionProc();
+				
 			}
 		});
 	}
 	
+	public void getSurrroundDeviceLatLngFailAndExceptionProc()
+	{
+		if(getLatLngCount <3)
+		{
+			getSurrroundDeviceLatLng();
+			getLatLngCount ++;
+		}else{
+			getLatLngCount = 0;
+			APP.ShowToast(getResources().getString(R.string.GET_P_FAILURE));
+			NewWebActivity.this.finish();
+		}
+	}
 	
 	private void getCommentNum(){
 		
@@ -1414,23 +1465,32 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						
 					} catch (JSONException e) {
 						e.printStackTrace();
+						getCommentNumFailAndExceptionProc();
 					}
 				}
 			}
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				
-				if(getCommentNumCount <3)
-				{
-					getCommentNum();
-					getCommentNumCount ++;
-				}else{
-					getCommentNumCount = 0;
-					APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
-				}
+				getCommentNumFailAndExceptionProc();
 			}
 		});
+	}
+	
+	private void getCommentNumFailAndExceptionProc()
+	{
+		if(getCommentNumCount <3)
+		{
+			getCommentNum();
+			getCommentNumCount ++;
+		}else{
+			getCommentNumCount = 0;
+			if(bType == 0)
+				APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
+			else
+				APP.ShowToast(getResources().getString(R.string.Err_NetConnect));
+			NewWebActivity.this.finish();
+		}
 	}
 	
 	private void getDeviceInfo(){
@@ -1479,6 +1539,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						
 					} catch (JSONException e) {
 						e.printStackTrace();
+						getDeviceInfoFailAndExceptionProc();
 					}
 				}
 			}
@@ -1486,19 +1547,26 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			@Override
 			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 				
-				if(getDeviceInfoCount <3)
-				{
-					getDeviceInfoCount ++;
-					getDeviceInfo();
-					
-				}else{
-					getDeviceInfoCount = 0;
-					APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
-				}
-				
-				
+				getDeviceInfoFailAndExceptionProc();
 			}
 		});
+	}
+	
+	
+	public void getDeviceInfoFailAndExceptionProc()
+	{
+
+		if(getDeviceInfoCount <3)
+		{
+			getDeviceInfoCount ++;
+			getDeviceInfo();
+			
+		}else{
+			getDeviceInfoCount = 0;
+			//APP.ShowToast(getResources().getString(R.string.GET_C_FAILURE));
+			APP.ShowToast(getResources().getString(R.string.Err_NetConnect));
+			NewWebActivity.this.finish();
+		}
 	}
 	
 	public void praiseAndCollectViewInit()
@@ -1519,9 +1587,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 
 	public void save(int id){
-		final String save_failure = getResources().getString(R.string.Err_CONNET);
-		final String collect_success = getResources().getString(R.string.SUCCESS_COLLECT);
-		final String like_success = getResources().getString(R.string.SUCCESS_LIKE);
+	
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 		params.put("liveid", liveId);
@@ -1544,16 +1610,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 							String result = json.getString("result");
 							Log.v(TAG, result);
 							if("true".equals(result)){
-								APP.ShowToast(collect_success);
+								APP.ShowToast(sAddCollectSuccess);
 								SetSharePrefer.write_bool("collect_info", liveId, true);
 								collection.setImageDrawable(getResources().getDrawable(R.drawable.collection_sel));
 								b_collection = true;
 								saveCollectCount = 0;
-								//TODO
+							}else{
+								saveCollectFailAndExceptionProc();
 							}
 							
 						} catch (JSONException e) {
 							e.printStackTrace();
+							saveCollectFailAndExceptionProc();
 						}
 					}
 				}
@@ -1561,16 +1629,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 					
-					if(saveCollectCount < 3)
-					{
-						saveCollectCount ++;
-						save(R.id.like);
-					}
-					else
-					{
-						saveCollectCount = 0;
-						APP.ShowToast(save_failure);
-					}
+					saveCollectFailAndExceptionProc();
 				}
 			});
 			break;
@@ -1584,18 +1643,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 							String result = json.getString("result");
 							Log.v(TAG, result);
 							if("true".equals(result)){
-								APP.ShowToast(like_success);
+								APP.ShowToast(sAddLikeSuccess);
 								SetSharePrefer.write_bool("praise_info", liveId, true);
 								like.setImageDrawable(getResources().getDrawable(R.drawable.like_sel));
 								b_like = true;
-								
 								savePraiseCount = 0;
 								//TODO
 							}else{
-								APP.ShowToast(save_failure);
+								 savePraiseFailAndExceptionProc();
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
+							 savePraiseFailAndExceptionProc();
 						}
 					}
 				}
@@ -1603,16 +1662,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 					
-					if(savePraiseCount < 3)
-					{
-						savePraiseCount ++;
-						save(R.id.like);
-					}
-					else
-					{
-						savePraiseCount = 0;
-						APP.ShowToast(save_failure);
-					}
+					 savePraiseFailAndExceptionProc();
 				}
 				
 			});	
@@ -1623,10 +1673,38 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 	}
 	
+	public void saveCollectFailAndExceptionProc()
+	{
+		if(saveCollectCount < 3)
+		{
+			saveCollectCount ++;
+			save(R.id.collection);
+		}
+		else
+		{
+			saveCollectCount = 0;
+			APP.ShowToast(sAddCollectFailure);
+			NewWebActivity.this.finish();
+		}
+	}
+	
+	public void savePraiseFailAndExceptionProc()
+	{
+		if(savePraiseCount < 3)
+		{
+			savePraiseCount ++;
+			save(R.id.like);
+		}
+		else
+		{
+			savePraiseCount = 0;
+			APP.ShowToast(sAddLikeFailure);
+			NewWebActivity.this.finish();
+		}
+	}
+	
 	public void cancel(int id){
-		final String cancel_failure = getResources().getString(R.string.Err_CONNET);
-		final String collect_success = getResources().getString(R.string.CANCEL_COLLECT);
-		final String like_success = getResources().getString(R.string.CANCEL_LIKE);
+		
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 		params.put("liveid", liveId);
@@ -1648,17 +1726,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						try {
 							String result = json.getString("result");
 							if("true".equals(result)){
-								APP.ShowToast(collect_success);
+								APP.ShowToast(sCancelCollectSuccess);
 								SetSharePrefer.write_bool("collect_info", liveId, false);
 								collection.setImageDrawable(getResources().getDrawable(R.drawable.collection));
 								b_collection = false;
 								cancelCollectCount = 0;
 								//TODO
 							}else{
-								APP.ShowToast(cancel_failure);
+								cancelCollectFailAndExceptionProc();
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
+							cancelCollectFailAndExceptionProc();
 						}
 					}
 				}
@@ -1666,15 +1745,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 					
-					if(cancelCollectCount<3)
-					{
-						cancelCollectCount ++;
-						cancel(R.id.collection);
-					}else{
-						
-						cancelCollectCount = 0;
-						APP.ShowToast(cancel_failure);
-					}
+					cancelCollectFailAndExceptionProc();
 				}
 			});
 			break;
@@ -1687,33 +1758,25 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 						try {
 							String result = json.getString("result");
 							if("true".equals(result)){
-								APP.ShowToast(like_success);
+								APP.ShowToast(sCancelLikeSuccess);
 								SetSharePrefer.write_bool("praise_info", liveId, false);
 								like.setImageDrawable(getResources().getDrawable(R.drawable.like));
 								b_like = false;
 								cancelPraiseCount = 0;
 								//TODO
 							}else{
-								APP.ShowToast(cancel_failure);
+								cancelPraiseFailAndExceptionProc();
 							}
 						} catch (JSONException e) {
 							e.printStackTrace();
+							cancelPraiseFailAndExceptionProc();
 						}
 					}
 				}
 				
 				@Override
 				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-					
-					if(cancelPraiseCount < 3)
-					{
-						cancelPraiseCount ++;
-						cancel(R.id.like);
-					}else{
-						
-						cancelPraiseCount = 0;
-						APP.ShowToast(cancel_failure);
-					}
+					cancelPraiseFailAndExceptionProc();
 				}
 			});
 			break;
@@ -1721,6 +1784,34 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			break;
 		}
 		
+	}
+	
+	public void cancelCollectFailAndExceptionProc()
+	{
+		if(cancelCollectCount<3)
+		{
+			cancelCollectCount ++;
+			cancel(R.id.collection);
+		}else{
+			
+			cancelCollectCount = 0;
+			APP.ShowToast(sCancelCollectFailure);
+			NewWebActivity.this.finish();
+			
+		}
+	}
+	public void cancelPraiseFailAndExceptionProc()
+	{
+		if(cancelPraiseCount < 3)
+		{
+			cancelPraiseCount ++;
+			cancel(R.id.like);
+		}else{
+			
+			cancelPraiseCount = 0;
+			APP.ShowToast(sCancelLikeFailure);
+			NewWebActivity.this.finish();
+		}
 	}
 	
 	public  String getJsonStr(String str){
@@ -1751,12 +1842,10 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		return null;
 	}
 	
+	//提交评论
 	public void sendComMessage(){
-		
 		String editStr = editC.getText().toString();
-		
-		if(editStr.length() == 0)
-		{
+		if(editStr.length() == 0 || editStr.trim().equals("")){
 			return;
 		}
 		

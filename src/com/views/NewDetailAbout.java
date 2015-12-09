@@ -45,16 +45,7 @@ public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSh
 			finish();
 			break;
 			case R.id.recom_friends:
-				/*//改用新的代码处理 2015.10.14 李德明
-				ShareSDK.initSDK(this);
-				OnekeyShare oks = new OnekeyShare();
-				oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-				oks.setText(getString(R.string.app_name));
-				oks.setImageUrl("http://www.9wingo.com/images/qrcode.png");
-				oks.show(this);
-				*/
 				dwz();
-				//RecommendSheet.showSheet(this, this, this);
 				break;
 		default:
 			break;
