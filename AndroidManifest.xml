@@ -251,10 +251,9 @@
        <activity android:name="com.localmedia.Fun_RecordplayActivity_MediaPlayer"/>
        <!-- 报警录像回放 -->
        <activity android:name="com.views.Fun_RecordPlay" android:screenOrientation="portrait"/>
-       
-       
+ 
        <activity
-           android:name="cn.sharesdk.framework.ShareSDKUIShell"
+           android:name="com.mob.tools.MobUIShell"
            android:theme="@android:style/Theme.Translucent.NoTitleBar"
            android:configChanges="keyboardHidden|orientation|screenSize"
            android:screenOrientation="portrait"
@@ -264,9 +263,13 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                </intent-filter>
-                </activity>
- 
+            </intent-filter>
+                <!-- 调用新浪原生SDK，需要注册的回调activity -->
+            <intent-filter>
+                    <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+                    <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
        
        <!--微信分享回调 -->
        <activity
@@ -276,13 +279,6 @@
            android:exported="true"
            android:screenOrientation="portrait" /> 
    
-   <!--易信分享回调 -->
-   <activity
-       android:name=".yxapi.YXEntryActivity"
-       android:theme="@android:style/Theme.Translucent.NoTitleBar"
-       android:configChanges="keyboardHidden|orientation|screenSize"
-       android:exported="true"
-       android:screenOrientation="portrait" />
     	<!-- <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="6VCl0aGKRaVVZAeuRS5yKtDL" /> -->

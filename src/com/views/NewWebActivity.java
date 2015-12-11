@@ -106,7 +106,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	
 	ProgressBar progressBar; 
 	
-	Context context;
+	Context context, context1;
 	
 	ImageView collection;
 	
@@ -209,6 +209,8 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		context1 = this;
 		
 		globalParamsInit();
 		mapViewInit(savedInstanceState);
@@ -1352,7 +1354,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;
 					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
 					
-					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
+					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context1,getString(R.string.famliy_around_withme),
 							strText,
 							strPYQText,
 							imgPath

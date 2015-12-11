@@ -6,6 +6,13 @@
     <string name="reopen_stream">"正在打开视频……"</string>
     <string name="Err_Error_Unknow">"操作失败!"</string>
 	
+	<string name="click_refresh">点击刷新</string>
+	<string name="confirm">确定</string>
+	<string name="tip_title">提示</string>
+	<string name="video_share">视频分享</string>
+    <string name="go_on">继续</string>
+    <string name="cancel">取消</string>
+    
 	<string name="Video_play_fail">播放失败</string>
 	<string name="Video_play_stop">播放停止</string>
 	<string name="Video_play_crash">用户设备关闭或网络不稳定引起播放停止</string>

@@ -5,11 +5,8 @@ import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.Platform.ShareParams;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
-import cn.sharesdk.onekeyshare.ShareContentCustomizeCallback;
 
-import com.manniu.manniu.R;
-
-public class ShareContentCustomize implements ShareContentCustomizeCallback {
+public class ShareContentCustomize /*implements ShareContentCustomizeCallback */{
 
 	String _textInfo = "";
 	String _imageUrl = "";
@@ -28,22 +25,26 @@ public class ShareContentCustomize implements ShareContentCustomizeCallback {
 		
 		OnekeyShare oks = new OnekeyShare();
 		ShareSDK.initSDK(context);
-		oks.setNotification(R.drawable.ic_launcher, strAppName);
-		oks.setShareContentCustomizeCallback(new ShareContentCustomize(strTitle,strText,strPYQText,strPYQImageURL)); 
-				 oks.show(context) ; 
+		//oks.setNotification(R.drawable.ic_launcher, strAppName);
+		//oks.setShareContentCustomizeCallback(new ShareContentCustomize(strTitle,strText,strPYQText,strPYQImageURL)); 
+		
+		//oks.disableSSOWhenAuthorize();
+		oks.setText("share text123123131");
+		oks.setTitle("title");
+		oks.setImagePath("http://www.mny9.com/images/1.jpeg");//本地图片路径
+		oks.setFilePath("http://www.mny9.com/update/update.txt");//本地路径 
+		oks.setUrl("http://www.mny9.com/");
+		oks.show(context) ; 
 	}
-	
-	
-	
-	@Override
-	public void onShare(Platform platform, ShareParams paramsToShare) {
+
+	//@Override
+	public void onShare(Platform platform, ShareParams paramsToShare) {/*
 		paramsToShare.setShareType(Platform.SHARE_WEBPAGE);
 		String strPN = platform.getName();
 		paramsToShare.setTitle(_titleInfo);
 		  if("Wechat".equals(strPN)){
 			  paramsToShare.setTitle("title");
-			  paramsToShare.setText ("text");//_textInfo
-			//.  paramsToShare.setImageUrl("http://www.mny9.com/images/1.jpeg");
+			  paramsToShare.setText ("text");
 			  paramsToShare.setImagePath("http://www.mny9.com/images/img1.jpg");
 			  paramsToShare.setUrl("http://www.baidu.com");
 		  }else if("WechatMoments".equals(strPN)){
@@ -53,6 +54,6 @@ public class ShareContentCustomize implements ShareContentCustomizeCallback {
 			  
 		  }
 		  //paramsToShare.setUrl(Constants.hostUrl);
-	}
+	*/}
 
 }

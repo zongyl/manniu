@@ -54,7 +54,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	private final static String PER_DETAIL_EDIT = "com.views.NewDetailEdit";// 个人资料编辑页面
 	private final static String PER_DETAIL_SET = "com.views.NewDetailSet";//基本配置
 	private final static String PER_DETAIL_HELP = "com.views.NewDetailHelp";//意见反馈
-	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";//关闭
+	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";//关于
 	private final static String PRE_LOG_IN ="com.views.SplashScreen";
 	private UpdateDialog tipDialog;
 	BaseApplication _bApp = null;

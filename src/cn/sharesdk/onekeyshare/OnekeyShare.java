@@ -8,20 +8,16 @@
 
 package cn.sharesdk.onekeyshare;
 
-import static cn.sharesdk.framework.utils.BitmapHelper.captureView;
-import static cn.sharesdk.framework.utils.R.getStringRes;
+import static cn.sharesdk.framework.utils.ShareSDKR.getStringRes;
+import static com.mob.tools.utils.BitmapHelper.captureView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -33,7 +29,9 @@ import cn.sharesdk.framework.CustomPlatform;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.framework.utils.UIHandler;
+import cn.sharesdk.wechat.utils.WechatHelper;
+
+import com.mob.tools.utils.UIHandler;
 
 /**
  * 快捷分享的入口
@@ -47,17 +45,16 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 
 	private HashMap<String, Object> shareParamsMap;
 	private ArrayList<CustomerLogo> customers;
-	private int notifyIcon;
-	private String notifyTitle;
 	private boolean silent;
 	private PlatformActionListener callback;
 	private ShareContentCustomizeCallback customizeCallback;
 	private boolean dialogMode = false;
 	private boolean disableSSO;
+	private boolean shareVideo;
 	private HashMap<String, String> hiddenPlatforms;
 	private View bgView;
 	private OnekeyShareTheme theme;
-
+    
 	private Context context;
 	private PlatformListFakeActivity.OnShareButtonClickListener onShareButtonClickListener;
 
@@ -118,8 +115,6 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 		platformListFakeActivity.setHiddenPlatforms(hiddenPlatforms);
 		platformListFakeActivity.setOnShareButtonClickListener(onShareButtonClickListener);
 		platformListFakeActivity.setThemeShareCallback(new ThemeShareCallback() {
-
-			@Override
 			public void doShare(HashMap<Platform, HashMap<String, Object>> shareData) {
 				share(shareData);
 			}
@@ -135,12 +130,6 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 
 	public void setTheme(OnekeyShareTheme theme) {
 		this.theme = theme;
-	}
-
-	/** 分享时Notification的图标和文字 */
-	public void setNotification(int icon, String title) {
-		notifyIcon = icon;
-		notifyTitle = title;
 	}
 
 	/** address是接收人地址，仅在信息和邮件使用，否则可以不提供 */
@@ -288,6 +277,11 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 		disableSSO = true;
 	}
 
+	/** 设置一个开关，用于微信分享视频 */
+ 	public void shareVideoToWechat() {
+ 		shareVideo = true;
+	}
+
 	/** 设置编辑页面的显示模式为Dialog模式 */
 	public void setDialogMode() {
 		dialogMode = true;
@@ -330,75 +324,92 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 			plat.SSOSetting(disableSSO);
 			String name = plat.getName();
 
-//			boolean isGooglePlus = "GooglePlus".equals(name);
-//			if (isGooglePlus && !plat.isValid()) {
-//				Message msg = new Message();
-//				msg.what = MSG_TOAST;
-//				int resId = getStringRes(context, "google_plus_client_inavailable");
-//				msg.obj = context.getString(resId);
-//				UIHandler.sendMessage(msg, this);
-//				continue;
-//			}
-
-			boolean isKakaoTalk = "KakaoTalk".equals(name);
-			if (isKakaoTalk && !plat.isValid()) {
+			boolean isGooglePlus = "GooglePlus".equals(name);
+			if (isGooglePlus && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "kakaotalk_client_inavailable");
+				int resId = getStringRes(context, "ssdk_google_plus_client_inavailable");
+				msg.obj = context.getString(resId);
+				UIHandler.sendMessage(msg, this);
+				continue;
+			}
+
+			boolean isAlipay = "Alipay".equals(name);
+			if (isAlipay && !plat.isClientValid()) {
+				Message msg = new Message();
+				msg.what = MSG_TOAST;
+				int resId = getStringRes(context, "ssdk_alipay_client_inavailable");
+				msg.obj = context.getString(resId);
+				UIHandler.sendMessage(msg, this);
+				continue;
+			}
+
+			boolean isKakaoTalk = "KakaoTalk".equals(name);
+			if (isKakaoTalk && !plat.isClientValid()) {
+				Message msg = new Message();
+				msg.what = MSG_TOAST;
+				int resId = getStringRes(context, "ssdk_kakaotalk_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
 			}
 
 			boolean isKakaoStory = "KakaoStory".equals(name);
-			if (isKakaoStory && !plat.isValid()) {
+			if (isKakaoStory && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "kakaostory_client_inavailable");
+				int resId = getStringRes(context, "ssdk_kakaostory_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
 			}
 
 			boolean isLine = "Line".equals(name);
-			if (isLine && !plat.isValid()) {
+			if (isLine && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "line_client_inavailable");
+				int resId = getStringRes(context, "ssdk_line_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
 			}
 
 			boolean isWhatsApp = "WhatsApp".equals(name);
-			if (isWhatsApp && !plat.isValid()) {
+			if (isWhatsApp && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "whatsapp_client_inavailable");
+				int resId = getStringRes(context, "ssdk_whatsapp_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
 			}
 
 			boolean isPinterest = "Pinterest".equals(name);
-			if (isPinterest && !plat.isValid()) {
+			if (isPinterest && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "pinterest_client_inavailable");
+				int resId = getStringRes(context, "ssdk_pinterest_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
 			}
 
-			if ("Instagram".equals(name)) {
-				Intent test = new Intent(Intent.ACTION_SEND);
-				test.setPackage("com.instagram.android");
-				test.setType("image/*");
-				ResolveInfo ri = context.getPackageManager().resolveActivity(test, 0);
-				if (ri == null) {
+			if ("Instagram".equals(name) && !plat.isClientValid()) {
+				Message msg = new Message();
+				msg.what = MSG_TOAST;
+				int resId = getStringRes(context, "ssdk_instagram_client_inavailable");
+				msg.obj = context.getString(resId);
+				UIHandler.sendMessage(msg, this);
+				continue;
+			}
+
+			boolean isLaiwang = "Laiwang".equals(name);
+			boolean isLaiwangMoments = "LaiwangMoments".equals(name);
+			if(isLaiwang || isLaiwangMoments){
+				if (!plat.isClientValid()) {
 					Message msg = new Message();
 					msg.what = MSG_TOAST;
-					int resId = getStringRes(context, "instagram_client_inavailable");
+					int resId = getStringRes(context, "ssdk_laiwang_client_inavailable");
 					msg.obj = context.getString(resId);
 					UIHandler.sendMessage(msg, this);
 					continue;
@@ -406,10 +417,10 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 			}
 
 			boolean isYixin = "YixinMoments".equals(name) || "Yixin".equals(name);
-			if (isYixin && !plat.isValid()) {
+			if (isYixin && !plat.isClientValid()) {
 				Message msg = new Message();
 				msg.what = MSG_TOAST;
-				int resId = getStringRes(context, "yixin_client_inavailable");
+				int resId = getStringRes(context, "ssdk_yixin_client_inavailable");
 				msg.obj = context.getString(resId);
 				UIHandler.sendMessage(msg, this);
 				continue;
@@ -424,7 +435,9 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 					shareType = Platform.SHARE_EMOJI;
 				} else if (data.containsKey("url") && !TextUtils.isEmpty(data.get("url").toString())) {
 					shareType = Platform.SHARE_WEBPAGE;
-					if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
+					if (shareVideo) {
+						shareType = Platform.SHARE_VIDEO;
+					} else if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
 						shareType = Platform.SHARE_MUSIC;
 					}
 				}
@@ -434,7 +447,9 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 					shareType = Platform.SHARE_IMAGE;
 					if (data.containsKey("url") && !TextUtils.isEmpty(data.get("url").toString())) {
 						shareType = Platform.SHARE_WEBPAGE;
-						if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
+						if (shareVideo) {
+							shareType = Platform.SHARE_VIDEO;
+						} else if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
 							shareType = Platform.SHARE_MUSIC;
 						}
 					}
@@ -446,7 +461,9 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 							shareType = Platform.SHARE_EMOJI;
 						} else if (data.containsKey("url") && !TextUtils.isEmpty(data.get("url").toString())) {
 							shareType = Platform.SHARE_WEBPAGE;
-							if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
+							if (shareVideo) {
+								shareType = Platform.SHARE_VIDEO;
+							} else if (data.containsKey("musicUrl") && !TextUtils.isEmpty(data.get("musicUrl").toString())) {
 								shareType = Platform.SHARE_MUSIC;
 							}
 						}
@@ -457,12 +474,12 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 
 			if (!started) {
 				started = true;
-				if (this == callback) {
-					int resId = getStringRes(context, "sharing");
+//				if (this == callback) {
+					int resId = getStringRes(context, "ssdk_oks_sharing");
 					if (resId > 0) {
-						showNotification(2000, context.getString(resId));
+						showNotification(context.getString(resId));
 					}
-				}
+//				}
 			}
 			plat.setPlatformActionListener(callback);
 			ShareCore shareCore = new ShareCore();
@@ -502,6 +519,9 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 		msg.arg2 = action;
 		msg.obj = platform;
 		UIHandler.sendMessage(msg, this);
+
+		// 分享失败的统计
+		ShareSDK.logDemoEvent(5, platform);
 	}
 
 	public boolean handleMessage(Message msg) {
@@ -515,9 +535,9 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 				switch (msg.arg1) {
 					case 1: {
 						// 成功
-						int resId = getStringRes(context, "share_completed");
+						int resId = getStringRes(context, "ssdk_oks_share_completed");
 						if (resId > 0) {
-							showNotification(2000, context.getString(resId));
+							showNotification(context.getString(resId));
 						}
 					}
 					break;
@@ -527,54 +547,54 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 						if ("WechatClientNotExistException".equals(expName)
 								|| "WechatTimelineNotSupportedException".equals(expName)
 								|| "WechatFavoriteNotSupportedException".equals(expName)) {
-							int resId = getStringRes(context, "wechat_client_inavailable");
+							int resId = getStringRes(context, "ssdk_wechat_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						} else if ("GooglePlusClientNotExistException".equals(expName)) {
-							int resId = getStringRes(context, "google_plus_client_inavailable");
+							int resId = getStringRes(context, "ssdk_google_plus_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						} else if ("QQClientNotExistException".equals(expName)) {
-							int resId = getStringRes(context, "qq_client_inavailable");
+							int resId = getStringRes(context, "ssdk_qq_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						} else if ("YixinClientNotExistException".equals(expName)
 								|| "YixinTimelineNotSupportedException".equals(expName)) {
-							int resId = getStringRes(context, "yixin_client_inavailable");
+							int resId = getStringRes(context, "ssdk_yixin_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						} else if ("KakaoTalkClientNotExistException".equals(expName)) {
-							int resId = getStringRes(context, "kakaotalk_client_inavailable");
+							int resId = getStringRes(context, "ssdk_kakaotalk_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						}else if ("KakaoStoryClientNotExistException".equals(expName)) {
-							int resId = getStringRes(context, "kakaostory_client_inavailable");
+							int resId = getStringRes(context, "ssdk_kakaostory_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						}else if("WhatsAppClientNotExistException".equals(expName)){
-							int resId = getStringRes(context, "whatsapp_client_inavailable");
+							int resId = getStringRes(context, "ssdk_whatsapp_client_inavailable");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						}else {
-							int resId = getStringRes(context, "share_failed");
+							int resId = getStringRes(context, "ssdk_oks_share_failed");
 							if (resId > 0) {
-								showNotification(2000, context.getString(resId));
+								showNotification(context.getString(resId));
 							}
 						}
 					}
 					break;
 					case 3: {
 						// 取消
-						int resId = getStringRes(context, "share_canceled");
+						int resId = getStringRes(context, "ssdk_oks_share_canceled");
 						if (resId > 0) {
-							showNotification(2000, context.getString(resId));
+							showNotification(context.getString(resId));
 						}
 					}
 					break;
@@ -593,31 +613,8 @@ public class OnekeyShare implements PlatformActionListener, Callback {
 	}
 
 	// 在状态栏提示分享操作
-	private void showNotification(long cancelTime, String text) {
-		try {
-			Context app = context.getApplicationContext();
-			NotificationManager nm = (NotificationManager) app
-					.getSystemService(Context.NOTIFICATION_SERVICE);
-			final int id = Integer.MAX_VALUE / 13 + 1;
-			nm.cancel(id);
-
-			long when = System.currentTimeMillis();
-			Notification notification = new Notification(notifyIcon, text, when);
-			PendingIntent pi = PendingIntent.getActivity(app, 0, new Intent(), 0);
-			notification.setLatestEventInfo(app, notifyTitle, text, pi);
-			notification.flags = Notification.FLAG_AUTO_CANCEL;
-			nm.notify(id, notification);
-
-			if (cancelTime > 0) {
-				Message msg = new Message();
-				msg.what = MSG_CANCEL_NOTIFY;
-				msg.obj = nm;
-				msg.arg1 = id;
-				UIHandler.sendMessageDelayed(msg, cancelTime, this);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private void showNotification(String text) {
+		Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 	}
 
 	/** 是否支持QQ,QZone授权登录后发微博 */

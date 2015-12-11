@@ -1,18 +1,17 @@
 package com.views;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -30,8 +29,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.onekeyshare.OnekeyShare;
 
 import com.adapter.HttpUtil;
 import com.adapter.Message;
@@ -39,7 +36,6 @@ import com.alibaba.fastjson.JSON;
 import com.basic.APP;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager.TransitionEffect;
-import com.localsnap.ImageItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
@@ -314,17 +310,6 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			break;
 		case R.id.msg_shareImg:
 			_pWindow.dismiss();
-			APP.ShowToast("share image!");
-			
-			/*String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title);
-			//strText+="\r\n"+getString(R.string.please_clicklink)+":"+short_url;
-		String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
-
-		ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
-				strText,
-				strPYQText,
-				Constants.hostUrl+"/images/WechatMomentsqrcode.png",false,null);*/
-			
 			//forward(NewMsgImgShare.class);
 			String strAlarmInfo = "";
 //			strAlarmInfo += getString(R.string.famliy_around_withme)+"\r\n";

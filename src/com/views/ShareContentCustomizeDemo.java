@@ -7,7 +7,6 @@ import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 import cn.sharesdk.onekeyshare.ShareContentCustomizeCallback;
 
-import com.manniu.manniu.R;
 import com.utils.Constants;
 
 public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback {
@@ -22,15 +21,15 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 		 * 如果使用代码配置应用注册信息或者应用后台配置应用注册信息,调用ShareSDK.initSDK(this,”androidv1101″);
 		 * androidv1101:是你的应用在ShareSDK注册应用信息时返回的AppKey。 代码会初始化ShareSDK，此后对ShareSDK的操作都以此为基础。如果不在所有ShareSDK的操作之前调用这行代码，会抛出空指针异常
 		 * */
-		oks.setNotification(R.drawable.ic_launcher, strAppName);
+		//oks.setNotification(R.drawable.ic_launcher, strAppName);
 		//oks.setAddress("12345678901");
 		//oks.setTitle("来自男人装的分享");
 		//oks.setTitleUrl("http://sharesdk.cn");
 		//oks.setText("\t\t家，与我同行\r\n[蛮牛云分享视频]\r\n"+"<a href ='"+liveUrl+"'>请点击:"+_title.getText()+"</a>"); 
 		//oks.setImagePath("http://img0.bdstatic.com/img/image/shouye/muzrxc1.jpg");//costume.getLargepic()
 		oks. setShareContentCustomizeCallback ( 
-				new ShareContentCustomizeDemo (strTitle,strText,strPYQText,strPYQImageURL) ) ; 
-				 oks. show (context ) ; 
+				new ShareContentCustomizeDemo (strTitle,strText,strPYQText,strPYQImageURL)) ; 
+				 oks.show (context) ; 
 		
 		
 		//oks.setImageUrl("http://www.9wingo.com/images/qrcode.png");
@@ -88,7 +87,6 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 		paramsToShare.setShareType(Platform.SHARE_WEBPAGE);
 		String strPN = platform.getName();
 		//APP.ShowToast(strPN);
-		paramsToShare.setAddress("12345678901");
 		paramsToShare.setTitle(_titleInfo);
 		  if  ("Wechat". equals (strPN) )  {
 			  //微信好友正文处理
