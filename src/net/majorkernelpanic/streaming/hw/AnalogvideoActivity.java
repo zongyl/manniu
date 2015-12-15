@@ -201,6 +201,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     			    	Main.Instance._loginThead.start();
     			    	LogUtil.d(TAG, "Main.Instance._loginThead.start()..ok.."); 
     			    	AnalogvideoActivity.this.finish();
+    			    	System.gc();
     				}
     			}).setNegativeButton(getString(R.string.btn_Cancel_caption), null).show();
 //    		}else{
@@ -218,7 +219,6 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		}
 		if(_encoderQueue != null) _encoderQueue.Stop();//停止编码线程
 		if(_talkPlayer != null) _talkPlayer.Stop();//停止音频线程
-		//LogUtil.d(TAG, "停止编码线程");
 		stopEncode();
     	SDK.Ffmpegh264EncoderUninit();			    	
     	//LogUtil.d(TAG, "stopEncode...ok.. SDK._sessionId=="+SDK._sessionId); 
@@ -291,7 +291,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     }
 	
 	protected void onStop() {
-		//LogUtil.i(TAG,"onstop");
+		LogUtil.i(TAG,"onstop");
 		stopHeartBeat();
 		//取消广播接收器
 //        if (phoReceiver != null) {
@@ -305,7 +305,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 			receiver = null;
 			instance = null;
 		}
-		//LogUtil.i(TAG,"onDestroy");
+		LogUtil.i(TAG,"onDestroy");
 		super.onDestroy();
 	}
 

@@ -179,6 +179,9 @@ public class NewMainAddDev extends Activity {
 					}else if("success".equals(msg)){
 						APP.ShowToast(getString(R.string.dev_addok));
 						finish();
+					}else if("repeat".equals(msg)){
+						APP.ShowToast("repeat-repeat-repeat");
+						finish();
 					}else if("existOtherUser".equals(msg)){
 						if(response.has("usmsg")){
 							msg = getStringByJson(response, "usmsg");
@@ -212,7 +215,7 @@ public class NewMainAddDev extends Activity {
 	 * @param vn
 	 * @param location
 	 */
-	public void addDevices(String sn, String vn, String location){
+	public void addDevices1(String sn, String vn, String location){
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
 		params.put("sn", sn);

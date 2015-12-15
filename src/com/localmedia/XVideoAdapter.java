@@ -251,6 +251,15 @@ public class XVideoAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				try {
+					final String path = Constants.data.get(position).get(KEY_THUMB_URL);
+					File file = new File(path);
+					if(file.exists()){
+						long fsize = file.length();
+						if(fsize < 102400){
+							APP.ShowToast(activity.getString(R.string.smalfile_tip));
+							return;
+						}
+					}	
 					new AlertDialog.Builder(activity).setTitle(APP.GetString(R.string.tip_title)).setMessage(APP.GetString(R.string.video_share)).setIcon(R.drawable.help)
 					.setPositiveButton(APP.GetString(R.string.confirm), new DialogInterface.OnClickListener() {
 						@Override
@@ -259,7 +268,6 @@ public class XVideoAdapter extends BaseAdapter {
 							new Thread(new Runnable() {
 								@Override
 								public void run() {//上传视频
-									String path = Constants.data.get(position).get(KEY_THUMB_URL);
 									byte[] tem = SDK.StartupLoadLocalMedia();
 									int ret = 0;
 									String str = "";

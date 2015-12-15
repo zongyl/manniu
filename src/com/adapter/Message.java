@@ -141,6 +141,7 @@ public class Message implements Parcelable{
 			msg.uuid = source.readString();
 			msg.evt_time = source.readString();
 			msg.evt_vsize = source.readInt();
+			msg.evt_video = source.readString();
 			return msg;
 		}
 
@@ -187,5 +188,6 @@ public class Message implements Parcelable{
 		dest.writeString(uuid);
 		dest.writeString(evt_time);
 		dest.writeInt(evt_vsize);
+		dest.writeString(evt_video);
 	}
 }

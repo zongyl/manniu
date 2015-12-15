@@ -21,9 +21,9 @@ import com.utils.ScreenHandler;
 import com.views.BaseApplication;
 import com.views.Fun_RecordPlay;
 import com.views.Main;
-import com.views.NewMain;
 import com.views.NewSurfaceTest;
 import com.views.analog.camera.audio.AudioQueue;
+import com.views.analog.camera.encode.DecoderQueue;
 
 public class SDK {
 
@@ -36,27 +36,20 @@ public class SDK {
 	//chnl:0
 	//type:类型   0：视频 1：音频 2：语音对讲
 	//isIFrame		1：i帧，否则为p帧
+	//pcmType 音频类型
 	//static byte[] newbuf = new byte[60*1024];
-	public void onData(int width,int heigth,int chnl,int type,int isIFrame,byte[] data, int length) {
+	public void onData(int width,int heigth,int pcmType,int chnl,int type,int isIFrame,byte[] data, int length) {
 		if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
-		//if(NewSurfaceTest.instance != null){
-			if(NewMain.devType == 1 && data.length > 1){
-				//Log.i("SDK", "接收数据.........................."+length);
-				//int exHead =  Integer.valueOf(G.byte2hex(data, 22, 1));
-//				int exHead = (int)data[22];
-//				int realHead = 24 + exHead ;
-//				int realLen = length - realHead - 8;
-//				byte[] newbuf = new byte[realLen];
-//				System.arraycopy(data, realHead, newbuf, 0, realLen);
-//				NewSurfaceTest.instance._decoderDebugger.setData(newbuf,realLen);
-				
+			if(data != null && data.length > 0 && NewSurfaceTest.instance._decoderQueue != null){
 				//硬、软解方法
-				if(NewSurfaceTest.instance._decoderQueue != null) {
+				if(type == 0){//视频
 					if(_width != width && _height != heigth){
 						_width = width;
 						_height = heigth;
 					}
 					NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
+				}else if(type == 1 && AudioQueue.runFlag){//音频
+					AudioQueue.addSound(data,pcmType);
 				}
 				
 				/*if(NewSurfaceTest.instance._decoderQueue != null && NewSurfaceTest.instance._decoderDebugger.isCanDecode()) {
@@ -65,11 +58,9 @@ public class SDK {
 					//软解直接把数据送到解码器测试
 					NewSurfaceTest.instance._deThead.addData(data, length);
 				}*/
-				
 				//NewSurfaceTest.instance._deThead.addData(data, length);
 				
-			} else{
-				//Log.i("SDK", "type:"+type);
+			} /*else{
 				if(NewSurfaceTest.instance._decoderQueue == null) return;
 				if(type == 0){//视频
 					if(data != null && data.length > 0){
@@ -78,18 +69,13 @@ public class SDK {
 							_height = heigth;
 						}
 						NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
-						
-//						LogUtil.d("SDK", "收视频..."+data.length+" type: "+type+"--"+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
-//								+"------"+data[data.length-6]+","+data[data.length-7]+","+data[data.length-8]+","+data[data.length-9]+","+data[data.length-10]);
 					}
 				}else if(type == 1){//音频
 					if(data != null && data.length > 0 && AudioQueue.runFlag){
-						AudioQueue.addSound(data);
-//						LogUtil.d("SDK", "收声音..."+data.length+" type: "+type+"--"+data[0]+","+data[1]+","+data[2]+","+data[3]+","+data[4]+"------"+data[data.length-1]+","+data[data.length-2]+","+data[data.length-3]+","+data[data.length-4]+","+data[data.length-5]
-//								+"------"+data[data.length-6]+","+data[data.length-7]+","+data[data.length-8]+","+data[data.length-9]+","+data[data.length-10]);
+						AudioQueue.addSound(data,pcmType);
 					}
 				}
-			}
+			}*/
 		}
 	}
 	
@@ -189,13 +175,12 @@ public class SDK {
 		if(Main.Instance._curIndex == Main.XV_NEW_MSG){//牛眼
 			if (cmd == 10) {
 				LogUtil.d("SDK", "发送宽高。。="+VideoStream.mRequestedQuality.framerate+"--"+VideoStream.mRequestedQuality.bitrate*0.8+"--"+VideoStream.mRequestedQuality.resX+"--"+VideoStream.mRequestedQuality.resY);
-				int ret = SendMediaInfo(param1, 0,1,0,10,5,(int)(VideoStream.mRequestedQuality.bitrate*0.8),2,VideoStream.mRequestedQuality.resX,VideoStream.mRequestedQuality.resY);
-				if(ret == 0 && AnalogvideoActivity.instance != null){
+//				int ret = SendMediaInfo(param1, 0,1,0,10,5,(int)(VideoStream.mRequestedQuality.bitrate*0.8),2,VideoStream.mRequestedQuality.resX,VideoStream.mRequestedQuality.resY);
+//				if(ret == 0 && AnalogvideoActivity.instance != null){
 					_createChnlFlag = 0;
-					LogUtil.d("SDK", "发数据。。。。。");
 					AnalogvideoActivity.instance.startEncode();
 					AnalogvideoActivity.instance.changeTextValue();
-				}
+//				}
 			}else if(cmd == 11){//关闭通通-停止编码发送数据
 				_createChnlFlag = -1;
 				_sessionId = 0;
@@ -204,19 +189,20 @@ public class SDK {
 			}
 		}else if(Main.Instance._curIndex == Main.XV_NEW_MAIN){//云端
 			if(cmd == 10){//获取宽高  第3  4  5 个参数分别是帧率  宽 高
-				LogUtil.d("SDK","收到宽高：    "+param2+"--"+param3 + "--" + param4+ "--" + param5+"--"+param6+"--"+param7);
-				if(param3 != 0) nFrameRate = param3;
+//				LogUtil.d("SDK","收到宽高：    "+param2+"--"+param3 + "--" + param4+ "--" + param5+"--"+param6+"--"+param7);
+//				if(param3 != 0) nFrameRate = param3;
 //				_width = param5;
 //				_height = param6;
 				//NewSurfaceTest.instance._decoderDebugger.configureDecoder(param3,param4,param5,param6);
-				isInitDecoder = true;
-				if(NewSurfaceTest.isPlay && _flag == 0){
-					_flag = 1;
-					BackLoginThread.state = 4;
-					Main.Instance._loginThead.start();
-				}
+				//isInitDecoder = true;
+//				if(NewSurfaceTest.isPlay && _flag == 0){
+//					_flag = 1;
+//					BackLoginThread.state = 4;
+//					Main.Instance._loginThead.start();
+//				}
 			}else if(cmd == 26){//设备状态 == 1设备不在线
-				if(param2 == 1 && NewSurfaceTest.instance != null) NewSurfaceTest.instance.closeNewSurface(param2);
+				isInitDecoder = true;
+				if(param2 != 2 && NewSurfaceTest.instance != null) NewSurfaceTest.instance.closeNewSurface(param2);
 			}
 		}
 	}
@@ -406,8 +392,8 @@ public class SDK {
 		return sid +"|{\"type\":1,\"action\":109,\"sid\":\""+sid+"\"}";
 	}
 	
-	public static String getJson(String sid){
-		return sid +"|{\"type\":1,\"action\":104,\"sid\":\""+sid+"\",\"channel\":0}";
+	public static String getJson(String sid, int channel){
+		return sid +"|{\"type\":1,\"action\":104,\"sid\":\""+sid+"\",\"channel\":"+channel+"}";
 	}
 	
 	//public static native String decode(byte[] data, int width, int height, boolean isCrop, int x, int y, int cwidth, int cheight);
@@ -503,6 +489,19 @@ public class SDK {
 	 * jint     是否存在音频1存在 0不存在
 	 * */
 	public static native int Ffmpegh264ToMp4(String h246Path,String aacPath,String mp4Path,int flag);
+	
+	/*
+	 * 设置软解录像文件路径
+	 * videopath 视频文件路径
+	 * audiopath 音频文件路径
+	 * audioflag 音频标志 0没有音频  1 有音频
+	 * */
+	public static native int SetVideoPath(String videopath,String audiopath);
+	/*
+	 * 设置软解录像文件路径
+	 * jstring mp4 file
+	 * */
+	public static native int SetFinishVideo(String mp4file);
 	
 	/*
 	 * jint  截图数据格式 1 nv12 2nv21

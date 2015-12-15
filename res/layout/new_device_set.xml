@@ -207,7 +207,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="分辨率"
+            android:text="@string/resolution"
             android:textColor="@color/black" />
         
         <Spinner android:id="@+id/resolution"
@@ -267,7 +267,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="帧率"
+            android:text="@string/frameRate"
             android:textColor="@color/black" />
         <Spinner android:id="@+id/frameRate"
             android:layout_width="wrap_content"
@@ -296,7 +296,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="码流"
+            android:text="@string/stream"
             android:textColor="@color/black" />
         <Spinner android:id="@+id/bitStream"
             android:layout_width="wrap_content"
@@ -325,7 +325,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="报警"
+            android:text="@string/alarm"
             android:textColor="@color/black" />
         
         <ImageView 
@@ -356,7 +356,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="云存储"
+            android:text="@string/cloud_storage"
             android:textColor="@color/black" />
         
         <ImageView 
@@ -383,7 +383,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="网络"
+            android:text="@string/network"
             android:textColor="@color/black" />
        
     </RelativeLayout>
@@ -400,7 +400,7 @@
 		      android:layout_height="40dp" 
 		      android:layout_weight="1.0"  
 		      android:textSize="16dp"
-		      android:text="确  定" 
+		      android:text="@string/confirm" 
 		      android:textColor="@color/white"
 	   		  android:layout_marginLeft="10.0dip" 
 	   		  android:layout_marginRight="10.0dip"
@@ -412,7 +412,7 @@
 		      android:layout_height="40dp" 
 		      android:layout_weight="1.0"  
 		      android:textSize="16dp"
-		      android:text="取  消" 
+		      android:text="@string/cancel" 
 		      android:textColor="@color/white"
 			  android:layout_marginLeft="10.0dip" 
 			  android:layout_marginRight="10.0dip"

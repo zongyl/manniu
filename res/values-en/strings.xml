@@ -3,8 +3,8 @@
 	<string name="object_name">Manniu Cloud Video</string>
     <string name="app_name">Manniu Cloud Video</string>
     <string name="object_null">object null</string>
-    <string name="reopen_stream">opening the video……</string>
-    <string name="Err_Error_Unknow">"Oper failure!"</string>
+    <string name="reopen_stream">opening the video...</string>
+    <string name="Err_Error_Unknow">Oper failure!</string>
 	
 	<string name="Video_play_fail">Fail to play</string>
 	<string name="Video_play_stop">stop playing</string>
@@ -12,13 +12,14 @@
 	<string name="Video_record_end">video end!</string>
 	<string name="Video_record_error">video failed!</string>
 	<string name="Video_Storage_space_err">no enough SD space</string>
-	<string name="Video_NetWork_Err">internet unconnect , close connecting...</string>
-	<string name="Video_NetWork_reload">internet unconnect , reconnecting...</string>
+	<string name="Video_NetWork_Err">internet unconnect, close connecting...</string>
+	<string name="Video_NetWork_reload">internet unconnect, reconnecting...</string>
 	<string name="Video_Dviece_BUSY">buey...</string>
 	<string name="Video_Dviece_login">Device not online/unlogin, waiting...</string>
 	<string name="Video_start_gpu">PureVideo has open, abnormal play please close</string>
 	<string name="Video_stop_gpu">closed the PureVideo</string>
 	<string name="Video_err_gpu">not support PureVideo</string>
+	<string name="Video_snap_error">screen snap error</string>
 	<string name="Video_snap_success">screen snap succeed</string>
 	<string name="checking">checking...</string>
 	<string name="new_version">Found a new version</string>
@@ -225,17 +226,17 @@
  	    <item >@drawable/more_about</item>
  	</string-array>
  	
- 	<string name="dev_add_maximum">该设备已超最大绑定数!</string>
- 	<string name="dev_addok">添加成功!</string>
- 	<string name="dev_addFail">添加失败!</string>
- 	<string name="dev_noserial">序列号不存在!</string>
- 	<string name="dev_binded">该设备已绑定用户!</string>
- 	<string name="devname">设备名称</string>
- 	<string name="dev_modifyname">修改名称</string>
- 	<string name="dev_upgradeOk">更新命令已发送，请稍后查看更新情况!</string>
- 	<string name="dev_offline">不在线</string>
- 	<string name="dev_cancelColl">取消收藏</string>
- 	<string name="dev_coverfresh">努力刷新...</string>
+ 	<string name="dev_add_maximum">The device has been over maximum binding number!</string>
+ 	<string name="dev_addok">Add success!</string>
+ 	<string name="dev_addFail">Add failure!</string>
+ 	<string name="dev_noserial">Serial number does not exist!</string>
+ 	<string name="dev_binded">The device has been bound to the user!</string>
+ 	<string name="devname">Device name</string>
+ 	<string name="dev_modifyname">Modify name</string>
+ 	<string name="dev_upgradeOk">Update command has been sent, please check the update later!</string>
+ 	<string name="dev_offline">Don\'t online</string>
+ 	<string name="dev_cancelColl">Cancel Favourite</string>
+ 	<string name="dev_coverfresh">Refreshing...</string>
  	
  	<string-array name="device_set_list0">
  	    <item>二维码名片</item>
@@ -331,12 +332,12 @@
  	
  	<string name="mail_hint">Please input you email</string>
  	<string name="mail_desc">Please input you email</string>
- 	<string name="hot_hint">昵称在2~20个字符之间</string>
- 	<string name="hot_desc">简洁好听的名字可以更容易让你的朋友记住你~</string>
- 	<string name="pho_hint">请输入11位手机号码</string>
+ 	<string name="hot_hint">Between 2~20 characters.</string>
+ 	<string name="hot_desc">Take a good name</string>
+ 	<string name="pho_hint">Please input you mobile phone number</string>
  
-	<string name="mKnow">我知道了</string>
-	<string name="mTip">攻城狮正在攻城中...</string>
+	<string name="mKnow">I know</string>
+	<string name="mTip">Developing...</string>
 	
 	<string name="login_lab_user">user name</string>
 	<string name="login_lab_pwd">password</string>
@@ -377,7 +378,7 @@
     </string-array>
 
     <string name="action_settings">Settings</string>
-    <string name="creat_file_error">创建文件失败，请检查存储卡是否正常！</string>
+    <string name="creat_file_error">Failed to create the file, check the memory card is normal</string>
     <string name="openning_stream">opening video</string>
     <string name="openning_Registered">registering, wait...</string>
     <string name="openning_ReloadData">loading data,wait...</string>
@@ -387,10 +388,10 @@
     <string name="end_stream">play end, closeing video connection.</string>
     <string name="logining">Logging into the System, wait...</string>
     <string name="sys_logining">Logging into the System...</string>
-    <string name="netWake_mobile">"当前处于移动网络,网络不稳定请耐心等待哟……"</string>
-    <string name="uploading">"上传中,请稍候……"</string>
-    <string name="P2PConnect">"正在创建连接……"</string>
-    <string name="querying">"正在查询……"</string>
+    <string name="netWake_mobile">Currently in mobile network, wait...</string>
+    <string name="uploading">Uploading, wait...</string>
+    <string name="P2PConnect">Creating connections</string>
+    <string name="querying">Querying...</string>
     <string name="Device:">Device：</string>
     <string name="Time:">Time：</string>
     <string name="Type:">Type：</string>
@@ -400,8 +401,8 @@
 	<string name="Err_Param">param error</string>
 	<string name="Err_Timeout">Oper timeout</string>
 	<string name="Err_NetConnect">Network connection is not available</string>
-	<string name="Err_NetSendData">"网络错误,数据发送失败"</string>
-	<string name="Err_NetRecvData">"网络错误,数据接收失败"</string>
+	<string name="Err_NetSendData">Network error, send data failure</string>
+	<string name="Err_NetRecvData">Network error, receive data failure</string>
 	<string name="Err_NoObject">"对象不存在"</string>
 	<string name="Err_Unknow">"很抱歉,出现异常,工程师攻城中！"</string>
 	<string name="Err_NewBuffer">"创建缓存失败"</string>
@@ -410,43 +411,43 @@
 	<string name="Err_NetSetNoDelay">"设置失败"</string>
 	<string name="Err_NoConnect">"未连接"</string>
 	<string name="Err_Protocol">"协议解析失败"</string>
-	<string name="Err_ReadData">"读取数据失败"</string>
+	<string name="Err_ReadData">Reading data failure</string>
 	<string name="Err_DataParser">"数据分析错误"</string>
 	<string name="Err_OutBuffer">"超过最大缓存"</string>
 	<string name="Err_OpenFile">"打开文件失败"</string>
 	<string name="Err_NoRight">"没有权限"</string>
-	<string name="Err_NO_USER_ID">"用户不存在"</string>
+	<string name="Err_NO_USER_ID">User does not exist</string>
 	<string name="Err_USER_NULL">username or password Can\'t be empty</string>
 	<string name="Err_USER_ERROR">username or password is incorrect</string>
 	<string name="Err_USER_DISABLE">"该用户已禁用!"</string>
-	<string name="Err_NO_DATA_RECORD">"用户不存在"</string>
+	<string name="Err_NO_DATA_RECORD">User does not exist</string>
 	<string name="Err_NO_USER_NAME_TO_ID">"用户未注册"</string>
-	<string name="Err_NO_USER_NAME">"用户名不存在"</string>
+	<string name="Err_NO_USER_NAME">Username does not exist</string>
 	<string name="Err_PASSWORD_INVALID">"密码无效"</string>
 	<string name="Err_INVALID_USER_ID">"无效用户"</string>
 	<string name="Err_USER_LOCKED">"用户被锁定"</string>
 	<string name="Err_SESSION_EXIST">"用户已经登录"</string>
-	<string name="Err_OFF_LINE">"不在线"</string>
+	<string name="Err_OFF_LINE">Don\'t online</string>
 	<string name="Err_DeviceLogin">"注册失败"</string>
 	<string name="Err_Registration_Timeout">"注册超时"</string>
-	<string name="Err_UPLOAD">"上传失败!"</string>
-	<string name="IN_UPLOAD">"上传中……"</string>
-	<string name="FAIL_ADD_LIKE">"点赞失败"</string>
-	<string name="FAIL_ADD_COLLECT">"收藏失败"</string>
-	<string name="FAIL_CANCEL_LIKE">"取消点赞失败"</string>
-	<string name="FAIL_CANCEL_COLLECT">"取消收藏失败"</string>
-	<string name="SUCCESS_COLLECT">"收藏成功!"</string>
-	<string name="SUCCESS_MODIFY">"修改成功!"</string>
-	<string name="SUCCESS_LOGIN">登录成功</string>
-	<string name="CANCEL_COLLECT">"取消收藏!"</string>
+	<string name="Err_UPLOAD">Upload failure</string>
+	<string name="IN_UPLOAD">Uploading</string>
+	<string name="FAIL_ADD_LIKE">Likes failure</string>
+	<string name="FAIL_ADD_COLLECT">Collection failure</string>
+	<string name="FAIL_CANCEL_LIKE">Cancel likes failure</string>
+	<string name="FAIL_CANCEL_COLLECT">Cancel collection failure</string>
+	<string name="SUCCESS_COLLECT">Collection success</string>
+	<string name="SUCCESS_MODIFY">Modify success!</string>
+	<string name="SUCCESS_LOGIN">Login success</string>
+	<string name="CANCEL_COLLECT">Cancel collection</string>
 	<string name="SUCCESS_LIKE">"praise_ok!"</string>
-	<string name="SUCCESS_CANCEL">取消成功!</string>
-	<string name="FAIL_CANCEL">取消失败!</string>
-	<string name="CANCEL_LIKE">"取消点赞!"</string>
-	<string name="cel_share">取消分享</string>
-	<string name="nosdcard">未找到存储卡，无法存储照片！</string>
-	<string name="delete_ask">确定删除吗?</string>
-	<string name="cancelColle_ask">确定取消收藏吗?</string>
+	<string name="SUCCESS_CANCEL">Cancel success</string>
+	<string name="FAIL_CANCEL">Cancel failure</string>
+	<string name="CANCEL_LIKE">Cancel likes</string>
+	<string name="cel_share">Cancel the share</string>
+	<string name="nosdcard">Memory card not found, Unable to store photos!</string>
+	<string name="delete_ask">Sure to delete?</string>
+	<string name="cancelColle_ask">Sure to cancel collection?</string>
 	
  	<string name="devciesJSON">
  	    <![CDATA[
@@ -510,17 +511,6 @@
  	    <item >@drawable/more_about</item>
  	</string-array>
  	
- 	<string name="dev_addok">添加成功!</string>
- 	<string name="dev_addFail">添加失败!</string>
- 	<string name="dev_noserial">序列号不存在!</string>
- 	<string name="dev_binded">该设备已绑定用户!</string>
- 	<string name="devname">设备名称</string>
- 	<string name="dev_modifyname">修改名称</string>
- 	<string name="dev_upgradeOk">更新命令已发送，请稍后查看更新情况!</string>
- 	<string name="dev_offline">不在线</string>
- 	<string name="dev_cancelColl">取消收藏</string>
- 	<string name="dev_coverfresh">努力刷新...</string>
- 	
  	<string-array name="device_set_list0">
  	    <item>二维码名片</item>
  	</string-array>
@@ -573,7 +563,7 @@
  	<string-array name="device_set_list5_ic">
  	    <item>@drawable/checked</item>
  	</string-array>
- 	<string name="version_upgrade">版本更新</string>
+ 	<string name="version_upgrade">Version Upgrade</string>
  	<string-array name="device_set_list6">
  	    <item>@string/version_upgrade</item>
  	</string-array>
@@ -590,15 +580,15 @@
  	<string name="share">share</string>
  	
  	<string-array name="live_group">
- 	    <item>风景</item>
- 	    <item>路况</item>
- 	    <item>商铺</item>
+ 	    <item>Scenery</item>
+ 	    <item>Traffic</item>
+ 	    <item>shops</item>
  	</string-array>
  	
  	<string-array name="share_group">
- 	    <item>风景</item>
- 	    <item>路况</item>
- 	    <item>商铺</item>
+ 	    <item>Scenery</item>
+ 	    <item>Traffic</item>
+ 	    <item>shops</item>
  	</string-array>
  	 
  	<string-array name="account_login_tip">
@@ -606,7 +596,7 @@
  	    <item>在</item>
  	    <item>设备登录。</item>
  	</string-array>
- 	<string name="sel_photo">头像</string>
+ 	<string name="sel_photo">profile</string>
  	<string name="hot_name">nickname</string>
  	<string name="per_signer">个性签名</string>
  	<string name="pho_number">Mobile phone</string>
@@ -619,7 +609,7 @@
  	<string name="mail_tip">Please enter the correct mail format</string>
  	<string name="per_detail">personal data</string>
  	
- 	<string name="set_push">推送配置</string>
+ 	<string name="set_push">Push settings</string>
  	<string name="flow_remaind">2G/3G/4G流量提醒</string>
  	<string name="flow_limit">流量限额</string>
  	<string name="flow_desc">3G模式下查看视频，当流量达到限额时系统会自动发出提醒，为你节省流量</string>
@@ -628,136 +618,143 @@
  	<string name="auto_check">自动检查更新</string>
  	<string name="auto_desc">打开后，更方便接收报警消息</string>
  	<string name="rece_login">最近登录信息</string>
- 	<string name="per_help">帮助</string>
+ 	<string name="per_help">Help</string>
  	<string name="online_customer">在线客服</string>
- 	<string name="my_feedback">反馈</string>
+ 	<string name="my_feedback">Feedback</string>
  	<string name="flow_tip">提醒流量间隔</string>
  	<string name="flow_count">移动数据流量统计</string>
  	<string name="flow_clean">清空数据</string>
- 	<string name="suggest_hint">这里是属于你的，可以写下你的问题和意见</string>
+ 	<string name="suggest_hint">Can I help you?</string>
  	
- 	<string name="auto_loginset">自动登录设置</string>
+ 	<string name="auto_loginset">Auto login settings</string>
  	<string name="auto_login">auto login</string>
  	<string name="pass_save">save password</string>
  	
- 	<string name="wel_page">欢迎页</string>
- 	<string name="newVer_check">新版本检测</string>
- 	<string name="recomm_friends">推荐给好友</string>
+ 	<string name="network">NetWork</string>
+ 	<string name="alarm">Alarm</string>
+ 	<string name="cloud_storage">Cloud storage</string>
+ 	<string name="stream">Stream</string>
+ 	<string name="frameRate">Frame Rate</string>
+ 	<string name="resolution">Resolution</string>
+ 	
+ 	<string name="wel_page">Welcome page</string>
+ 	<string name="newVer_check">New version detection</string>
+ 	<string name="recomm_friends">Recommend to friends</string>
  	<string name="spre_activity">推广活动</string>
  	
- 	<string name="album">"相册"</string>
- 	<string name="my_photos">我的相册</string>
- 	<string name="my_shares">我的分享</string>
+ 	<string name="album">Album</string>
+ 	<string name="my_photos">My photo album</string>
+ 	<string name="my_shares">My share</string>
  	
  	
  	<string name="logout_tip">logout will not receive any news,Confirm log out?</string>
- 	<string name="exit_tip">关闭后将收不到任何报警消息，确定关闭？</string>
+ 	<string name="exit_tip">Down will not receive any message, sure closing?</string>
  	<string name="logout">Sign out</string>
  	<string name="relogin">relogin</string>
  	<string name="exit">Exit</string>
- 	<string name="user_in_other_dev">同一个账号在别的设备上登陆</string>
+ 	<string name="user_in_other_dev">The account is logged in on another device.</string>
  	
- 	<string name="app_declare">版权所有:杭州蛮牛科技有限公司</string>
- 	<string name="team_name">杭州蛮牛科技有限公司</string>
- 	<string name="checking_msg">信息校验中</string>
- 	<string name="up_relinfo">上传实名信息中</string>
- 	<string name="up_shareinfo">上传分享信息中</string>
- 	<string name="photos_tip">请上传两张照片</string>
- 	<string name="title_tip">标题不能为空</string>
- 	<string name="group_tip">请选择分组</string>
- 	<string name="rename_tip">真实姓名不能为空</string>
- 	<string name="ch_tip">请输入中文姓名</string>
- 	<string name="idcard_tip">身份证不能为空</string>
- 	<string name="idfit_tip">请输入合法身份证号</string>
- 	<string name="relname">"真实姓名 "</string>
- 	<string name="relname_hint">请输入您的真实姓名以便审核</string>
- 	<string name="idcard">"身份证号 "</string>
- 	<string name="cardVefi">"身份认证 "</string>
- 	<string name="cardVefi_hint">上传含本人头像的身份证两面照</string>
- 	<string name="cardVefi_desc">亲,首次分享，需要进行实名认证,带*为必填</string>
- 	<string name="commit">提交</string>
+ 	<string name="app_declare">CopyRight:Hangzhou Manniu Technology Co.,Ltd</string>
+ 	<string name="team_name">Hangzhou Manniu Technology Co.,Ltd</string>
+ 	<string name="checking_msg">Information verification</string>
+ 	<string name="up_relinfo">Upload real name information</string>
+ 	<string name="up_shareinfo">Upload share information</string>
+ 	<string name="photos_tip">Please upload two photos</string>
+ 	<string name="title_tip">Title can\'t be empty</string>
+ 	<string name="group_tip">Select group</string>
+ 	<string name="rename_tip">Real name can\'t be empty</string>
+ 	<string name="ch_tip">Please enter chinese name</string>
+ 	<string name="idcard_tip">ID can\'t be empty</string>
+ 	<string name="idfit_tip">Please enter a valid ID number.</string>
+ 	<string name="relname">Real name</string>
+ 	<string name="relname_hint">Please enter real name</string>
+ 	<string name="idcard">ID</string>
+ 	<string name="cardVefi">Identity auth</string>
+ 	<string name="cardVefi_hint">upload ID photos </string>
+ 	<string name="cardVefi_desc">Dear, first share need identity auth, with * required</string>
+ 	<string name="commit">Commit</string>
  	
- 	<string name="sharemsg">分享信息</string>
- 	<string name="title">标题</string>
- 	<string name="title_hint">标题</string>
- 	<string name="group">分组</string>
- 	<string name="group_hint">点击选择</string>
- 	<string name="live_dec">视频说明</string>
+ 	<string name="sharemsg">Share info</string>
+ 	<string name="title">Title</string>
+ 	<string name="title_hint">Title</string>
+ 	<string name="group">Grouping</string>
+ 	<string name="group_hint">Click select</string>
+ 	<string name="live_dec">Video Description</string>
  	
  	<string name="yidong">China Mobile</string>
  	<string name="liantong">China Unicom</string>
  	<string name="dianxin">China Telecom</string>
  	
- 	<string name="cloud">cloud</string>
+ 	<string name="cloud">Cloud</string>
  	<string name="niuyan">Manniu Eye</string>
- 	<string name="personel">personal</string>
- 	<string name="square">discovery</string>
+ 	<string name="personel">Personal</string>
+ 	<string name="square">Discovery</string>
  	
- 	<string name="sq_live">直播</string>
- 	<string name="sq_short">短片</string>
- 	<string name="sq_near">周边</string>
+ 	<string name="sq_live">Live Video</string>
+ 	<string name="sq_short">Short Video</string>
+ 	<string name="sq_near">Near</string>
  	
  	<string name="share_txt">分享文本!</string>
  	<string name="alert_msg">报警消息!</string>
-	<string name="reclick_tip">再按一次退出程序</string>
+	<string name="reclick_tip">Double click Exit</string>
 	
 	<string name="device">Device</string>
 	<string name="alert">Alarm</string>
 	<string name="local">Local</string>
-	<string name="add">添加</string>
+	<string name="add">Add</string>
  	
-	<string name="pwdSet">"设  置  密  码"</string>
+	<string name="pwdSet">Password setup</string>
 	<string name="pwd_empty">password can\'t be empty!</string>
-	<string name="pwd_reempty">重复密码不能为空!</string>
-	<string name="pwd_refind">"密  码  重  置"</string>
+	<string name="pwd_reempty">Confirm password can\'t be empty!</string>
+	<string name="pwd_refind">Password reset</string>
 	<string name="pwd_putTip">Please input password</string>
-	<string name="pwd_reputTip">请再次输入密码</string>
+	<string name="pwd_reputTip">Please enter your new password again.</string>
 	<string name="pwd_newputTip">Please input new password</string>
 	<string name="pwd_oldputTip">Please input old password</string>
-	<string name="pwd_formatDesc">6~16个字母、数字或符号</string>
-	<string name="pwd_rewriteNew">请再次输入新密码</string>
-	<string name="pwd_modify">修改密码</string>
-	<string name="pwd_mofiSucc">修改密码成功</string>
-	<string name="pwd_setSucc">密码设置成功!</string>
-	<string name="pwd_modiFail">修改密码失败</string>
-	<string name="pwd_oldEmpty">旧密码不能为空</string>
-	<string name="pwd_newEmpty">新密码不能为空</string>
-	<string name="pwd_confrimEmpty">确认新密码不能为空</string>
-	<string name="pwd_confrimNoMatch">两次输入密码不一致</string>
-	<string name="declare_devname">不超过50个字符</string>
-	<string name="pwd_error">密码错误</string>
-	<string name="pwd_veriFail">验证失败,请检查您的网络</string>
-	<string name="pwd_next">下一步</string>
-	<string name="case_sensitive">区分大小写</string>
+	<string name="pwd_formatDesc">6~16 letters or numbers</string>
+	<string name="pwd_rewriteNew">Please enter your new password again.</string>
+	<string name="pwd_modify">Modify password</string>
+	<string name="pwd_mofiSucc">Modify password success</string>
+	<string name="pwd_setSucc">Password set successfully!</string>
+	<string name="pwd_modiFail">Failed to modify password!</string>
+	<string name="pwd_oldEmpty">Old password can\'t be empty!</string>
+	<string name="pwd_newEmpty">New password can\'t be empty!</string>
+	<string name="pwd_confrimEmpty">Confirm new password can\'t be empty!</string>
+	<string name="pwd_confrimNoMatch">Two times the password is not consistent</string>
+	<string name="declare_devname">No more than 50 characters</string>
+	<string name="pwd_error">Password error!</string>
+	<string name="pwd_veriFail">Verify that the failure, please check your network</string>
+	<string name="pwd_next">Next</string>
+	<string name="case_sensitive">Case sensitive</string>
 	
 	<string name="phnum_putTip">Mobile phone</string>
-	<string name="phnum_wrong">手机号码不正确!</string>
-	<string name="phnum_empty">手机号不能为空!</string>
-	<string name="phnum_repeat">该手机号码已注册!</string>
-	<string name="phnum_none">该手机号码不存在!</string>
-	<string name="phnum_error">账号异常!</string>
+	<string name="phnum_wrong">Mobile phone number is not correct!</string>
+	<string name="phnum_empty">Mobile phone number can not be empty!</string>
+	<string name="phnum_repeat">The phone number has been registered!</string>
+	<string name="phnum_none">The phone number does not exist!</string>
+	<string name="phnum_error">Account exception!</string>
 	
 	<string name="file_tip">请选择正确的文件夹</string>
 	
- 	<string name="video_layout_loading">加载资源中...</string>
- 	<string name="video_layout_starting">准备播放中...</string>
- 	<string name="famliy_around_withme">家，与我同行</string>
- 	<string name="allbeautifulview_oftheworld_inmyhand">走遍天下路，风景只在手中。</string>
- 	<string name="APP_download_title">蛮牛云视APP下载</string>
- 	<string name="Click_download">点击下载</string>
+ 	<string name="video_layout_loading">Loading resources</string>
+ 	<string name="video_layout_starting">Readying play</string>
+ 	<string name="famliy_around_withme">The home, Walk with me</string>
+ 	<string name="allbeautifulview_oftheworld_inmyhand">Go all the way, the scenery is only in the hands of.</string>
+ 	<string name="APP_download_title">Manniu Cloud Video APP download</string>
+ 	<string name="Click_download">Click download</string>
  	<string name="app_share_video">蛮牛云视分享视频</string>
- 	<string name="Click_toplay">点击播放</string>
- 	<string name="cancelcollect">取消收藏</string>
- 	<string name="prompt_title">提示</string>
- 	<string name="areyousure_tocloseanalogIPC">确定要退出模拟IPC吗？</string>
- 	<string name="btn_OK_caption">确定</string>
- 	<string name="btn_Cancel_caption">取消</string>
- 	<string name="analog_Video">模拟IPC</string>
- 	<string name="analogvideocaptureing_CantExit">正在采集视频，不能退出...</string>
- 	<string name="openCamera_error">打开摄像头失败</string>
- 	<string name="openVideo_error">打开视频失败</string>
- 	<string name="captureing">正在采集视频数据...</string>
- 	<string name="connectclosed_preview">连接关闭，正在预览...</string>
+ 	<string name="Click_toplay">Click play</string>
+ 	<string name="cancelcollect">Cancel</string>
+ 	<string name="prompt_title">Tip</string>
+ 	<string name="areyousure_tocloseanalogIPC">Are you sure you want to exit the simulation IPC?</string>
+ 	<string name="btn_OK_caption">Confirm</string>
+ 	<string name="btn_Cancel_caption">Cancel</string>
+ 	<string name="analog_Video">Simulation IPC</string>
+ 	<string name="analogvideocaptureing_CantExit">Collecting video, can\'t quit...</string>
+ 	<string name="openCamera_error">Opening camera failure</string>
+ 	<string name="openVideo_error">Opening video failure</string>
+ 	<string name="captureing">Gathering video data...</string>
+ 	<string name="connectclosed_preview">Connection Closed, Is the preview...</string>
  	<string name="nothave_SDCard">没有外置SD卡!</string>
  	<string name="downloadbitmap_failed">获取图片失败</string>
  	<string name="notHave_SNInfo">没有SN信息</string>
@@ -765,9 +762,9 @@
  	<string name="unregisterad_sn">序列号不存在</string>
  	<string name="device_havebinduser">该设备己绑定用户</string>
  	<string name="securitycode_Error">验证码错误</string>
- 	<string name="loading...">加载中...</string>
- 	<string name="file">文件</string>
- 	<string name="SUCCESS_SAVE">保存成功</string>
+ 	<string name="loading...">Loading</string>
+ 	<string name="file">File</string>
+ 	<string name="SUCCESS_SAVE">Save success</string>
  	
  	<string name="send_comment">send comment</string>
  	<string name="comment_tip">comment</string>
@@ -780,24 +777,39 @@
  	<string name="profile_pre">介绍</string>
  	<string name="default_profile">好视频，一辈子</string>
  	<string name="default_dev_title">蛮牛云眼</string>
- 	<string name="please_clicklink">请点击</string>
- 	<string name="add_assist_user">添加辅助用户</string>
+ 	<string name="please_clicklink">Please click</string>
+ 	<string name="add_assist_user">Add sub user</string>
  	<string name="please_input_userID">Plase input your username.</string>
  	<string name="userID_cant_empty">username can not be empty!</string>
  	<string name="userID_cant_sameasower">用户名不能为当前用户！</string>
  	<string name="no_device">没有该设备！</string>
  	<string name="add_failure">添加失败！</string>
  	<string name="binding_maxinum">超过最大绑定数！</string>
- 	<string name="add_success">添加成功！</string>
+ 	<string name="add_success">Add success!</string>
  	<string name="right_lessness">没有权限！</string>
  	<string name="user_donot_exits">用户不存在！</string>
  	<string name="channel">通道</string>
+ 	
+ 	<string name="network_setting">Network settings</string>
+ 	<string name="wireless_networks">Wireless networks(WIFI)</string>
+ 	<string name="wired_networks">Wired networks</string>
+ 	<string name="model">Model</string>
+ 	<string name="ip">IP Address</string>
+ 	<string name="subnet_mask">Subnet mask</string>
+ 	<string name="gateway">Gateway</string>
+ 	<string name="dns1">Preferred DNS</string>
+ 	<string name="dns2">Alternate DNS</string>
+ 	<string name="get1">Manual settings</string>
+ 	<string name="get2">Auto acquisition</string>
+ 	<string name="staticc">Static</string>
+ 	
+ 	<string name="priview">priview</string>
  	
  	<string name="analog_video_update">修改</string>
 	<string name="analog_video_open">开通</string>
 	<string name="analog_video_open1">open</string>
 	<string name="analog_video_cancel_share">cancel sharing</string>
 	<string name="analog_video_open_ok_share">share to square</string>
-	<string name="analog_video_click_reload">点击屏幕，可重新加载</string>
+	<string name="analog_video_click_reload">Click screen, can reload</string>
  	
 </resources>

@@ -98,7 +98,7 @@
         <TextView
 		       android:layout_width="wrap_content"
 		       android:layout_height="wrap_content"
-		       android:text="  正在预览..."
+		       android:text="@string/priview"
 		       android:gravity="center"
 		       android:textSize="@dimen/text_size_16"
 		       android:id="@+id/tooltip"

@@ -19,7 +19,7 @@ public class AudioQueue implements Runnable{
 	private final static int MAX_SIZE = 5000;
 	public static boolean runFlag;
 	
-	static AudioTrack _talkAudio = null; //播放声音
+	public static AudioTrack _talkAudio = null; //播放声音
 	 // 设置音频采样率，44100是目前的标准，但是某些设备仍然支持22050，16000，11025  
 //    private static int sampleRateInHz = 32000;
 //    // 设置音频的录制的声道CHANNEL_IN_STEREO 16 为双声道，CHANNEL_CONFIGURATION_MONO 2为单声道  
@@ -53,29 +53,36 @@ public class AudioQueue implements Runnable{
 //		}
 	}
 	
-	static{
-		int bufsize = AudioTrack.getMinBufferSize(Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding);
-		if(_talkAudio == null)
-			_talkAudio = new AudioTrack(AudioManager.STREAM_MUSIC, Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding, bufsize, AudioTrack.MODE_STREAM);//
-		//_talkAudio.setStereoVolume(0.5f, 0.5f);
-	}
-	
-	/*public void init(){
+	/*static{
 		int bufsize = AudioTrack.getMinBufferSize(Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding);
 		if(_talkAudio == null)
 			_talkAudio = new AudioTrack(AudioManager.STREAM_MUSIC, Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding, bufsize, AudioTrack.MODE_STREAM);//
 		//_talkAudio.setStereoVolume(0.5f, 0.5f);
 	}*/
 	
-	public static Queue<byte[]> queue = new LinkedList<byte[]>();
+	public static void init(int type){
+		if(type == 1){//ipc 对应 8000采集 牛眼不变
+			Constants.frequency = 8000;
+		}
+		int bufsize = AudioTrack.getMinBufferSize(Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding);
+		if(_talkAudio == null)
+			_talkAudio = new AudioTrack(AudioManager.STREAM_MUSIC, Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding, bufsize, AudioTrack.MODE_STREAM);//
+		//_talkAudio.setStereoVolume(0.5f, 0.5f);
+		//_talkAudio.play();//开始
+	}
 	
-	public static void addSound(byte[] data){
+	public static Queue<QueuePcmBean> queue = new LinkedList<QueuePcmBean>();
+	public static int _flag = 0;
+	public static void addSound(byte[] data,int pcmType){
+		if(_flag == 0){
+			_flag = 1;
+			init(pcmType);
+		}
 		try {
 			synchronized (queue) {
-				if(queue != null)
-				{
+				if(queue != null){
 					if(queue.size() < MAX_SIZE){
-						queue.offer(data);			
+						queue.offer(new QueuePcmBean(data,pcmType));			
 					}
 				}
 			}	
@@ -88,7 +95,7 @@ public class AudioQueue implements Runnable{
 		try {
 			synchronized (queue) {
 				aacdncoder = new AacDecoder();
-				_talkAudio.play();//开始
+				//_talkAudio.play();//开始
 				if(_thread == null){
 					_thread = new Thread(this);
 				}
@@ -108,11 +115,12 @@ public class AudioQueue implements Runnable{
 				_thread = null;
 				_talkAudio.flush();
 				_talkAudio.stop();
-				//_talkAudio = null;
+				_talkAudio = null;
 				isDecorderOpen = false;
 				if(aacdncoder != null && long_decoderRet != null)					
 					aacdncoder.Close(long_decoderRet[0],long_decoderRet[1],long_decoderRet[2]); //关闭解码
 				aacdncoder = null;
+				_flag = 0;
 				while (queue.size() > 0) {
 					queue.poll();
 				}
@@ -131,26 +139,30 @@ public class AudioQueue implements Runnable{
 				try {
 					synchronized (queue) {
 						if(queue != null && queue.size() > 0 && aacdncoder != null){
-							//setTime(1);
-							byte[] _data = queue.poll();
-							if(null != _data && _data.length > 0){
-								//解码
-		            			if(isDecorderOpen){
-		            				isDecorderOpen = false;
-		            				long_decoderRet = aacdncoder.Open(_data);
-		            			}
-		            			if(long_decoderRet[0] != 0){
-		            				byte[] b2 = aacdncoder.Write(long_decoderRet[0],long_decoderRet[1],long_decoderRet[2],_data);
-				    				if(b2 != null && b2.length > 0){
-				    					//outsStream.write(b2);
-				    					_talkAudio.write(b2, 0, b2.length);//播放
-				    					try {
-											Thread.sleep(1);
-										} catch (InterruptedException e) {
-											e.printStackTrace();
-										}
-				    				}
-		            			}
+							//byte[] _data = queue.poll();
+							QueuePcmBean bean = queue.poll();
+							if(null != bean.getData() && bean.getData().length > 0){
+								if(bean.getPcmType() == 1){//IPC过来数据是PCM 直接去播放
+									_talkAudio.write(bean.getData(), 0, bean.getData().length);//播放
+								}else{
+									//解码--牛眼需要解码AAC
+			            			if(isDecorderOpen){
+			            				isDecorderOpen = false;
+			            				long_decoderRet = aacdncoder.Open(bean.getData());
+			            			}
+			            			if(long_decoderRet[0] != 0){
+			            				byte[] b2 = aacdncoder.Write(long_decoderRet[0],long_decoderRet[1],long_decoderRet[2],bean.getData());
+					    				if(b2 != null && b2.length > 0){
+					    					//outsStream.write(b2);
+					    					_talkAudio.write(b2, 0, b2.length);//播放
+					    					try {
+												Thread.sleep(1);
+											} catch (InterruptedException e) {
+												e.printStackTrace();
+											}
+					    				}
+			            			}
+								}
 							}
 			        		
 						}/*else{
@@ -167,6 +179,30 @@ public class AudioQueue implements Runnable{
 //				e.printStackTrace();
 //			}
 	}	
+	
+	public static class QueuePcmBean{
+		public byte[] data;
+		public int pcmType;
+		QueuePcmBean(){
+		}
+		QueuePcmBean(byte[] data,int pcmType){
+			this.data = data;
+			this.pcmType = pcmType;
+		}
+		
+		public byte[] getData() {
+			return data;
+		}
+		public void setData(byte[] data) {
+			this.data = data;
+		}
+		public int getPcmType() {
+			return pcmType;
+		}
+		public void setPcmType(int pcmType) {
+			this.pcmType = pcmType;
+		}
+	}
 
 	
 	public long getTime() {

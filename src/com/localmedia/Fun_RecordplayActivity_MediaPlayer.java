@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -26,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -378,6 +380,22 @@ public class Fun_RecordplayActivity_MediaPlayer extends Activity implements Surf
 			mediaPlayer.setDataSource(fileName);
 			// 把视频画面输出到SurfaceView
 			mediaPlayer.setDisplay(surfaceView.getHolder());
+			
+			mediaPlayer.setOnErrorListener(new OnErrorListener() {
+				@Override
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) { 
+						Toast.makeText(Fun_RecordplayActivity_MediaPlayer.this, getText(R.string.Video_play_fail).toString(), Toast.LENGTH_SHORT).show();
+						mediaPlayer.reset();// 可调用此方法重置 
+						return false;
+				    } else if (what == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) { 
+				      LogUtil.v(TAG, "MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK"); 
+				    } else if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN) { 
+				      LogUtil.v(TAG, "MEDIA_ERROR_UNKNOWN"); 
+				    } 
+					return true;
+				}
+			});
 			mediaPlayer.prepare();
 			startTimer();
 			// 播放
@@ -385,7 +403,7 @@ public class Fun_RecordplayActivity_MediaPlayer extends Activity implements Surf
 			seekbar.setMax(mediaPlayer.getDuration());
 			seekbar.setEnabled(true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 

@@ -6,13 +6,6 @@
     <string name="reopen_stream">"正在打开视频……"</string>
     <string name="Err_Error_Unknow">"操作失败!"</string>
 	
-	<string name="click_refresh">点击刷新</string>
-	<string name="confirm">确定</string>
-	<string name="tip_title">提示</string>
-	<string name="video_share">视频分享</string>
-    <string name="go_on">继续</string>
-    <string name="cancel">取消</string>
-    
 	<string name="Video_play_fail">播放失败</string>
 	<string name="Video_play_stop">播放停止</string>
 	<string name="Video_play_crash">用户设备关闭或网络不稳定引起播放停止</string>
@@ -26,6 +19,7 @@
 	<string name="Video_start_gpu">"硬解码已开启，如播放异常请关闭"</string>
 	<string name="Video_stop_gpu">"已关闭硬解码"</string>
 	<string name="Video_err_gpu">"不支持硬解码"</string>
+	<string name="Video_snap_error">"截图失败!"</string>
 	<string name="Video_snap_success">"截图成功!"</string>
 	<string name="checking">正在检查，请稍后</string>
 	<string name="new_version">发现新版本</string>
@@ -423,6 +417,13 @@
  	<string name="auto_loginset">自动登录设置</string>
  	<string name="auto_login">自动登录</string>
  	<string name="pass_save">保存密码</string>
+ 	
+ 	<string name="network">网络</string>
+ 	<string name="alarm">报警</string>
+ 	<string name="cloud_storage">云存储</string>
+ 	<string name="stream">码流</string>
+ 	<string name="frameRate">帧率</string>
+ 	<string name="resolution">分辨率</string>
  	
  	<string name="wel_page">欢迎页</string>
  	<string name="newVer_check">新版本检测</string>
@@ -992,6 +993,22 @@
  	<string name="right_lessness">没有权限！</string>
  	<string name="user_donot_exits">用户不存在！</string>
  	<string name="channel">通道</string>
+ 	
+ 	<string name="network_setting">网络设置</string>
+ 	<string name="wireless_networks">无线(WIFI)</string>
+ 	<string name="wired_networks">有线</string>
+ 	<string name="model">模式</string>
+ 	<string name="ip">IP地址</string>
+ 	<string name="subnet_mask">子网掩码</string>
+ 	<string name="gateway">网关</string>
+ 	<string name="model">模式</string>
+ 	<string name="dns1">首选DNS</string>
+ 	<string name="dns2">备选DNS</string>
+ 	<string name="get1">手动设置</string>
+ 	<string name="get2">自动获取</string>
+ 	<string name="staticc">固定地址</string>
+ 	
+ 	<string name="priview">正在预览...</string>
  	
  	<!-- 牛眼 -->
 	<string name="analog_video_update">修改</string>

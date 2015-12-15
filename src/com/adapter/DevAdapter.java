@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -195,6 +196,15 @@ public class DevAdapter extends BaseAdapter{
 								context.startActivity(intent);
 							}
 						});
+						
+						nvrGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
+							@Override
+							public boolean onItemLongClick(
+									AdapterView<?> parent, View view, int position, long id) {
+								//APP.ShowToast(((TextView)view.findViewById(R.id.ItemText)).getText().toString());
+									dlg = Sheet(device, holder.iv, position);
+								return true;
+							}});
 					};
 					
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
@@ -245,7 +255,7 @@ public class DevAdapter extends BaseAdapter{
 					@Override
 					public void onClick(View v) {
 						if(device.type == 1 && device.isowner == 1){
-							dlg = Sheet(device, holder.iv);
+							dlg = Sheet(device, holder.iv, 0);
 						}else if(device.type == 1 && device.isowner == 0){
 							dlg = DelSheet(device, holder.iv);
 						}else if(device.type == 4){
@@ -318,7 +328,7 @@ public class DevAdapter extends BaseAdapter{
 	 * @param imv
 	 * @return
 	 */
-	private Dialog Sheet(final Device device, final ImageView imv){
+	private Dialog Sheet(final Device device, final ImageView imv, final int channel){
 		return ActionSheet.showSheet(context, device, new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -348,7 +358,7 @@ public class DevAdapter extends BaseAdapter{
 					context.startActivity(intent);
 				}else if("dialog3".equals(tag.getText())){
 					text.setText(context.getString(R.string.dev_coverfresh));
-					String json = SDK.getJson(device.sid);
+					String json = SDK.getJson(device.sid, channel);
 					Log.d(TAG, "JSON:"+json);
 					SDK.SendJsonPck(0, json);
 					ScreenCache.getInstance().addImgView(device.sid, imv);
@@ -522,7 +532,7 @@ public class DevAdapter extends BaseAdapter{
 					context.startActivity(intent);
 				}*/else if("dialog3".equals(tag.getText())){
 					text.setText(context.getString(R.string.dev_coverfresh));
-					String json = SDK.getJson(device.sid);
+					String json = SDK.getJson(device.sid, 0);
 					Log.d(TAG, "JSON:"+json);
 					SDK.SendJsonPck(0, json);
 					ScreenCache.getInstance().addImgView(device.sid, imv);

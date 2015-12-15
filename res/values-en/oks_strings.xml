@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="finish">Finish</string>
     <string name="sharing">Sharing operation is working in the background…</string>
     <string name="share_to">Share to </string>

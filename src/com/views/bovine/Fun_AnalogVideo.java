@@ -957,9 +957,9 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	        	}
 				break;
 			case XMSG.CHECK_DEVICE:
-				LogUtil.d(TAG, "44444....");
+				//LogUtil.d(TAG, "44444....");
 				backgroundExecution();
-				LogUtil.d(TAG, "55555....");
+				//LogUtil.d(TAG, "55555....");
 				break;
 			case XMSG.CHECK_DEVICE_SHARE:
 				isShare();

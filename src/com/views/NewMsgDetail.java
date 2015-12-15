@@ -1,12 +1,13 @@
 package com.views;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import P2P.SDK;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,11 +30,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.adapter.HttpUtil;
 import com.adapter.Message;
 import com.alibaba.fastjson.JSON;
 import com.basic.APP;
+import com.ctrl.XImageBtn;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager.TransitionEffect;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -49,9 +51,10 @@ import com.utils.BitmapUtils;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.FileUtil;
+import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 
-
+//报警
 public class NewMsgDetail extends Activity implements OnClickListener,OnTouchListener{
 	private final String TAG ="NewMegDetail";
 	private JazzyViewPager _viewPager;
@@ -79,6 +82,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	private int UPDATED = 0;
 	private int pageCount = 0;
 	private DisplayImageOptions options;
+	XImageBtn _alarmPlay,_alarmDown,_alarmShare;
 	
 	String _url;
 	private String sid = APP.GetMainActivity().getSharedPreferences("Info_Login", APP.GetMainActivity().MODE_PRIVATE).getString("sid", "");
@@ -130,6 +134,9 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			_devName = (TextView) findViewById(R.id.msg_devName);
 			_curIndex = getIntent().getIntExtra("position", 0);
 			_viewPager = (JazzyViewPager) findViewById(R.id.new_pager_list);
+			_alarmPlay = (XImageBtn) findViewById(R.id.alarm_play);
+			_alarmDown = (XImageBtn) findViewById(R.id.alarm_down);
+			_alarmShare = (XImageBtn) findViewById(R.id.alarm_share);
 			getMessageList();
 			/*_imageLayout =LayoutInflater.from(this).inflate(R.layout.item_pager_image,null);
 			_imageview = (ImageView) _imageLayout.findViewById(R.id.msg_image);
@@ -217,6 +224,12 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 		//_imageLayout.setOnTouchListener(this);
 		//_imageview.setOnClickListener(this);
 		//_spinner.setOnClickListener(this);
+		if(_alarmPlay != null)
+			_alarmPlay.setOnClickListener(this);
+		if(_alarmDown != null)
+			_alarmDown.setOnClickListener(this);
+		if(_alarmShare != null)
+			_alarmShare.setOnClickListener(this);
 	}
 	
 	
@@ -336,8 +349,68 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 		case R.layout.item_pager_image:
 			show(header);
 			show(footer);
+		case R.id.alarm_play://播放
+//			System.out.println(_curIndex);
+//			System.out.println(_msgs.get(_curIndex).devicename+"--"+_msgs.get(_curIndex).logtime);
+//			System.out.println(_msgs.get(_curIndex).evt_video);
+			JSONObject json = null;
+			String params = "?ossUrl="+_msgs.get(_curIndex).evt_video+"&timeMillis=0";
+			try {
+				Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl+"/android/getUrl"+params);
+				if (Integer.parseInt(map.get("code").toString()) == 200) {
+					json = new JSONObject(map.get("data").toString());
+					String str = json.getString("url");
+					if(str.equals("NoSuchKey")){//地址错误
+						APP.ShowToast(SDK.GetErrorStr(-1));
+					}else{
+						//播放
+						Intent intent = new Intent(this, Fun_RecordPlay.class);
+						intent.putExtra("evt_vsize", _msgs.get(_curIndex).evt_vsize);
+						intent.putExtra("evt_video", str);
+						intent.putExtra("deviceName", _msgs.get(_curIndex).devicename);
+						startActivity(intent);
+					}
+				}
+			} catch (Exception e) {
+			}
+			break;
+		case R.id.alarm_down:
+			imgDown();
+			break;
+		case R.id.alarm_share:
+			imgShare();
+			break;
 		}
 	}
+	//保存本地
+	private void imgDown(){
+		try {
+			String filePath = FileUtil.getFileName(_strDevName);
+			Bitmap bitmap = ImageLoader.getInstance().loadImageSync(_url);
+			BitmapUtils.saveBitmap(bitmap, filePath);
+			File file = new File(filePath);
+			if(file.isFile() && file.exists()){
+				Toast.makeText(this, getText(R.string.SUCCESS_SAVE).toString(), Toast.LENGTH_SHORT).show();
+			}
+		} catch (Exception e) {
+		}
+	}
+	//分享
+	private void imgShare(){
+		try {
+			String strAlarmInfo = "";
+			strAlarmInfo += _devName.getText()+" ";			
+			strAlarmInfo += _title.getText()+" ";
+			strAlarmInfo += _time.getText();	
+			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
+					"",
+					strAlarmInfo,
+					_url
+					,false,null);
+		} catch (Exception e) {
+		}
+	}
+	
 	 /**创建PopupWindow对话框*/
 	private void showPopwindow() {
 		 LayoutInflater inflater = (LayoutInflater) getSystemService(NewMsgDetail.LAYOUT_INFLATER_SERVICE);       
@@ -544,6 +617,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			
 			//getCurrentMsg(position);
 			loadMessage(position);
+			_curIndex = position;
 			//displayMessage(position);
 		}
 	}

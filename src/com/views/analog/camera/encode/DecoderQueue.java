@@ -34,12 +34,12 @@ public class DecoderQueue implements Runnable{
 	private int b_flag = 0;//录像也要从I帧开始
 	
     String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
-//    private BufferedOutputStream outputStream;
+//    public static BufferedOutputStream outputStream;
+//    static File f = new File(Environment.getExternalStorageDirectory(), "/IPC_test2.rgb");
 	private long time;
 	public DecoderQueue(){
 		runFlag = true;
 		
-//		File f = new File(Environment.getExternalStorageDirectory(), "/IPC_test2.h264");
 //	    touch (f);
 //	    try {
 //	        outputStream = new BufferedOutputStream(new FileOutputStream(f));
@@ -51,6 +51,17 @@ public class DecoderQueue implements Runnable{
 //		try {
 //			if (!f.exists())
 //				f.createNewFile();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
+//	public static void writeFile(byte[] buffer){
+//		try {
+//			if(outputStream == null){
+//				outputStream = new BufferedOutputStream(new FileOutputStream(f));
+//			}
+//			outputStream.write(buffer);
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
@@ -109,6 +120,10 @@ public class DecoderQueue implements Runnable{
 				_thread = null;
 				i_flag = 0;
 				clearQueue();
+//				if(outputStream != null){
+//					outputStream.close();
+//					outputStream = null;
+//				}
 				//long t2= System.currentTimeMillis();
 				//LogUtil.d("DecoderQueue", "..数据队列..DecoderQueue.stop()....time = "+(t2-t1));
 			}
@@ -171,6 +186,7 @@ public class DecoderQueue implements Runnable{
 			}
 			b_flag = 0;
 		} catch (Exception e) {
+			LogUtil.e("DecoderQueue", ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 	
@@ -190,16 +206,7 @@ public class DecoderQueue implements Runnable{
 							if(i_flag == 0 && bean.getIsIFrame() == 1){
 								i_flag = 1;
 							}
-//							outputStream.write(bean.getData());	
 							if(i_flag == 1){
-								/*if(_isRecording){//录像
-									if(NewMain.devType == 4){
-										raf.write(bean.getData());
-									}else{
-										Mp4Enc.InsertVideoBuffer(Mp4Enc.handle, bean.getData(), bean.getLength());
-									}
-								}*/
-								
 								if(_startSnap && bean.getIsIFrame() == 1){//截图要保留头
 									NewSurfaceTest.instance.h264DecoderSnapImg(bean.getData(), bean.getLength());
 								}
@@ -213,38 +220,28 @@ public class DecoderQueue implements Runnable{
 										byte[] newbuf = new byte[realLen];
 										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
 										NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen);
-										if(_isRecording){//录像
+										/*if(_isRecording){//录像
 											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
 											if(b_flag == 1){
 												raf.write(newbuf);
 											}
-										}
+										}*/
 									}else{ //模拟不用去头
 										byte[] newbuf = new byte[bean.getLength()-32];
 										System.arraycopy(bean.getData(), 24, newbuf, 0, bean.getLength()-32);
-										if(_isRecording){//录像
+										/*if(_isRecording){//录像
 											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
 											if(b_flag == 1){
 												raf.write(newbuf);
 											}
-										}
+										}*/
 										if(NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, newbuf.length) == -1) i_flag = 0;
 									}
 									
 								}else{
 									//软解码 直接送数据
 									NewSurfaceTest.instance.h264Decoder2(bean.getData(), bean.getLength());
-									if(_isRecording){//录像
-										if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
-										if(b_flag == 1){
-											int exHead = (int)bean.getData()[22];
-											int realHead = 24 + exHead;
-											int realLen = bean.getLength() - realHead - 8;
-											byte[] newbuf = new byte[realLen];
-											System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
-											raf.write(newbuf);
-										}
-									}
+									//outputStream.write(bean.getData());	
 									//异步
 									//NewSurfaceTest.instance.setData(bean.getData(), bean.getLength());
 									//解码队列

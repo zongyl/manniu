@@ -3,6 +3,7 @@ package com.views.analog.camera.audio;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
+import com.utils.MD5Util;
 import com.views.analog.camera.encode.EncoderDebugger;
 
 import P2P.SDK;
@@ -69,9 +70,9 @@ public class AudioRecorder implements Runnable {
 					_recorder.release();
 				}
 				if(_recoderQueue != null)_recoderQueue.Stop();
+				_recoderQueue = null;
 				_tempBuffer = null;
 				_recorder = null;
-				_recoderQueue = null;
 			} catch (Exception e) {
 				LogUtil.e("AudioRecorder",ExceptionsOperator.getExceptionInfo(e));
 			}

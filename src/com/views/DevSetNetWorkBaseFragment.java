@@ -50,7 +50,6 @@ public class DevSetNetWorkBaseFragment extends Fragment {
 				}else if(checkedId == net_type_dhcp_r.getId()){
 					net_type_dhcp_r.setChecked(true);
 				}else{
-					
 				}
 			}
 		});
@@ -64,13 +63,12 @@ public class DevSetNetWorkBaseFragment extends Fragment {
 			net_type_dhcp_r.setChecked(true);
 		}else if("2".equals(net_type)){//static
 			net_type_static_r.setChecked(true);
-			ip.setText(readInfo("wifi_ip",""));
-			subnet_mask.setText(readInfo("pass_mask",""));
-			gateway.setText(readInfo("net_gateway",""));
-			dns1.setText(readInfo("net_dns",""));
 		}else{
-			
 		}
+		ip.setText(readInfo("wifi_ip",""));
+		subnet_mask.setText(readInfo("pass_mask",""));
+		gateway.setText(readInfo("net_gateway",""));
+		dns1.setText(readInfo("net_dns",""));
 		return view;
 	}
 	

@@ -22,7 +22,7 @@ import android.os.Environment;
 public class RecoderQueue implements Runnable{
 			
 	private final static int MAX_SIZE = 500;
-	public static boolean runFlag;
+	public boolean runFlag = false;
 	
 	//AudioTrack _talkAudio; //播放声音
 	 // 设置音频采样率，44100是目前的标准，但是某些设备仍然支持22050，16000，11025  
@@ -90,16 +90,17 @@ public class RecoderQueue implements Runnable{
 		try {
 			synchronized (queue) {
 				aacEncoder.Close(longRet[0]);//关闭编码
-				runFlag = false;
-				_thread = null;
 				aacEncoder = null;
-				while (queue.size() > 0) {
+				runFlag = false;
+				_thread.interrupt();
+				_thread = null;
+				stopRecordAAC();
+				while (queue != null && queue.size() > 0) {
 					queue.poll();
 				}
-				stopRecordAAC();
 			}
 		} catch (Exception e) {
-			return;
+			LogUtil.e("RecoderQueue", ExceptionsOperator.getExceptionInfo(e));   
 		}
 	}
 	
@@ -131,27 +132,25 @@ public class RecoderQueue implements Runnable{
 	 
 	@Override
 	public void run() {	
-		while(true){
-			if(runFlag){
-				try {
-					synchronized (queue) {
-						if(queue != null && queue.size() > 0 && aacEncoder != null){
-							byte[] _data = queue.poll();
-							//开始编码
-							byte[] data = aacEncoder.Write(longRet[0],(int)longRet[1],(int)longRet[2],_data);
-							if(data != null && data.length > 0){
-								if(_isRecordingAAC) raf.write(data);
-								//发送数据
-								if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
-				            		SDK.SendData(data,data.length,1,0,1);
-								}
+		while(runFlag){
+			try {
+				synchronized (queue) {
+					if(queue != null && queue.size() > 0 && aacEncoder != null){
+						byte[] _data = queue.poll();
+						//开始编码
+						byte[] data = aacEncoder.Write(longRet[0],(int)longRet[1],(int)longRet[2],_data);
+						if(data != null && data.length > 0){
+							if(_isRecordingAAC) raf.write(data);
+							//发送数据
+							if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
+			            		SDK.SendData(data,data.length,1,0,1);
 							}
 						}
-					} 
-				}catch (Exception e) {
-					LogUtil.e("RecoderQueue",ExceptionsOperator.getExceptionInfo(e));
-				}
-			}	
+					}
+				} 
+			}catch (Exception e) {
+				LogUtil.e("RecoderQueue",ExceptionsOperator.getExceptionInfo(e));
+			}
 		}
 	}	
 	

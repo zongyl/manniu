@@ -117,7 +117,7 @@ public class DecoderDebugger {
 	
 	public synchronized void close() {
 		if(mediaCodecDecode != null){
-			//long t3= System.currentTimeMillis();
+			long t3= System.currentTimeMillis();
 			try{ 
 				mediaCodecDecode.flush();
 			}catch(IllegalStateException e){}
@@ -126,8 +126,8 @@ public class DecoderDebugger {
 		        mediaCodecDecode.release();
 		        mediaCodecDecode = null;
 		        _surface = null;
-		        //long t4= System.currentTimeMillis();
-		        //LogUtil.d(TAG, " 解码退出  mediaCodecDecode.stop() time= "+(t4-t3));
+		        long t4= System.currentTimeMillis();
+		        LogUtil.d(TAG, " 解码退出  mediaCodecDecode.stop() time= "+(t4-t3));
 		    } catch (Exception e){
 		    	LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		    }
@@ -179,6 +179,7 @@ public class DecoderDebugger {
 				flag = 1;
 				NewSurfaceTest.instance.showGpu();
 				NewSurfaceTest.instance.closeWait();
+				NewSurfaceTest.instance.talkAudio();
 			}
 			
 			//软解start......

@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="模式"
+            android:text="@string/model"
             android:textColor="@color/black" />
     
         <RadioGroup 
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:text="固定地址"
+                android:text="@string/staticc"
                 android:checked="true" />
             <RadioButton 
                 android:id="@+id/net_type_dhcp"
@@ -63,7 +63,7 @@
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="IP地址"
+            android:text="@string/ip"
             android:textColor="@color/black" />
         
         <!--  <EditText 
@@ -100,7 +100,7 @@
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="子网掩码"
+            android:text="@string/subnet_mask"
             android:textColor="@color/black" />
         
         <EditText 
@@ -124,7 +124,7 @@
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="网关"
+            android:text="@string/gateway"
             android:textColor="@color/black" />
         
         <EditText 
@@ -154,14 +154,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:text="自动获取DNS"
+                android:text="@string/get1"
                 android:checked="true" />
             <RadioButton 
                 android:id="@+id/radio2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:text="自动获取DNS" />
+                android:text="@string/get2" />
         </RadioGroup> 
         
     </LinearLayout>
@@ -181,7 +181,7 @@
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="首选DNS"
+            android:text="@string/dns1"
             android:textColor="@color/black" />
         
         <EditText 
@@ -206,7 +206,7 @@
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="备选DNS"
+            android:text="@string/dns2"
             android:textColor="@color/black" />
         
         <EditText 

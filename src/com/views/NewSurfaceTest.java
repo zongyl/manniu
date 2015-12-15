@@ -18,6 +18,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -312,19 +313,19 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 		try {
 			if(_snapImg){
 				screenCount++;
-				if(screenCount < 20){
+				if(screenCount < 10){
 					if(m_imageData == null) m_imageData = new byte[MAX_IMG_BUFFER_SIZE];
 					//m_imageBitmap = BitmapUtils.Bytes2Bimap(data);
 					m_imageBitmap = BitmapUtils.getScreenBitmap(data, m_imageData, len);
 					if(m_imageBitmap != null){
 						long fileLong = snapPic(m_imageBitmap, _fileName);
-						//if(fileLong >= 204800){
+						if(fileLong >= 102400){
 							_decoderQueue._startSnap = false;
 							_snapImg = false;
 							screenCount=0;
 							m_imageBitmap = null;
 							cut.setClickable(true);
-						//}
+						}
 					}
 				}else{
 					_decoderQueue._startSnap = false;
@@ -526,7 +527,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				//LogUtil.d(TAG, "start...stop...");
 				isStop = false;
 				long t3= System.currentTimeMillis();
-				if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
+				if (_isRecording) {//如果正在录像关闭录像  _decoderQueue != null && _decoderQueue.
 					stopRecordingVideo();
 				}
 				//_deThead.de_stop();
@@ -544,17 +545,18 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				}
 				//H264Dec.UninitDecoder(m_decoder);
 				long t4= System.currentTimeMillis();
-				LogUtil.d(TAG, " 退出app .time= "+(t4-t3));
+				LogUtil.d(TAG, " stop  app .time= "+(t4-t3));
 				SDK.isInitDecoder = false;
 				if(isPlay){
-					LogUtil.i(TAG, "start p2pclose ...isPlay = "+isPlay+"--"+SDK._sessionId);
 					long t1= System.currentTimeMillis();
 					SDK.P2PCloseChannel(SDK._sessionId, channelNo);
+					LogUtil.i(TAG, "P2PCloseChannel  sessionId:"+SDK._sessionId+"  devSid:"+devSid);
 					SDK.P2PClose(SDK._sessionId);
+					LogUtil.i(TAG, "P2PClose  sessionId:"+SDK._sessionId+" devSid:"+devSid);
 					SDK._sessionId = 0;
 					isPlay = false;
 					long t2= System.currentTimeMillis();
-					LogUtil.d(TAG, "end p2pclose 退出SDK.time "+(t2-t1));
+					LogUtil.d(TAG, "end p2pclose stop SDK.time "+(t2-t1));
 				}
 				finish();
 				System.gc();
@@ -592,7 +594,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 							_decoderQueue = new DecoderQueue();
 							_decoderQueue.Start();
 						}
-						if(NewMain.devType == 4){//模拟打开音频队列，IPC目前没有音频 
+						if(_sQueue == null){//模拟打开音频队列，IPC目前没有音频 
 							_sQueue = new AudioQueue();
 							_sQueue.Start();
 						}
@@ -641,7 +643,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			_handler.sendEmptyMessage(XMSG.PLAY_GPU);
 		}
 	}
-	
+	//开户音频
+	public void talkAudio(){
+		if(AudioQueue._talkAudio != null)
+			AudioQueue._talkAudio.play();//开始
+	}
 	
 	//网络断开打开提示框
 	public void openWait(){
@@ -716,7 +722,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public long snapPic(Bitmap bitmap,String fileName) {
 		BitmapUtils.saveBitmap(bitmap, fileName);
 		File file = new File(fileName);
-		if(file.isFile() && file.exists()){// && file.length() >= 204800 夜间抓图会小于200K 
+		if(file.isFile() && file.exists() && file.length() >= 102400){// && file.length() >= 204800 夜间抓图会小于200K 
 			if(fileName.indexOf("images") != -1){
 				_handler.sendEmptyMessage(XMSG.PLAY_SNAP);
 			}
@@ -744,6 +750,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public String _fileName = "";//截图文件名
 	public String _recordfileName = "";//录像文件名
 	public boolean _snapImg = false;//软解截图
+	private boolean _isRecording = false;//录像
 	@Override
 	public void onClick(View v) {
 		try {
@@ -763,7 +770,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				break;
 			case R.id.btn_play_video:
 				// 如果正在录像，则停止
-				if (_decoderQueue._isRecording && isPlay) {
+				if (_isRecording && isPlay) {
 					APP.ShowToast(getText(R.string.Video_record_end).toString());
 					stopRecordingVideo();
 				} else {	// 开始录像
@@ -779,6 +786,12 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 						_dlgWait.show();
 						_dlgWait.UpdateText(getText(R.string.set_pwd).toString());
 						startNotify();
+						/*if(_decoderDebugger.isCanDecode()){
+							startNotify();
+						}else{
+							SDK.SetVideoPath(_recordfileName + ".h264",_recordfileName + ".aac");
+							_decoderQueue._isRecording = true;
+						}*/
 					}else{
 						APP.ShowToast(getText(R.string.Video_Storage_space_err).toString());
 					}
@@ -819,12 +832,13 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	//停止录像
 	private void stopRecordingVideo(){
 		video.setBackgroundResource(R.drawable.control_icon_small_video_n);
-		_decoderQueue._isRecording = false;
-//		if(NewMain.devType == 1){
-//			Mp4Enc.stop(Mp4Enc.handle);
-//		}else{
+		_isRecording = false;
+		SDK.SetFinishVideo(_recordfileName + ".mp4");
+		/*if(_decoderDebugger.isCanDecode()){
 			_decoderQueue.h264ToMp4();
-//		}
+		}else{
+			SDK.SetFinishVideo(_recordfileName + ".mp4");
+		}*/
 	}
 		
 	@Override 
@@ -838,10 +852,13 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	public void stopPause(){
 		try {
 			LogUtil.d(TAG, "start...stopPause...");
-			if (_decoderQueue != null && _decoderQueue._isRecording) {//如果正在录像关闭录像
+			if (_isRecording) {//如果正在录像关闭录像 _decoderQueue != null && _decoderQueue.
 				stopRecordingVideo();
 			}
-			if(_sQueue != null) _sQueue.Stop();
+			if(_sQueue != null){
+				_sQueue.Stop();
+				_sQueue = null;
+			} 
 			if(_decoderQueue != null){
 				_decoderQueue.Stop();
 				_decoderQueue = null;
@@ -911,6 +928,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
     protected void onDestroy(){
 		super.onDestroy();
 		try {
+			devSid = "";
 			instance = null;
 			m_imageData = null;
 			if (m_imageBitmap != null && !m_imageBitmap.isRecycled()) {  
@@ -919,6 +937,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			m_imageBitmap = null;
 			m_prevewview = null;
 			m_surfaceHolder = null;
+			videoCanvas = null;
 			_decoderDebugger = null;
 			_handler = null;
 			LogUtil.i(TAG, "onDestroy.....end..");
@@ -994,8 +1013,11 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 						_runFlag = true;
 					}
 					break;
+				case 0://设备忙
+					APP.ShowToast(getText(R.string.Video_Dviece_BUSY).toString());
+					stop();
+					break;
 				case 1://设备忙
-					//isCloseChannel = false;
 					APP.ShowToast(getText(R.string.Video_Dviece_BUSY).toString());
 					stop();
 					break;
@@ -1010,8 +1032,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					APP.ShowToast(getText(R.string.Video_snap_success).toString());
 					break;
 				case 100:
-					APP.ShowToast("截图失败!");
-					//btnPhotoFileClick();
+					APP.ShowToast(getText(R.string.Video_snap_error).toString());//截图失败
+					File temFile = new File(_fileName);
+					if(temFile.exists()) temFile.delete();
 					break;
 				case XMSG.PLAY_GPU:
 					isGpu = false;
@@ -1027,16 +1050,15 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					recordCount ++;
 					File efile = new File(_recordfileName + ".bmp");
 					if(recordCount < 10){
-						if(efile.exists()){
-//							long handle = Mp4Enc.handle;
-//							Mp4Enc.startwrite(handle,_recordfileName + ".mp4");
-							_decoderQueue.recordFile(_recordfileName);
+						if(efile.exists() && efile.length() >= 102400){
+							//_decoderQueue.recordFile(_recordfileName);
+							SDK.SetVideoPath(_recordfileName + ".h264",_recordfileName + ".aac");
+							_isRecording = true;
 							stopNotify();
 							closeWait();
 							recordCount = 0;
 						}
 					}else{
-						LogUtil.i(TAG, "录像次数。。。"+recordCount);
 						recordCount = 0;
 						video.setBackgroundResource(R.drawable.control_icon_small_video_n);
 						_decoderQueue._isRecording = false;

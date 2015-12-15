@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:text="网络设置"
+        android:text="@string/network_setting"
         android:textSize="18dp"
         android:textColor="@color/black"
         android:textStyle="bold" 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:gravity="center"
             android:layout_marginLeft="10dp"
-            android:text="有线"
+            android:text="@string/wired_networks"
             android:textColor="@color/blue_menu" />
         <TextView 
             android:id="@+id/dev_set_net_wifi"
@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:gravity="center"
             android:layout_marginLeft="180dp"
-            android:text="无线(wifi)"
+            android:text="@string/wireless_networks"
             android:textColor="@color/black" />
     </RelativeLayout>
    
