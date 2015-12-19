@@ -5,6 +5,8 @@ package com.views.bovine;
  * Description：本地视频
  */
 
+import java.io.File;
+
 import com.basic.APP;
 import com.localmedia.Fun_RecordplayActivity_MediaPlayer;
 import com.localmedia.XListViewRewrite;
@@ -117,6 +119,14 @@ public class Fra_VideoActivity extends Fragment implements TextWatcher,DelButton
 	public void playHappend(int position, Object obj) {
 		try {
 			final String path = (String) obj;
+			File file = new File(path);
+			if(file.exists()){
+				long fsize = file.length();
+				if(fsize < 102400){
+					APP.ShowToast(getString(R.string.smalfile_tip));
+					return;
+				}
+			}
 			Intent intent = new Intent(this.getActivity(), Fun_RecordplayActivity_MediaPlayer.class);
 			intent.putExtra("fileName", path);
 			this.getActivity().startActivity(intent);

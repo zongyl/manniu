@@ -21,7 +21,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
-import com.utils.ShareContentCustomize;
 import com.views.RecommendSheet.OnRecmSheetSelected;
 
 public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSheetSelected,OnCancelListener{

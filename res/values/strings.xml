@@ -68,7 +68,7 @@
     <string name="GW_ERRCODE_P2P_UNSUPPORT_TYPE">设备类型不支持P2P打洞</string>
     <string name="GW_ERRCODE_P2P_INIT_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_DISCONNECT">设备掉线</string>
-    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">设备不在线</string>
+    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">设备不在线!</string>
     <string name="GW_ERRCODE_P2P_LINK_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_TIMEOUT">网络超时</string>
     
@@ -266,6 +266,7 @@
  	
  	<string name="dev_add_maximum">该设备已超最大绑定数!</string>
  	<string name="dev_addok">添加成功!</string>
+ 	<string name="dev_addrepeat">该设备已经添加!</string>
  	<string name="dev_addFail">添加失败!</string>
  	<string name="dev_noserial">序列号不存在!</string>
  	<string name="dev_binded">该设备已绑定用户!</string>
@@ -608,6 +609,7 @@
 	<string name="Err_NO_USER_ID">"用户不存在"</string>
 	<string name="Err_USER_NULL">"用户名或密码不能为空"</string>
 	<string name="Err_USER_ERROR">"用户名或密码不正确!"</string>
+	<string name="Err_USERINFO_ERROR">"用户信息不正确!"</string>
 	<string name="Err_USER_DISABLE">"该用户已禁用!"</string>
 	<string name="Err_NO_DATA_RECORD">"用户不存在"</string>
 	<string name="Err_NO_USER_NAME_TO_ID">"用户未注册"</string>
@@ -946,7 +948,7 @@
  	<string name="allbeautifulview_oftheworld_inmyhand">走遍天下路，风景只在手中。</string>
  	<string name="APP_download_title">蛮牛云视APP下载</string>
  	<string name="Click_download">点击下载</string>
- 	<string name="app_share_video">蛮牛云视分享视频</string>
+ 	<string name="app_share_video">蛮牛云视频分享</string>
  	<string name="Click_toplay">点击播放</string>
  	<string name="cancelcollect">取消收藏</string>
  	<string name="prompt_title">提示</string>
@@ -1009,6 +1011,7 @@
  	<string name="staticc">固定地址</string>
  	
  	<string name="priview">正在预览...</string>
+ 	<string name="set_success">设置成功!</string>
  	
  	<!-- 牛眼 -->
 	<string name="analog_video_update">修改</string>

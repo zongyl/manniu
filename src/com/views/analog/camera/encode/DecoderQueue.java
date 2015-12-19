@@ -113,7 +113,7 @@ public class DecoderQueue implements Runnable{
 	
 	public void Stop() {
 		try {
-			//long t1= System.currentTimeMillis();
+//			long t1= System.currentTimeMillis();
 			synchronized (queue) {
 				runFlag = false;
 				_thread.interrupt(); //外围调用关闭
@@ -124,8 +124,8 @@ public class DecoderQueue implements Runnable{
 //					outputStream.close();
 //					outputStream = null;
 //				}
-				//long t2= System.currentTimeMillis();
-				//LogUtil.d("DecoderQueue", "..数据队列..DecoderQueue.stop()....time = "+(t2-t1));
+//				long t2= System.currentTimeMillis();
+//				LogUtil.d("DecoderQueue", "..数据队列..DecoderQueue.stop()....time = "+(t2-t1));
 			}
 		} catch (Exception e) {
 			return;

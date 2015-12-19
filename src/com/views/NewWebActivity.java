@@ -1330,18 +1330,18 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		RequestParams params = new RequestParams();
 		params.put("url", liveUrl);
 		
-		HttpUtil.post("http://dwz.cn/create.php", params, new JsonHttpResponseHandler(){
+		/*HttpUtil.post("http://dwz.cn/create.php", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(int statusCode, Header[] headers,
-					JSONObject response) {
-				Log.d(TAG, "dwz:" + response.toString());
-				String short_url = "";
-				if(response.has("tinyurl")){
-					try {
+					JSONObject response) {*/
+				//Log.d(TAG, "dwz:" + response.toString());
+				//String short_url = "";
+				//if(response.has("tinyurl")){
+					/*try {
 						short_url = response.getString("tinyurl");
 					} catch (JSONException e) {
 						e.printStackTrace();
-					}
+					}*/
 
 					String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";
 					if(liveImg != null && liveImg.isEmpty()==false && liveImg.length()>0)
@@ -1351,23 +1351,24 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 					//String imgPath = "http://www.9wingo.com/images/WechatMomentsqrcode.png";
 					Log.d(TAG, "image path:" + imgPath);
 					//String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n<a href ='"+liveUrl+"'>"+getString(R.string.Click_toplay)+":"+_title.getText()+"</a>";
-					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;
-					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
-					
+//					String strText= "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+getString(R.string.please_clicklink)+":"+short_url;
+//					String strPYQText=  "\t\t"+getString(R.string.famliy_around_withme)+"\r\n["+getString(R.string.app_share_video)+"]\r\n"+_title.getText()+"\r\n"+short_url;					
+					String strText= /*getString(R.string.famliy_around_withme)+*/getString(R.string.app_share_video)+":"+_title.getText()+getString(R.string.please_clicklink)+":"+liveUrl+"&lc.type=2";
+					String strPYQText=  /*getString(R.string.famliy_around_withme)+*/getString(R.string.app_share_video)+":"+_title.getText()+liveUrl+"&lc.type=2";					
 					ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context1,getString(R.string.famliy_around_withme),
 							strText,
 							strPYQText,
 							imgPath
 							,false,null);
-				}
+				//}
 
-			}
+			/*}
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					String responseString, Throwable throwable) {
-				super.onFailure(statusCode, headers, responseString, throwable);
+				APP.ShowToast("FAILURE!");
 			}
-		});
+		});*/
 	}
 
 	private void getSurrroundDeviceLatLng(){

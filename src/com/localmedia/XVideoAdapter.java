@@ -256,7 +256,7 @@ public class XVideoAdapter extends BaseAdapter {
 					if(file.exists()){
 						long fsize = file.length();
 						if(fsize < 102400){
-							APP.ShowToast(activity.getString(R.string.smalfile_tip));
+							APP.ShowToast(activity.getString(R.string.share_error));
 							return;
 						}
 					}	

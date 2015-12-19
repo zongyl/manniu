@@ -23,7 +23,6 @@ import com.views.Fun_RecordPlay;
 import com.views.Main;
 import com.views.NewSurfaceTest;
 import com.views.analog.camera.audio.AudioQueue;
-import com.views.analog.camera.encode.DecoderQueue;
 
 public class SDK {
 

@@ -71,7 +71,7 @@ public class AudioQueue implements Runnable{
 		//_talkAudio.play();//开始
 	}
 	
-	public static Queue<QueuePcmBean> queue = new LinkedList<QueuePcmBean>();
+	public static Queue<QueuePcmBean> _queue = new LinkedList<QueuePcmBean>();
 	public static int _flag = 0;
 	public static void addSound(byte[] data,int pcmType){
 		if(_flag == 0){
@@ -79,10 +79,10 @@ public class AudioQueue implements Runnable{
 			init(pcmType);
 		}
 		try {
-			synchronized (queue) {
-				if(queue != null){
-					if(queue.size() < MAX_SIZE){
-						queue.offer(new QueuePcmBean(data,pcmType));			
+			synchronized (_queue) {
+				if(_queue != null){
+					if(_queue.size() < MAX_SIZE){
+						_queue.offer(new QueuePcmBean(data,pcmType));			
 					}
 				}
 			}	
@@ -93,7 +93,7 @@ public class AudioQueue implements Runnable{
 	Thread _thread = null;
 	public void Start() {
 		try {
-			synchronized (queue) {
+			synchronized (_queue) {
 				aacdncoder = new AacDecoder();
 				//_talkAudio.play();//开始
 				if(_thread == null){
@@ -109,26 +109,28 @@ public class AudioQueue implements Runnable{
 	
 	public void Stop() {
 		try {
-			long t1= System.currentTimeMillis();
-			synchronized (queue) {
+//			long t1= System.currentTimeMillis();
+			synchronized (_queue) {
 				runFlag = false;
 				_thread = null;
-				_talkAudio.flush();
-				_talkAudio.stop();
-				_talkAudio = null;
+				if(_talkAudio != null){
+					_talkAudio.flush();
+					_talkAudio.stop();
+					_talkAudio = null;
+				}
 				isDecorderOpen = false;
 				if(aacdncoder != null && long_decoderRet != null)					
 					aacdncoder.Close(long_decoderRet[0],long_decoderRet[1],long_decoderRet[2]); //关闭解码
 				aacdncoder = null;
 				_flag = 0;
-				while (queue.size() > 0) {
-					queue.poll();
+				while (_queue.size() > 0) {
+					_queue.poll();
 				}
 			}
-			long t2= System.currentTimeMillis();
-			LogUtil.d("AudioQueue", "..音频退出..AudioQueue.stop()....time = "+(t2-t1));
+//			long t2= System.currentTimeMillis();
+//			LogUtil.d("AudioQueue", "..音频退出..AudioQueue.stop()....time = "+(t2-t1));
 		} catch (Exception e) {
-			return;
+			LogUtil.d("AudioQueue",ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
 
@@ -137,10 +139,12 @@ public class AudioQueue implements Runnable{
 	public void run() {	
 			while(runFlag){
 				try {
-					synchronized (queue) {
-						if(queue != null && queue.size() > 0 && aacdncoder != null){
-							//byte[] _data = queue.poll();
-							QueuePcmBean bean = queue.poll();
+//					synchronized (_queue) {
+						if(_queue != null && _queue.size() > 0 && aacdncoder != null){
+							QueuePcmBean bean = null;
+							synchronized (_queue) {
+								bean = _queue.poll();
+							}
 							if(null != bean.getData() && bean.getData().length > 0){
 								if(bean.getPcmType() == 1){//IPC过来数据是PCM 直接去播放
 									_talkAudio.write(bean.getData(), 0, bean.getData().length);//播放
@@ -165,10 +169,8 @@ public class AudioQueue implements Runnable{
 								}
 							}
 			        		
-						}/*else{
-							setTime(10);
-						}*/
-					}
+						}
+//					}
 				} catch (Exception e) {
 					LogUtil.e("AudioQueue",ExceptionsOperator.getExceptionInfo(e));
 				}

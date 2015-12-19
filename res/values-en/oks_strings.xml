@@ -12,6 +12,7 @@
 	<string name="select_one_plat_at_least">Please select a target platform</string>
 	<string name="list_friends">Friends on %s</string>
 	<string name="share_failed">Operation failed</string>
+	<string name="share_error">Files smaller than 100KB, do not support share</string>
 	<string name="pull_to_refresh">Pull down to refresh</string>
 	<string name="release_to_refresh">Release to refresh</string>
 	<string name="refreshing">Refreshing…</string>

@@ -172,25 +172,35 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
 		TextView tv = (TextView) ((LinearLayout) view).findViewById(R.id.menu_txt);
-		if (tv.getText().equals(ACT.getString(R.string.base_set))) {//set
+		
+		String text = tv.getText().toString();
+
+		String base_set = ACT.getString(R.string.base_set);
+		String feedback = ACT.getString(R.string.suggest);
+		String about = ACT.getString(R.string.about);
+		String version = ACT.getString(R.string.ver_check);
+		String log_out = ACT.getString(R.string.logout);
+		String exit = ACT.getString(R.string.exitApp);
+		
+		if (text.equals(base_set)) {//set
 			forwardTo(PER_DETAIL_SET);//跳转到基本配置页面
 		}
-		if (tv.getText().equals(ACT.getString(R.string.suggest))) {//feedback
+		if (text.equals(feedback)) {//feedback
 			forwardTo(PER_DETAIL_HELP);//跳转到意见反馈页面
 		}
-		if (tv.getText().equals(ACT.getString(R.string.about))) {//about
+		if (text.equals(about)) {//about
 			forwardTo(PER_DETAIL_ABOUT);//跳转到关于页面
 		}
-		if(tv.getText().equals(ACT.getString(R.string.ver_check))){//version check
+		if(text.equals(version)){//version check
 			String timeNow = DateUtil.getCurrentStringDate("yyyyMMdd");
 			SetSharePrefer.write("Info_Login", "check_time", timeNow);
 			UpdateManager.getUpdateManger().checkAppUpdate(ACT, true,false);
 		}
-		if (tv.getText().equals(ACT.getString(R.string.logout))) {//logout
+		if (text.equals(log_out)) {//logout
 			logout =true;
 			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
 		}
-		if(tv.getText().equals(ACT.getString(R.string.exitApp))){//close app
+		if(text.equals(exit)){//close app
 			exitApp = true;
 			_mydilog = new LogoutDilog(ACT,R.style.ActionSheet);
 		}

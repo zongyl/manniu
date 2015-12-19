@@ -39,13 +39,16 @@ public class XMSG {
 	public final static int PLAY_GPU = 107;//软硬切换
 	
 	public final static int LOCATION = 108;//定位
+	public final static int PLAY_AUDIO = 109;//实时视频音频
+	
 	//模拟
 	public final static int ANALOG_IS_LOGIN = 200;//判断IDM有没有登录成功
 	public final static int PLAY_GPU_OK = 201;//硬解-GPU
 	//云端
-	public final static int DEVICE_LIST_LOAD = 300;
+	public final static int DEVICE_LIST_LOAD = 300;//设备列表
 	public final static int PLAY_CLOSE_WAIT = 301;
 	public final static int DEVICE_LIST_ISREFRESH = 302;
+	public final static int MSG_LIST_LOAD = 303;//消息列表
 	
 	//回放
 	//public final static int RECORD_UPDATE_SEEKBAR = 400;
@@ -53,6 +56,7 @@ public class XMSG {
 	public final static int LOGIN_USER_ERROR = -1;
 	public final static int LOGIN_USER_DISABLE = -2;
 	public final static int LOGIN_NETWORK_ERROR = -3;
+	public final static int LOGIN_USERINFO_ERROR = -4;
 	
 	
 }

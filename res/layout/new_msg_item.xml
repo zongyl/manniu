@@ -25,6 +25,7 @@
         android:background="@drawable/check_state"
         android:layout_gravity="center_vertical"
         android:button="@null"
+        android:visibility="gone"
         style="@style/msg_checkbox"/>
     
     <FrameLayout 

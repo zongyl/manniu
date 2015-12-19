@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import com.views.bovine.Fun_AnalogVideo;
+import java.util.List;
 
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.util.Log;
+
+import com.views.bovine.Fun_AnalogVideo;
 
 public class FileUtil {
 
@@ -48,6 +49,38 @@ public class FileUtil {
 			LogUtil.e(TAG, "getBytes exception!");
 		}
 		return buffer;
+	}
+	
+	public static void merge(String toFile, List<File> fromFiles){
+		Log.d(TAG, "File.getFile fileName:" + toFile);
+		try {
+			FILE = new File(toFile);
+			if(!FILE.getParentFile().exists()){
+				FILE.getParentFile().mkdirs();
+			}
+			FOS = new FileOutputStream(FILE);
+			BOS = new BufferedOutputStream(FOS);
+			for(File file : fromFiles){
+				BOS.write(getBytes(file.getAbsolutePath()));
+			}
+		} catch (Exception e) {
+			LogUtil.e(TAG, "exception:" +e.getMessage());
+		} finally {
+			if(BOS != null){
+				try {
+					BOS.close();
+				} catch (IOException e) {
+					LogUtil.e(TAG, "getFile bos.close exception!" + e.getMessage());
+				}
+			}
+			if(FOS != null){
+				try {
+					FOS.close();
+				} catch (IOException e) {
+					LogUtil.e(TAG, "getFile fos.close exception!" + e.getMessage());
+				}
+			}
+		}
 	}
 	
 	//文件上传至广场

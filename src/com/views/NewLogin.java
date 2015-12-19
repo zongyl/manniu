@@ -247,19 +247,15 @@ public class NewLogin extends Activity implements OnClickListener{
 							Log.d(TAG, "time_token is null!");
 						}
 						Constants.session_Id = json.getString("session_id");
-//						if(JSON.parseObject(data).getInteger("state") == 0){
-//							Message message = new Message();
-//							message.what = XMSG.LOGIN_USER_DISABLE;
-//							_handler.sendMessage(message);
-//						}else{
-//						}
+						if(JSON.parseObject(data).getString("sid").equals("")){
+							_handler.sendEmptyMessage(XMSG.LOGIN_USERINFO_ERROR);
+							return;
+						}
 						SaveUserInfo(data, time_token);
 						load();
 						LogUtil.d(TAG, "login success....");
 					}else{
-						Message message = new Message();
-						message.what = XMSG.LOGIN_USER_ERROR;
-						_handler.sendMessage(message);
+						_handler.sendEmptyMessage(XMSG.LOGIN_USER_ERROR);
 					}
 				} catch (JSONException e) {
 					LogUtil.e("NewLogin", e);
@@ -513,6 +509,9 @@ public class NewLogin extends Activity implements OnClickListener{
 				break;
 			case XMSG.LOGIN_NETWORK_ERROR:
 				showToast(getText(R.string.Err_CONNET).toString());
+				break;
+			case XMSG.LOGIN_USERINFO_ERROR:
+				showToast(getText(R.string.Err_USERINFO_ERROR).toString());
 				break;
 			case XMSG.Alias:
 				

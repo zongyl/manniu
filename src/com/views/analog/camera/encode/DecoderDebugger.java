@@ -177,9 +177,9 @@ public class DecoderDebugger {
 			if(mediaCodecDecode == null) return 0;
 			if(flag == 0){
 				flag = 1;
+				NewSurfaceTest.instance.talkAudio();
 				NewSurfaceTest.instance.showGpu();
 				NewSurfaceTest.instance.closeWait();
-				NewSurfaceTest.instance.talkAudio();
 			}
 			
 			//软解start......

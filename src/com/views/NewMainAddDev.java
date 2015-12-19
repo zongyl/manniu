@@ -180,7 +180,7 @@ public class NewMainAddDev extends Activity {
 						APP.ShowToast(getString(R.string.dev_addok));
 						finish();
 					}else if("repeat".equals(msg)){
-						APP.ShowToast("repeat-repeat-repeat");
+						APP.ShowToast(getString(R.string.dev_addrepeat));
 						finish();
 					}else if("existOtherUser".equals(msg)){
 						if(response.has("usmsg")){

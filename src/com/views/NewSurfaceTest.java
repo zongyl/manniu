@@ -645,8 +645,8 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	}
 	//开户音频
 	public void talkAudio(){
-		if(AudioQueue._talkAudio != null)
-			AudioQueue._talkAudio.play();//开始
+		//_handler.sendEmptyMessageAtTime(XMSG.PLAY_AUDIO, 500);
+		startNotify(XMSG.PLAY_AUDIO);
 	}
 	
 	//网络断开打开提示框
@@ -785,7 +785,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 						_snapImg = true;
 						_dlgWait.show();
 						_dlgWait.UpdateText(getText(R.string.set_pwd).toString());
-						startNotify();
+						startNotify(XMSG.GetNotify);
 						/*if(_decoderDebugger.isCanDecode()){
 							startNotify();
 						}else{
@@ -1021,15 +1021,15 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					APP.ShowToast(getText(R.string.Video_Dviece_BUSY).toString());
 					stop();
 					break;
+				case XMSG.PLAY_SNAP:
+					APP.ShowToast(getText(R.string.Video_snap_success).toString());
+					break;
 				case XMSG.ON_PLAY:
 					if(!SDK.isInitDecoder && _playId > 0 && isPlay){
 						APP.ShowToast(getText(R.string.video_failopen).toString());
 						LogUtil.d(TAG, "12秒未收到数据调 stop()....");
 						stop();
 					}
-					break;
-				case XMSG.PLAY_SNAP:
-					APP.ShowToast(getText(R.string.Video_snap_success).toString());
 					break;
 				case 100:
 					APP.ShowToast(getText(R.string.Video_snap_error).toString());//截图失败
@@ -1073,6 +1073,21 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 						_handler.sendEmptyMessageDelayed(XMSG.GetNotify, 500); //延迟发送
 					}
 					break;
+				case XMSG.PLAY_AUDIO:
+					recordCount ++;
+					if(recordCount < 3){
+						if(AudioQueue._talkAudio != null){
+							stopNotify();
+							AudioQueue._talkAudio.play();//音频开始
+						}
+					}else{
+						recordCount = 0;
+						stopNotify();
+					}
+					if (_bNotify) {
+						_handler.sendEmptyMessageDelayed(XMSG.PLAY_AUDIO, 400); //延迟发送
+					}
+					break;
 				}
 			} catch (Exception e) {
 			}
@@ -1080,9 +1095,10 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	}
 	
 	boolean _bNotify = false;
-	private void startNotify() {
+	private void startNotify(int type) {
 		if (!_bNotify) {
-			_handler.sendEmptyMessage(XMSG.GetNotify);
+			//_handler.sendEmptyMessage(XMSG.GetNotify);
+			_handler.sendEmptyMessage(type);
 			_bNotify = true;
 		}
 	}

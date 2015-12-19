@@ -1,23 +1,11 @@
 package com.views;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TimerTask;
-
-import com.adapter.HttpUtil;
-import com.basic.G;
-import com.basic.XMSG;
-import com.ctrl.XImageBtn;
-import com.manniu.manniu.R;
-import com.utils.ExceptionsOperator;
-import com.utils.LogUtil;
-import com.views.analog.camera.encode.DecoderDebugger;
 
 import P2P.SDK;
 import android.annotation.SuppressLint;
@@ -32,19 +20,28 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.SurfaceHolder.Callback;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
+import com.adapter.HttpUtil;
+import com.basic.G;
+import com.basic.XMSG;
+import com.ctrl.XImageBtn;
+import com.manniu.manniu.R;
+import com.utils.ExceptionsOperator;
+import com.utils.LogUtil;
+import com.views.analog.camera.encode.DecoderDebugger;
 
 /**
  * @author: li_jianhua Date: 2015-11-27 下午5:05:41
@@ -390,7 +387,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 		        			if(ret > 0){
 		        				_deThead.addData(bmpBuff);
 		        			}
-		        			if((t2-t1) < 100 && freamerate < 15){
+		        			if((t2-t1) < 100){
 								Thread.sleep(100-(t2-t1));
 							}
 		        			//h264Decoder(bmpBuff);

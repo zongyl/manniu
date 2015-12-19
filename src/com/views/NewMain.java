@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.afinal.simplecache.ACache;
-import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,17 +26,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.adapter.DevAdapter;
-import com.adapter.HttpUtil;
 import com.adapter.Message;
-import com.adapter.MsgAdapter;
+import com.adapter.MsgAdapter2;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.backprocess.BackLoginThread;
@@ -54,8 +48,6 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.localmedia.XListViewRewrite;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
@@ -103,8 +95,9 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	float temp = 1;
 	public static int devType = 0;
 
-	ArrayList<Message> msgList;
-	MsgAdapter adapter;
+	ArrayList<Message> msgList = null;
+//	MsgAdapter adapter;
+	MsgAdapter2 adapter;
 	public CheckBox cb;
 	HashMap<String, Object> isSelected = new HashMap<String, Object>();
 	int pageNo = 1;
@@ -136,8 +129,8 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 		LayoutInflater lf = LayoutInflater.from(context);
 		viewList.add(lf.inflate(R.layout.new_main_tab1, null));
 		//viewList.add(lf.inflate(R.layout.new_main_tab2, null));
-		viewList.add(lf.inflate(R.layout.new_main_tab3, null));
-		viewList.add(lf.inflate(R.layout.new_main_tab4, null));
+		viewList.add(lf.inflate(R.layout.new_main_tab3, null));//报警
+		viewList.add(lf.inflate(R.layout.new_main_tab4, null));//本地
 		
 		viewPager = (ViewPager) findViewById(R.id.vp_list_new_main);
 		viewPager.setAdapter(new MyPagerAdapter(viewList));
@@ -187,6 +180,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	/**
 	 * 加载消息列表 
 	 */
+	int _direction = 0;//0:PULL_FROM_START 1.PULL_FROM_END
 	public void loadMsgList(){
 		listView = (ListView)findViewById(R.id.msg_list);
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -219,27 +213,31 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				if(State.REFRESHING == state){
 					isrefresh = true;
 					if(Mode.PULL_FROM_END == direction){
-						Log.d(TAG, "——————————————————向上拉——————————————————————");
+						//Log.d(TAG, "——————————————————向上拉——————————————————————");
+						_direction = 1;
 					}else if(Mode.PULL_FROM_START == direction){
-						Log.d(TAG, "——————————————————向下拉——————————————————————");
+						//Log.d(TAG, "——————————————————向下拉——————————————————————");
+						_direction = 0;
 					}
-					loadMsgData(direction);
+//					loadMsgData(direction);
+					APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
 				}
 			}
 		});
 		
-		cb = (CheckBox)findViewById(R.id.msg_ck_all);
-		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				selectAll(isChecked);
-			}
-		});
+//		cb = (CheckBox)findViewById(R.id.msg_ck_all);
+//		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {			
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				selectAll(isChecked);
+//			}
+//		});
 		isrefresh = false;
 		pageNo = 1;
 		if(cache.getAsObject(userId + "_msgList")==null){
 			Log.d(TAG, "用户:" + userId + ", 消息列表没有缓存!");
-			loadMsgData(Mode.PULL_FROM_START);
+//			loadMsgData(Mode.PULL_FROM_START);
+			APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
 		}else{
 			Log.d(TAG, "用户:" + userId + ", 消息列表有缓存，直接加载!!!!!");
 			msgList = (ArrayList<Message>) cache.getAsObject(userId + "_msgList");
@@ -270,6 +268,10 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				if(BackLoginThread.state == 200){
 					APP.dismissProgressDialog();
 				}
+				break;
+			case XMSG.MSG_LIST_LOAD:
+				adapter = new MsgAdapter2(context, msgList);
+				listView.setAdapter(adapter);
 				break;
 			/*case 1002:
 				if(APP.IsWaitDlgShow()){
@@ -536,13 +538,13 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	 * @param sel
 	 */
 	private void selectAll(boolean sel){
-		isSelected.put("移动侦测报警", sel);
-		isSelected.put("移动侦测报警1", sel);
-		isSelected.put("移动侦测报警2", sel);
-		isSelected.put("移动侦测报警3", sel);
-		adapter.isSelected = isSelected;
-		adapter.notifyDataSetChanged();	
-		APP.GetMainActivity().setValue(adapter.sumByChecked(adapter.isSelected, true));
+//		isSelected.put("移动侦测报警", sel);
+//		isSelected.put("移动侦测报警1", sel);
+//		isSelected.put("移动侦测报警2", sel);
+//		isSelected.put("移动侦测报警3", sel);
+//		adapter.isSelected = isSelected;
+//		adapter.notifyDataSetChanged();	
+//		APP.GetMainActivity().setValue(adapter.sumByChecked(adapter.isSelected, true));
 	}
 	
 	/**
@@ -587,27 +589,68 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	/**
 	 * 加载消息
 	 */
-	private void loadMsgData(Mode dur){
+	private int loadMsgData(Mode dur){
+		int result = 0;
 		if(msgList == null){
 			Log.d(TAG, "msgList is null!");
 			msgList = new ArrayList<Message>();
 		}else{
 			Log.d(TAG, "msgList is not null!");
 		}
-		RequestParams params = new RequestParams();
-		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
-		params.put("sessionId", Constants.sessionId);
+//		RequestParams params = new RequestParams();
+//		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
+//		params.put("sessionId", Constants.sessionId);
+		String params = "?userId="+APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", "")+"&sessionId="+Constants.sessionId+"&pageSize=10";
 		if(Mode.PULL_FROM_START == dur){
 			msgList.clear();
 			Log.d(TAG, "msgList clearing!!");
 		}else if(Mode.PULL_FROM_END == dur){
 			//累加
 			pageNo += 1;
-			params.put("pageNo", pageNo);
+			//params.put("pageNo", pageNo);
+			params += "&pageNo="+pageNo;
 		}
 		
 		Log.d(TAG, "params:"+params.toString());
-		HttpUtil.get(getMsgServerPath, params, new JsonHttpResponseHandler(){
+		
+		
+		JSONObject json = null;
+		try {
+			Map<String, Object> map = HttpURLConnectionTools.get(getMsgServerPath+params);
+			if (Integer.parseInt(map.get("code").toString()) == 200) {
+				json = new JSONObject(map.get("data").toString());
+				LogUtil.d(TAG, "json:" + json.toString());
+				String str;
+				try {
+					str = json.getString("data");
+					if("nologin".equals(str)){
+						LogUtil.d(TAG, "报警信息..session超时");
+					}else{
+						JSONArray array = JSON.parseArray(json.getString("data"));
+						for(int i = 0; i < array.size(); i++){
+							String str2 = array.get(i).toString();
+							Message msg = JSON.toJavaObject((JSON)JSON.parseObject(str2), Message.class);
+							msgList.add(msg);
+						}
+						cache.put(userId + "_msgList", msgList);
+						Log.d(TAG, "用户:" + userId + ", 已缓存!");
+						msgRender(isrefresh);
+					}
+				} catch (JSONException e) {
+					result = SDK.Err_refresh;
+					LogUtil.d(TAG, "/android/getDevices...error..json:"+json.toString()+"\n"+e.getMessage());
+				}
+			}else{
+				result = SDK.Err_SER_FAIL;
+			}
+		} catch (Exception e) {
+		}
+		return result;
+		
+		
+		
+		
+		/*HttpUtil.get(getMsgServerPath, params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
 				Log.d(TAG, "onSuccess");
@@ -655,7 +698,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
                 super.onFinish();  
             }
 			
-		});
+		});*/
 	}
 	
 	/**
@@ -663,16 +706,8 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	 * @param isrefresh
 	 */
 	private void msgRender(boolean isrefresh){
-		//msgList.clear();
-			/*JSONArray array = JSON.parseArray(json);
-			for(int i = 0; i < array.size(); i++){
-				Message msg = JSON.toJavaObject((JSON)array.get(i), Message.class);
-				msgList.add(msg);
-			}*/
-			
-			Log.d(TAG, "msgList.size:"+msgList.size());
-			
-			if(adapter!=null&&adapter.show){
+		try {
+			/*if(adapter!=null&&adapter.show){
 				Log.v(TAG, "isSelected："+isSelected);
 				Log.v(TAG, "adapter.isSelected："+adapter.isSelected);
 				HashMap<String, Object> maps = new HashMap<String, Object>();
@@ -688,12 +723,16 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				adapter.isSelected = maps;
 				adapter.notifyDataSetChanged();
 			}else{
-				adapter = new MsgAdapter(context, msgList);
-				listView.setAdapter(adapter);
-			}
-			if(isrefresh){
-				scrollView.onRefreshComplete();
-			}
+//				adapter = new MsgAdapter(context, msgList);
+//				listView.setAdapter(adapter);
+				_handler.sendEmptyMessage(XMSG.MSG_LIST_LOAD);//通过消息更新数据
+			}*/
+			_handler.sendEmptyMessage(XMSG.MSG_LIST_LOAD);//通过消息更新数据
+//			if(isrefresh){
+//				scrollView.onRefreshComplete();
+//			}
+		} catch (Exception e) {
+		}
 	}
 	
 	/**
@@ -834,9 +873,19 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	@Override
 	public Object OnDoInBackground(int what, int arg1, int arg2, Object obj) {
 		try {
+			Integer ret = 0;
 			switch (what) {
 			case XMSG.DEVICE_LIST_LOAD:
-				Integer ret = loadDevData2();
+				ret = loadDevData2();
+				return ret;
+			case XMSG.MSG_LIST_LOAD:
+				Mode dur;
+				if(arg1 == 0){
+					dur = Mode.PULL_FROM_START;
+				}else{
+					dur = Mode.PULL_FROM_END;
+				}
+				ret = loadMsgData(dur);
 				return ret;
 			}
 		} catch (Exception e) {
@@ -852,12 +901,21 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 			switch (what) {
 			case XMSG.DEVICE_LIST_LOAD:
 				Integer nRet = (Integer) ret;
-				if (nRet != 0) {	// 打开列表失败
+				if (nRet != 0) {	// 打开设备列表失败
 					APP.ShowToast(SDK.GetErrorStr(nRet));
 				}
 				if(isrefresh){
 					scrollView.onRefreshComplete();//关闭下拉刷新
 				}
+			case XMSG.MSG_LIST_LOAD:
+				Integer mRet = (Integer) ret;
+				if (mRet != 0) {	// 打开消息列表失败
+					APP.ShowToast(SDK.GetErrorStr(mRet));
+				}
+				if(isrefresh){
+					scrollView.onRefreshComplete();//关闭下拉刷新
+				}
+				break;
 			}
 		} catch (Exception e) {
 			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));

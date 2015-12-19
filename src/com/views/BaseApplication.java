@@ -36,6 +36,8 @@ public class BaseApplication extends Application {
     
     private RealHandler redlandler = null;
     
+    private String SENDER_ID = "975604114042";
+    
     private static Stack<Activity> activityStack;
 	private static BaseApplication singleton;
 	//检查网络广播接收器
@@ -58,6 +60,17 @@ public class BaseApplication extends Application {
 		// 注册crashHandler
 		crashHandler.init(getApplicationContext());
 
+		/****************GCM*****************************/
+		/*GCMRegistrar.checkDevice(this);  
+		GCMRegistrar.checkManifest(this);  
+		final String regId = GCMRegistrar.getRegistrationId(this);  
+		if (regId.equals("")) {  
+		  GCMRegistrar.register(this, SENDER_ID);  
+		} else {  
+		  Log.v(TAG, "Already registered");  
+		} */ 
+		/*********************************************/
+		
 		JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
 		JPushInterface.init(this); // 初始化 JPushe
 

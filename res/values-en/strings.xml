@@ -68,7 +68,7 @@
     <string name="GW_ERRCODE_P2P_UNSUPPORT_TYPE">设备类型不支持P2P打洞</string>
     <string name="GW_ERRCODE_P2P_INIT_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_DISCONNECT">设备掉线</string>
-    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">设备不在线</string>
+    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">Device don\'t online!</string>
     <string name="GW_ERRCODE_P2P_LINK_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_TIMEOUT">网络超时</string>
     
@@ -228,6 +228,7 @@
  	
  	<string name="dev_add_maximum">The device has been over maximum binding number!</string>
  	<string name="dev_addok">Add success!</string>
+ 	<string name="dev_addrepeat">Device has been added!</string>
  	<string name="dev_addFail">Add failure!</string>
  	<string name="dev_noserial">Serial number does not exist!</string>
  	<string name="dev_binded">The device has been bound to the user!</string>
@@ -419,6 +420,7 @@
 	<string name="Err_NO_USER_ID">User does not exist</string>
 	<string name="Err_USER_NULL">username or password Can\'t be empty</string>
 	<string name="Err_USER_ERROR">username or password is incorrect</string>
+	<string name="Err_USERINFO_ERROR">User information is not correct</string>
 	<string name="Err_USER_DISABLE">"该用户已禁用!"</string>
 	<string name="Err_NO_DATA_RECORD">User does not exist</string>
 	<string name="Err_NO_USER_NAME_TO_ID">"用户未注册"</string>
@@ -742,7 +744,7 @@
  	<string name="allbeautifulview_oftheworld_inmyhand">Go all the way, the scenery is only in the hands of.</string>
  	<string name="APP_download_title">Manniu Cloud Video APP download</string>
  	<string name="Click_download">Click download</string>
- 	<string name="app_share_video">蛮牛云视分享视频</string>
+ 	<string name="app_share_video">Manniu Cloud video sharing</string>
  	<string name="Click_toplay">Click play</string>
  	<string name="cancelcollect">Cancel</string>
  	<string name="prompt_title">Tip</string>
@@ -804,6 +806,7 @@
  	<string name="staticc">Static</string>
  	
  	<string name="priview">priview</string>
+ 	<string name="set_success">Setting success!</string>
  	
  	<string name="analog_video_update">修改</string>
 	<string name="analog_video_open">开通</string>

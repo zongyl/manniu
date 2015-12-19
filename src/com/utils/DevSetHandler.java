@@ -9,6 +9,7 @@ import android.os.Message;
 
 import com.alibaba.fastjson.JSONObject;
 import com.basic.APP;
+import com.manniu.manniu.R;
 import com.views.NewDeviceSet;
 
 /**
@@ -46,11 +47,11 @@ public class DevSetHandler extends Handler{
 			APP.GetMainActivity().sendBroadcast(intent);
 			break;
 		case 2://
-			APP.ShowToast("设置成功!");
+			APP.ShowToast(APP.GetString(R.string.set_success));
 			break;
 		case 3://设备不在线
 			LogUtil.d(TAG, "设备不在线!");
-			APP.ShowToast("设备不在线!");
+			APP.ShowToast(APP.GetString(R.string.GW_ERRCODE_P2P_DEST_DISCONNECT));
 			break;
 		default:
 			break;

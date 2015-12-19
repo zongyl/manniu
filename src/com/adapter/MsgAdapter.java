@@ -36,7 +36,7 @@ import com.views.NewMsg;
 
 public class MsgAdapter extends BaseAdapter{
 	
-	private static final String TAG = "MsgAdapter";
+	private final String TAG = "MsgAdapter";
 	
 	private Context context;
 	
@@ -53,6 +53,7 @@ public class MsgAdapter extends BaseAdapter{
 	//(CheckBox)findViewById(R.id.msg_ck_all);
 	
 	CheckBox cb;
+	public MsgImageLoader _msgImageLoader;
 	
 	static class ViewHolder{
 		TextView title;
@@ -66,6 +67,7 @@ public class MsgAdapter extends BaseAdapter{
 		this.context = _context;
 		this.items = _items;
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		_msgImageLoader = new MsgImageLoader(context);
 	}
 	
 	@Override
@@ -117,8 +119,10 @@ public class MsgAdapter extends BaseAdapter{
 		//holder.time.setText(msg.logtime);
 		
 		//报警图片加载
-		Log.d(TAG, "报警图片：" + msg.evt_picture);
-		ImageLoader.getInstance().displayImage(msg.evt_picture, holder.iv);
+		//Log.d(TAG, "报警图片：" + msg.evt_picture);
+		//ImageLoader.getInstance().displayImage(msg.evt_picture, holder.iv);
+		
+		_msgImageLoader.DisplayImage(msg.evt_picture, holder.iv);
 		
 		if(show){
 			holder.ck.setVisibility(View.VISIBLE);
