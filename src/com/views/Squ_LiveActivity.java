@@ -117,7 +117,7 @@ public class Squ_LiveActivity extends Fragment{
 	private void LoadURL()
 	{
 		//String webUrl = "http://10.12.6.121:8080/NineCloud/sharesquare.jsp";
-		String webUrl = Constants.hostUrl+"/sharesquare.jsp";
+		String webUrl = Constants.hostUrl1+"/sharesquare.jsp";
 		//String webUrl = Constants.hostUrl+"/LiveAction_toPlays?lc.deviceId=Q04hAQEAbDAwMjkzZjBkAAAAAAAA";
 		webView.loadUrl(webUrl);
 	};

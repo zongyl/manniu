@@ -297,7 +297,8 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 			if(nClickedCount == 1 && _isOpen && devList.size() > 0){
 				_isOpen = false;
 				Device device = devList.get(position);
-				if(BackLoginThread.state != 200 && BackLoginThread.runFlag && device.type != 100){
+				if(BackLoginThread.state != 200 && device.type != 100){
+					Main.Instance._loginThead.start();
 					//如果IDM不在线 弹出登录框
 					Main.Instance._loginThead.waitIDMLogin();
 					_isOpen = true;
@@ -334,8 +335,6 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 					}else{
 						_isOpen = true;
 						APP.ShowToastLong(APP.GetString(R.string.Video_Dviece_login));
-						//如果IDM不在线 弹出登录框
-						//Main.Instance._loginThead.waitIDMLogin();
 					}
 					break;
 				case 100:

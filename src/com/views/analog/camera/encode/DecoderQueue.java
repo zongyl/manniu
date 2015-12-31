@@ -86,6 +86,7 @@ public class DecoderQueue implements Runnable{
 						queue.offer(new QueueBean(data,length,isIFrame));	
 						queue.offer(new QueueBean(data,length,isIFrame));	
 						queue.offer(new QueueBean(data,length,isIFrame));	
+						queue.offer(new QueueBean(data,length,isIFrame));
 						i = 1;
 					}
 					queue.offer(new QueueBean(data,length,isIFrame));					
@@ -214,12 +215,12 @@ public class DecoderQueue implements Runnable{
 								if(NewSurfaceTest.instance._decoderDebugger.isCanDecode()){//IPC 解码不动走软解    模拟不用
 									if(NewMain.devType == 1){//IPC去头
 										//int exHead =  Integer.valueOf(G.byte2hex(bean.getData(), 22, 1));
-										int exHead = (int)bean.getData()[22];
+										/*int exHead = (int)bean.getData()[22];
 										int realHead = 24 + exHead;
 										int realLen = bean.getLength() - realHead - 8;
 										byte[] newbuf = new byte[realLen];
-										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
-										NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen);
+										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);*/
+										NewSurfaceTest.instance._decoderDebugger.decoder(bean.getData(), bean.getLength());
 										/*if(_isRecording){//录像
 											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
 											if(b_flag == 1){
@@ -227,15 +228,15 @@ public class DecoderQueue implements Runnable{
 											}
 										}*/
 									}else{ //模拟不用去头
-										byte[] newbuf = new byte[bean.getLength()-32];
-										System.arraycopy(bean.getData(), 24, newbuf, 0, bean.getLength()-32);
+										/*byte[] newbuf = new byte[bean.getLength()-32];
+										System.arraycopy(bean.getData(), 24, newbuf, 0, bean.getLength()-32);*/
 										/*if(_isRecording){//录像
 											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
 											if(b_flag == 1){
 												raf.write(newbuf);
 											}
 										}*/
-										if(NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, newbuf.length) == -1) i_flag = 0;
+										if(NewSurfaceTest.instance._decoderDebugger.decoder(bean.getData(), bean.getLength()) == -1) i_flag = 0;
 									}
 									
 								}else{

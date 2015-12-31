@@ -114,6 +114,14 @@
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp">
     	</com.adapter.NoScrollListView>  
+    	
+    	<Button 
+    	    android:id="@+id/btn_test"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:textColor="@color/bk_menu"
+    	    android:text="Test by administrator"/>
+    	
    </LinearLayout>
 </LinearLayout> 
 </ScrollView>

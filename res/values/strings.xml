@@ -996,6 +996,9 @@
  	<string name="user_donot_exits">用户不存在！</string>
  	<string name="channel">通道</string>
  	
+ 	<string name="save_local">保存至本地</string>
+ 	<string name="share_image">分享图片</string>
+ 	
  	<string name="network_setting">网络设置</string>
  	<string name="wireless_networks">无线(WIFI)</string>
  	<string name="wired_networks">有线</string>
@@ -1004,8 +1007,7 @@
  	<string name="subnet_mask">子网掩码</string>
  	<string name="gateway">网关</string>
  	<string name="model">模式</string>
- 	<string name="dns1">首选DNS</string>
- 	<string name="dns2">备选DNS</string>
+ 	<string name="dns1">DNS</string>
  	<string name="get1">手动设置</string>
  	<string name="get2">自动获取</string>
  	<string name="staticc">固定地址</string>

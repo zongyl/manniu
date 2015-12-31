@@ -52,41 +52,50 @@ public class NewDetailAbout extends Activity implements OnClickListener,OnRecmSh
 		}
 	}
 	
-	private void dwz(){
-		RequestParams params = new RequestParams();
-		params.put("url", Constants.hostUrl+ "/downLoadAndroidApp.jsp");
-		HttpUtil.post("http://dwz.cn/create.php", params, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(int statusCode, Header[] headers,
-					JSONObject response) {
-				String short_url = "";
-				if(response.has("tinyurl")){
-					try {
-						short_url = response.getString("tinyurl");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					
-					//String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n<a href ='"+Constants.hostUrl+"/downLoadAndroidApp.jsp' >";
-					//strText+=getString(R.string.Click_download)+":"+getString(R.string.APP_download_title)+"</a>";
-					String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title);
-					strText+="\r\n"+getString(R.string.please_clicklink)+":"+short_url;
-				String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
+	private void dwz(){		
 
-				ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,getString(R.string.famliy_around_withme),
-						strText,
-						strPYQText,
-						Constants.hostUrl+"/images/WechatMomentsqrcode.png",false,null);
-					
-				}
-				
-			}
-			@Override
-			public void onFailure(int statusCode, Header[] headers,
-					String responseString, Throwable throwable) {
-				super.onFailure(statusCode, headers, responseString, throwable);
-			}
-		});
+	ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,"【"+getString(R.string.app_name)+"】"+getString(R.string.famliy_around_withme),
+			getString(R.string.allbeautifulview_oftheworld_inmyhand),
+			getString(R.string.allbeautifulview_oftheworld_inmyhand),
+			Constants.hostUrl+"/images/WechatMomentsqrcode.png",
+			Constants.hostUrl+ "/downLoadAndroidApp.jsp"
+			,false,null);
+//		RequestParams params = new RequestParams();
+//		params.put("url", Constants.hostUrl+ "/downLoadAndroidApp.jsp");
+//		HttpUtil.post("http://dwz.cn/create.php", params, new JsonHttpResponseHandler(){
+//			@Override
+//			public void onSuccess(int statusCode, Header[] headers,
+//					JSONObject response) {
+//				String short_url = "";
+//				if(response.has("tinyurl")){
+//					try {
+//						short_url = response.getString("tinyurl");
+//					} catch (JSONException e) {
+//						e.printStackTrace();
+//					}
+//					
+//					//String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n<a href ='"+Constants.hostUrl+"/downLoadAndroidApp.jsp' >";
+//					//strText+=getString(R.string.Click_download)+":"+getString(R.string.APP_download_title)+"</a>";
+//					String strText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title);
+//					strText+="\r\n"+getString(R.string.please_clicklink)+":"+short_url;
+//				String strPYQText = "\t\t"+getString(R.string.famliy_around_withme)+"\r\n"+getString(R.string.allbeautifulview_oftheworld_inmyhand)+"\r\n"+getString(R.string.APP_download_title)+":"+short_url;					
+//
+//				ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context,"【"+getString(R.string.app_name)+"】"+getString(R.string.famliy_around_withme),
+//						"",
+//						strPYQText,
+//						Constants.hostUrl+"/images/WechatMomentsqrcode.png",
+//						short_url
+//						,false,null);
+//					
+//				}
+//				
+//			}
+//			@Override
+//			public void onFailure(int statusCode, Header[] headers,
+//					String responseString, Throwable throwable) {
+//				super.onFailure(statusCode, headers, responseString, throwable);
+//			}
+//		});
 		
 	}
 	

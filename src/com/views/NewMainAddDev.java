@@ -4,7 +4,10 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +31,7 @@ import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.utils.LogUtil;
+import com.utils.TwilioUtils;
 
 /**
  * 
@@ -97,6 +101,25 @@ public class NewMainAddDev extends Activity {
 		registerReceiver(receiver, intentFilter);
 	}
 	
+	private NotificationManager m;
+	private Notification n;
+	@SuppressLint({ "Recycle", "NewApi" })
+	private void test(){
+		m = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+		n = new Notification.Builder(this)
+		.setTicker("new message!")
+		 .setContentTitle("New mail from ")
+         .setContentText("contentText")
+         .setSmallIcon(R.drawable.del_button_sel)
+		.build();
+		m.notify(1, n);
+	}
+	
+	//test sms
+	private void sendSms(){
+		TwilioUtils.sendSms("5104971518", "Test from hangzhou! currentTime:" + System.currentTimeMillis());
+	}
+	
 	class Click implements OnClickListener{
 		@Override
 		public void onClick(View v) {
@@ -105,8 +128,6 @@ public class NewMainAddDev extends Activity {
 				finish();
 				break;
 			case R.id.new_main_adddev_submit:
-				//addDevices(sn.getText().toString(), pn.getText().toString(), location);
-				
 				try {
 					longitude = locationJson.getDouble("longitude");// 获取经度信息
 					latitude = locationJson.getDouble("latitude");// 获取纬度信息

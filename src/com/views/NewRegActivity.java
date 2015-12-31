@@ -41,8 +41,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
+import com.utils.LanguageUtil;
 import com.utils.LogUtil;
 import com.utils.Loger;
+import com.utils.TwilioUtils;
 /**
  * 用户注册  、 找回密码
  * @author pc
@@ -51,8 +53,10 @@ import com.utils.Loger;
 public class NewRegActivity extends Activity implements OnClickListener, OnTaskListener{
 
 	private static final String TAG = "NewRegActivity";
-	
+
 	String pattern = "^1[3|4|5|7|8][0-9]\\d{8}$";
+	
+	String pattern_en = "^\\d{10}$";
 	
 	//美国/北美号码（包括手机和座机）为十位数
 	//(\d{10})|(\d{3}[-\.\s]\d{3}[-\.\s]\d{4})|(\d{3}-\d{3}-\d{4}\s(x|(ext))\d{3,5})|(\(\d{3}\)-\d{3}-\d{4})
@@ -83,6 +87,14 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 		setContentView(R.layout.new_reg_activity);
 		
 		btn_reg = (Button)findViewById(R.id.reg_btn_reg);
+		
+		if("en".equals(LanguageUtil.getLanguageEnv())){
+			pattern = pattern_en;
+		}else if("zh_CN".equals(LanguageUtil.getLanguageEnv())){
+			//
+		}else{
+			//other
+		}
 		
 		getParams();
 		
@@ -331,7 +343,14 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 			if(codeVaild()){
 				String _code = RandomUtil.generateNumString(4);
 				maps.put(mobile, Utils.MD5(_code).toUpperCase());
-				new smsTask().execute(mobile, _code);
+				LogUtil.d(TAG, "language:" + LanguageUtil.getLanguageEnv());
+				if(LanguageUtil.getLanguageEnv().contains("en")){
+					TwilioUtils.sendSms(mobile, _code);
+				}else if("zh_CN".equals(LanguageUtil.getLanguageEnv())){
+					new smsTask().execute(mobile, _code);
+				}else {
+					//
+				}
 				//codeSubmit(mobile);
 				btn_vaildCode.setEnabled(false);
 				handler.post(runnable);
@@ -357,10 +376,9 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 	private class smsTask extends AsyncTask<String, String, String>{
 		@Override
 		protected String doInBackground(String... params) {
-			//return HttpUtil.sms(params[0], params[1]);
 			String ret = "";
 			try {
-				ret = Sms.SendCode(params[0], params[1]);
+					ret = Sms.SendCode(params[0], params[1]);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

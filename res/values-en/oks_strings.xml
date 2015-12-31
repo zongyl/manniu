@@ -2,6 +2,7 @@
 <resources>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="tip_title">Tip</string>
     <string name="finish">Finish</string>
     <string name="sharing">Sharing operation is working in the background…</string>
     <string name="share_to">Share to </string>

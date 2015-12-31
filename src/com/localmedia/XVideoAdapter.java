@@ -19,11 +19,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.basic.APP;
@@ -260,32 +262,41 @@ public class XVideoAdapter extends BaseAdapter {
 							return;
 						}
 					}	
+					final EditText editText = new EditText(activity);
+					editText.setText(Constants.data.get(position).get(KEY_TITLE));
+					editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(32)});
+					editText.setFocusable(true);
 					new AlertDialog.Builder(activity).setTitle(APP.GetString(R.string.tip_title)).setMessage(APP.GetString(R.string.video_share)).setIcon(R.drawable.help)
 					.setPositiveButton(APP.GetString(R.string.confirm), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
-							APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
-							new Thread(new Runnable() {
-								@Override
-								public void run() {//上传视频
-									byte[] tem = SDK.StartupLoadLocalMedia();
-									int ret = 0;
-									String str = "";
-									if(tem != null){
-										ret = FileUtil.readFile(path);//调用上传方法
-										str  = ret+","+path.replace(".mp4", ".bmp")+","+new String(tem)+","+Constants.data.get(position).get(KEY_TITLE);
-									}else{
-										ret = -1;
-										str  = ret+","+path.replace(".mp4", ".bmp")+","+1+","+Constants.data.get(position).get(KEY_TITLE);
+							final String title = editText.getText().toString();
+							if(!title.trim().equals("")){
+								APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
+								new Thread(new Runnable() {
+									@Override
+									public void run() {//上传视频
+										byte[] tem = SDK.StartupLoadLocalMedia();
+										int ret = 0;
+										String str = "";
+										if(tem != null){
+											ret = FileUtil.readFile(path);//调用上传方法
+											str  = ret+","+path.replace(".mp4", ".bmp")+","+new String(tem)+","+title;
+										}else{
+											ret = -1;
+											str  = ret+","+path.replace(".mp4", ".bmp")+","+1+","+title;
+										}
+										Message msg = new Message();
+										msg.what = SHARE_SEND_MSG;
+										msg.obj = str;
+										_handler.sendMessage(msg);
 									}
-									Message msg = new Message();
-									msg.what = SHARE_SEND_MSG;
-									msg.obj = str;
-									_handler.sendMessage(msg);
-								}
-							}).start();
+								}).start();
+							}else{
+								APP.ShowToastLong(APP.GetString(R.string.title_tip));
+							}
 						}
-					}).setNegativeButton(APP.GetString(R.string.cancel),null).show();
+					}).setView(editText).setNegativeButton(APP.GetString(R.string.cancel),null).show();
 					
 				} catch (Exception e) {
 					return;

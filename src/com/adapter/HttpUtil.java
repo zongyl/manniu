@@ -43,6 +43,7 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.manniu.manniu.R;
 
 @SuppressLint("UseValueOf")
@@ -78,6 +79,11 @@ public class HttpUtil  {
 	}
 	
 	public static void post(String url, RequestParams params, JsonHttpResponseHandler res){
+		client.post(url, params, res);
+	}
+	
+	public static void postussms(String Authorization, String url, RequestParams params, TextHttpResponseHandler res){
+		client.addHeader("Authorization", "Basic " + Base64.encode((Authorization).getBytes()));
 		client.post(url, params, res);
 	}
 
@@ -483,7 +489,6 @@ public class HttpUtil  {
         }
         return result;
     }
-	
 	
 	public static String sms(String moblie) {
 		return sms(moblie, "");

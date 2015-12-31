@@ -23,10 +23,12 @@
     <com.handmark.pulltorefresh.library.PullToRefreshScrollView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/pull_refresh_msg"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         ptr:ptrHeaderTextColor="@color/gray"
-        ptr:ptrAnimationStyle="flip"
         ptr:ptrMode="both">
         
      <LinearLayout

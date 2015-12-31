@@ -27,10 +27,15 @@ public class SetSharePrefer {
 		editor.commit();
 	}
 	
+	@SuppressWarnings("static-access")
 	public static String read(String file, String key, String defValue){
-		@SuppressWarnings("static-access")
-		SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(file, APP.GetMainActivity().MODE_PRIVATE);
-		return preferences.getString(key, defValue);
+		String tem = "";
+		try {
+			SharedPreferences preferences = APP.GetMainActivity().getSharedPreferences(file, APP.GetMainActivity().MODE_PRIVATE);
+			tem = preferences.getString(key, defValue);
+		} catch (Exception e) {
+		}
+		return tem;
 	}
 	
 	public static void write_bool(String file, String param,  boolean value)

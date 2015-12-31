@@ -50,31 +50,7 @@ public class SDK {
 				}else if(type == 1 && AudioQueue.runFlag){//音频
 					AudioQueue.addSound(data,pcmType);
 				}
-				
-				/*if(NewSurfaceTest.instance._decoderQueue != null && NewSurfaceTest.instance._decoderDebugger.isCanDecode()) {
-					NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
-				}else{
-					//软解直接把数据送到解码器测试
-					NewSurfaceTest.instance._deThead.addData(data, length);
-				}*/
-				//NewSurfaceTest.instance._deThead.addData(data, length);
-				
-			} /*else{
-				if(NewSurfaceTest.instance._decoderQueue == null) return;
-				if(type == 0){//视频
-					if(data != null && data.length > 0){
-						if(_width != width && _height != heigth){
-							_width = width;
-							_height = heigth;
-						}
-						NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
-					}
-				}else if(type == 1){//音频
-					if(data != null && data.length > 0 && AudioQueue.runFlag){
-						AudioQueue.addSound(data,pcmType);
-					}
-				}
-			}*/
+			}
 		}
 	}
 	
@@ -246,7 +222,8 @@ public class SDK {
 				if(_isRun) {
 					_isRun = false;
 					BackLoginThread.state = 1;
-					Main.Instance._loginThead.start();
+					if((Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog) || (Main.Instance._curIndex == Main.XV_NEW_MAIN && NewSurfaceTest._playId > 0))
+						Main.Instance._loginThead.start();
 				}
 			}
 			break;
@@ -256,7 +233,8 @@ public class SDK {
 				if(_isRun) {
 					_isRun = false;
 					BackLoginThread.state = 1;
-					Main.Instance._loginThead.start();
+					if((Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog) || (Main.Instance._curIndex == Main.XV_NEW_MAIN && NewSurfaceTest._playId > 0))
+						Main.Instance._loginThead.start();
 				}
 			}
 			break;
@@ -282,6 +260,10 @@ public class SDK {
 				try {
 					_isLogout = false;
 					LogUtil.d("SDK", "同一个账号在别的设备上登陆....");
+					if(Main.Instance!= null && Main.Instance._loginThead != null){
+						Main.Instance.stopUpdateCheck();
+						Main.Instance._loginThead.stop();//停止IDM线程
+					}
 					//判断如果正在播放视频关闭
 					if(NewSurfaceTest.isPlay){
 						NewSurfaceTest.instance.stop();
@@ -299,14 +281,12 @@ public class SDK {
 //					if(VlcVideoActivity.instance != null && VlcVideoActivity.instance.isVlcPlaying()){
 //						VlcVideoActivity.instance.release();
 //					}
-					LogUtil.d("SDK", "关闭资源....");
 					
 					Intent intent = new Intent();
 					intent.setAction("com.service.EXIT_SERVICE");
 					intent.putExtra("type", "1");
 					intent.setPackage("com.manniu.manniu");
 					BaseApplication.getInstance().startService(intent);
-					LogUtil.d("SDK", "打开弹出框....");
 				} catch (Exception e) {
 					LogUtil.e("SDK", ExceptionsOperator.getExceptionInfo(e));
 				}
@@ -319,6 +299,7 @@ public class SDK {
 
 	static {
 		//System.loadLibrary("GwMiddleSDK");
+		System.loadLibrary("AnalyzeData");
 		System.loadLibrary("P2PTransfor");
 		//System.loadLibrary("zbar");
 	}

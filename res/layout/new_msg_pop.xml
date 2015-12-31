@@ -22,7 +22,7 @@
 	    android:layout_marginTop="15dp"
 	    android:layout_marginLeft="10dp"
 	    android:layout_marginRight="10dp"
-	    android:text="存至本地"/>
+	    android:text="@string/save_local"/>
     <TextView 
         android:id="@+id/msg_shareImg"
         android:layout_width="fill_parent"
@@ -32,5 +32,5 @@
 	    android:layout_marginLeft="10dp"
 	    android:layout_marginRight="10dp"
 	    android:gravity="center"
-	    android:text="分享图片"/>
+	    android:text="@string/share_image"/>
 </LinearLayout>

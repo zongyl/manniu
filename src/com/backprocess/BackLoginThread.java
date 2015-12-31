@@ -111,7 +111,7 @@ public class BackLoginThread implements Runnable{
 							//long t1 = System.currentTimeMillis();
 							int nRet = SDK.Login("cms.9wingo.com", 9511, 3, Constants.userid, Constants.userName, "pwd");
 							//long t2 = System.currentTimeMillis();
-							LogUtil.d("BackLoginThread", Constants.userid+"-----IDM登录中--------"+Constants.userName +" nRet= "+nRet);
+							LogUtil.d("BackLoginThread", Constants.userid+"-----云端IDM登录中--------"+Constants.userName +" nRet= "+nRet);
 							if(nRet == 0){
 								APP.dismissProgressDialog();
 								state = 200;
@@ -134,11 +134,10 @@ public class BackLoginThread implements Runnable{
 							}
 							break;
 						case 3:
-							LogUtil.d("BackLoginThread","start  牛眼登录 IDM ....");
 							long t1 = System.currentTimeMillis();
 							int status = SDK.Login("cms.9wingo.com", 9511, 4, Fun_AnalogVideo.instance._devSid, Constants.userName, "pwd");//模拟TYPE 传4
 							long t2 = System.currentTimeMillis();
-							LogUtil.d("BackLoginThread", Constants.userid+"-----IDM登录中--------"+Constants.userName +" nRet= "+status + " time="+(t2-t1));
+							LogUtil.d("BackLoginThread", Fun_AnalogVideo.instance._devSid+"-----牛眼IDM登录中--------"+Constants.userName +" nRet= "+status + " time="+(t2-t1));
 							if(status == 0){
 								APP.dismissProgressDialog();
 								state = 201;
@@ -158,9 +157,10 @@ public class BackLoginThread implements Runnable{
 							break;
 						case 1:
 							error_Count = 0;
-							waitIDMLogin();
+							//waitIDMLogin();
 							//IPC
 							if(NewSurfaceTest.isPlay){
+								waitIDMLogin();
 								SDK.P2PClose(SDK._sessionId);
 							}
 							//牛眼
@@ -172,7 +172,7 @@ public class BackLoginThread implements Runnable{
 							SDK._sessionId = 0;
 							SDK.Logout();
 							if(Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog){
-								//waitIDMLogin();
+								waitIDMLogin();
 								state = 3;
 							}else{
 								state = 0;
@@ -186,12 +186,12 @@ public class BackLoginThread implements Runnable{
 							String tempStr = "?username="+Constants.userName+"&password="+MD5Util.MD5(MD5Util.MD5(APP.GetSharedPreferences(NewLogin.SAVEFILE, "pwd0", "")))+"&registrationId="+1+"&deviceInfo="+2+"&time_token="+3;
 							loginForETS(tempStr);
 							break;
-						case 4:
+						/*case 4:
 							//SDK.Ffmpegh264DecoderInit(SDK._width,SDK._height,SDK.nFrameRate,SDK._bitrate);
 							state = 200;
 							runFlag = false;//连接成功置成false 
 							_thread.wait();//
-							break;
+							break;*/
 						}
 					}
 				}

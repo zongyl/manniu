@@ -209,10 +209,10 @@ public class DecoderDebugger {
 			//获得你接收到结果的ByteBuffer的索引位置 排一个输出buffer,如果等待timeoutUs时间还没响应则跳过，返回TRY_AGAIN_LATER
 			int outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,10000);
 			while (outputBufferIndex >= 0) {
-					//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
-					//释放所有权 这个output buffer将被返回到解码器中
-					mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
-					outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
+				//如果你对outputbuffer的处理完后，调用这个函数把buffer重新返回给codec类。
+				//释放所有权 这个output buffer将被返回到解码器中
+				mediaCodecDecode.releaseOutputBuffer(outputBufferIndex, true);
+				outputBufferIndex = mediaCodecDecode.dequeueOutputBuffer(bufferInfo,0);//绘图
 			}
 			
 			/*if(outputBufferIndex >= 0) {

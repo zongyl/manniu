@@ -549,6 +549,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 				SDK.isInitDecoder = false;
 				if(isPlay){
 					long t1= System.currentTimeMillis();
+					if(!isGpu){
+						SDK.SetDecoderModel(0);
+					}
 					SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 					LogUtil.i(TAG, "P2PCloseChannel  sessionId:"+SDK._sessionId+"  devSid:"+devSid);
 					SDK.P2PClose(SDK._sessionId);
@@ -565,22 +568,23 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			}
 		}
 	}
-	long[] _sessionId = new long[1];
+	long[] _sessionId = null;
 	private int p2p_Count= 0;//P2P连接失败次数标识
 	//type 0-初始化要开 1-断线打开
 	public synchronized void doPlay(int type){
 		try{
+			_sessionId = new long[1];
 			SDK.DataSourceDeviceType(NewMain.devType);
 			long t1 = System.currentTimeMillis();
 			int nRet = SDK.P2PConnect(devSid,_sessionId);
 			long t2 = System.currentTimeMillis();
-			LogUtil.d(TAG, "SDK.P2PConnect return= "+nRet+" time= "+(t2-t1)+" devSid = "+devSid +" devName = "+devName +" channelNo = "+channelNo);
+			SDK._sessionId = _sessionId[0];
+			LogUtil.d(TAG, "SDK.P2PConnect return= "+nRet+" time= "+(t2-t1)+" devSid = "+devSid +" devName = "+devName +" channelNo = "+channelNo+" sessionID="+SDK._sessionId);
 			if(nRet == 0){
-				SDK._sessionId = _sessionId[0];
 				long t3 = System.currentTimeMillis();
 				_playId = SDK.P2PCreateChannel(SDK._sessionId, channelNo,1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
-				LogUtil.i(TAG,"SDK.P2PCreateChannel return="+_playId+" sessionId= "+SDK._sessionId+" time="+(t4-t3));
+				LogUtil.i(TAG,"SDK.P2PCreateChannel return="+_playId+" time="+(t4-t3)+" sessionID="+SDK._sessionId);
 				stopTimer();
 				if(_playId > 0){
 					//模拟目前不要发消息
@@ -869,6 +873,9 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			}
 			SDK.isInitDecoder = false;
 			if(isPlay){
+				if(!isGpu){
+					SDK.SetDecoderModel(0);
+				}
 				SDK.P2PCloseChannel(SDK._sessionId, channelNo);
 				SDK.P2PClose(SDK._sessionId);
 				SDK._sessionId = 0;
@@ -910,9 +917,6 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 	@Override
 	protected void onStop() {
 		try {
-			if(!isGpu){
-				SDK.SetDecoderModel(0);
-			}
 			SDK._flag = 0;
 			//SDK.Ffmpegh264DecoderUninit();
 			isStop = true;
@@ -940,6 +944,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 			videoCanvas = null;
 			_decoderDebugger = null;
 			_handler = null;
+			_sessionId = null;
 			LogUtil.i(TAG, "onDestroy.....end..");
 			//System.gc();
 		} catch (Exception e) {

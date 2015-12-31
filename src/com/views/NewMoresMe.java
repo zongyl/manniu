@@ -4,6 +4,7 @@ package com.views;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -24,10 +25,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.adapter.Menu;
 import com.adapter.UpdateDialog;
 import com.basic.APP;
@@ -56,13 +59,16 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	private final static String PER_DETAIL_HELP = "com.views.NewDetailHelp";//意见反馈
 	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";//关于
 	private final static String PRE_LOG_IN ="com.views.SplashScreen";
+	private final static String TEST ="com.views.TestActivity";
 	private UpdateDialog tipDialog;
 	BaseApplication _bApp = null;
 	ImageView _headImage = null;
 	ListView listView0, listView1, listView2;
 	LogoutDilog _mydilog;
 	InnerBroadcastReceiver _broadcast;
-	 
+	
+	private Button test;
+	
 	boolean logout,exitApp;
 	private List<Menu> getMenuList(Activity act, int titleid, int resid) {
 		List<Menu> ret = new ArrayList<Menu>();
@@ -105,6 +111,11 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 				activity,R.array.menuList1, R.array.imgGroup1),true));
 		listView2.setAdapter(new com.adapter.MenuAdapter(activity, getMenuList(
 				activity, R.array.menuList2,R.array.imgGroup2),false));
+
+		test = (Button) findViewById(R.id.btn_test);
+		test.setOnClickListener(this);
+		test.setVisibility(View.GONE);
+		
 		//给页面头像和昵称赋值
 		ReadUserInfo();
 		_bApp =(BaseApplication) ACT.getApplication();
@@ -112,6 +123,7 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		getHeadImg();
 		Log.v(TAG, _userid);
 		RegistBroadcast();
+		
 	}
 	
 	public void ReadUserInfo(){
@@ -120,6 +132,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		if(preferences.contains("username"))//判断该项是否存在
 		{
 			username= preferences.getString("username", "");
+			if("zongyl".equals(username)){
+				test.setVisibility(View.VISIBLE);
+			}
 		}
 		((TextView)findViewById(R.id.main_hotname)).setText(username);
 	}
@@ -166,6 +181,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		case R.id.per_edit:
 			_bApp.setMyhandler(_handler);
 			forwardTo(PER_DETAIL_EDIT);//跳转到个人信息编辑页面
+			break;
+		case R.id.btn_test:
+			forwardTo(TEST);
 			break;
 		}
 	}

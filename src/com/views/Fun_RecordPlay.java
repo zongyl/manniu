@@ -42,6 +42,7 @@ import com.manniu.manniu.R;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.views.analog.camera.encode.DecoderDebugger;
+import com.views.analog.camera.encode.DecoderQueue.QueueBean;
 
 /**
  * @author: li_jianhua Date: 2015-11-27 下午5:05:41
@@ -381,9 +382,11 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 		        				_handler.sendEmptyMessage(1001);
 		        				_deThead.de_start();
 		        			}
+		        			
 		        			long t1 = System.currentTimeMillis();
 		        			int ret = SDK.AlarmDataPlayBack(_myBuffer,realLen,bmpBuff);
 		        			long t2 = System.currentTimeMillis();
+		        			//LogUtil.d(TAG, "AlarmDataPlayBack time="+(t2-t1)+" ret:"+ret);
 		        			if(ret > 0){
 		        				_deThead.addData(bmpBuff);
 		        			}
@@ -645,12 +648,16 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 		public void run() {
 			while(runFlag){
 				try {
-					synchronized (_queue) {
+//					synchronized (_queue) {
 						if(_queue != null && _queue.size() > 0){
-							byte[] data = _queue.poll();
+							byte[] data = null;
+							synchronized (_queue) {
+								data = _queue.poll();
+							}
+							//byte[] data = _queue.poll();
 							h264Decoder(data);
 						}
-					}
+//					}
 				} catch (Exception e) {
 					LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 				}

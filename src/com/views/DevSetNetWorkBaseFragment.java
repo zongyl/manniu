@@ -16,7 +16,7 @@ import com.utils.SetSharePrefer;
 
 public class DevSetNetWorkBaseFragment extends Fragment {
 
-	public static final String TAG = "DevSetNetWorkBaseFragment";
+	public final String TAG = "DevSetNetWorkBaseFragment";
 	
 	private EditText ip, subnet_mask, gateway, dns1;
 
@@ -79,13 +79,13 @@ public class DevSetNetWorkBaseFragment extends Fragment {
 	
 	private void save(){
 		if(net_type_static_r.isChecked()){
-			writeInfo("net_type", "2");
+			writeInt("net_type", 2);
 			writeInfo("wifi_ip", ip.getText().toString());
 			writeInfo("pass_mask", subnet_mask.getText().toString());
 			writeInfo("net_gateway", gateway.getText().toString());
 			writeInfo("net_dns", dns1.getText().toString());
 		}else if(net_type_dhcp_r.isChecked()){
-			writeInfo("net_type", "1");
+			writeInt("net_type", 1);
 		}else{
 			
 		} 
@@ -96,6 +96,10 @@ public class DevSetNetWorkBaseFragment extends Fragment {
 	}
 	
 	private void writeInfo(String key, String value){
+		SetSharePrefer.write(MD5Util.MD5(deviceId)+NewDeviceSet.FILE, key, value);
+	}
+	
+	private void writeInt(String key, int value){
 		SetSharePrefer.write(MD5Util.MD5(deviceId)+NewDeviceSet.FILE, key, value);
 	}
 	

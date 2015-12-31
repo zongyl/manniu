@@ -33,14 +33,11 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
-import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,15 +46,18 @@ import cn.jpush.android.api.JPushInterface;
 
 import com.alibaba.fastjson.JSON;
 import com.basic.XMSG;
+import com.google.android.gcm.GCMRegistrar;
 import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;
+import com.utils.LanguageUtil;
 import com.utils.LogUtil;
 import com.utils.Loger;
 import com.utils.MD5Util;
 import com.utils.SIMCardInfo;
 import com.utils.httpClientUtils;
+//import android.view.inputmethod.InputMethodManager;
 
 @SuppressLint("ShowToast")
 public class NewLogin extends Activity implements OnClickListener{
@@ -90,13 +90,13 @@ public class NewLogin extends Activity implements OnClickListener{
 
 		login_main =(com.views.CustomScrollView) findViewById(R.id.logindialog_space);
 		
-		login_main.setOnTouchListener(new OnTouchListener(){  			  
+	/*	login_main.setOnTouchListener(new OnTouchListener(){  			  
 			public boolean onTouch(View arg0, MotionEvent arg1)  
 			{  
 				InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);  
 				return imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);  
 			}  
-		});  
+		});  */
 		
 		_dlgWait = new Dlg_Wait(this, R.style.dialog);
 		BaseApplication.getInstance().addActivity(this);
@@ -514,12 +514,8 @@ public class NewLogin extends Activity implements OnClickListener{
 				showToast(getText(R.string.Err_USERINFO_ERROR).toString());
 				break;
 			case XMSG.Alias:
-				
-				String str = getRegistrationId();
-				
 				String param = (String) msg.obj;
 				if(param.split(",").length > 0){
-					//String tempStr = "?registrationId="+param.split(",")[0]+"&alias="+param.split(",")[1]+"&time_token="+param.split(",")[2]+"&sessionId="+Constants.sessionId;
 					setAlias(param);
 				}
 				break;
@@ -569,6 +565,9 @@ public class NewLogin extends Activity implements OnClickListener{
 	}; 
 
 	public String getRegistrationId(){
+		if("en".equals(LanguageUtil.getLanguageEnv())){
+			return GCMRegistrar.getRegistrationId(this);
+		}
 		return JPushInterface.getRegistrationID(this);
 	}
 

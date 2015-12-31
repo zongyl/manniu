@@ -22,7 +22,7 @@ import com.utils.LogUtil;
  */
 public class NewDeviceSetNetWork extends Activity{
 
-	public static final String TAG = "NewDeviceSetNetWork";
+	public final String TAG = "NewDeviceSetNetWork";
 	
 	Button submit, cancel;
 	
@@ -104,9 +104,9 @@ public class NewDeviceSetNetWork extends Activity{
 			LogUtil.d(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
 	}
-	
+	Fragment fragment = null;
 	private void save(){
-		Fragment fragment = getFragmentManager().findFragmentById(R.id.ui_container);
+		fragment = getFragmentManager().findFragmentById(R.id.ui_container);
 		if(fragment instanceof DevSetNetWorkBaseFragment){
 			LogUtil.d(TAG, "base fragment!");
 			DevSetNetWorkBaseFragment fmt = (DevSetNetWorkBaseFragment)fragment;
@@ -130,7 +130,8 @@ public class NewDeviceSetNetWork extends Activity{
 				finish();
 				break;
 			case R.id.dev_set_network_submit:
-				save();finish();
+				save();
+				NewDeviceSetNetWork.this.finish();
 				break;
 			case R.id.dev_set_net_base:
 				getFragmentView(0);
@@ -148,4 +149,10 @@ public class NewDeviceSetNetWork extends Activity{
 		}
 	};
 	
+	@Override
+    protected void onDestroy(){
+		super.onDestroy();
+		deviceId = "";
+		fragment = null;
+	}
 }

@@ -68,7 +68,7 @@
     <string name="GW_ERRCODE_P2P_UNSUPPORT_TYPE">设备类型不支持P2P打洞</string>
     <string name="GW_ERRCODE_P2P_INIT_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_DISCONNECT">设备掉线</string>
-    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">Device don\'t online!</string>
+    <string name="GW_ERRCODE_P2P_DEST_DISCONNECT">Device Offline!</string>
     <string name="GW_ERRCODE_P2P_LINK_FAILD">链接失败</string>
     <string name="GW_ERRCODE_P2P_TIMEOUT">网络超时</string>
     
@@ -135,8 +135,8 @@
  	<string name="ver_check">version</string>
  	<string name="about">about</string>
  	<string name="exitApp">close the manniu</string>
- 	<string name="setphoto">头像设置</string>
- 	<string name="camera">拍照</string>
+ 	<string name="setphoto">Avatar setting</string>
+ 	<string name="camera">Take photo</string>
  	
  	<string name="SUCCESS_UPLOAD">Upload success!</string>
  	<string name="Err_CONNET">NetWork connection failure!</string>
@@ -235,7 +235,7 @@
  	<string name="devname">Device name</string>
  	<string name="dev_modifyname">Modify name</string>
  	<string name="dev_upgradeOk">Update command has been sent, please check the update later!</string>
- 	<string name="dev_offline">Don\'t online</string>
+ 	<string name="dev_offline">Offline</string>
  	<string name="dev_cancelColl">Cancel Favourite</string>
  	<string name="dev_coverfresh">Refreshing...</string>
  	
@@ -429,7 +429,7 @@
 	<string name="Err_INVALID_USER_ID">"无效用户"</string>
 	<string name="Err_USER_LOCKED">"用户被锁定"</string>
 	<string name="Err_SESSION_EXIST">"用户已经登录"</string>
-	<string name="Err_OFF_LINE">Don\'t online</string>
+	<string name="Err_OFF_LINE">Offline</string>
 	<string name="Err_DeviceLogin">"注册失败"</string>
 	<string name="Err_Registration_Timeout">"注册超时"</string>
 	<string name="Err_UPLOAD">Upload failure</string>
@@ -618,7 +618,7 @@
  	<string name="save_deviMsg">保存设备参数信息</string>
  	<string name="auto_recMsg">开机自动接收报警</string>
  	<string name="auto_check">自动检查更新</string>
- 	<string name="auto_desc">打开后，更方便接收报警消息</string>
+ 	<string name="auto_desc">After the opening, more convenient to receive the alarm message</string>
  	<string name="rece_login">最近登录信息</string>
  	<string name="per_help">Help</string>
  	<string name="online_customer">在线客服</string>
@@ -792,6 +792,9 @@
  	<string name="user_donot_exits">用户不存在！</string>
  	<string name="channel">通道</string>
  	
+ 	<string name="save_local">Save to local</string>
+ 	<string name="share_image">Share image</string>
+ 	
  	<string name="network_setting">Network settings</string>
  	<string name="wireless_networks">Wireless networks(WIFI)</string>
  	<string name="wired_networks">Wired networks</string>
@@ -799,8 +802,7 @@
  	<string name="ip">IP Address</string>
  	<string name="subnet_mask">Subnet mask</string>
  	<string name="gateway">Gateway</string>
- 	<string name="dns1">Preferred DNS</string>
- 	<string name="dns2">Alternate DNS</string>
+ 	<string name="dns1">DNS</string>
  	<string name="get1">Manual settings</string>
  	<string name="get2">Auto acquisition</string>
  	<string name="staticc">Static</string>

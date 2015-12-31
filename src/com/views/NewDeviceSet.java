@@ -56,7 +56,7 @@ import com.utils.SetSharePrefer;
 @SuppressLint({ "ResourceAsColor", "NewApi" })
 public class NewDeviceSet extends Activity {
 
-	public static final String TAG = "NewDeviceSet";
+	public final String TAG = "NewDeviceSet";
 	
 	DeviceParcel device;
 	

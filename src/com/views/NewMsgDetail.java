@@ -332,11 +332,12 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			strAlarmInfo += _time.getText();	
 //			strAlarmInfo += "]";
 			//2015.11.17 李德明修改 			
-			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
-					"",
-					strAlarmInfo,
-					_url
-					,false,null);
+//			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
+//					"",
+//					strAlarmInfo,
+//					_url
+//					,false,null);
+			imgShare();
 			break;
 		case R.id.msg_image:
 			show(header);
@@ -402,10 +403,16 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			strAlarmInfo += _devName.getText()+" ";			
 			strAlarmInfo += _title.getText()+" ";
 			strAlarmInfo += _time.getText();	
-			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
-					"",
+//			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this,getString(R.string.famliy_around_withme),
+//					"",
+//					strAlarmInfo,
+//					_url
+//					,false,null);
+			ShareContentCustomizeDemo.showShare( getString(R.string.app_name),this, "【"+getString(R.string.app_name)+"】"+_title.getText(),
+					_devName.getText()+" "+_title.getText()+" " +_time.getText(),
 					strAlarmInfo,
-					_url
+					_url,
+					Constants.hostUrl
 					,false,null);
 		} catch (Exception e) {
 		}

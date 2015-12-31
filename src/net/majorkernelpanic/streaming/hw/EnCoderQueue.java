@@ -138,8 +138,13 @@ public class EnCoderQueue implements Runnable{
 						if(dataLenth > 0 && _isRecording){
 							if(i_flag == 0 && framerate[0] == 1) i_flag = 1;
 							if(i_flag == 1){
-								byte[] newbuf = new byte[dataLenth-36];
-								System.arraycopy(newData, 28, newbuf, 0, dataLenth-36);
+//								byte[] newbuf = new byte[dataLenth-36];
+//								System.arraycopy(newData, 28, newbuf, 0, dataLenth-36);
+								int exHead = (int)newData[22];
+								int realHead = 24 + exHead;
+								int realLen = dataLenth - realHead - 8;
+								byte[] newbuf = new byte[realLen];
+								System.arraycopy(newData, realHead, newbuf, 0, realLen);
 								raf.write(newbuf);
 							}
 						}

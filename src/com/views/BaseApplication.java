@@ -36,7 +36,7 @@ public class BaseApplication extends Application {
     
     private RealHandler redlandler = null;
     
-    private String SENDER_ID = "975604114042";
+    public String SENDER_ID = "975604114042";
     
     private static Stack<Activity> activityStack;
 	private static BaseApplication singleton;
@@ -61,14 +61,20 @@ public class BaseApplication extends Application {
 		crashHandler.init(getApplicationContext());
 
 		/****************GCM*****************************/
-		/*GCMRegistrar.checkDevice(this);  
-		GCMRegistrar.checkManifest(this);  
-		final String regId = GCMRegistrar.getRegistrationId(this);  
-		if (regId.equals("")) {  
-		  GCMRegistrar.register(this, SENDER_ID);  
-		} else {  
-		  Log.v(TAG, "Already registered");  
-		} */ 
+	//	try{
+			/*GCMRegistrar.checkDevice(this);  
+			GCMRegistrar.checkManifest(this);  
+			final String regId = GCMRegistrar.getRegistrationId(this);
+			LogUtil.d(TAG, "regId:" + regId);
+			if (regId.equals("")) {  
+			  GCMRegistrar.register(this, SENDER_ID);  
+			} else {  
+				 LogUtil.v(TAG, "Already registered");  
+			}*/ 
+//		}catch(Exception e){
+//			LogUtil.d(TAG, "GCM Exception:" + e.getMessage());
+//		}
+		
 		/*********************************************/
 		
 		JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志

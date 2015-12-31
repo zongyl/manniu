@@ -1,5 +1,7 @@
 package com.views;
 
+import com.utils.LogUtil;
+
 import android.content.Context;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.Platform.ShareParams;
@@ -10,12 +12,12 @@ import cn.sharesdk.onekeyshare.ShareContentCustomizeCallback;
 public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback {
 
 	public static void showShare(String strAppName, Context context, String strTitle, String strText, String strPYQText, 
-			String strPYQImageURL, boolean silent, String platform) {
+			String strPYQImageURL,String strURL, boolean silent, String platform) {
 		
 		OnekeyShare oks = new OnekeyShare();
 		ShareSDK.initSDK(context);
 		oks. setShareContentCustomizeCallback ( 
-				new ShareContentCustomizeDemo (strTitle,strText,strPYQText,strPYQImageURL)) ; 
+				new ShareContentCustomizeDemo (strTitle,strText,strPYQText,strPYQImageURL,strURL)) ; 
 				 oks.show (context) ; 
 		}
 	
@@ -23,12 +25,14 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 	String _imageUrl = "";
 	String _titleInfo = "";	
 	String _wechatMomentsTextInfo = "";
-	public ShareContentCustomizeDemo(String strTitle,String strText,String strPYQText,String strImageURL)
+	String _URL = "";
+	public ShareContentCustomizeDemo(String strTitle,String strText,String strPYQText,String strImageURL,String strURL)
 	{
 		_titleInfo = strTitle;
 		_textInfo = strText;
 		_wechatMomentsTextInfo = strPYQText; 
 		_imageUrl = strImageURL; 
+		_URL = strURL;
 	}	
 	@Override
 	public void onShare(Platform platform, ShareParams paramsToShare) {
@@ -46,22 +50,32 @@ public class ShareContentCustomizeDemo implements ShareContentCustomizeCallback 
 			  }
 			  paramsToShare.setUrl(Constants.hostUrl);*/
 			  
-			  int index = _wechatMomentsTextInfo.indexOf("http://");
+			  /*int index = _wechatMomentsTextInfo.indexOf("http://");
 			  paramsToShare.setTitle(_wechatMomentsTextInfo.substring(0, index));
 			  String str = _wechatMomentsTextInfo.substring(index, _wechatMomentsTextInfo.length());
 			  paramsToShare.setText("") ;
 			  paramsToShare.setImageUrl(_imageUrl);	
 			  paramsToShare.setUrl(_wechatMomentsTextInfo.substring(index, _wechatMomentsTextInfo.length()));
+			  */
+			  paramsToShare.setTitle(_titleInfo);			
+			  paramsToShare.setText(_textInfo) ;			  
+			  paramsToShare.setImageUrl(_imageUrl);	
+			  paramsToShare.setUrl(_URL);
+			  
 		  }
 		  else if("WechatMoments".equals(strPN))
 		  {
 			  //朋友圈正文处理			  
-			  int index = _wechatMomentsTextInfo.indexOf("http://");
+			  /*int index = _wechatMomentsTextInfo.indexOf("http://");
 			  paramsToShare.setTitle(_wechatMomentsTextInfo.substring(0, index));
 			  String str = _wechatMomentsTextInfo.substring(index, _wechatMomentsTextInfo.length());
 			  paramsToShare.setText("") ;
 			  paramsToShare.setImageUrl(_imageUrl);	
-			  paramsToShare.setUrl(_wechatMomentsTextInfo.substring(index, _wechatMomentsTextInfo.length()));
+			  paramsToShare.setUrl(_wechatMomentsTextInfo.substring(index, _wechatMomentsTextInfo.length()));*/
+			  paramsToShare.setTitle(_titleInfo+" "+_textInfo);			
+			  paramsToShare.setText(_textInfo) ;
+			  paramsToShare.setImageUrl(_imageUrl);	
+			  paramsToShare.setUrl(_URL);
 		  }
 		  
 		  
