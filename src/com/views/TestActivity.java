@@ -32,7 +32,9 @@ public class TestActivity extends Activity {
 		
 		tv.setText("GCMregId:" + gcmRegId + LINE + 
 				"jpushRegId:" + jpushRegId + LINE + 
-				"Server IP:" + Constants.hostUrl);
+				"string.xml server:" + getString(R.string.server_address) + LINE + 
+				"Server IP:" + Constants.hostUrl + LINE + 
+				"ETS Server:" + Constants.ETShostUrl);
 		
 	}
 }

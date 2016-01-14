@@ -5,6 +5,8 @@ import org.apache.http.Header;
 import com.adapter.HttpUtil;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.manniu.manniu.R;
+import com.views.BaseApplication;
 
 /**
  * Twilio 
@@ -23,7 +25,7 @@ public class TwilioUtils {
 		RequestParams params = new RequestParams();
 		params.put("To", "+1"+toNubmer);
 		params.put("From", "16503979760");
-		params.put("Body", text);
+		params.put("Body", BaseApplication.getInstance().getString(R.string.register_success_tip) + text + ".");
 		HttpUtil.postussms(ACCOUNT_SID+":"+AUTH_TOKEN, url, params, new TextHttpResponseHandler(){
 			@Override
 			public void onFailure(int arg0, Header[] arg1, String arg2,

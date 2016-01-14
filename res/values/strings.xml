@@ -117,7 +117,8 @@
 	<string name="updated_just_now">刚刚更新</string>
 	<string name="time_error">时间有问题</string>
 
-   	<string name="server_address">http://www.mny9.com</string>
+   	<string name="server_address">http://ts.mny9.com</string>
+
 	<string name="E_SER_FAIL">当前网络不好,请稍后再试!</string>
 
   	<string name ="default_photo">./images/users/users.jpg</string>
@@ -450,7 +451,7 @@
  	<string name="up_relinfo">上传实名信息中</string>
  	<string name="up_shareinfo">上传分享信息中</string>
  	<string name="photos_tip">请上传两张照片</string>
- 	<string name="title_tip">标题不能为空</string>
+ 	<string name="title_tip">标题不能为空,且长度不超过20</string>
  	<string name="group_tip">请选择分组</string>
  	<string name="rename_tip">真实姓名不能为空</string>
  	<string name="ch_tip">请输入中文姓名</string>
@@ -866,7 +867,6 @@
  	<string name="up_relinfo">上传实名信息中</string>
  	<string name="up_shareinfo">上传分享信息中</string>
  	<string name="photos_tip">请上传两张照片</string>
- 	<string name="title_tip">标题不能为空</string>
  	<string name="group_tip">请选择分组</string>
  	<string name="rename_tip">真实姓名不能为空</string>
  	<string name="ch_tip">请输入中文姓名</string>
@@ -1014,6 +1014,7 @@
  	
  	<string name="priview">正在预览...</string>
  	<string name="set_success">设置成功!</string>
+ 	<string name="submit_success">提交成功!</string>
  	
  	<!-- 牛眼 -->
 	<string name="analog_video_update">修改</string>

@@ -17,8 +17,11 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
+import com.utils.LogUtil;
 
 public class NewDetailHelp extends Activity implements OnClickListener{
+	
+	private static final String TAG = "NewDetailHelp";
 	
 	private EditText feed;
 	@Override
@@ -89,22 +92,28 @@ public class NewDetailHelp extends Activity implements OnClickListener{
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
 		params.put("content", feed.getText().toString());
+		
+		LogUtil.d(TAG, "params:" + params.toString());
+		LogUtil.d(TAG, "server address:" + Constants.hostUrl + "/android/saveSuggest");
+		
 		HttpUtil.post(Constants.hostUrl + "/android/saveSuggest", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(int statusCode, Header[] headers,
 					JSONObject response) {
-				APP.ShowToast("提交成功!");
+				APP.ShowToast(getString(R.string.submit_success));
 			}
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					String responseString, Throwable throwable) {
+				LogUtil.d("", "response:" + responseString);
 				APP.ShowToast(getString(R.string.E_SER_FAIL));
 			}
 			
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					Throwable throwable, JSONObject errorResponse) {
+				LogUtil.d("", "response:" + errorResponse.toString());
 				APP.ShowToast(getString(R.string.E_SER_FAIL));
 			}
 		});

@@ -62,13 +62,19 @@ public class ActionSheet {
 		String[] tagArr = context.getResources().getStringArray(R.array.dialog_tag);
 		TypedArray imgs = context.getResources().obtainTypedArray(R.array.dialog_ic);
 		
+		boolean online = (device.online == 1);
+		
 		Map<String, Object> map = null;
 		for(int i = 0; i < textArr.length-2; i++){
 			map = new HashMap<String, Object>();
-			map.put("tag", tagArr[i]);
-			map.put("text", textArr[i]);
-			map.put("image", imgs.getResourceId(i, 0));
-			items.add(map);
+			if(!online&&(i==1 || i==2)){
+				continue;
+			}else{
+				map.put("tag", tagArr[i]);
+				map.put("text", textArr[i]);
+				map.put("image", imgs.getResourceId(i, 0));
+				items.add(map);
+			}
 		}
 		
 		if(device.type == 1){

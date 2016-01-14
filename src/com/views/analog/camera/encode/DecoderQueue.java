@@ -33,9 +33,9 @@ public class DecoderQueue implements Runnable{
 	public int i_flag = 0;//I帧标志位
 	private int b_flag = 0;//录像也要从I帧开始
 	
-    String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
+//    String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
 //    public static BufferedOutputStream outputStream;
-//    static File f = new File(Environment.getExternalStorageDirectory(), "/IPC_test2.rgb");
+//    static File f = new File(Environment.getExternalStorageDirectory(), "/IPC_test2.h264");
 	private long time;
 	public DecoderQueue(){
 		runFlag = true;
@@ -208,50 +208,43 @@ public class DecoderQueue implements Runnable{
 								i_flag = 1;
 							}
 							if(i_flag == 1){
-								if(_startSnap && bean.getIsIFrame() == 1){//截图要保留头
-									NewSurfaceTest.instance.h264DecoderSnapImg(bean.getData(), bean.getLength());
+								if(_startSnap && bean.getIsIFrame() == 1){//截图也去头
+									if(SDK._manufactorType == 0){
+										int exHead = (int)bean.getData()[22];
+										int realHead = 24 + exHead;
+										int realLen = bean.getLength() - realHead - 8;
+										byte[] newbuf = new byte[realLen];
+										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
+										NewSurfaceTest.instance.h264DecoderSnapImg(newbuf, realLen);
+									}else{
+										NewSurfaceTest.instance.h264DecoderSnapImg(bean.getData(), bean.getLength());
+									}
 								}
 								
 								if(NewSurfaceTest.instance._decoderDebugger.isCanDecode()){//IPC 解码不动走软解    模拟不用
 									if(NewMain.devType == 1){//IPC去头
-										//int exHead =  Integer.valueOf(G.byte2hex(bean.getData(), 22, 1));
-										/*int exHead = (int)bean.getData()[22];
-										int realHead = 24 + exHead;
-										int realLen = bean.getLength() - realHead - 8;
-										byte[] newbuf = new byte[realLen];
-										System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);*/
-										NewSurfaceTest.instance._decoderDebugger.decoder(bean.getData(), bean.getLength());
-										/*if(_isRecording){//录像
-											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
-											if(b_flag == 1){
-												raf.write(newbuf);
-											}
-										}*/
+										if(SDK._manufactorType == 0){
+											//int exHead =  Integer.valueOf(G.byte2hex(bean.getData(), 22, 1));
+											int exHead = (int)bean.getData()[22];
+											int realHead = 24 + exHead;
+											int realLen = bean.getLength() - realHead - 8;
+											byte[] newbuf = new byte[realLen];
+											System.arraycopy(bean.getData(), realHead, newbuf, 0, realLen);
+											NewSurfaceTest.instance._decoderDebugger.decoder(newbuf, realLen);
+										}else{
+											NewSurfaceTest.instance._decoderDebugger.decoder(bean.getData(), bean.getLength());
+										}
 									}else{ //模拟不用去头
 										/*byte[] newbuf = new byte[bean.getLength()-32];
 										System.arraycopy(bean.getData(), 24, newbuf, 0, bean.getLength()-32);*/
-										/*if(_isRecording){//录像
-											if(b_flag == 0 && bean.getIsIFrame() == 1) b_flag = 1;
-											if(b_flag == 1){
-												raf.write(newbuf);
-											}
-										}*/
 										if(NewSurfaceTest.instance._decoderDebugger.decoder(bean.getData(), bean.getLength()) == -1) i_flag = 0;
 									}
 									
 								}else{
 									//软解码 直接送数据
 									NewSurfaceTest.instance.h264Decoder2(bean.getData(), bean.getLength());
-									//outputStream.write(bean.getData());	
-									//异步
-									//NewSurfaceTest.instance.setData(bean.getData(), bean.getLength());
-									//解码队列
-									//NewSurfaceTest.instance._deThead.addData(bean.getData(), bean.getLength());
-									//runFlag = false;
-									//NewSurfaceTest.instance._vsPlayer.Start();
 								}
 							}
-//							runFlag = true;
 						}else{
 							setTime(10);
 						}
@@ -260,11 +253,6 @@ public class DecoderQueue implements Runnable{
 					LogUtil.e("RecoderQueue",ExceptionsOperator.getExceptionInfo(e));
 				}
 			}
-//			try {
-//				Thread.sleep(time);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
 //		}
 	}	
 	

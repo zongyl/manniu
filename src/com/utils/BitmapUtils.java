@@ -292,7 +292,7 @@ public class BitmapUtils extends XViewBasic {
 							android.graphics.Bitmap.Config.RGB_565);
 
 					if (bmpBuff != null) {
-						System.arraycopy(outBytes, 0, bmpBuff, 0,width_frame * height_frame * 2);
+						System.arraycopy(outBytes, 0, bmpBuff, 0,len);
 						byteBuffer = ByteBuffer.wrap(outBytes);
 						bmp.copyPixelsFromBuffer(byteBuffer);
 					}

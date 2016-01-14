@@ -298,7 +298,9 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				_isOpen = false;
 				Device device = devList.get(position);
 				if(BackLoginThread.state != 200 && device.type != 100){
-					Main.Instance._loginThead.start();
+					if(!BackLoginThread.runFlag){
+						Main.Instance._loginThead.start();
+					}
 					//如果IDM不在线 弹出登录框
 					Main.Instance._loginThead.waitIDMLogin();
 					_isOpen = true;

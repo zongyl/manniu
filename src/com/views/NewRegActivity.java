@@ -290,6 +290,7 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 	 *  通过服务器端 发送验证码
 	 * @param mobile
 	 */
+	@Deprecated
 	private void codeSubmit(String _mobile){
 		RequestParams params = new RequestParams();
 		params.put("mobile", _mobile);
@@ -351,7 +352,6 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 				}else {
 					//
 				}
-				//codeSubmit(mobile);
 				btn_vaildCode.setEnabled(false);
 				handler.post(runnable);
 			}

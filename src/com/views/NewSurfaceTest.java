@@ -319,7 +319,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					m_imageBitmap = BitmapUtils.getScreenBitmap(data, m_imageData, len);
 					if(m_imageBitmap != null){
 						long fileLong = snapPic(m_imageBitmap, _fileName);
-						if(fileLong >= 102400){
+						if(fileLong >= 51200){
 							_decoderQueue._startSnap = false;
 							_snapImg = false;
 							screenCount=0;
@@ -459,7 +459,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 						bmp = Bitmap.createBitmap(width_frame, height_frame,
 								android.graphics.Bitmap.Config.RGB_565);
 						if (bmpBuff != null) {
-							System.arraycopy(outBytes, 0, bmpBuff, 0, width_frame * height_frame * 2);
+							System.arraycopy(outBytes, 0, bmpBuff, 0, len);
 							bytBuffer = ByteBuffer.wrap(outBytes);
 							bmp.copyPixelsFromBuffer(bytBuffer);
 						}
@@ -487,7 +487,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 //					_snapImg = false;
 					//_handler.sendEmptyMessage(100);
 					long fileLong = snapPic(m_imageBitmap, _fileName);
-					if(fileLong >= 204800){// || NewMain.devType == 4
+					if(fileLong >= 102400){// || NewMain.devType == 4
 						_decoderQueue._startSnap = false;
 						_snapImg = false;
 						cut.setClickable(true);
@@ -1055,7 +1055,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 					recordCount ++;
 					File efile = new File(_recordfileName + ".bmp");
 					if(recordCount < 10){
-						if(efile.exists() && efile.length() >= 102400){
+						if(efile.exists() && efile.length() >= 51200){
 							//_decoderQueue.recordFile(_recordfileName);
 							SDK.SetVideoPath(_recordfileName + ".h264",_recordfileName + ".aac");
 							_isRecording = true;

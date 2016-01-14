@@ -8,6 +8,7 @@ import net.majorkernelpanic.streaming.video.VideoStream;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -37,12 +38,14 @@ public class SDK {
 	//isIFrame		1：i帧，否则为p帧
 	//pcmType 音频类型
 	//static byte[] newbuf = new byte[60*1024];
-	public void onData(int width,int heigth,int pcmType,int chnl,int type,int isIFrame,byte[] data, int length) {
+	public void onData(int width,int heigth,int pcmType,int chnl,int devType,int type,int isIFrame,byte[] data, int length) {
 		if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
 			if(data != null && data.length > 0 && NewSurfaceTest.instance._decoderQueue != null){
 				//硬、软解方法
 				if(type == 0){//视频
-					if(_width != width && _height != heigth){
+					if(_width != width || _height != heigth){
+//						Log.i("isInitDecoder",width+"---------------------------"+heigth);
+						_manufactorType = devType;
 						_width = width;
 						_height = heigth;
 					}
@@ -89,6 +92,7 @@ public class SDK {
 	public static int _bitrate = 80000000;//码率
 	public static int _width = 352;//
 	public static int _height = 288;//
+	public static int _manufactorType = 0;//厂家类型：0-智诺 1-海康
 	public static int _flag = 0;//收到宽高只处理一次
 	public void OnCommand(int cmd, long param1, int param2, int param3,
 			int param4,int param5 ,int param6,int param7, String str1, String str2, String str3) {
@@ -299,7 +303,6 @@ public class SDK {
 
 	static {
 		//System.loadLibrary("GwMiddleSDK");
-		System.loadLibrary("AnalyzeData");
 		System.loadLibrary("P2PTransfor");
 		//System.loadLibrary("zbar");
 	}

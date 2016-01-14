@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.basic.APP;
 import com.manniu.manniu.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;

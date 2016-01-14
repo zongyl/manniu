@@ -264,14 +264,14 @@ public class XVideoAdapter extends BaseAdapter {
 					}	
 					final EditText editText = new EditText(activity);
 					editText.setText(Constants.data.get(position).get(KEY_TITLE));
-					editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(32)});
+					editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
 					editText.setFocusable(true);
 					new AlertDialog.Builder(activity).setTitle(APP.GetString(R.string.tip_title)).setMessage(APP.GetString(R.string.video_share)).setIcon(R.drawable.help)
 					.setPositiveButton(APP.GetString(R.string.confirm), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
 							final String title = editText.getText().toString();
-							if(!title.trim().equals("")){
+							if(!title.trim().equals("") && title.length() < 21){
 								APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
 								new Thread(new Runnable() {
 									@Override

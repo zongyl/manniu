@@ -114,7 +114,6 @@
 	<string name="updated_just_now">刚刚更新</string>
 	<string name="time_error">时间有问题</string>
 
-   	<string name="server_address">http://www.mny9.com</string>
 	<string name="E_SER_FAIL">The current network is poor, please try again later!</string>
 
   	<string name ="default_photo">./images/users/users.jpg</string>
@@ -662,7 +661,7 @@
  	<string name="up_relinfo">Upload real name information</string>
  	<string name="up_shareinfo">Upload share information</string>
  	<string name="photos_tip">Please upload two photos</string>
- 	<string name="title_tip">Title can\'t be empty</string>
+ 	<string name="title_tip">Title can\'t be empty, and the length of not more than 20</string>
  	<string name="group_tip">Select group</string>
  	<string name="rename_tip">Real name can\'t be empty</string>
  	<string name="ch_tip">Please enter chinese name</string>
@@ -809,6 +808,7 @@
  	
  	<string name="priview">priview</string>
  	<string name="set_success">Setting success!</string>
+ 	<string name="submit_success">Submit success!</string>
  	
  	<string name="analog_video_update">修改</string>
 	<string name="analog_video_open">开通</string>

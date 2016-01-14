@@ -1,15 +1,16 @@
 package com.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.TreeSet;
-
-import com.views.BaseApplication;
-import com.views.Main;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -18,6 +19,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Looper;
 import android.widget.Toast;
+
+import com.views.BaseApplication;
+import com.views.Main;
 /**
  * Created by IntelliJ IDEA. User: li_jianhua Date: 2014-10-17 下午2:14:34
  * To change this template use File | Settings | File Templates.
@@ -124,7 +128,6 @@ public class CrashHandler implements UncaughtExceptionHandler{
     		if (ex == null) {   
                 return true;   
             }   
-            
     		final String msg = ex.getLocalizedMessage();
             
     		ex.printStackTrace();
@@ -147,7 +150,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
             //收集设备信息   
             collectCrashDeviceInfo(mContext);   
             //保存错误报告文件   
-            //String crashFileName = saveCrashInfoToFile(ex);   
+            String crashFileName = saveCrashInfoToFile(ex);   
             //发送错误报告到服务器   
             //sendCrashReportsToServer(mContext);   
 		} catch (Exception e) {
@@ -219,7 +222,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
      * @param ex  
      * @return  
      */  
-   /* private String saveCrashInfoToFile(Throwable ex) {   
+    private String saveCrashInfoToFile(Throwable ex) {/*   
         Writer info = new StringWriter();   
         PrintWriter printWriter = new PrintWriter(info);   
         ex.printStackTrace(printWriter);   
@@ -247,8 +250,8 @@ public class CrashHandler implements UncaughtExceptionHandler{
         } catch (Exception e) {   
             LogUtil.e(TAG, "an error occured while writing report file...");   
         }   
-        return null;   
-    }*/   
+          
+    */return null; }   
   
   
     /**  

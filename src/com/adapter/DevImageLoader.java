@@ -6,15 +6,17 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.widget.ImageView;
+
 import com.manniu.manniu.R;
 import com.utils.BitmapUtils;
 import com.utils.ExceptionsOperator;
 import com.utils.FileUtil;
 import com.utils.LogUtil;
-import android.os.Handler;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 /**
  * @author: li_jianhua Date: 2015-11-19 下午3:10:48

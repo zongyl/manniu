@@ -35,7 +35,7 @@ public class BackLoginThread implements Runnable{
 	public static boolean runFlag;
 	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高 201:牛眼登录成功
 	public static int state = 0;
-	Thread _thread = null;
+	public Thread _thread = null;
 	public int error_Count= 0;
 	private MyHandler _handler = new MyHandler();
     private final int LOGIN_SEND_MSG = 100;

@@ -70,7 +70,7 @@ public class BaseApplication extends Application {
 			  GCMRegistrar.register(this, SENDER_ID);  
 			} else {  
 				 LogUtil.v(TAG, "Already registered");  
-			}*/ 
+			}*/
 //		}catch(Exception e){
 //			LogUtil.d(TAG, "GCM Exception:" + e.getMessage());
 //		}

@@ -36,6 +36,7 @@
                 android:background="@null"
                 android:textColor="#FF333333" 
                 android:singleLine="true" 
+                android:maxLength="10"
                 android:paddingLeft="5dp">
                 <requestFocus />
             </EditText>

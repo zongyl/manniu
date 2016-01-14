@@ -39,17 +39,23 @@ public class Constants {
 	public static long sessionId = 0;//记录sessionID
 	public static String session_Id = "";//记录ETS返回的sessionID
 	//public static String userPassword = "";
-	//public static String hostUrl = "http://120.26.194.72/NineCloud";//www.nmy9.com
-	public static String hostUrl1 = "http://ts.nmy9.com";
-	public static String hostUrl = "http://ts.nmy9.com";//ts.nmy9.com
-	//public static String hostUrl = "http://47.88.30.207/NineCloud";//us.nmy9.com
-	//public static String ETShostUrl = "http://120.26.56.240:9601";
+	
+	//cn
+//	public static String hostUrl = "http://120.26.194.72/NineCloud";//www.nmy9.com
+//	public static String ETShostUrl = "http://120.26.56.240:9601";
+
+	//us
+//	public static String hostUrl = "http://47.88.30.207/NineCloud";
+//	public static String ETShostUrl = "http://47.88.30.207:9601";
+	
+	//ts
+	public static String hostUrl = "http://ts.mny9.com";//ts.mny9.com
 	public static String ETShostUrl = "http://ts.cms.mny9.com:9601";
 	
 	//控制视频显示窗口
 	public static int viewNum = 1;
 	//视频图片大小 
-	public static int imgViewWidth = 352;
+	public static int imgViewWidth = 352;  
 	public static int imgViewHeight = 288;
 	
 	//XML信息

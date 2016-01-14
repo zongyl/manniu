@@ -1,16 +1,14 @@
 package com.adapter;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import com.manniu.manniu.R;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.manniu.manniu.R;
 
 public class MsgImgPager extends PagerAdapter{
 
