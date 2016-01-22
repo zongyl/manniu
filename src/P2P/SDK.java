@@ -8,7 +8,6 @@ import net.majorkernelpanic.streaming.video.VideoStream;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -39,7 +38,7 @@ public class SDK {
 	//pcmType 音频类型
 	//static byte[] newbuf = new byte[60*1024];
 	public void onData(int width,int heigth,int pcmType,int chnl,int devType,int type,int isIFrame,byte[] data, int length) {
-		if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
+		//if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
 			if(data != null && data.length > 0 && NewSurfaceTest.instance._decoderQueue != null){
 				//硬、软解方法
 				if(type == 0){//视频
@@ -55,7 +54,7 @@ public class SDK {
 				}
 			}
 		}
-	}
+	//}
 	
 	/*
 	 * C_MSG_CREATE_CHANNEL = 10,		//创建通道(通道信息在 C_Channel_T* param)
@@ -435,6 +434,29 @@ public class SDK {
 	 * 返回：0表示成功，<0参照错误码
 	 * */
 	public static native int P2PTransfor(String dId,long[] sessionId);
+	
+	/*
+	 *  deviceid设备id
+	 *  返回值 1 智诺 2 海康
+	 * */
+	public static native int AnalysisFactoryType(String deviceid);
+	
+	/*海康告警回放*/
+	/*
+	 * jbyteArray  输入数据
+	 * jint        输入长度
+	 * */
+	public static native int InputHiKangData(byte[] inputdata,int inlen);
+
+	/*
+	  * jbyteArray  输出数据
+	 * 	jint        输出长度
+	 * 	返回值                    0 成功  1需要input数据
+	 * 	jintArray   数据信息 目前有数据长度 宽 高信息
+	 * 	注意                       input一次可能需要get多次 直到返回1时继续input数据
+	 * */
+	public static native int GetHiKangData(byte[] outputdata,int[] info);
+	
 	
 	/*
 	 * class:      p2p_SDK

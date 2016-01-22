@@ -1,7 +1,5 @@
 package com.views;
 
-import com.utils.LogUtil;
-
 import android.content.Context;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.Platform.ShareParams;

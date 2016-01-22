@@ -85,9 +85,6 @@ public class Fra_VideoActivity extends Fragment implements TextWatcher,DelButton
 		String fileType = ".mp4";
 		_adapter.UpdateList(dir, fileType,query,bQuery);
 	}
-    
-    
-
 
 	@Override
 	public void clickHappend(int position, Object obj) {
@@ -105,7 +102,6 @@ public class Fra_VideoActivity extends Fragment implements TextWatcher,DelButton
 			System.out.println(1111);
 			//LogUtil.e("Fra_videoActivity", ExceptionsOperator.getExceptionInfo(e));
 		}
-		
 	}
 	
 	@Override
@@ -113,7 +109,6 @@ public class Fra_VideoActivity extends Fragment implements TextWatcher,DelButton
 		super.onDestroy();
 		XListViewRewrite.dismissPopWindow();
     }
-	
 	
 	@Override
 	public void playHappend(int position, Object obj) {

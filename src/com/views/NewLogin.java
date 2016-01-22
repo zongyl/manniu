@@ -45,6 +45,7 @@ import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 
 import com.alibaba.fastjson.JSON;
+import com.basic.Local;
 import com.basic.XMSG;
 import com.google.android.gcm.GCMRegistrar;
 import com.manniu.manniu.R;
@@ -481,7 +482,7 @@ public class NewLogin extends Activity implements OnClickListener{
 			params.put("alias", param.split(",")[1]);
 			params.put("time_token", param.split(",")[2]);
 			params.put("sessionId", Constants.sessionId+"");
-			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/jpush/setAlias",params);
+			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/android/getCompanyInfo",params);
 			if (Integer.parseInt(map.get("code").toString()) != 200) {
 				showToast(getResources().getString(R.string.E_SER_FAIL));
 			}
@@ -565,7 +566,7 @@ public class NewLogin extends Activity implements OnClickListener{
 	}; 
 
 	public String getRegistrationId(){
-		if("en".equals(LanguageUtil.getLanguageEnv())){
+		if(Constants.LOCAL.equals(Local.US)){
 			return GCMRegistrar.getRegistrationId(this);
 		}
 		return JPushInterface.getRegistrationID(this);

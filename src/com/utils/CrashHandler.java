@@ -1,6 +1,7 @@
 package com.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
@@ -9,8 +10,14 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -18,8 +25,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.adapter.HttpUtil;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.views.BaseApplication;
 import com.views.Main;
 /**
@@ -46,7 +57,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
     private Properties mDeviceCrashInfo = new Properties();   
     private static final String VERSION_NAME = "versionName";   
     private static final String VERSION_CODE = "versionCode";   
-    //private static final String STACK_TRACE = "STACK_TRACE";   
+    private static final String STACK_TRACE = "STACK_TRACE";   
     /** 错误报告文件的扩展名 */  
     private static final String CRASH_REPORTER_EXTENSION = ".cr";   
        
@@ -152,7 +163,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
             //保存错误报告文件   
             String crashFileName = saveCrashInfoToFile(ex);   
             //发送错误报告到服务器   
-            //sendCrashReportsToServer(mContext);   
+            sendCrashReportsToServer(mContext);   
 		} catch (Exception e) {
 		}
         return true;   
@@ -191,17 +202,55 @@ public class CrashHandler implements UncaughtExceptionHandler{
   
             for (String fileName : sortedFiles) {   
                 File cr = new File(ctx.getFilesDir(), fileName);   
-                //postReport(cr);   
-                cr.delete();// 删除已发送的报告   
+                postReport(cr);   
+                //cr.delete();// 删除已发送的报告   
             }   
         }   
     }   
   
-   // private void postReport(File file) {   
+    private void postReport(File f) {   
+    	LogUtil.d(TAG, "postReport.file:" + f.getAbsolutePath());
         // TODO 使用HTTP Post 发送错误报告到服务器   
         // 这里不再详述,开发者可以根据OPhoneSDN上的其他网络操作   
         // 教程来提交错误报告   
-//    }   
+		RequestParams params = new RequestParams();
+		try {
+			//params.put("file", new File("/data/data/com.manniu.manniu/shared_prefs/HOSTIP.xml"));
+			params.put("file", f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		params.put("path", "logs"+File.separator+"exception");
+	
+	HttpUtil.post(Constants.hostUrl+"/mobile/upload", params, new JsonHttpResponseHandler(){
+		public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+			try {
+				LogUtil.v(TAG, "onSuccess >> statusCode:" + statusCode + ", response:" + response.toString());
+				String file = response.getString("file");
+				LogUtil.d("file:", file.substring(file.lastIndexOf("/")));
+				//delFile(file.substring(file.lastIndexOf("/")));
+			} catch (JSONException e) {
+			}
+		};
+		
+		@Override
+		public void onFailure(int statusCode, Header[] headers,
+				String responseString, Throwable throwable) {
+			Log.d(TAG, "responseString:" + responseString);
+		}
+		
+		public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+			if(errorResponse == null){
+				LogUtil.v(TAG, "onFailure >> statusCode:" + statusCode);
+			}else{
+				LogUtil.v(TAG, "onFailure >> statusCode:" + statusCode + ", response:" + errorResponse.toString());
+			}
+		};
+	});
+	
+    	
+    	
+    }   
   
     /**  
      * 获取错误报告文件名  
@@ -222,7 +271,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
      * @param ex  
      * @return  
      */  
-    private String saveCrashInfoToFile(Throwable ex) {/*   
+    private String saveCrashInfoToFile(Throwable ex) {   
         Writer info = new StringWriter();   
         PrintWriter printWriter = new PrintWriter(info);   
         ex.printStackTrace(printWriter);   
@@ -235,7 +284,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
   
         String result = info.toString();   
         printWriter.close();   
-        mDeviceCrashInfo.put(STACK_TRACE, result);   
+     //   mDeviceCrashInfo.put(STACK_TRACE, result);   
         LogUtil.i(TAG, "result..."+result);  
         try {   
             long timestamp = System.currentTimeMillis();   
@@ -243,15 +292,30 @@ public class CrashHandler implements UncaughtExceptionHandler{
             LogUtil.i(TAG, "saveCrashInfoToFile fileName..."+fileName);  
             FileOutputStream trace = mContext.openFileOutput(fileName,   
                     Context.MODE_PRIVATE);   
-            mDeviceCrashInfo.store(trace, "");   
+            Object obj;
+            StringBuffer sb = new StringBuffer();
+            Set<Object> keys = mDeviceCrashInfo.keySet();
+            for(Iterator<Object> iter = keys.iterator(); iter.hasNext();){
+            	obj = iter.next();
+            	LogUtil.d(TAG, "=====================");
+            	LogUtil.d(TAG, obj.getClass());
+            	LogUtil.d(TAG, "key:" + obj.toString());
+            	LogUtil.d(TAG, "value:" + mDeviceCrashInfo.get(obj.toString()));
+            	sb.append(obj.toString() + ":" + mDeviceCrashInfo.get(obj.toString()) + "\n");
+            }
+            result = result + sb.toString();
+            byte[] buffer = result.getBytes();
+            trace.write(buffer);
+            
+    //        mDeviceCrashInfo.store(trace, "");   
             trace.flush();   
             trace.close();   
             return fileName;   
         } catch (Exception e) {   
-            LogUtil.e(TAG, "an error occured while writing report file...");   
+            LogUtil.e(TAG, "an error occured while writing report file..." + e.getMessage());   
         }   
           
-    */return null; }   
+    return null; }   
   
   
     /**  
@@ -279,7 +343,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
 		for (Field field : fields) {
 			try {
 				field.setAccessible(true);
-				mDeviceCrashInfo.put(field.getName(), field.get(null));
+				mDeviceCrashInfo.put(field.getName(), field.get(null).toString());
 				if (DEBUG) {
 					LogUtil.d(TAG, field.getName() + " : " + field.get(null));
 				}

@@ -3,6 +3,8 @@ package com.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.basic.Local;
+
 import android.graphics.Bitmap;
 import android.media.AudioFormat;
 
@@ -51,6 +53,8 @@ public class Constants {
 	//ts
 	public static String hostUrl = "http://ts.mny9.com";//ts.mny9.com
 	public static String ETShostUrl = "http://ts.cms.mny9.com:9601";
+	
+	public static String LOCAL = Local.CN;
 	
 	//控制视频显示窗口
 	public static int viewNum = 1;

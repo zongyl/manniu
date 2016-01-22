@@ -1341,7 +1341,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		String strPYQText=  _title.getText()+"";
 		String strURL= liveUrl+"&lc.type=2";
 		
-		String strTitle = "【"+getString(R.string.app_name)+"】"+getString(R.string.app_share_video);
+		String strTitle = "【"+getString(R.string.app_name)+"】";
 		
 		ShareContentCustomizeDemo.showShare( getString(R.string.app_name),context1,strTitle,
 				strText,

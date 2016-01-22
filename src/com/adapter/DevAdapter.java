@@ -28,7 +28,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -148,12 +147,30 @@ public class DevAdapter extends BaseAdapter{
 			if(device.channels > 1){//NVR 多通道
 				convertView = inflater.inflate(R.layout.new_main_grid_item, null);
 				holder.tv = (TextView)convertView.findViewById(R.id.nvr_device_txt);
+				holder.more_btn = (Button)convertView.findViewById(R.id.nvr_device_btn);
 				final GridView nvrGrid = (GridView)convertView.findViewById(R.id.nvr_grid_view);
 				
 				holder.tv.setText(device.devname);
 				Log.d(TAG, "SID:"+device.sid);
 				Log.d(TAG, "channels:"+device.channels);
 
+				holder.more_btn.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if(device.type == 1 && device.isowner == 1){
+							dlg = Sheet(device, holder.iv, 0);
+						}else if(device.type == 1 && device.isowner == 0){
+							dlg = DelSheet(device, holder.iv);
+						}else if(device.type == 4){
+							dlg = AnalogSheet(device, holder.iv);
+						}else if(device.type == 100){
+							dlg = CollectSheet(device, holder.iv);
+						}else{
+							
+						}
+					}
+				});
+				
 				RequestParams params = new RequestParams();
 				params.put("sid", device.sid);
 				HttpUtil.get(Constants.hostUrl + "/mobile/getDeviceChannel", params, new JsonHttpResponseHandler(){
@@ -197,14 +214,14 @@ public class DevAdapter extends BaseAdapter{
 							}
 						});
 						
-						nvrGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
+						/*nvrGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
 							@Override
 							public boolean onItemLongClick(
 									AdapterView<?> parent, View view, int position, long id) {
 								//APP.ShowToast(((TextView)view.findViewById(R.id.ItemText)).getText().toString());
 									dlg = Sheet(device, holder.iv, position);
 								return true;
-							}});
+							}});*/
 					};
 					
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {

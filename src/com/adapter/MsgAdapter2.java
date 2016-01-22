@@ -103,6 +103,7 @@ public class MsgAdapter2 extends BaseAdapter {
 						Message msg = (Message)_items.get(position);
 //						System.out.println(msg.devicename+"--"+msg.logtime+"--"+msg.evt_vsize);
 //						System.out.println(msg.evt_video);
+						int type = SDK.AnalysisFactoryType(msg.uuid);
 						JSONObject json = null;
 						String params = "?ossUrl="+msg.evt_video+"&timeMillis=0";
 						Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl+"/android/getUrl"+params);
@@ -119,6 +120,7 @@ public class MsgAdapter2 extends BaseAdapter {
 									intent.putExtra("evt_vsize", msg.evt_vsize);
 									intent.putExtra("evt_video", str);
 									intent.putExtra("deviceName", msg.devicename);
+									intent.putExtra("evt_ManufacturerType", type);
 									APP.GetMainActivity().startActivity(intent);
 								}
 							} catch (JSONException e) {

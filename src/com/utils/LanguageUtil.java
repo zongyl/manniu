@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 public class LanguageUtil {
 	
-	public static String getLanguageEnv(){
+	public static String getLanguageEnv1(){
 		Locale l = Locale.getDefault();
 		String language = l.getLanguage();
 		String country = l.getCountry().toLowerCase();

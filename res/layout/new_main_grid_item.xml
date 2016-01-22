@@ -23,7 +23,7 @@
        </TextView>
        
         <Button 
-           android:id="@+id/device_btn"
+           android:id="@+id/nvr_device_btn"
            android:layout_width="50dp"
            android:layout_height="50dp"
            android:layout_gravity="center_vertical|right"

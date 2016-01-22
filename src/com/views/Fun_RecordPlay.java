@@ -1,12 +1,10 @@
 package com.views;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TimerTask;
-
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -33,7 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
 import com.adapter.HttpUtil;
 import com.basic.G;
 import com.basic.XMSG;
@@ -42,7 +39,6 @@ import com.manniu.manniu.R;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.views.analog.camera.encode.DecoderDebugger;
-import com.views.analog.camera.encode.DecoderQueue.QueueBean;
 
 /**
  * @author: li_jianhua Date: 2015-11-27 下午5:05:41
@@ -57,6 +53,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
     TextView _devName;
     String devName = "",evt_video ="";
     int evt_vsize = 0;
+    int evt_ManufacturerType = 0;//设备厂家类型
     Button _btnBack;
     XImageBtn _btnpause,_btnstop;
     // 是否手动拖动播放条标志位
@@ -93,6 +90,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 		devName = getIntent().getExtras().getString("deviceName");//设备名称
 		evt_video = getIntent().getExtras().getString("evt_video");
 		evt_vsize = getIntent().getExtras().getInt("evt_vsize");
+		evt_ManufacturerType = getIntent().getExtras().getInt("evt_ManufacturerType");
 		
 		framelayout = (FrameLayout)findViewById(R.id.frame);
         params = (LinearLayout.LayoutParams)framelayout.getLayoutParams();
@@ -161,7 +159,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 			_dlgWait = new Dlg_WaitForActivity(this,R.style.dialog);
 			_dlgWait.setCancelable(true);
 		}
-//		File f = new File(Environment.getExternalStorageDirectory(), "/IPC_recordplay");
+//		File f = new File(Environment.getExternalStorageDirectory(), "/IPC_recordplay.rbg");
 //	    touch (f);
 //	    try {
 //	        outputStream = new BufferedOutputStream(new FileOutputStream(f));
@@ -291,8 +289,10 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
     }
 	
     int temp=0;
+    int n = 0;
+    byte[] b =new byte[1024];
     byte[] bmpBuff = null;
-    int flag  = 0;
+    int flag  = 0,hk_flag = 0;
     int byteLength = 0;//读取字节长度
     //int updateSeekbar = 0;//10帧更新一次
     boolean isRange = false;//是否从指定的地方加载
@@ -319,7 +319,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 	        	video_height = 0;
 	        	if(is == null) break;
 	        	if(!isPause) continue;
-	        	//synchronized (is) {
+	        	if (evt_ManufacturerType == 1) { //智诺
 	        		while ((temp = is.read()) != 'Z'){
 		        		if (temp == -1){
 		        			isEnd=true;
@@ -376,9 +376,11 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 		        				bmpBuff = new byte[video_width * video_height * 2];
 		        				img_width = video_width;
 		        				img_height = video_height;
-		        				startTimer();
-		        				seekbar.setMax(evt_vsize);//总长度
-//		        				seekbar.setEnabled(true);
+		        				System.out.println("evt_vsize=="+evt_vsize);
+		        				if(evt_vsize > 0){
+		        					startTimer();
+			        				seekbar.setMax(evt_vsize);//总长度
+		        				}
 		        				_handler.sendEmptyMessage(1001);
 		        				_deThead.de_start();
 		        			}
@@ -398,7 +400,60 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 	        				//_decoderDebugger.decoder(_myBuffer, realLen);
 		        		}
 		    		}
-	        	//}
+	        	}else if(evt_ManufacturerType == 2){ //海康
+	        		if(flag == 0){
+        				flag = 1;
+        				buffer = new byte[40];
+    		    		is.read(buffer,0,39);
+    		    		byteLength += 40;
+    		    		int iret = SDK.InputHiKangData(buffer, 40);
+    		    		if(iret != 0) break;
+	        		}
+	        		
+	        		int a = fill(b,0,b.length);
+        			if(a == -1){
+        				byteLength = evt_vsize;
+        				isEnd=true;
+        				stop();
+	        			break;
+        			}else{
+        				int m = SDK.InputHiKangData(b, a);
+    		    		if(m != 0) break;
+        			}
+        			byteLength += a;
+        			//System.out.println("java:"+byteLength+" size:"+evt_vsize+" a:"+a);
+    				byte[] data = new byte[1024*1024];
+		    		int[] info = new int[3];
+		    		while(true){
+		    			int ret = SDK.GetHiKangData(data,info);
+		    			if(ret == 0){
+		    				if(hk_flag == 0){
+		    					hk_flag = 1;
+		    					img_width = info[1];
+		        				img_height = info[2];
+		    					bmpBuff = new byte[info[1] * info[2] * 2];
+		    					SDK.Ffmpegh264DecoderInit(info[1],info[2],0,0);
+		    					if(evt_vsize > 0){
+		    						startTimer();
+			        				seekbar.setMax(evt_vsize);//总长度
+		    					}
+		        				_handler.sendEmptyMessage(1001);
+		        				_deThead.de_start();
+		    				}
+		    				long t1 = System.currentTimeMillis();
+		    				int ret2 = SDK.AlarmDataPlayBack(data,info[0],bmpBuff);
+		    				long t2 = System.currentTimeMillis();
+		    				if(ret2 > 0){
+		        				_deThead.addData(bmpBuff);
+		        			}
+		    				if((t2-t1) < 100){
+								Thread.sleep(100-(t2-t1));
+							}
+		    			}else{
+		    				break;
+		    			}
+		    		}
+	        	}
 			}
 		} catch (Exception e) {
 			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
@@ -415,7 +470,8 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
 			while (sum<length) {
 				len = is.read(buffer, offset+sum, length-sum);
 				if (len<0) {
-					throw new IOException("fill...End of stream");
+					//throw new IOException("fill...End of stream");
+					return -1;
 				}
 				else sum+=len;
 			}

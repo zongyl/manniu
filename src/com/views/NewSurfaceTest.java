@@ -797,6 +797,7 @@ public class NewSurfaceTest extends Activity implements SurfaceHolder.Callback, 
 							_decoderQueue._isRecording = true;
 						}*/
 					}else{
+						video.setBackgroundResource(R.drawable.control_icon_small_video_n);
 						APP.ShowToast(getText(R.string.Video_Storage_space_err).toString());
 					}
 				}

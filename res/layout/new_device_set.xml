@@ -190,6 +190,35 @@
         </RelativeLayout>
    
        <RelativeLayout
+       android:id="@+id/device_set_channel"
+       android:layout_marginTop="1dp"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/new_dev_set_item_selector" >
+    
+    <TextView android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    
+        <TextView 
+            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="@string/channel"
+            android:textColor="@color/black" />
+        
+        <Spinner android:id="@+id/channelNos"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout>
+   
+       <RelativeLayout
        android:id="@+id/device_set_alarm_dj"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
@@ -216,37 +245,7 @@
             android:layout_marginRight="20dp"
             android:layout_alignParentRight="true">
         </Spinner>
-      
-    </RelativeLayout><!-- 
-      <RelativeLayout
-       android:id="@+id/device_set_alarm_dj"
-       android:layout_marginTop="1dp"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/new_dev_set_item_selector" >
-    
-    <TextView android:id="@+id/tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    
-        <TextView 
-            android:id="@+id/dev_item_ver_tv"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="画质"
-            android:textColor="@color/black" />
-        <Spinner android:id="@+id/quality"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:layout_marginRight="20dp"
-            android:layout_alignParentRight="true">
-        </Spinner>
-    </RelativeLayout> -->
-   
+    </RelativeLayout>
    
       <RelativeLayout
        android:id="@+id/device_set_alarm_dj"

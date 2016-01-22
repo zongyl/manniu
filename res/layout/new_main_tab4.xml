@@ -39,7 +39,6 @@
            android:text="@string/local_img"  
            android:textColor="@color/text_color"  
            android:textSize="18.0dip" />  
-           
    </LinearLayout>
    
    <FrameLayout

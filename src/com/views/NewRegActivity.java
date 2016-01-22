@@ -35,6 +35,7 @@ import com.adapter.HttpUtil;
 import com.adapter.RandomUtil;
 import com.adapter.Utils;
 import com.alibaba.fastjson.JSON;
+import com.basic.Local;
 import com.exinxi.Sms;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -85,16 +86,22 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.new_reg_activity);
-		
 		btn_reg = (Button)findViewById(R.id.reg_btn_reg);
+
+		LogUtil.d(TAG, "Constants.LOCAL:" + Constants.LOCAL);
+		LogUtil.d(TAG, "Local.CN:" + Local.CN);
 		
-		if("en".equals(LanguageUtil.getLanguageEnv())){
+		if(Constants.LOCAL.equals(Local.US)){
 			pattern = pattern_en;
+		}
+		
+		/*if("en".equals(LanguageUtil.getLanguageEnv())){
+			
 		}else if("zh_CN".equals(LanguageUtil.getLanguageEnv())){
 			//
 		}else{
 			//other
-		}
+		}*/
 		
 		getParams();
 		
@@ -344,10 +351,10 @@ public class NewRegActivity extends Activity implements OnClickListener, OnTaskL
 			if(codeVaild()){
 				String _code = RandomUtil.generateNumString(4);
 				maps.put(mobile, Utils.MD5(_code).toUpperCase());
-				LogUtil.d(TAG, "language:" + LanguageUtil.getLanguageEnv());
-				if(LanguageUtil.getLanguageEnv().contains("en")){
+
+				if(Constants.LOCAL.equals(Local.US)){
 					TwilioUtils.sendSms(mobile, _code);
-				}else if("zh_CN".equals(LanguageUtil.getLanguageEnv())){
+				}else if(Constants.LOCAL.equals(Local.CN)){
 					new smsTask().execute(mobile, _code);
 				}else {
 					//

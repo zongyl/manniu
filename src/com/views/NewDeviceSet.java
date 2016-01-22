@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adapter.HttpUtil;
 import com.alibaba.fastjson.JSON;
@@ -66,11 +67,13 @@ public class NewDeviceSet extends Activity {
 	
 	Button btn_update ;
 	
-	Spinner resolution, frameRate, bitStream;
+	Spinner resolution, frameRate, bitStream, channelNos;
 	
 	ImageView switch1, switch2;
 	
 	ArrayAdapter<CharSequence> adapter;
+	
+	View channelsView;
 	
 	boolean init = true;
 	
@@ -112,7 +115,9 @@ public class NewDeviceSet extends Activity {
 		resolution = (Spinner) findViewById(R.id.resolution);
 		frameRate = (Spinner) findViewById(R.id.frameRate);
 		bitStream = (Spinner) findViewById(R.id.bitStream);
-
+		channelNos = (Spinner) findViewById(R.id.channelNos);
+		channelsView = findViewById(R.id.device_set_channel);
+		
 		adapter(resolution, R.array.devSetResolution, 0);
 		adapter(frameRate, R.array.devSetFrameRate, 0);
 		adapter(bitStream, R.array.devSetBitStream, 0);
@@ -177,13 +182,29 @@ public class NewDeviceSet extends Activity {
 		if(!device.devname.equals(et_dev_name.getText().toString())){
 			updateDevName();
 		} 
-		writeInfo("method", 0);
-		writeInfo("type", 1);
-		set(0, "overlay_text", et_dev_name.getText().toString());
-		
-		String sets = getSets();
-		LogUtil.d(TAG, "save config json:"+sets);
-		send(sets);
+
+		if(channelsView.getVisibility() != View.GONE){//NVR
+			APP.ShowToast("通道:"+channelNos.getSelectedItem().toString());
+			if(channelNos.getSelectedItem()!=null){
+				if(!"".equals(channelNos.getSelectedItem().toString())){
+					//非空   只传一个通道的数据 
+					//String sets = getSets();//这是所有的数据 
+					writeInfo("method", 0);
+					writeInfo("type", 1);
+					channelNo = Integer.parseInt(channelNos.getSelectedItem().toString())-1;
+					String sets = getSets(channelNo);
+					LogUtil.d(TAG, "NVR save config json:"+sets);
+					send(sets, channelNo);
+				}
+			}
+		}else{//IPC
+			writeInfo("method", 0);
+			writeInfo("type", 1);
+			set(0, "overlay_text", et_dev_name.getText().toString());
+			String sets = getSets();
+			LogUtil.d(TAG, "IPC save config json:"+sets);
+			send(sets);
+		}
 	}
 	
 	//获取配置 发送请求的json
@@ -278,14 +299,23 @@ public class NewDeviceSet extends Activity {
 	private String getServerAddress(){
 		return Constants.hostUrl;
 	}
-	
+
 	private String paramStr;
+	private int channelNo = -1;
 	
-	/**
-	 * 将设置信息发送到web
-	 */
 	private void send(String configJson){
+		send(configJson, -1);
+	}
+	/**
+	 * 
+	 * @param configJson 配置信息 
+	 * @param channelNo 通道号 
+	 */
+	private void send(String configJson, int _channelNo){
 		RequestParams params = new RequestParams();
+		if(channelNo>-1){
+			this.channelNo = _channelNo;
+		}
 		
 		com.alibaba.fastjson.JSONObject obj = JSON.parseObject(configJson);
 		
@@ -306,7 +336,9 @@ public class NewDeviceSet extends Activity {
 						maps.put("method", 0);
 						maps.put("sid", device.sid);
 						maps.put("action", 101);
-						
+						if(channelNo > -1){
+							maps.put("channel", channelNo);
+						}
 						String str = new JSONObject(maps).toString();
 						//JSON.parseObject(maps.toString()).toJSONString()
 						LogUtil.d(TAG, "QWE:"+str);
@@ -471,6 +503,21 @@ public class NewDeviceSet extends Activity {
 	}
 	
 	/**
+	 * 通道号 
+	 * @param channelNo
+	 * @return
+	 */
+	private String getSets(int channelNo){
+		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
+		JSONArray array = new JSONArray();
+		array.add(get(channelNo));
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.putAll(pre.getAll());
+		map.put("cam_conf", array);
+		return JSON.toJSONString(map);
+	}
+	
+	/**
 	 * 设置属性 
 	 * @param cannelNo 通道号  
 	 * @param key  属性
@@ -478,10 +525,8 @@ public class NewDeviceSet extends Activity {
 	 */
 	private void set(int channelNo, String key, Object value){
 		String cam_conf = readInfo("cam_conf");
-
 		com.alibaba.fastjson.JSONArray array;
 		com.alibaba.fastjson.JSONObject obj;
-		
 		if("".equals(cam_conf)||cam_conf==null){
 			obj = new com.alibaba.fastjson.JSONObject();
 			array = new com.alibaba.fastjson.JSONArray();
@@ -495,6 +540,24 @@ public class NewDeviceSet extends Activity {
 			//array.remove(channelNo);
 			array.set(channelNo, obj);
 			SetSharePrefer.write(MD5Util.MD5(device.sid) + FILE, "cam_conf", array.toJSONString());
+		}
+	}
+	
+	/**
+	 * 根据通道号获取配置
+	 * @param channelNo
+	 * @return
+	 */
+	private com.alibaba.fastjson.JSONObject get(int channelNo){
+		String cam_conf = readInfo("cam_conf");
+		com.alibaba.fastjson.JSONArray array;
+		com.alibaba.fastjson.JSONObject obj;
+		if("".equals(cam_conf)||cam_conf==null){
+			return null;
+		}else{
+			array = JSON.parseArray(cam_conf);
+			obj = array.getJSONObject(channelNo);
+			return obj;
 		}
 	}
 	
@@ -516,6 +579,79 @@ public class NewDeviceSet extends Activity {
 		return pre.getString(key, "");
 	}
 	
+	public void show(com.alibaba.fastjson.JSONObject set){
+		String bps,fps,width;
+		bps = set.getString("bps");
+		fps = set.getString("fps");
+		width = set.getString("width");
+		
+		if("1".equals(fps)){
+			frameRate.setSelection(0);
+		}else if("5".equals(fps)){
+			frameRate.setSelection(1);
+		}else if("10".equals(fps)){
+			frameRate.setSelection(2);
+		}else if("15".equals(fps)){
+			frameRate.setSelection(3);
+		}else {
+		}
+
+		if("352".equals(width)){
+			resolution.setSelection(0);
+			if("48".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 0);
+			}else if("96".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 1);
+			}else if("160".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 2);
+			}else if("224".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream, 3);
+			}else{
+				bitStream.setSelection(0);
+			}
+		}else if("704".equals(width)){
+			resolution.setSelection(1);
+			if("128".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 0);
+			}else if("256".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 1);
+			}else if("384".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 2);
+			}else if("512".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 3);
+			}else if("640".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream1, 4);
+			}else{
+				bitStream.setSelection(0);
+			} 
+		}else if("1280".equals(width)){
+			resolution.setSelection(2);
+			if("224".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 0);
+			}else if("384".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 1);
+			}else if("640".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 2);
+			}else if("768".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 3);
+			}else if("896".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 4);
+			}else if("1280".equals(bps)){
+				adapter(bitStream, R.array.devSetBitStream2, 5);
+			}else{
+				bitStream.setSelection(0);
+			}
+		}else{ 
+		} 
+		if("0".equals(set.getString("alert_type"))){
+			LogUtil.d(TAG, "报警未开启!");
+			switchTag(switch1, false);
+		}else if("3".equals(set.getString("alert_type"))){
+			LogUtil.d(TAG, "报警已开启!");
+			switchTag(switch1, true);
+		}
+	}
+	
 	public void readSetInfos(){
 		LogUtil.d(TAG, "readSetInfos!");
 		SharedPreferences pre = APP.GetMainActivity().getSharedPreferences(MD5Util.MD5(device.sid) + FILE, APP.GetMainActivity().MODE_PRIVATE);
@@ -524,86 +660,21 @@ public class NewDeviceSet extends Activity {
 			JSONArray sets = JSON.parseArray(cam_conf);
 			LogUtil.d(TAG, "channel count is:" + sets.size());
 			com.alibaba.fastjson.JSONObject set;
-			/*if((sets !=null) && sets.size() > 0){
+			set = sets.getJSONObject(0);
+			show(set);
+			String[] channels;
+			if((sets !=null) && sets.size() > 1){
+				channels = new String[sets.size()];
 				for(int i = 0;i < sets.size();i++){
 					set = sets.getJSONObject(i);
+					channels[i] = String.valueOf(set.getIntValue("channel")+1);
 					LogUtil.d(TAG, "toJSONString:" + set.toJSONString());
 					LogUtil.d(TAG, "toString:" + set.toString());
 				}
-			}*/
-			set = sets.getJSONObject(0);
-
-			String bps,fps,width;
-			bps = set.getString("bps");
-			fps = set.getString("fps");
-			width = set.getString("width");
-			
-
-			if("1".equals(fps)){
-				frameRate.setSelection(0);
-			}else if("5".equals(fps)){
-				frameRate.setSelection(1);
-			}else if("10".equals(fps)){
-				frameRate.setSelection(2);
-			}else if("15".equals(fps)){
-				frameRate.setSelection(3);
-			}else {
-			}
-
-			if("352".equals(width)){
-				resolution.setSelection(0);
-				if("48".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream, 0);
-				}else if("96".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream, 1);
-				}else if("160".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream, 2);
-				}else if("224".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream, 3);
-				}else{
-					bitStream.setSelection(0);
-				}
-			}else if("704".equals(width)){
-				resolution.setSelection(1);
-				if("128".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream1, 0);
-				}else if("256".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream1, 1);
-				}else if("384".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream1, 2);
-				}else if("512".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream1, 3);
-				}else if("640".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream1, 4);
-				}else{
-					bitStream.setSelection(0);
-				} 
-			}else if("1280".equals(width)){
-				resolution.setSelection(2);
-				if("224".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 0);
-				}else if("384".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 1);
-				}else if("640".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 2);
-				}else if("768".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 3);
-				}else if("896".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 4);
-				}else if("1280".equals(bps)){
-					adapter(bitStream, R.array.devSetBitStream2, 5);
-				}else{
-					bitStream.setSelection(0);
-				}
-			}else{ 
-			} 
-			
-			if("0".equals(set.getString("alert_type"))){
-				LogUtil.d(TAG, "报警未开启!");
-				switchTag(switch1, false);
-			}else if("3".equals(set.getString("alert_type"))){
-				LogUtil.d(TAG, "报警已开启!");
-				switchTag(switch1, true);
+				adapter(channelNos, channels);
+			}else{
+				//channelNos
+				channelsView.setVisibility(View.GONE);
 			}
 		}else{
 			LogUtil.d(TAG, "readSetInfos perperences is null!");
@@ -694,7 +765,7 @@ public class NewDeviceSet extends Activity {
 	public String getDeviceId(){
 		return device.sid;
 	}
-	
+
 	private void adapter(Spinner spinner, int resId, int index){
 		LogUtil.d(TAG, "adapter start:" + spinner.getId() + " index:" + index);
 		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item,
@@ -704,6 +775,18 @@ public class NewDeviceSet extends Activity {
 		spinner.setOnItemSelectedListener(new SelectedListener());
 		spinner.setOnTouchListener(touch);
 		spinner.setSelection(index);
+		adapter.notifyDataSetChanged();
+		LogUtil.d(TAG, "adapter end:" + spinner.getId());
+	}
+	
+	private void adapter(Spinner spinner, String[] strs){
+		LogUtil.d(TAG, "adapter start:" + spinner.getId());
+		adapter = new ArrayAdapter<CharSequence>(this, R.layout.my_spinner_item, strs);
+		adapter.setDropDownViewResource(R.layout.spinner_checked_text);
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(new SelectedListener());
+		spinner.setOnTouchListener(touch);
+		spinner.setSelection(0);
 		adapter.notifyDataSetChanged();
 		LogUtil.d(TAG, "adapter end:" + spinner.getId());
 	}
@@ -736,7 +819,6 @@ public class NewDeviceSet extends Activity {
 			switch (parent.getId()) {
 			case R.id.resolution:
 				LogUtil.d(TAG, "...resolution...");
-				//init = false;
 				switch (position) {
 				case 0:
 					if(view != null){
@@ -798,6 +880,17 @@ public class NewDeviceSet extends Activity {
 					set(0, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
 				}
 				break;
+			case R.id.channelNos:
+				int channelNo = Integer.valueOf(channelNos.getSelectedItem().toString());
+				LogUtil.d(TAG, "当前通道:" + channelNo);
+				com.alibaba.fastjson.JSONObject obj = get(channelNo-1);
+				if(obj!=null){
+					show(obj);
+				}else{
+					//没有获取到该通道数据
+					alert("未获取到该通道数据!");
+				}
+				break;
 			default:
 				break;
 			}
@@ -812,6 +905,10 @@ public class NewDeviceSet extends Activity {
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {
 		}
+	}
+	
+	private void alert(String text){
+		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 	}
 	
 	@SuppressLint("NewApi")

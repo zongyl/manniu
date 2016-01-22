@@ -364,11 +364,13 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 					if(str.equals("NoSuchKey")){//地址错误
 						APP.ShowToast(SDK.GetErrorStr(-1));
 					}else{
+						//int type = SDK.AnalysisFactoryType(_msgs.get(_curIndex).uuid);
 						//播放
 						Intent intent = new Intent(this, Fun_RecordPlay.class);
 						intent.putExtra("evt_vsize", _msgs.get(_curIndex).evt_vsize);
 						intent.putExtra("evt_video", str);
 						intent.putExtra("deviceName", _msgs.get(_curIndex).devicename);
+						intent.putExtra("evt_ManufacturerType", SDK.AnalysisFactoryType(_msgs.get(_curIndex).uuid));
 						startActivity(intent);
 					}
 				}
