@@ -184,7 +184,7 @@ public class NewDeviceSet extends Activity {
 		} 
 
 		if(channelsView.getVisibility() != View.GONE){//NVR
-			APP.ShowToast("通道:"+channelNos.getSelectedItem().toString());
+			//APP.ShowToast("通道:"+channelNos.getSelectedItem().toString());
 			if(channelNos.getSelectedItem()!=null){
 				if(!"".equals(channelNos.getSelectedItem().toString())){
 					//非空   只传一个通道的数据 
@@ -192,6 +192,7 @@ public class NewDeviceSet extends Activity {
 					writeInfo("method", 0);
 					writeInfo("type", 1);
 					channelNo = Integer.parseInt(channelNos.getSelectedItem().toString())-1;
+					saveCfg();
 					String sets = getSets(channelNo);
 					LogUtil.d(TAG, "NVR save config json:"+sets);
 					send(sets, channelNo);
@@ -200,11 +201,59 @@ public class NewDeviceSet extends Activity {
 		}else{//IPC
 			writeInfo("method", 0);
 			writeInfo("type", 1);
+			saveCfg();
 			set(0, "overlay_text", et_dev_name.getText().toString());
 			String sets = getSets();
 			LogUtil.d(TAG, "IPC save config json:"+sets);
 			send(sets);
 		}
+	}
+	
+	/**
+	 * 保存配置
+	 */
+	private void saveCfg(){
+		if(channelNo == -1){
+			channelNo = 0;
+		}
+		switch (resolution.getSelectedItemPosition()) {
+		case 0:
+			set(channelNo, "width", 352);
+			set(channelNo, "height", 288);
+			break;
+		case 1:
+			set(channelNo, "width", 704);
+			set(channelNo, "height", 576);
+			break;
+		case 2:
+			set(channelNo, "width", 1028);
+			set(channelNo, "height", 720);
+			break;
+
+		default:
+			break;
+		}
+		
+		switch (frameRate.getSelectedItemPosition()) {
+		case 0:
+			set(channelNo, "fps", 1);
+			break;
+		case 1:
+			set(channelNo, "fps", 5);
+			break;
+		case 2:
+			set(channelNo, "fps", 10);
+			break;
+		case 3:
+			set(channelNo, "fps", 15);
+			break;
+		default:
+			break;
+		}
+		
+		String bps = bitStream.getSelectedItem().toString();
+		set(channelNo, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
+		
 	}
 	
 	//获取配置 发送请求的json
@@ -825,8 +874,8 @@ public class NewDeviceSet extends Activity {
 						if(!init){
 							adapter(bitStream, R.array.devSetBitStream, 0);
 						}
-						set(0, "width", 352);
-						set(0, "height", 288);
+						//set(0, "width", 352);
+						//set(0, "height", 288);
 					}
 					break;
 				case 1:
@@ -834,8 +883,8 @@ public class NewDeviceSet extends Activity {
 						if(!init){
 							adapter(bitStream, R.array.devSetBitStream1, 0);
 						}
-						set(0, "width", 704);
-						set(0, "height", 576);
+						//set(0, "width", 704);
+						//set(0, "height", 576);
 					}
 					break;
 				case 2:
@@ -843,8 +892,8 @@ public class NewDeviceSet extends Activity {
 						if(!init){
 							adapter(bitStream, R.array.devSetBitStream2, 0);
 						}
-						set(0, "width", 1280);
-						set(0, "height", 720);
+						//set(0, "width", 1280);
+						//set(0, "height", 720);
 					}
 					break;
 				default:
@@ -856,16 +905,16 @@ public class NewDeviceSet extends Activity {
 				if(view != null){
 					switch (position) {
 					case 0:
-						set(0, "fps", 1);
+						//set(0, "fps", 1);
 						break;
 					case 1:
-						set(0, "fps", 5);
+						//set(0, "fps", 5);
 						break;
 					case 2:
-						set(0, "fps", 10);
+						//set(0, "fps", 10);
 						break;
 					case 3:
-						set(0, "fps", 15);
+						//set(0, "fps", 15);
 						break;
 					default:
 						break;
@@ -877,7 +926,7 @@ public class NewDeviceSet extends Activity {
 				if(view != null){
 					String bps = bitStream.getSelectedItem().toString();
 					//LogUtil.d(TAG, "当前码流:" + bps);
-					set(0, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
+					//set(0, "bps", Integer.parseInt(bps.substring(0, bps.indexOf(" kbps")).trim()));
 				}
 				break;
 			case R.id.channelNos:
