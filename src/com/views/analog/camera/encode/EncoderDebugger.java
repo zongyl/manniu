@@ -152,7 +152,7 @@ public class EncoderDebugger {
 //	        	outData[3] = 0; 
 	            
 	            //offerDecoder(outData);
-	            if(SDK._sessionId != 0){
+	            if(SDK._sessionIdContext != 0){
             		//SDK.SendData(SDK._sessionId,outData,outData.length,1,0);
 //	            		LogUtil.d("SDK", "NV21发送视频..."+outData.length+" -- "+outData[0]+","+outData[1]+","+outData[2]+","+outData[3]+","+outData[4]+"------"+outData[outData.length-1]+","+outData[outData.length-2]+","+outData[outData.length-3]+","+outData[outData.length-4]+","+outData[outData.length-5]
 //	    						+"------"+outData[outData.length-6]+","+outData[outData.length-7]+","+outData[outData.length-8]+","+outData[outData.length-9]+","+outData[outData.length-10]);
@@ -198,7 +198,7 @@ public class EncoderDebugger {
 	            
 	            //offerDecoder(outData);
 	            
-	            if(SDK._sessionId != 0){
+	            if(SDK._sessionIdContext != 0){
             		//SDK.SendData(SDK._sessionId,outData,outData.length,1,0);
 	            		//outputStream.write(newData, 0, newData.length);
 	            		//SDK.SendData(outData,outData.length,0,0,SDK.lessionList.get(i));

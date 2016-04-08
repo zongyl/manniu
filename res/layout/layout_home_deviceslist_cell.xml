@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:minHeight="60dp"
+    android:background="@color/fun_bkcolor"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5" >
+    </TextView>
+
+    <ImageView
+        android:id="@+id/home_devslist_cell_img"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1.5"
+        android:contentDescription="home_devslist_cell_img"
+        android:scaleType="centerInside"
+        android:src="@drawable/home_dvr_offline" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6.5"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/home_devslist_cell_txtlabel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Device 01"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/home_devslist_cell_detaillabel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="00ad3809"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/home_devslist_cell_morelayout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="home_devslist_cell_moreimg"
+            android:scaleType="centerInside"
+            android:src="@drawable/new_main_item_more_selector" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5" >
+    </TextView>
+
+</LinearLayout>

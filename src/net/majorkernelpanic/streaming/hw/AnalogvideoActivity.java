@@ -332,7 +332,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 	public void changeTextValue(){
 		Message msg = new Message();
 		msg.what = XMSG.CHANGE_TEXTVALUE;
-		if(SDK._sessionId != 0){
+		if(SDK._sessionIdContext != 0){
 			msg.obj = "  正在采集视频数据...";
 			_handler.sendMessageDelayed(msg, 300);
 		}else{
@@ -413,7 +413,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 		_btnRecord.SetImages(R.drawable.btn_record0, R.drawable.btn_record0);
 		//如果正在采集标志位不变
 		_encoderQueue._isRecording = false;
-		if(SDK._sessionId == 0 && SDK._createChnlFlag == -1){
+		if(SDK._sessionIdContext == 0 && SDK._createChnlFlag == -1){
 			_encoderQueue._isEncord = false;
 		}
 		_talkPlayer._recoderQueue.stopRecordAAC();

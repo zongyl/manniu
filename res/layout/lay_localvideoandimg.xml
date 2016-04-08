@@ -23,7 +23,6 @@
            android:textSize="18.0dip" />  
            
        <TextView  
-           android:id="@+id/local_text1"  
            android:layout_width="wrap_content"  
            android:layout_height="fill_parent"  
            android:gravity="center"  

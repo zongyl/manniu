@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
-    android:background="@color/red" >
+    android:background="@color/black" >
    
     <ImageView 
         android:layout_width="fill_parent"
@@ -18,4 +18,15 @@
         android:layout_marginBottom="5dp"
         android:textColor="@color/black"
         android:id="@+id/ItemText"></TextView>
+    <ImageView 
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/ItemRefresh"
+        android:scaleType="fitXY"
+        ></ImageView>
+    
 </RelativeLayout>

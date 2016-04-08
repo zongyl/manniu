@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.adapter.HttpUtil;
 import com.adapter.Message;
+import com.adapter.MsgAdapter2;
 import com.alibaba.fastjson.JSON;
 import com.basic.APP;
 import com.ctrl.XImageBtn;
@@ -54,7 +55,7 @@ import com.utils.FileUtil;
 import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 
-//报警
+//点击报警--进入报警详情
 public class NewMsgDetail extends Activity implements OnClickListener,OnTouchListener{
 	private final String TAG ="NewMegDetail";
 	private JazzyViewPager _viewPager;
@@ -66,7 +67,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	private String _strDevName="";
 	private int _curIndex = 0;
 	private ImageView _imageview;
-	private View _imageLayout;
+//	private View _imageLayout;
 	private View _spinner;
 	private int _curPaNo = 1;
 	private Handler handler =new Handler();
@@ -85,8 +86,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	XImageBtn _alarmPlay,_alarmDown,_alarmShare;
 	
 	String _url;
-	private String sid = APP.GetMainActivity().getSharedPreferences("Info_Login", APP.GetMainActivity().MODE_PRIVATE).getString("sid", "");
-	
+	private String sid = "";
 	/**
 	 * 手指按下时的x y坐标
 	 */
@@ -99,11 +99,14 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 	private int yMove = 0;
 	//触发移动事件的最短距离
 	private int touchSlop = 200;
+	byte[] buf = new byte[28];//取报警设备类型
 	
 	ArrayList<View> _imageLayouts ;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		sid = APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", "");
 		init(R.layout.new_msg_detail2);
+		MsgAdapter2._isOpenAlarm = true;
 	}
 	
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -163,7 +166,7 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 		}
 		options =  new DisplayImageOptions.Builder()
 		//.showImageOnLoading(R.drawable.progress_msg_loading)
-		.showImageForEmptyUri(R.drawable.images_nophoto_bg)
+		.showImageForEmptyUri(R.drawable.event_list_fail_pic)
 		.showImageOnFail(R.drawable.event_list_fail_pic)
 		.resetViewBeforeLoading(true)
 		.cacheOnDisk(true)
@@ -364,13 +367,14 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 					if(str.equals("NoSuchKey")){//地址错误
 						APP.ShowToast(SDK.GetErrorStr(-1));
 					}else{
-						//int type = SDK.AnalysisFactoryType(_msgs.get(_curIndex).uuid);
+						SDK.DecodeUuid(_msgs.get(_curIndex).uuid, buf);
+						int type = buf[3];
 						//播放
+						Constants.devName = _msgs.get(_curIndex).devicename;
+						Constants.evt_video = str;
+                    	Constants.evt_vsize = _msgs.get(_curIndex).evt_vsize;
+                    	Constants.evt_ManufacturerType = type;
 						Intent intent = new Intent(this, Fun_RecordPlay.class);
-						intent.putExtra("evt_vsize", _msgs.get(_curIndex).evt_vsize);
-						intent.putExtra("evt_video", str);
-						intent.putExtra("deviceName", _msgs.get(_curIndex).devicename);
-						intent.putExtra("evt_ManufacturerType", SDK.AnalysisFactoryType(_msgs.get(_curIndex).uuid));
 						startActivity(intent);
 					}
 				}
@@ -488,7 +492,11 @@ public class NewMsgDetail extends Activity implements OnClickListener,OnTouchLis
 			_time.setText(getString(R.string.time).concat(_msgs.get(location).logtime));
 			_devName.setText(getString(R.string.from).concat(_msgs.get(location).devicename));
 			_strDevName = _msgs.get(location).devicename;
-			
+			if(_msgs.get(location).evt_video.equals("") || _msgs.get(location).evt_vsize <= 0){
+				_alarmPlay.setVisibility(View.GONE);
+			}else{
+				_alarmPlay.setVisibility(View.VISIBLE);
+			}
 		}
 		
 	}

@@ -142,7 +142,7 @@ public class RecoderQueue implements Runnable{
 						if(data != null && data.length > 0){
 							if(_isRecordingAAC) raf.write(data);
 							//发送数据
-							if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
+							if(SDK._sessionIdContext != 0 && SDK._createChnlFlag == 0){
 			            		SDK.SendData(data,data.length,1,0,1);
 							}
 						}

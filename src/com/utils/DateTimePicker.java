@@ -92,7 +92,8 @@ public class DateTimePicker extends FrameLayout
         {
             cal.add(Calendar.DAY_OF_YEAR, 1);
             //mDateDisplayValues[i] = (String) DateFormat.format("MM.dd", cal);
-            mDateDisplayValues[i] = (String) DateFormat.format("MM.dd EEEE", cal);
+            //mDateDisplayValues[i] = (String) DateFormat.format("MM.dd EEEE", cal);
+            mDateDisplayValues[i] = (String) DateFormat.format("yyyy-MM-dd", cal);
         }
         mDateSpinner.setDisplayedValues(mDateDisplayValues);
         mDateSpinner.setValue(7 / 2);

@@ -124,7 +124,7 @@ public class EnCoderQueue implements Runnable{
 			try {
 				if(tempData != null && tempData.length > 0){
 					if(_isEncord){
-						if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
+						if(SDK._sessionIdContext != 0 && SDK._createChnlFlag == 0){
 							isSend = 1;
 						}
 						lock.lock();

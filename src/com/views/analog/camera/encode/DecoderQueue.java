@@ -211,6 +211,7 @@ public class DecoderQueue implements Runnable{
 								if(_startSnap && bean.getIsIFrame() == 1){//截图也去头
 									if(SDK._manufactorType == 0){
 										int exHead = (int)bean.getData()[22];
+										if(exHead < 0) continue;
 										int realHead = 24 + exHead;
 										int realLen = bean.getLength() - realHead - 8;
 										byte[] newbuf = new byte[realLen];
@@ -226,6 +227,7 @@ public class DecoderQueue implements Runnable{
 										if(SDK._manufactorType == 0){
 											//int exHead =  Integer.valueOf(G.byte2hex(bean.getData(), 22, 1));
 											int exHead = (int)bean.getData()[22];
+											if(exHead < 0) continue;
 											int realHead = 24 + exHead;
 											int realLen = bean.getLength() - realHead - 8;
 											byte[] newbuf = new byte[realLen];
@@ -242,7 +244,7 @@ public class DecoderQueue implements Runnable{
 									
 								}else{
 									//软解码 直接送数据
-									NewSurfaceTest.instance.h264Decoder2(bean.getData(), bean.getLength());
+									//NewSurfaceTest.instance.h264Decoder2(bean.getData(), bean.getLength());
 								}
 							}
 						}else{

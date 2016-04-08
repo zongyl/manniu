@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -20,12 +21,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -34,14 +33,13 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.basic.APP;
 import com.basic.XMSG;
 import com.manniu.manniu.R;
@@ -373,10 +371,10 @@ public class NewSurfaceTest2 extends XViewBasic{
 				if(isPlay){
 					long t1= System.currentTimeMillis();
 					if(isCloseChannel){
-						SDK.P2PCloseChannel(SDK._sessionId,0);
+						SDK.P2PCloseChannel(SDK._sessionIdContext,0);
 					} 
-					SDK.P2PClose(SDK._sessionId);
-					SDK._sessionId = 0;
+					SDK.P2PClose(SDK._sessionIdContext);
+					SDK._sessionIdContext = 0;
 					isPlay = false;
 					long t2= System.currentTimeMillis();
 					LogUtil.d(TAG, " 退出SDK.time "+(t2-t1));
@@ -392,16 +390,17 @@ public class NewSurfaceTest2 extends XViewBasic{
 	private void doPlay(){
 		try{
 			long t1 = System.currentTimeMillis();
-			int nRet = SDK.P2PConnect(devSid,_sessionId);
+//			int nRet = SD?K.P2PConnect(devSid,_sessionId);
+			int nRet = 0;
 			long t2 = System.currentTimeMillis();
 			LogUtil.d(TAG, "SDK.P2PConnect time :"+(t2-t1) +" ret= "+nRet);
 			if(nRet == 0){
-				SDK._sessionId = _sessionId[0];
+				SDK._sessionIdContext = _sessionId[0];
 				
 				long t3 = System.currentTimeMillis();
-				_playId = SDK.P2PCreateChannel(SDK._sessionId,0,1,20,10000, 352,288);
+				_playId = SDK.P2PCreateChannel(SDK._sessionIdContext,0,1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
-				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionId+" time="+(t4-t3));
+				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionIdContext+" time="+(t4-t3));
 				if(_playId > 0){
 					//startTimer();
 					isPlay = true;
@@ -417,14 +416,14 @@ public class NewSurfaceTest2 extends XViewBasic{
 					msg.obj = _playId;
 					_handler.sendMessage(msg);
 					closeWait();
-					SDK._sessionId = 0;
+					SDK._sessionIdContext = 0;
 				}
 				
 			}else{
 				SDK.SendJsonPck(1,SDK.getJsonString(devSid));
 				closeWait();
 				APP.ShowToast(SDK.GetErrorStr((int)nRet));
-				SDK._sessionId = 0;
+				SDK._sessionIdContext = 0;
 			}
 		}catch(Exception e){
 			e.printStackTrace();

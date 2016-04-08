@@ -43,16 +43,6 @@
                 android:scaleType="fitCenter"
                 android:background="@drawable/gps_bk"
                 /> 
-           <!--  <Button 
-                android:id="@+id/main_tab_2"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="fill_parent"
-                android:text="收藏"
-                android:textColor="@color/gray"
-                android:scaleType="fitCenter"
-                android:background="@drawable/gps_bk"
-                />  -->
             <Button 
                 android:id="@+id/main_tab_3"
                 android:layout_width="0dp"
@@ -63,6 +53,18 @@
                 android:scaleType="fitCenter"
                 android:background="@drawable/gps_bk"
                 /> 
+                
+            <Button 
+                android:id="@+id/main_tab_multi"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:text="多画面"
+                android:textColor="@color/gray"
+                android:scaleType="fitCenter"
+                android:background="@drawable/gps_bk"
+                />
+                <!-- 本地暂时先注 -->
             <Button 
                 android:id="@+id/main_tab_4"
                 android:layout_width="0dp"
@@ -72,7 +74,7 @@
                 android:textColor="@color/gray"
                 android:scaleType="fitCenter"
                 android:background="@drawable/gps_bk"
-                /> 
+                />
           <!--   <com.ctrl.XImageBtn
 	           android:id="@+id/btn_add"
                android:layout_width="0dp"
@@ -248,20 +250,23 @@
        <!-- 实时视频 -->
         <!-- <include android:id="@+id/fun_realplay"
             layout="@layout/new_surface_test" /> -->
-        
+        <!-- 云端 -->
         <include android:id="@+id/new_main"
-            layout="@layout/new_main" />  
-            
+            layout="@layout/new_main" />
+          <!--  <include android:id="@+id/fun_cloud"
+        layout="@layout/fun_cloud" /> -->
+        <!-- 牛眼 -->
         <include android:id="@+id/lay_setting"
             layout="@layout/lay_setting" />
-            
-        <!-- <include android:id="@+id/fun_analogvideo"
-            layout="@layout/fun_analogvideo" /> --> 
-            
+        <!-- 广场 -->
         <include android:id="@+id/new_web"
             layout="@layout/new_web" />
+        <!-- 个人 --> 
         <include android:id="@+id/new_more"
-            layout="@layout/new_more_me" />  
+            layout="@layout/new_more_me" />
+        
+        <!-- <include android:id="@+id/fun_cloud"
+           layout="@layout/cloud_fragmentpager" />  --> 
         
     </ViewFlipper>
     

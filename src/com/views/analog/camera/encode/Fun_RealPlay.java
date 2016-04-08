@@ -100,6 +100,7 @@ public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListene
     public String _fileName = "";//截图文件名
 	public String _recordfileName = "";//录像文件名
 	private boolean isGpu = false;//软硬切换
+	@SuppressLint("WrongViewCast")
 	public Fun_RealPlay(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
 		instance = this;
@@ -452,15 +453,16 @@ public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListene
 	public synchronized void doPlay(int type){
 		try{
 			long t1 = System.currentTimeMillis();
-			int nRet = SDK.P2PConnect(devSid,_sessionId);
+			//int nRet = SDK.P2PConnect(devSid,_sessionId);
+			int nRet = 0;
 			long t2 = System.currentTimeMillis();
 			LogUtil.d(TAG, "SDK.P2PConnect time :"+(t2-t1) +" ret= "+nRet);
 			if(nRet == 0){
-				SDK._sessionId = _sessionId[0];
+				SDK._sessionIdContext = _sessionId[0];
 				long t3 = System.currentTimeMillis();
-				_playId = SDK.P2PCreateChannel(SDK._sessionId,0,1,20,10000, 352,288);
+				_playId = SDK.P2PCreateChannel(SDK._sessionIdContext,0,1,20,10000, 352,288);
 				long t4 = System.currentTimeMillis();
-				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionId+" time="+(t4-t3));
+				LogUtil.i(TAG,"..调用SDK.P2PCreateChannel返回ret:"+_playId+"---"+_playId+"--"+SDK._sessionIdContext+" time="+(t4-t3));
 				if(_playId > 0){
 					//模拟目前不要发消息
 					if(NewMain.devType ==1)
@@ -481,7 +483,7 @@ public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListene
 					msg.obj = _playId;
 					_handler.sendMessage(msg);
 					closeWait();
-					SDK._sessionId = 0;
+					SDK._sessionIdContext = 0;
 				}
 				
 			}else{//连接失败消息处理
@@ -491,7 +493,7 @@ public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListene
 				msg.what = XMSG.SMS_P2PConnect;
 				msg.obj = nRet;
 				if(_handler != null) _handler.sendMessage(msg);
-				SDK._sessionId = 0;
+				SDK._sessionIdContext = 0;
 				_runFlag = false;
 				APP.SendMsg(R.layout.main, XMSG.SELECTED_FUN, Main.XV_NEW_MAIN);
 			}
@@ -531,9 +533,9 @@ public class Fun_RealPlay extends XViewBasic implements OnClickWnd,OnTaskListene
 				
 				if(isPlay){
 					long t1= System.currentTimeMillis();
-					SDK.P2PCloseChannel(SDK._sessionId,0);
-					SDK.P2PClose(SDK._sessionId);
-					SDK._sessionId = 0;
+					SDK.P2PCloseChannel(SDK._sessionIdContext,0);
+					SDK.P2PClose(SDK._sessionIdContext);
+					SDK._sessionIdContext = 0;
 					isPlay = false;
 					long t2= System.currentTimeMillis();
 					LogUtil.d(TAG, " 退出SDK.time "+(t2-t1));

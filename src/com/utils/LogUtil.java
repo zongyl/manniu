@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;  
 import java.util.Calendar;  
 import java.util.Date;  
+
+import com.adapter.MsgAdapter2;
 import com.views.NewLogin;
 import android.annotation.SuppressLint;
 import android.util.Log;  
@@ -17,15 +19,15 @@ import android.util.Log;
  */  
 @SuppressLint("SimpleDateFormat")
 public class LogUtil {  
-	private static final String TAG = "LogUtil";
+	//private static final String TAG = "LogUtil";
     private static Boolean MYLOG_SWITCH=true; // 日志文件总开关  
     private static Boolean MYLOG_WRITE_TO_FILE=true;// 日志写入文件开关  
     private static char MYLOG_TYPE='v';// 输入日志类型，w代表只输出告警信息等，v代表输出所有信息  
-    //private static String LOG_PATH = Fun_AnalogVideo.logPath;// 日志文件在sdcard中的路径  
-    private static int SDCARD_LOG_FILE_SAVE_DAYS = 3;// sd卡中日志文件的最多保存天数  
+    private static int SDCARD_LOG_FILE_SAVE_DAYS = 5;// sd卡中日志文件的最多保存天数  
     private static String _LogName = ".log";// 本类输出的日志文件名称  
     private static SimpleDateFormat myLogSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 日志的输出格式  
     private static SimpleDateFormat logfile = new SimpleDateFormat("yyyy-MM-dd");// 日志文件格式  
+    private static SimpleDateFormat alarmimgfile = new SimpleDateFormat("yyyyMMdd");// 报警图片文件格式  
   
     public static void w(String tag, Object msg) { // 警告信息  
         log(tag, msg.toString(), 'w');  
@@ -182,9 +184,33 @@ public class LogUtil {
 						continue;
 					}
 					String createDateInfo = getFileNameWithoutExtension(fileName);
-					if (canDeleteSDLog(createDateInfo)) {
+					if (canDeleteSDLog(createDateInfo,1)) {
 						logFile.delete();
 						//LogUtil.d(TAG, "delete expired log success,the log path is:"+ logFile.getAbsolutePath());
+					}
+				}
+			}
+		} catch (Exception e) {
+		}
+		deleteSDcardAlarms();
+	}
+	
+	/**
+     * 删除内存下过期的报警图片
+     */
+	public static void deleteSDcardAlarms() {
+		try {
+			File file = new File(MsgAdapter2.alarmPath);
+			if (file.isDirectory()) {
+				File[] allFiles = file.listFiles();
+				for (File logFile : allFiles) {
+					String fileName = logFile.getName();
+					if (".jpg".equals(fileName)) {
+						continue;
+					}
+					String createDateInfo = getFileNameWithoutExtension(fileName).substring(0,8);
+					if (canDeleteSDLog(createDateInfo,2)) {
+						logFile.delete();
 					}
 				}
 			}
@@ -195,18 +221,23 @@ public class LogUtil {
     /**
      * 判断sdcard上的日志文件是否可以删除
      * @param createDateStr
+     * @param type 1 日志  2 报警图片
      * @return
      */
-	private static boolean canDeleteSDLog(String createDateStr) {
+	private static boolean canDeleteSDLog(String createDateStr,int type) {
 		boolean canDel = false;
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, -1 * SDCARD_LOG_FILE_SAVE_DAYS);
 		Date expiredDate = calendar.getTime();
 		try {
-			Date createDate = logfile.parse(createDateStr);
+			Date createDate = null;
+			if(type == 1){
+				createDate = logfile.parse(createDateStr);
+			}else if(type == 2){
+				createDate = alarmimgfile.parse(createDateStr);
+			}
 			canDel = createDate.before(expiredDate);
 		} catch (ParseException e) {
-			Log.e(TAG, ExceptionsOperator.getExceptionInfo(e), e);
 			canDel = false;
 		}
 		return canDel;

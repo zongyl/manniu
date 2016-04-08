@@ -1,12 +1,15 @@
 package com.views;
 
+import com.localmedia.XListViewRewrite;
 import com.manniu.manniu.R;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.view.View;
 
+@SuppressLint("Instantiatable")
 public class NewSquare extends XViewBasic {
 	
 	private static final String TAG ="NewSquare";
@@ -17,6 +20,14 @@ public class NewSquare extends XViewBasic {
 		super(activity, viewId, title);
 		instance = this;
 		getFragmentView(0);
+	}
+	
+	@Override
+	protected void OnVisibility(int visibility) {
+		super.OnVisibility(visibility);
+		if (visibility == View.VISIBLE) {
+			XListViewRewrite.dismissPopWindow();//切换时关闭本地的删除按钮
+		}
 	}
 	
 	@SuppressLint("NewApi")

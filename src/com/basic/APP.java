@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -64,6 +63,8 @@ public class APP {
 		try {
 			SDK.Init();
 			new P2P.SDK().SetCallback("onData");
+			new P2P.ViESurfaceRenderer().DrawBitMapCallback();
+			
 			Log.d("APP.INIT:", "##############################################userid:" + Constants.userid);
 		} catch (Exception e) {
 			Loger.print("APP.Init SDK.Init time:" + NewLogin.sdf.format(new Date()) +" exception msg:"+e.getMessage());

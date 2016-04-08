@@ -24,7 +24,8 @@ public class Message implements Parcelable{
 
 	public String devicename;
 	
-	public String evt_picture;
+	public String evt_picture;//原图片
+	public String thumb_url;//缩略图片
 	
 	public int evt_state;
 
@@ -137,6 +138,7 @@ public class Message implements Parcelable{
 			msg.videoPath = source.readString();
 			msg.devicename =source.readString();
 			msg.evt_picture= source.readString();
+			msg.thumb_url = source.readString();
 			msg.logtime = source.readString();
 			msg.uuid = source.readString();
 			msg.evt_time = source.readString();
@@ -174,6 +176,9 @@ public class Message implements Parcelable{
 		if(evt_picture==null){
 			evt_picture="";
 		}
+		if(thumb_url==null){
+			thumb_url="";
+		}
 		if(logtime==null){
 			logtime="";
 		}
@@ -184,6 +189,7 @@ public class Message implements Parcelable{
 		dest.writeString(videoPath);
 		dest.writeString(devicename);
 		dest.writeString(evt_picture);
+		dest.writeString(thumb_url);
 		dest.writeString(logtime);
 		dest.writeString(uuid);
 		dest.writeString(evt_time);

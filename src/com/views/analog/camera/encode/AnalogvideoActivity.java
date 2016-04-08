@@ -153,7 +153,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
     
     public void closeVideo(){
 		//如果正在采集提示 并不跳转
-		if(SDK._sessionId == 0){
+		if(SDK._sessionIdContext == 0){
 			new AlertDialog.Builder(this).setTitle(getString(R.string.prompt_title))
 			.setMessage(getString(R.string.areyousure_tocloseanalogIPC))
 			.setIcon(R.drawable.help)
@@ -237,7 +237,7 @@ public class AnalogvideoActivity extends Activity implements SurfaceHolder.Callb
 	public void changeTextValue(){
 		Message msg = new Message();
 		msg.what = XMSG.CHANGE_TEXTVALUE;
-		if(SDK._sessionId != 0){
+		if(SDK._sessionIdContext != 0){
 			msg.obj = "  "+getString(R.string.captureing);
 			_handler.sendMessageDelayed(msg, 300);
 		}else{

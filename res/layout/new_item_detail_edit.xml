@@ -49,6 +49,7 @@
             android:singleLine="true"
             android:textColorHint="@color/gray"
             android:textColor="@color/black"
+            android:maxLength="20"
             android:id="@+id/hotN_write"/>
         <ImageView android:layout_width="wrap_content"
             android:layout_height="30dp"

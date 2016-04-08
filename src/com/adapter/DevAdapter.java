@@ -1,6 +1,7 @@
 package com.adapter;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -33,12 +35,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.Volley;
 import com.basic.APP;
 import com.bean.Device;
@@ -51,6 +51,7 @@ import com.utils.Constants;
 import com.utils.FileUtil;
 import com.utils.LogUtil;
 import com.utils.ScreenCache;
+import com.utils.SetSharePrefer;
 import com.views.DeviceOnlineShare;
 import com.views.Main;
 import com.views.NewDeviceSet;
@@ -68,7 +69,7 @@ public class DevAdapter extends BaseAdapter{
 	
 	private Context context;
 	//设备列表
-	private List<?> items;
+	private List<Device> _data = new ArrayList<Device>();
 	
 	LayoutInflater inflater;
 	//图片缓存目录 
@@ -77,20 +78,15 @@ public class DevAdapter extends BaseAdapter{
 	private File file;
 	//设备ID 当缓存文件文件名
 	private String sid, url, prompt_text;
-	
 	RequestQueue requestQueue;
-	
 	View promptView;
-	
 	//String url;
-
 	Dialog dlg;
-	
 	int maxMemory = (int) Runtime.getRuntime().maxMemory();
 	
 	final LruCache<String, Bitmap> lrnCache = new LruCache<String, Bitmap>(maxMemory/8);
 	
-	ImageCache imageCache;
+//	ImageCache imageCache;
 	public DevImageLoader _imageLoader;
 	
 	public static class ViewHolder{
@@ -101,32 +97,43 @@ public class DevAdapter extends BaseAdapter{
 		public ImageView status_ic;//设备状态图标
 	}
 	
-	public DevAdapter(Context _context, List<?> _items){
+	public DevAdapter(Context _context/*, List<Device> _items*/){
 		this.context = _context;
-		this.items = _items;
+//		this._data = _items;
 		this.requestQueue = Volley.newRequestQueue(context);
-		this.imageCache = new ImageCache(){
-			@Override
-			public Bitmap getBitmap(String url) {
-				return lrnCache.get(url);
-			}
-			@Override
-			public void putBitmap(String url, Bitmap bitmap) {
-				lrnCache.put(url, bitmap);
-			}};
+//		this.imageCache = new ImageCache(){
+//			@Override
+//			public Bitmap getBitmap(String url) {
+//				return lrnCache.get(url);
+//			}
+//			@Override
+//			public void putBitmap(String url, Bitmap bitmap) {
+//				lrnCache.put(url, bitmap);
+//			}};
 		
 		inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		_imageLoader=new DevImageLoader(context);
 	}
 	
+	public void addItem(List<Device> data){
+		this._data.addAll(data);
+	}
+	
+	public int updateList(List<Device> data) {
+    	_data.clear();
+    	this._data.addAll(data);
+		this.notifyDataSetChanged();
+		return _data.size();
+	}
+	
 	@Override
 	public int getCount() {
-		return items.size();
+		return _data.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return items.get(position);
+		return _data.get(position);
 	}
 
 	@Override
@@ -136,10 +143,9 @@ public class DevAdapter extends BaseAdapter{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
 		final ViewHolder holder;
 		if(convertView == null){
-			final Device device = (Device)items.get(position);
+			final Device device = (Device)_data.get(position);
 			holder = new ViewHolder();
 			if(device.channels == null){
 				device.channels = 0;
@@ -149,11 +155,9 @@ public class DevAdapter extends BaseAdapter{
 				holder.tv = (TextView)convertView.findViewById(R.id.nvr_device_txt);
 				holder.more_btn = (Button)convertView.findViewById(R.id.nvr_device_btn);
 				final GridView nvrGrid = (GridView)convertView.findViewById(R.id.nvr_grid_view);
+//				final ListView nvrList = (ListView)convertView.findViewById(R.id.nvr_list_view);
 				
 				holder.tv.setText(device.devname);
-				Log.d(TAG, "SID:"+device.sid);
-				Log.d(TAG, "channels:"+device.channels);
-
 				holder.more_btn.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -178,13 +182,34 @@ public class DevAdapter extends BaseAdapter{
 						LogUtil.d(TAG, device.sid + " getDeviceChannels response:" + response.toString());
 						List<Map<String, Object>> items = new ArrayList<Map<String, Object>>(16);
 						Map<String, Object> map = null;
-						for(int i = 0; i < device.channels; i++){
-							map = new HashMap<String, Object>();
-							map.put("tag", "tag");
-							map.put("text", i+1);
-							map.put("image", R.drawable.lock_bg1);
-							items.add(map);
+						try {
+							String data = response.getString("data");
+							org.json.JSONArray jsonArray = new org.json.JSONArray(data);
+							outer: for(int i = 0; i < device.channels; i++){
+								map = new HashMap<String, Object>();
+								for(int j = 0; j < jsonArray.length(); j++){
+									JSONObject jo = (JSONObject) jsonArray.get(j);
+									if(i == Integer.parseInt(jo.get("channel").toString())){
+										map.put("tag", "tag");
+										map.put("text", i+1);
+										map.put("image", R.drawable.lock_bg1);
+										map.put("refresh", R.drawable.my_refresh);
+										map.put("logo", jo.get("chanLogo").toString().equals("")?null:jo.get("chanLogo").toString());
+										items.add(map);
+										continue outer;
+									}
+								}
+								map.put("tag", "tag");
+								map.put("text", i+1);
+								map.put("image", R.drawable.lock_bg1);
+								map.put("refresh", R.drawable.my_refresh);
+								items.add(map);
+							}
+							
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
+						
 
 						if(items.size() < 16){
 							int count = 16 - items.size();
@@ -193,43 +218,41 @@ public class DevAdapter extends BaseAdapter{
 								map.put("tag", "tag");
 								map.put("text", null);
 								map.put("image", R.color.graywhite);
+								map.put("refresh", R.color.graywhite);
 								items.add(map);
 							}
 						}
 						
-						SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.gridview_item, 
-						new String[]{"tag", "image", "text"}, new int[]{R.id.tag, R.id.ItemImage, R.id.ItemText});
+						MySimpleAdapter adapter = new MySimpleAdapter(context, items, R.layout.gridview_item, 
+						new String[]{"tag", "image", "text", "refresh"}, 
+						new int[]{R.id.tag, R.id.ItemImage, R.id.ItemText, R.id.ItemRefresh}, device.sid);
 						nvrGrid.setAdapter(adapter);
 						
 						nvrGrid.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> parent,
 									View view, int position, long id) {
-								Intent intent = new Intent(context, NewSurfaceTest.class);
-								intent.putExtra("channel", position);
-								intent.putExtra("deviceSid", device.sid);
-								intent.putExtra("deviceName", device.devname);
-								intent.putExtra("nvr", "");
-								context.startActivity(intent);
+//								if(position > 10){
+//									hideOrView(nvrList);
+//								}else{
+									Intent intent = new Intent(context, NewSurfaceTest.class);
+									intent.putExtra("channel", position);
+									intent.putExtra("deviceSid", device.sid);
+									intent.putExtra("deviceName", device.devname);
+									intent.putExtra("nvr", "");
+									context.startActivity(intent);
+//								}
 							}
 						});
+					//	nvrList.setAdapter(adapter);
 						
-						/*nvrGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
-							@Override
-							public boolean onItemLongClick(
-									AdapterView<?> parent, View view, int position, long id) {
-								//APP.ShowToast(((TextView)view.findViewById(R.id.ItemText)).getText().toString());
-									dlg = Sheet(device, holder.iv, position);
-								return true;
-							}});*/
+//						LayoutParams params = new LayoutParams(source);
+//						nvrList.setLayoutParams(params);
+						
 					};
-					
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-						
 					};
 				});
-				
-				
 				
 			}else{//单通道
 				convertView = inflater.inflate(R.layout.new_main_item, null);
@@ -241,7 +264,6 @@ public class DevAdapter extends BaseAdapter{
 				convertView.setTag(holder);
 				
 				holder.tv.setText(device.devname);
-				
 				switch (device.type) {
 				case 1:
 					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc));
@@ -250,6 +272,9 @@ public class DevAdapter extends BaseAdapter{
 					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.common_bar_eye_2));
 					break;
 				case 100:
+					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.collection));
+					break;
+				case 101:
 					holder.type_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.collection));
 					break;
 				default:
@@ -262,7 +287,7 @@ public class DevAdapter extends BaseAdapter{
 					holder.status_ic.setImageDrawable(context.getResources().getDrawable(R.drawable.ipc_online1));
 				}
 				
-				if(device.type == 100){
+				if(device.type == 100 || device.type == 101){
 					holder.status_ic.setVisibility(View.GONE);
 				}else{
 					holder.status_ic.setVisibility(View.VISIBLE);
@@ -277,7 +302,7 @@ public class DevAdapter extends BaseAdapter{
 							dlg = DelSheet(device, holder.iv);
 						}else if(device.type == 4){
 							dlg = AnalogSheet(device, holder.iv);
-						}else if(device.type == 100){
+						}else if(device.type == 100 || device.type == 101){
 							dlg = CollectSheet(device, holder.iv);
 						}else{
 							
@@ -287,56 +312,21 @@ public class DevAdapter extends BaseAdapter{
 				
 				//异步加载图片
 				_imageLoader.DisplayImage(device.logo, holder.iv,device.sid);
-				
-				/*RequestParams params = new RequestParams();
-				params.put("sid", device.sid);//"Q04hAQEAbDAwMjk0MTYwAAAAAAAA"
-				System.out.println("........."+device.sid+"--"+device.devname);
-				try {
-					HttpUtil.get(Constants.hostUrl + "/mobile/getScreen", params, new JsonHttpResponseHandler(){
-						@Override
-						public void onSuccess(int statusCode, Header[] headers,
-								JSONObject response) {
-							//Log.d(TAG, response.toString());
-							String result = "";
-							try {
-								result = response.getString("result");
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							if(result.startsWith("http")){
-								Log.d(TAG, device.devname + "的封面:" + result);
-								String name = result.substring(result.indexOf("aliyuncs.com")+12, result.length());
-								
-								file = new File(rootPath+device.sid+name);
-								LogUtil.d(TAG, rootPath+device.sid+name);
-								if(file.exists()){
-									Log.d(TAG, device.devname + "的封面本地已存在!");
-									holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
-								}else{
-									Log.d(TAG, device.devname + "的封面本地不存在,正在下载...");
-									byte[] bytes = HttpUtil.executeGetBytes(result);
-									FileUtil.toFile(bytes, rootPath+device.sid+name);
-									holder.iv.setImageBitmap(getBitMap(file.getAbsolutePath()));
-								}
-							}
-						}
-						@Override
-						public void onFailure(int statusCode, Header[] headers,
-								String responseString, Throwable throwable) {
-							super.onFailure(statusCode, headers, responseString, throwable);
-						}
-					});
-					Resources rs = context.getResources();
-					Drawable dw = rs.getDrawable(R.drawable.lock_bg1);				
-					holder.iv.setImageDrawable(dw);
-				} catch (Exception e) {
-				}*/
 			}
-			
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
 		return convertView;
+	}
+	
+	private void hideOrView(View view){
+		LayoutParams params = view.getLayoutParams();
+		APP.ShowToast("w:" + params.width + " h:" + params.height);
+		if(view.isShown()){
+			view.setVisibility(View.GONE);
+		}else{
+			view.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	/**
@@ -371,7 +361,7 @@ public class DevAdapter extends BaseAdapter{
 					dlg.dismiss();
 					Intent intent = new Intent(context, NewDeviceSet.class);
 					DeviceParcel deviceParcel = new DeviceParcel(device);
-					intent.putExtra("device", deviceParcel);
+					intent.putExtra("device", (Serializable) deviceParcel);
 					context.startActivity(intent);
 				}else if("dialog3".equals(tag.getText())){
 					text.setText(context.getString(R.string.dev_coverfresh));
@@ -380,14 +370,14 @@ public class DevAdapter extends BaseAdapter{
 					SDK.SendJsonPck(0, json);
 					ScreenCache.getInstance().addImgView(device.sid, imv);
 					dlg.dismiss();
-				}else if("dialog4".equals(tag.getText())){
+				}else if("dialog4".equals(tag.getText())){//分享、取消分享
 					dlg.dismiss();
 
 					LogUtil.d(TAG, "text:" + text.getText());
 					LogUtil.d(TAG, "text:" + context.getString(R.string.share));
 					LogUtil.d(TAG, "text:" + context.getString(R.string.cancelcollect));
 					
-					if(context.getString(R.string.share).equals(text.getText())){
+					if(text.getText().toString().equals(context.getString(R.string.share))){
 						RequestParams params = new RequestParams();
 						params.put("userId", device.userid);
 						params.put("deviceId", device.sid);
@@ -433,7 +423,7 @@ public class DevAdapter extends BaseAdapter{
 							};*/
 						});
 						
-					}else if(context.getString(R.string.cel_share).equals(text.getText())){
+					}else if(text.getText().toString().equals(context.getString(R.string.cel_share))){
 
 						APP.ShowConfirmDialog(context.getString(R.string.tip_title), context.getString(R.string.cancelShare_ask), 
 								new DialogInterface.OnClickListener() {
@@ -680,7 +670,7 @@ public class DevAdapter extends BaseAdapter{
 	/**
 	 * 取消收藏
 	 */
-	private void cancelCollect(String userId, String liveId){
+	private void cancelCollect(String userId, final String liveId){
 		RequestParams params = new RequestParams();
 		params.put("userId", userId);
 		params.put("liveid", liveId);
@@ -691,6 +681,7 @@ public class DevAdapter extends BaseAdapter{
 					JSONObject response) {
 				dlg.dismiss();
 				Main.Instance.NewMainreLoad();
+				SetSharePrefer.write_bool("collect_info", liveId, false);
 			}
 			@Override
 			public void onFailure(int statusCode, Header[] headers,

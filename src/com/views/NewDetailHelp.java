@@ -30,7 +30,6 @@ public class NewDetailHelp extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.new_online_feedback);
 		setListeners();
-		
 	}
 	
 	public void setListeners(){
@@ -80,7 +79,6 @@ public class NewDetailHelp extends Activity implements OnClickListener{
 			break;
 		case R.id.confirm_edit:
 			submit();
-			finish();
 			break;
 		}
 	}
@@ -89,34 +87,38 @@ public class NewDetailHelp extends Activity implements OnClickListener{
 	 * 意见提交
 	 */
 	public void submit(){
-		RequestParams params = new RequestParams();
-		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
-		params.put("content", feed.getText().toString());
-		
-		LogUtil.d(TAG, "params:" + params.toString());
-		LogUtil.d(TAG, "server address:" + Constants.hostUrl + "/android/saveSuggest");
-		
-		HttpUtil.post(Constants.hostUrl + "/android/saveSuggest", params, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(int statusCode, Header[] headers,
-					JSONObject response) {
-				APP.ShowToast(getString(R.string.submit_success));
-			}
+		String content = feed.getText().toString().trim();
+		if(!"".equals(content)){
+			RequestParams params = new RequestParams();
+			params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
+			params.put("content", content);
 			
-			@Override
-			public void onFailure(int statusCode, Header[] headers,
-					String responseString, Throwable throwable) {
-				LogUtil.d("", "response:" + responseString);
-				APP.ShowToast(getString(R.string.E_SER_FAIL));
-			}
+			LogUtil.d(TAG, "params:" + params.toString());
+			LogUtil.d(TAG, "server address:" + Constants.hostUrl + "/android/saveSuggest");
 			
-			@Override
-			public void onFailure(int statusCode, Header[] headers,
-					Throwable throwable, JSONObject errorResponse) {
-				LogUtil.d("", "response:" + errorResponse.toString());
-				APP.ShowToast(getString(R.string.E_SER_FAIL));
-			}
-		});
+			HttpUtil.post(Constants.hostUrl + "/android/saveSuggest", params, new JsonHttpResponseHandler(){
+				@Override
+				public void onSuccess(int statusCode, Header[] headers,
+						JSONObject response) {
+					APP.ShowToast(getString(R.string.submit_success));
+					finish();
+				}
+				@Override
+				public void onFailure(int statusCode, Header[] headers,
+						String responseString, Throwable throwable) {
+					LogUtil.d("", "response:" + responseString);
+					APP.ShowToast(getString(R.string.E_SER_FAIL));
+				}
+				@Override
+				public void onFailure(int statusCode, Header[] headers,
+						Throwable throwable, JSONObject errorResponse) {
+					LogUtil.d("", "response:" + errorResponse.toString());
+					APP.ShowToast(getString(R.string.E_SER_FAIL));
+				}
+			});
+		}else{
+			APP.ShowToast(getString(R.string.notempty));
+		}
 	}
 	
 	public void onBackPressed(){

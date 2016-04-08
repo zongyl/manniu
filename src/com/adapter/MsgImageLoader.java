@@ -1,18 +1,20 @@
 package com.adapter;
 
+import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.widget.ImageView;
-
 import com.manniu.manniu.R;
+import com.utils.BitmapUtils;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 
@@ -22,20 +24,37 @@ import com.utils.LogUtil;
  * Description：加载报警图片
  */
 public class MsgImageLoader {
-	public static String TAG = "DevImageLoader";
+	private String TAG = "MsgImageLoader";
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService;
+//    public static int countData = 0;
+//    public static boolean _isRefresh = false;
+    //FileCache fileCache;
     Handler handler = new Handler();//handler to display images in UI thread
+    private Map<String, SoftReference<Bitmap>> imageCaches = new HashMap<String, SoftReference<Bitmap>>();
     
     public MsgImageLoader(Context context){
-        executorService=Executors.newFixedThreadPool(4);
+        executorService=Executors.newFixedThreadPool(5);
+        //fileCache = new FileCache(context);
     }
     // 当进入listview时默认的图片，可换成你自己的默认图片
     final int stub_id=R.drawable.lock_bg1;
     public void DisplayImage(String url, ImageView imageView){
-        imageViews.put(imageView, url);
-        queuePhoto(url, imageView);
-        imageView.setImageResource(stub_id);
+    	String tempUrl = url.substring(0,url.indexOf("?"));
+    	SoftReference<Bitmap> currBitmap = imageCaches.get(getUrlKey(tempUrl));
+		Bitmap softRefBitmap = null;
+		if(currBitmap != null){
+			softRefBitmap = currBitmap.get();
+		}
+		//先从软引用中拿数据
+		if(currBitmap != null && softRefBitmap != null){
+			imageView.setImageBitmap(softRefBitmap);
+			//System.out.println("2222222222222222222");
+		}else{
+			imageViews.put(imageView, url);
+	        queuePhoto(url, imageView);
+	        imageView.setImageResource(stub_id);
+		}
     }
         
     private void queuePhoto(String url, ImageView imageView){
@@ -47,26 +66,78 @@ public class MsgImageLoader {
     private Bitmap getBitmap(String url){
     	Bitmap bitmap=null;
         try {
-//        	if(url.startsWith("http")){
-//    			String name = url.substring(url.indexOf("aliyuncs.com")+12, url.length());
-//    			File file = new File(DevAdapter.rootPath + devSid + name);
-//    			//Log.d(TAG, devSid+"--"+name);
-//    			if(file.exists()){
-//    				bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
-//    				return bitmap;
-//    			}else{
-    				byte[] bytes = HttpUtil.executeGetBytes(url);
-    				//FileUtil.toFile(bytes, DevAdapter.rootPath + devSid + name);
-    				//bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
-    				bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        	if(url.startsWith("http")){
+        		String tempUrl = url.substring(0,url.indexOf("?"));
+    			File file = new File(MsgAdapter2.alarmPath + tempUrl.substring(tempUrl.lastIndexOf("/")+1,tempUrl.length()));
+    			if(file.exists()){
+    				bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
+    				System.out.println("sdk..."+getUrlKey(tempUrl));
+    				//将读取的数据放入到软引用中
+    				if(imageCaches.get(getUrlKey(tempUrl)) == null){
+    					imageCaches.put(getUrlKey(tempUrl), new SoftReference<Bitmap>(bitmap));
+    				}
     				return bitmap;
-//    			}
-//    		}
+    			}else{
+    				byte[] bytes = HttpUtil.executeGetBytes(url);
+    				//存入SDK文件
+    				//FileUtil.toFile(bytes, MsgAdapter2.alarmPath + tempUrl.substring(tempUrl.lastIndexOf("/")+1,tempUrl.length()));
+    				BitmapUtils.saveBitmap2(getBitmapByBytes(bytes), MsgAdapter2.alarmPath + tempUrl.substring(tempUrl.lastIndexOf("/")+1,tempUrl.length()));
+    				bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
+    				System.out.println("url..."+getUrlKey(tempUrl));
+    				//将读取的数据放入到软引用中
+    				if(imageCaches.get(getUrlKey(tempUrl)) == null){
+    					imageCaches.put(getUrlKey(tempUrl), new SoftReference<Bitmap>(bitmap));
+    				}
+    				//bitmap = getBitmapByBytes(bytes);
+    				return bitmap;
+    			}
+    		}
         } catch (Exception ex){
         	LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(ex));
         }
        return null;
     }
+    
+    public String getUrlKey(String str){
+		str = str.substring(str.lastIndexOf("/")+1,str.length());
+		str = str.substring(0, str.indexOf("."));
+		return str;
+	}
+ 	
+ 	/** 
+ 	 * 根据图片字节数组，对图片可能进行二次采样，不致于加载过大图片出现内存溢出 
+ 	 * @param bytes 
+ 	 * @return 
+ 	 */  
+ 	public Bitmap getBitmapByBytes(byte[] bytes){  
+ 	    //对于图片的二次采样,主要得到图片的宽与高  
+ 		try {
+ 			BitmapFactory.Options options = new BitmapFactory.Options();  
+ 	 	    options.inJustDecodeBounds = true;  //仅仅解码边缘区域  
+ 	 	    //如果指定了inJustDecodeBounds，decodeByteArray将返回为空  
+ 	 	    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);  
+ 	 	    // 找到正确的刻度值，它应该是2的幂。
+ 			final int REQUIRED_SIZE = 70;
+ 			int width_tmp = options.outWidth, height_tmp = options.outHeight;
+ 			int scale = 1;
+ 			while (true) {
+ 				if (width_tmp / 2 < REQUIRED_SIZE
+ 						|| height_tmp / 2 < REQUIRED_SIZE)
+ 					break;
+ 				width_tmp /= 2;
+ 				height_tmp /= 2;
+ 				scale *= 2;
+ 			}
+ 	 	  
+ 	 	    //不再只加载图片实际边缘  
+ 	 	    options.inJustDecodeBounds = false;  
+ 	 	    //并且制定缩放比例  
+ 	 	    options.inSampleSize = scale;  
+ 	 	    return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);  
+		} catch (Exception e) {
+		}
+ 	    return null;
+ 	}  
     
     //Task for the queue
 	private class PhotoToLoad {
@@ -98,6 +169,7 @@ public class MsgImageLoader {
 				BitmapDisplayer bd = new BitmapDisplayer(bmp, photoToLoad);
 				handler.post(bd);
 			} catch (Throwable th) {
+				LogUtil.e(TAG,"handler error....");
 				th.printStackTrace();
 			}
 		}
@@ -127,12 +199,23 @@ public class MsgImageLoader {
 		}
 
 		public void run() {
-			if (imageViewReused(photoToLoad))
-				return;
-			if (bitmap != null)
-				photoToLoad.imageView.setImageBitmap(bitmap);
-			else
-				photoToLoad.imageView.setImageResource(stub_id);
+			try {
+				if (imageViewReused(photoToLoad))
+					return;
+//				countData ++;
+//				if(countData > 5){
+//					_isRefresh = true;
+//					countData = 0;
+//				}
+				System.out.println("111111111111111111111111111111111");
+				if (bitmap != null){
+					photoToLoad.imageView.setImageBitmap(bitmap);
+				}else
+					photoToLoad.imageView.setImageResource(stub_id);
+				
+			} catch (Exception e) {
+				LogUtil.e(TAG,"BitmapDisplayer error....");
+			}
 		}
 	}
 

@@ -9,7 +9,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -208,7 +210,10 @@ public class CrashHandler implements UncaughtExceptionHandler{
         }   
     }   
   
-    private void postReport(File f) {   
+    File crFile;
+    
+    private void postReport(File f) {
+    	crFile = f;
     	LogUtil.d(TAG, "postReport.file:" + f.getAbsolutePath());
         // TODO 使用HTTP Post 发送错误报告到服务器   
         // 这里不再详述,开发者可以根据OPhoneSDN上的其他网络操作   
@@ -220,7 +225,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		params.put("path", "logs"+File.separator+"exception");
+		params.put("path", "logs"+File.separator+"exception"+File.separator+new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 	
 	HttpUtil.post(Constants.hostUrl+"/mobile/upload", params, new JsonHttpResponseHandler(){
 		public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -229,6 +234,7 @@ public class CrashHandler implements UncaughtExceptionHandler{
 				String file = response.getString("file");
 				LogUtil.d("file:", file.substring(file.lastIndexOf("/")));
 				//delFile(file.substring(file.lastIndexOf("/")));
+				crFile.delete();
 			} catch (JSONException e) {
 			}
 		};

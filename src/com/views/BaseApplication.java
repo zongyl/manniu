@@ -24,6 +24,7 @@ import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.utils.Loger;
 import com.utils.NetWakeReceiver;
+import com.views.NewSurfaceTest.VideoBackHandler;
 import com.views.XViewBasic.MyHandler;
 import com.views.analog.camera.encode.Fun_RealPlay.RealHandler;
 
@@ -36,7 +37,9 @@ public class BaseApplication extends Application {
     
     private RealHandler redlandler = null;
     
-    public String SENDER_ID = "975604114042";
+    private VideoBackHandler videoHandler = null;
+    
+	public String SENDER_ID = "975604114042";
     
     private static Stack<Activity> activityStack;
 	private static BaseApplication singleton;
@@ -61,8 +64,8 @@ public class BaseApplication extends Application {
 		crashHandler.init(getApplicationContext());
 
 		/****************GCM*****************************/
-	//	try{
-			/*GCMRegistrar.checkDevice(this);  
+		/*try{
+			GCMRegistrar.checkDevice(this);  
 			GCMRegistrar.checkManifest(this);  
 			final String regId = GCMRegistrar.getRegistrationId(this);
 			LogUtil.d(TAG, "regId:" + regId);
@@ -70,14 +73,14 @@ public class BaseApplication extends Application {
 			  GCMRegistrar.register(this, SENDER_ID);  
 			} else {  
 				 LogUtil.v(TAG, "Already registered");  
-			}*/
-//		}catch(Exception e){
-//			LogUtil.d(TAG, "GCM Exception:" + e.getMessage());
-//		}
+			}
+		}catch(Exception e){
+			LogUtil.d(TAG, "GCM Exception:" + e.getMessage());
+		}*/
 		
 		/*********************************************/
 		
-		JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
+		//JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
 		JPushInterface.init(this); // 初始化 JPushe
 
 		singleton = this;
@@ -120,6 +123,14 @@ public class BaseApplication extends Application {
 	}
 	public void setRedlandler(RealHandler redlandler) {
 		this.redlandler = redlandler;
+	}
+	
+	public VideoBackHandler getVideoHandler() {
+		return videoHandler;
+	}
+
+	public void setVideoHandler(VideoBackHandler videoHandler) {
+		this.videoHandler = videoHandler;
 	}
 
 	public void finishActivity(Activity activity){
@@ -203,3 +214,5 @@ public class BaseApplication extends Application {
 	}
 
 }
+
+

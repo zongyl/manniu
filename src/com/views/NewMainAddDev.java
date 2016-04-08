@@ -216,6 +216,9 @@ public class NewMainAddDev extends Activity {
 							}else {
 								
 							} 
+						}else{
+							//existOtherUser
+							APP.ShowToast(getString(R.string.dev_binded));
 						}
 					}else {
 						

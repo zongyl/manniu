@@ -2,6 +2,7 @@ package com.utils;
 
 import java.util.Set;
 
+import P2P.SDK;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +54,10 @@ public class DevSetHandler extends Handler{
 			LogUtil.d(TAG, "设备不在线!");
 			APP.ShowToast(APP.GetString(R.string.GW_ERRCODE_P2P_DEST_DISCONNECT));
 			break;
+//		case 4:
+//			long context = (Long) msg.obj;
+//			SDK.SetDecoderModel(1,context);
+//			break;
 		default:
 			break;
 		}

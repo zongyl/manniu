@@ -1,10 +1,7 @@
 package com.bean;
 
-import com.adapter.Message;
-
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
 
 public class LiveVideo implements Parcelable{
 	private String sid;//设备ID

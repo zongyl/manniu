@@ -235,7 +235,7 @@
 		            android:textColor="@color/blue_menu"
 		            android:textSize="@dimen/text_size_15"
 		            android:paddingLeft="3dp"/>
-				<TextView android:id="@+id/groupForce" style="@style/forceInput"/>
+				<TextView style="@style/forceInput"/>
                <EditText
                    android:id="@+id/share_idCard"
                    android:layout_width="match_parent"
@@ -271,10 +271,9 @@
 		            android:textColor="@color/blue_menu"
 		            android:textSize="@dimen/text_size_15"
 		            android:paddingLeft="3dp"/>
-			   <TextView android:id="@+id/groupForce" style="@style/forceInput"/>
+			   <TextView style="@style/forceInput"/>
                <EditText
                    android:editable="false"
-                   android:id="@+id/share_title"
                    android:layout_width="match_parent"
                    android:layout_height="45dp"
                    android:layout_marginLeft="8.0dip"

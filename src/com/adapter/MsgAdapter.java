@@ -106,8 +106,8 @@ public class MsgAdapter extends BaseAdapter{
 			holder.title = (TextView)convertView.findViewById(R.id.msg_title);
 			//holder.time = (TextView)convertView.findViewById(R.id.msg_time);
 			holder.iv = (ImageView)convertView.findViewById(R.id.msg_img);
-			holder.ck = (CheckBox)convertView.findViewById(R.id.cb);
-			holder.play_image = (Button) convertView.findViewById(R.id.record_play);
+			//holder.ck = (CheckBox)convertView.findViewById(R.id.cb);
+			//holder.play_image = (Button) convertView.findViewById(R.id.record_play);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder)convertView.getTag();

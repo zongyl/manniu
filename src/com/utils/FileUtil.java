@@ -170,5 +170,61 @@ public class FileUtil {
 		fileName = fileName.replace(":", "");
 		return fileName;
 	}
+	//解析图片 url  返回  20160112130313_8a205bb0 作为缓存图片的KEY
+	public static String getUrlKey(String str){
+		str = str.substring(str.lastIndexOf("/")+1,str.length());
+		str = str.substring(0, str.indexOf("."));
+		return str;
+	}
+	
+	 /**
+	  * 将字符串转成long型
+	  * @param strValue:值的字符串
+	  * @param nDefaultValue:默认值
+	  * @return
+	  */
+	public static long ConvertStringToLong(String strValue, long nDefaultValue) {
+		long nRet = nDefaultValue;
+		if (strValue != null && strValue.length() > 0) {
+			try {
+				nRet = Long.parseLong(strValue);
+			} catch (Throwable e) {
+
+			}
+		}
+		return nRet;
+	}
+	 /**将字符串转成int型**/
+	public static int ConvertStringToInt(String strValue, int nDefaultValue) {
+		int nRet = nDefaultValue;
+		if (strValue != null && strValue.length() > 0) {
+			try {
+				nRet = Integer.parseInt(strValue);
+			} catch (Throwable e) {
+
+			}
+		}
+		return nRet;
+	}
+
+	public static String ConvertObjectToString(Object objValue,String strDefauleValue) {
+		String strRet = strDefauleValue;
+		if (objValue != null) {
+			strRet = objValue.toString();
+		}
+		return strRet;
+	}
+	
+	public static boolean ConvertToBoolean(Object objValue, boolean defaultValue) {
+		return ConvertStringToBoolean(ConvertObjectToString(objValue, "true"),defaultValue);
+	}
+
+	public static boolean ConvertStringToBoolean(String strValue,
+			boolean defaultValue) {
+		boolean blnRet = defaultValue;
+		blnRet = Boolean.parseBoolean(strValue);
+		System.out.println("2016.03.29TEST ConvertStringToBoolean   strValue:"+ strValue + ";blnRet:" + blnRet);
+		return blnRet;
+	}
 	
 }

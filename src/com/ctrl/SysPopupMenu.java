@@ -132,9 +132,9 @@ public class SysPopupMenu {
                 if (mListener != null) {
                 	if(mItems.get(position).getItemId() == 0){
                 		//如果正在采集提示 并不跳转
-                		if(SDK._sessionId != 0){
+                		if(SDK._sessionIdContext != 0){
                 			AnalogvideoActivity.instance.stopEncode();
-                			SDK._sessionId = 0; //清空连接数
+                			SDK._sessionIdContext = 0; //清空连接数
                 			AnalogvideoActivity.instance.finish();
                 		}else{
                 			APP.ShowToast(mContext.getString(R.string.exit_monitor_alert));

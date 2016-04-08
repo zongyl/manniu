@@ -6,6 +6,7 @@
     <string name="reopen_stream">"正在打开视频……"</string>
     <string name="Err_Error_Unknow">"操作失败!"</string>
 	
+	<string name="Video_play">播放</string>
 	<string name="Video_play_fail">播放失败</string>
 	<string name="Video_play_stop">播放停止</string>
 	<string name="Video_play_crash">用户设备关闭或网络不稳定引起播放停止</string>
@@ -57,6 +58,8 @@
     
     <string name="GW_SESSION_UNLINK">设备掉线</string>
     <string name="GW_ERRCODE_UNLOGIN">设备未登录</string>
+    <string name="GW_ERRCODE_UPGRADE_PROGRAM">APP需要升级</string>
+    <string name="GW_ERRCODE_DEV_UNSUPORT">设备不支持该功能，需要升级</string>
     
     <string name="GW_ERRCODE_LOGIN_FAILED">登录失败</string>
     <string name="GW_ERRCODE_LOGIN_TIMEOUT">登录超时</string>
@@ -120,6 +123,7 @@
    	<string name="server_address">http://ts.mny9.com</string>
 
 	<string name="E_SER_FAIL">当前网络不好,请稍后再试!</string>
+	<string name="Err_Last_page">已经是最后一页了!</string>
 
   	<string name ="default_photo">./images/users/users.jpg</string>
 	<string name="scan_text">将二维码放入框内,即可自动扫描</string>
@@ -145,7 +149,7 @@
  	
  	<string name="dev_set_base">基本设置</string>
  	<string name="dev_set_advanced">高级设置</string>
- 	
+ 	<string name="COVER_SUCCESS_UPLOAD">封面上传成功!</string>
  	<string name="SUCCESS_UPLOAD">上传成功!</string>
  	<string name="Err_CONNET">网络连接失败!</string>
  	<string name="cancelShare_ask">确认取消分享吗?</string>
@@ -277,6 +281,66 @@
  	<string name="dev_offline">不在线</string>
  	<string name="dev_cancelColl">取消收藏</string>
  	<string name="dev_coverfresh">努力刷新...</string>
+ 	
+ 	<!-- 多画面列表 -->
+ 	<string name="home_chn">通道</string>
+	<string name="home_select_chn">请先选择通道</string>
+ 	
+ 	<!-- 播放器 -->
+    <string name="playerview_realplayer">实时预览</string>
+    <string name="playerview_realplayer_tool_picture">截图</string>
+    <string name="playerview_realplayer_tool_auido">语音对讲</string>
+    <string name="playerview_realplayer_tool_ptz">云台</string>
+    <string name="playerview_realplayer_tool_video">录像</string>
+    <string name="playerview_realplayer_control_mainstream">高清</string>
+    <string name="playerview_realplayer_control_substream">流畅</string>
+    <string name="alertMsg56">H.265暂不支持录像</string>
+    
+     <!-- 播放器描述信息 -->
+    <string name="playerview_detailtext_noChooseCH">未选择通道</string>
+    <string name="playerview_detailtext_connecting">正在连接</string>
+    <string name="playerview_detailtext_buffering">缓冲中</string>
+    <string name="playerview_detailtext_stopped">已停止</string>
+    <string name="playerview_detailtext_P2PError">P2P服务器未连接</string>
+    <string name="playerview_detailtext_devFailed">设备连接失败</string>
+    <string name="playerview_detailtext_loginFailed">设备登录失败</string>
+    <string name="playerview_detailtext_pwdError">登录密码错误</string>
+    <string name="playerview_detailtext_devLock">设备已被锁定</string>
+    <string name="playerview_detailtext_devNoUser">该账号不存在</string>
+    <string name="playerview_detailtext_devLogged">该账号已登录</string>
+    <string name="playerview_detailtext_devTimeout">设备连接超时</string>
+    <string name="playerview_detailtext_chnFailed">通道连接失败</string>
+    <string name="playerview_detailtext_chnTimeout">通道连接超时</string>
+    <string name="playerview_detailtext_chnNoVideo">无录像</string>
+    <string name="playerview_detailtext_devNoZero">设备不支持零通道预览</string>
+    <string name="playerview_detailtext_error02">系统错误 (2)</string>
+    
+     <!-- Toast内容 -->
+    <string name="toast_oom">运行内存不足，请关闭不必要的程序</string>
+    <string name="stop_talk">正在语音，请关闭</string>
+    
+    <!-- 警告框 -->
+    <string name="alertMsg1">视频正在加载中，请稍后尝试！</string>
+    <string name="alertMsg10">当前通道超过设备通道数上限</string>
+    <string name="alertMsg13">正在录像，请停止后退出！</string>
+    <string name="alertMsg17">请先选择通道，然后再进行操作！</string>
+    <string name="alertMsg19">正在录像，请停止后再切换通道！</string>
+    <string name="alertMsg23">选择视频通道最多只能选4个！</string>
+    <string name="alertMsg35">切换的通道已存在！</string>
+ 	
+ 	
+ 	<!-- 下拉刷新 -->
+    <string name="p2refresh_head_last_update">上次更新:</string>
+    <string name="p2refresh_footer_load_all">已加载全部</string>
+    <string name="p2refresh_footer_nodata">暂无数据</string>
+    <string name="p2refresh_head_load_more">加载更多</string>
+    <string name="p2refresh_end_load_more">更    多</string>
+    <string name="p2refresh_end_click_load_more">点击加载</string>
+    <string name="p2refresh_release_refresh">松开刷新</string>
+    <string name="p2refresh_pull_to_refresh">下拉刷新</string>
+    <string name="p2refresh_doing_head_refresh">正在刷新&#8230;</string>
+    <string name="p2refresh_doing_end_refresh">加载中&#8230;</string>
+    <string name="p2refresh_refresh_lasttime">最近更新&#160;&#058;&#160;</string>
  	
  	<string-array name="device_set_list0">
  	    <item>二维码名片</item>
@@ -510,6 +574,7 @@
 	<string name="pwd_modiFail">修改密码失败</string>
 	<string name="pwd_oldEmpty">旧密码不能为空</string>
 	<string name="pwd_newEmpty">新密码不能为空</string>
+	<string name="pwd_newidentical">新密码和旧密码相同</string>
 	<string name="pwd_confrimEmpty">确认新密码不能为空</string>
 	<string name="pwd_confrimNoMatch">两次输入密码不一致</string>
 	<string name="declare_devname">不超过50个字符</string>
@@ -567,7 +632,9 @@
         <item>RotateDown</item>
         <item>Accordion</item>
     </string-array>
-
+    
+	<string name="Err_recordvide_null">"报警录像为空!"</string>
+	<string name="downloading">"正在加载报警录像，请稍候..."</string>
     <string name="action_settings">Settings</string>
     <string name="creat_file_error">创建文件失败，请检查存储卡是否正常！</string>
     <string name="openning_stream">正在打开视频</string>
@@ -629,6 +696,7 @@
 	<string name="FAIL_CANCEL_LIKE">"取消点赞失败"</string>
 	<string name="FAIL_CANCEL_COLLECT">"取消收藏失败"</string>
 	<string name="SUCCESS_COLLECT">"收藏成功!"</string>
+	<string name="ALREADY_COLLECT">已收藏</string>
 	<string name="SUCCESS_MODIFY">"修改成功!"</string>
 	<string name="SUCCESS_LOGIN">登录成功</string>
 	<string name="CANCEL_COLLECT">"取消收藏!"</string>
@@ -641,23 +709,19 @@
 	<string name="delete_ask">确定删除吗?</string>
 	<string name="cancelColle_ask">确定取消收藏吗?</string>
 	
-	<string name="checking">正在检查，请稍后……</string>
-	<string name="new_version">发现新版本</string>
-	<string name="file_count">文件大小:</string>
-	<string name="mostnew">您当前已经是最新版本</string>
-	<string name="net_tip">您正在使用使用移动网络，是否继续?</string>
-	<string name="move_alert">移动报警侦测</string>
+	<!-- <string name="move_alert">移动报警侦测</string>
 	<string name="time">时间:</string>
 	<string name="from">来自:</string>
 	<string name="select_all">全选</string>
-	<string name="select_allno">全不选</string>
+	<string name="select_allno">全不选</string> -->
 	
- 	<string name="devciesJSON">
+ 	<!-- <string name="devciesJSON">
  	    <![CDATA[
  	    [{\"sid\":\"001237a8\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"c1(001237a8)\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2014-11-15 03:06:15.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"0019420a\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"0019420a\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[1,2],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"12345678901\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"12345678901\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":4,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"18158113714\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"18158113714\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-25 17:23:21.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQEAADg1Mjc4YTk2MDM3ZjEx\",\"logo\":null,\"sn\":\"4\",\"model\":null,\"devicesname\":\"devices05\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":\"123456\",\"createtime\":\"2015-01-28 05:21:26.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQEAADkwN2VjYzU3MDM3ZjEx\",\"logo\":null,\"sn\":\"8\",\"model\":null,\"devicesname\":\"c1(001237a8)\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[10001,10002,10003,10004,10005,10006,10007,10008],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":1,\"password\":null,\"vn\":\"123456\",\"createtime\":\"2015-01-28 01:47:55.0\",\"typeimg\":null,\"pn\":null},{\"sid\":\"Q04BAQQAAGE4ZDA2NWZiMDM3ZjEx\",\"logo\":null,\"sn\":null,\"model\":null,\"devicesname\":\"模拟IPC\",\"userid\":\"Q04BAQ0AADAzZWExNWYxMDM4MDEx\",\"state\":1,\"channels\":[],\"domainid\":\"Q04BAQsAAGJmMjFjYmQwMDM3YjEx\",\"ver\":null,\"type\":4,\"password\":null,\"vn\":null,\"createtime\":\"2015-05-13 14:04:33.0\",\"typeimg\":null,\"pn\":null}]
  	    ]]>
- 	    </string>
- 	<string-array name="menuList0">
+ 	    </string> -->
+ 	    
+ 	<!-- <string-array name="menuList0">
  	    <item >@string/base_set</item>
  	</string-array>
  	<string-array name="menuList1">
@@ -681,13 +745,14 @@
  	<integer-array name="imgGroup2">
  	    <item >@drawable/more_account</item>
  	    <item >@drawable/user_exit</item>
- 	</integer-array>
+ 	</integer-array> -->
+ 	
  	<!-- <string-array name="msgMenu">
  	    <item>实时视频</item>
  	    <item>存至本地</item>
  	    <item>分享图片</item>
  	</string-array> -->
- 	<integer-array name ="msgImgs">
+ 	<!-- <integer-array name ="msgImgs">
  	    <item>@drawable/title_down_play</item>
  	    <item>@drawable/title_down_download</item>
  	    <item>@drawable/title_down_share</item>
@@ -712,9 +777,9 @@
  	    <item >@drawable/more_mall</item>
  	    <item >@drawable/more_help</item>
  	    <item >@drawable/more_about</item>
- 	</string-array>
+ 	</string-array> -->
  	
- 	<string name="dev_addok">添加成功!</string>
+ 	<!-- <string name="dev_addok">添加成功!</string>
  	<string name="dev_addFail">添加失败!</string>
  	<string name="dev_noserial">序列号不存在!</string>
  	<string name="dev_binded">该设备已绑定用户!</string>
@@ -723,9 +788,9 @@
  	<string name="dev_upgradeOk">更新命令已发送，请稍后查看更新情况!</string>
  	<string name="dev_offline">不在线</string>
  	<string name="dev_cancelColl">取消收藏</string>
- 	<string name="dev_coverfresh">努力刷新...</string>
+ 	<string name="dev_coverfresh">努力刷新...</string> -->
  	
- 	<string-array name="device_set_list0">
+ 	<!-- <string-array name="device_set_list0">
  	    <item>二维码名片</item>
  	</string-array>
  	
@@ -791,7 +856,7 @@
  	</string-array>
  	
  	<string name="delete">删除</string>
- 	<string name="share">分享</string>
+ 	<string name="share">分享</string> -->
  	
  	<string-array name="live_group">
  	    <item>风景</item>
@@ -799,7 +864,7 @@
  	    <item>商铺</item>
  	</string-array>
  	
- 	<string-array name="share_group">
+ 	<!-- <string-array name="share_group">
  	    <item>风景</item>
  	    <item>路况</item>
  	    <item>商铺</item>
@@ -809,8 +874,9 @@
  	    <item>账号已于</item>
  	    <item>在</item>
  	    <item>设备登录。</item>
- 	</string-array>
- 	<string name="sel_photo">头像</string>
+ 	</string-array> -->
+ 	
+ 	<!-- <string name="sel_photo">头像</string>
  	<string name="hot_name">昵称</string>
  	<string name="per_signer">个性签名</string>
  	<string name="pho_number">手机号码</string>
@@ -821,7 +887,9 @@
  
  	<string name="no_empty">输入内容不能为空</string>
  	<string name="mail_tip">请输入正确的邮箱格式</string>
- 	<string name="per_detail">个人资料</string>
+ 	<string name="per_detail">个人资料</string> 
+ 	
+ 	
  	
  	<string name="set_push">推送配置</string>
  	<string name="flow_remaind">2G/3G/4G流量提醒</string>
@@ -853,15 +921,16 @@
  	<string name="my_photos">我的相册</string>
  	<string name="my_shares">我的分享</string>
  	
- 	
  	<string name="logout_tip">退出登录后将不能接收到消息，确定退出登录？</string>
  	<string name="exit_tip">关闭后将收不到任何报警消息，确定关闭？</string>
  	<string name="logout">退出登录</string>
  	<string name="relogin">重新登录</string>
  	<string name="exit">退出</string>
  	<string name="user_in_other_dev">同一个账号在别的设备上登陆</string>
+ 	-->
  	
- 	<string name="app_declare">版权所有:杭州蛮牛科技有限公司</string>
+ 	
+ 	<!-- <string name="app_declare">版权所有:杭州蛮牛科技有限公司</string>
  	<string name="team_name">杭州蛮牛科技有限公司</string>
  	<string name="checking_msg">信息校验中</string>
  	<string name="up_relinfo">上传实名信息中</string>
@@ -876,39 +945,12 @@
  	<string name="relname_hint">请输入您的真实姓名以便审核</string>
  	<string name="idcard">"身份证号 "</string>
  	<string name="cardVefi">"身份认证 "</string>
- 	<string name="cardVefi_hint">上传含本人头像的身份证两面照</string>
  	<string name="cardVefi_desc">亲,首次分享，需要进行实名认证,带*为必填</string>
- 	<string name="commit">提交</string>
+ 	<string name="commit">提交</string> -->
  	
- 	<string name="sharemsg">分享信息</string>
- 	<string name="title">标题</string>
- 	<string name="title_hint">标题</string>
- 	<string name="group">分组</string>
- 	<string name="group_hint">点击选择</string>
- 	<string name="live_dec">视频说明</string>
  	
- 	<string name="yidong">中国移动</string>
- 	<string name="liantong">中国联通</string>
- 	<string name="dianxin">中国电信</string>
- 	
- 	<string name="cloud">云端</string>
- 	<string name="niuyan">牛眼</string>
- 	<string name="personel">个人</string>
- 	<string name="square">广场</string>
- 	
- 	<string name="sq_live">直播</string>
- 	<string name="sq_short">短片</string>
- 	<string name="sq_near">周边</string>
- 	
- 	<string name="share_txt">分享文本!</string>
- 	<string name="alert_msg">报警消息!</string>
-	<string name="reclick_tip">再按一次退出程序</string>
-	
-	<string name="device">设备</string>
-	<string name="alert">报警</string>
-	<string name="local">本地</string>
-	<string name="add">添加</string>
- 	
+ 	<!-- 注释重复的 -->
+	<!-- 	
 	<string name="pwdSet">"设  置  密  码"</string>
 	<string name="pwd_empty">密码不能为空!</string>
 	<string name="pwd_reempty">重复密码不能为空!</string>
@@ -931,7 +973,7 @@
 	<string name="pwd_error">密码错误</string>
 	<string name="pwd_veriFail">验证失败,请检查您的网络</string>
 	<string name="pwd_next">下一步</string>
-	<string name="case_sensitive">区分大小写</string>
+	<string name="case_sensitive">区分大小写</string> 
 	
 	<string name="phnum_putTip">输入手机号</string>
 	<string name="phnum_wrong">手机号码不正确!</string>
@@ -939,8 +981,8 @@
 	<string name="phnum_repeat">该手机号码已注册!</string>
 	<string name="phnum_none">该手机号码不存在!</string>
 	<string name="phnum_error">账号异常!</string>
-	
 	<string name="file_tip">请选择正确的文件夹</string>
+	-->
 	
  	<string name="video_layout_loading">加载资源中...</string>
  	<string name="video_layout_starting">准备播放中...</string>
@@ -962,6 +1004,7 @@
  	<string name="connectclosed_preview">连接关闭，正在预览...</string>
  	<string name="nothave_SDCard">没有外置SD卡!</string>
  	<string name="downloadbitmap_failed">获取图片失败</string>
+ 	<string name="unrecognized_device">未识别该设备!</string>
  	<string name="notHave_SNInfo">没有SN信息</string>
  	<string name="notHave_VNInfo">没有VN信息</string>
  	<string name="unregisterad_sn">序列号不存在</string>
@@ -1005,7 +1048,6 @@
  	<string name="ip">IP地址</string>
  	<string name="subnet_mask">子网掩码</string>
  	<string name="gateway">网关</string>
- 	<string name="model">模式</string>
  	<string name="dns1">DNS</string>
  	<string name="get1">手动设置</string>
  	<string name="get2">自动获取</string>
@@ -1014,6 +1056,7 @@
  	<string name="priview">正在预览...</string>
  	<string name="set_success">设置成功!</string>
  	<string name="submit_success">提交成功!</string>
+ 	<string name="notempty">请输入内容!</string>
  	
  	<!-- 牛眼 -->
 	<string name="analog_video_update">修改</string>

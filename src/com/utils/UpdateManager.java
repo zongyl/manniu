@@ -138,14 +138,14 @@ public class UpdateManager {
 		this.isAuto = isAuto;
 		getCurrentVersion();
 		if(isShowMsg){
-			if(mProDialog == null){
+//			if(mProDialog == null){
 				mProDialog = ProgressDialog.show(mContext, null, mContext.getString(R.string.checking), true, true);
-			}/*else if(mProDialog.isShowing()||(latestOrFailDialog!=null&&latestOrFailDialog.isShowing())){
+			/*}else if(mProDialog.isShowing()||(latestOrFailDialog!=null&&latestOrFailDialog.isShowing())){
 				Log.v(TAG, "不显示对话框   1");
 				return;
-			}*/else if(!mProDialog.isShowing()){
+			}else if(!mProDialog.isShowing()){
 				mProDialog.show();
-			}
+			}*/
 		}
 		final Handler handler = new Handler(APP.GetMainActivity().getMainLooper()){
 			public void handleMessage(Message msg){

@@ -105,8 +105,8 @@ public class NewItemDetailEdit extends Activity implements OnClickListener{
 			et.setText(null);
 		}
 		if(R.id.confirm_edit == view.getId()){
-			if(_ex.getText().toString().length()==0){
-				APP.ShowToast(getString(R.string.no_empty));
+			if(_ex.getText().toString().trim().length() < 2){
+				APP.ShowToast(getString(R.string.no_empty)+","+getString(R.string.hot_hint));
 			}else{
 				if( "mail".equals(_updateItem)){
 					if(!isEmail(_ex.getText().toString())){

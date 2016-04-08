@@ -1,7 +1,9 @@
 package com.adapter;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
@@ -10,6 +12,7 @@ import java.util.concurrent.Executors;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.manniu.manniu.R;
@@ -28,6 +31,7 @@ public class DevImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService;
     Handler handler = new Handler();//handler to display images in UI thread
+    private Map<String, SoftReference<Bitmap>> imageCaches = new HashMap<String, SoftReference<Bitmap>>();//缓存BITMAP
     
     public DevImageLoader(Context context){
         executorService=Executors.newFixedThreadPool(4);
@@ -51,10 +55,23 @@ public class DevImageLoader {
         try {
         	if(url.startsWith("http")){
     			String name = url.substring(url.indexOf("aliyuncs.com")+12, url.length());
+    			
+    			SoftReference<Bitmap> currBitmap = imageCaches.get(FileUtil.getUrlKey(url));
+    			Bitmap softRefBitmap = null;
+    			if(currBitmap != null){
+    				softRefBitmap = currBitmap.get();
+    			}
+    			//先从软引用中拿数据
+    			if(currBitmap != null && softRefBitmap != null){
+    				System.out.println("从软引用中拿数据--imageName==");
+    				return softRefBitmap;
+    			}
     			File file = new File(DevAdapter.rootPath + devSid + name);
     			//Log.d(TAG, devSid+"--"+name);
     			if(file.exists()){
     				bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
+    				//将读取的数据放入到软引用中
+    				imageCaches.put(FileUtil.getUrlKey(url), new SoftReference<Bitmap>(bitmap));
     				return bitmap;
     			}else{
     				byte[] bytes = HttpUtil.executeGetBytes(url);
@@ -75,6 +92,8 @@ public class DevImageLoader {
     				//存入SDK文件
     				FileUtil.toFile(bytes, DevAdapter.rootPath + devSid + name);
     				bitmap = BitmapUtils.getBitMap(file.getAbsolutePath());
+    				//将读取的数据放入到软引用中
+    				imageCaches.put(FileUtil.getUrlKey(url), new SoftReference<Bitmap>(bitmap));
     				return bitmap;
     			}
     		}

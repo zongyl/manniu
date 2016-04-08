@@ -1237,8 +1237,11 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 			restoreCommentAndInfoView();
 			sendComMessage();
 			break;
-		case R.id.collection:
-			
+		case R.id.collection://点击收藏
+			if(true == SetSharePrefer.read_bool("collect_info", liveId)){
+				APP.ShowToast(getString(R.string.ALREADY_COLLECT));
+				return;
+			} 
 			if(false == b_collection)	
 			{
 				LogUtil.d(TAG, "collection button action save()!");
@@ -1570,7 +1573,9 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 	}
 
 	public void save(int id){
-	
+//		if(collection.getd){
+//			
+//		}
 		RequestParams params = new RequestParams();
 		params.put("userId", APP.GetSharedPreferences("Info_Login", "sid", ""));
 		params.put("liveid", liveId);
@@ -1699,7 +1704,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 		
 		switch(id)
 		{
-		case R.id.collection:
+		case R.id.collection://取消收藏
 			
 			HttpUtil.get(Constants.hostUrl+"/android/cancelCollect", params, new JsonHttpResponseHandler(){
 				@Override
@@ -1732,7 +1737,7 @@ public class NewWebActivity extends Activity implements OnClickListener, OnMapLo
 				}
 			});
 			break;
-		case R.id.like:
+		case R.id.like://取消点赞
 			HttpUtil.get(Constants.hostUrl+"/android/cancelPraise", params, new JsonHttpResponseHandler(){
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONObject json) {

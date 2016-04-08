@@ -1,34 +1,48 @@
 package P2P;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import net.majorkernelpanic.streaming.hw.AnalogvideoActivity;
 import net.majorkernelpanic.streaming.video.VideoQuality;
 import net.majorkernelpanic.streaming.video.VideoStream;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.view.Surface;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.backprocess.BackLoginThread;
 import com.basic.APP;
+import com.bean.Monitor;
 import com.manniu.manniu.R;
 import com.utils.DevSetHandler;
 import com.utils.ExceptionsOperator;
+import com.utils.FileUtil;
 import com.utils.LogUtil;
 import com.utils.ScreenHandler;
 import com.views.BaseApplication;
+import com.views.Fun_RealPlayerActivity;
 import com.views.Fun_RecordPlay;
 import com.views.Main;
+import com.views.NewMain;
 import com.views.NewSurfaceTest;
 import com.views.analog.camera.audio.AudioQueue;
+import com.views.analog.camera.encode.DecoderDebugger;
 
 public class SDK {
 
 	private static String[] strArr;
+	//截图 handler
 	private static ScreenHandler screenHandler = new ScreenHandler();
+	//设备设置 handler
 	private static DevSetHandler devSetHandler = new DevSetHandler();
+	//录像回放 handler
+	//private static VideoBackHandler videoBackHandler = new VideoBackHandler();
 	// 0 是音频 1 是视频 后面三个字节填
 //	src:源数组；	srcPos:源数组要复制的起始位置；
 //	dest:目的数组；	destPos:目的数组放置的起始位置；	length:复制的长度。
@@ -37,25 +51,136 @@ public class SDK {
 	//isIFrame		1：i帧，否则为p帧
 	//pcmType 音频类型
 	//static byte[] newbuf = new byte[60*1024];
-	public void onData(int width,int heigth,int pcmType,int chnl,int devType,int type,int isIFrame,byte[] data, int length) {
-		//if(isInitDecoder && NewSurfaceTest.instance!=null && NewSurfaceTest._playId > 0 && NewSurfaceTest.instance._decoderDebugger != null){
-			if(data != null && data.length > 0 && NewSurfaceTest.instance._decoderQueue != null){
+	public void onData(int width,int heigth,int pcmType,int chnl,int devType,int type,int isIFrame,byte[] data, int length,long nSessionID, long lDeviceChannelID,int encoderType) {
+		/*if(data.length > 0 && NewMain.instance != null && NewMain.instance.viewPager.getCurrentItem() == 1){//报警视频
+			if(_width != width || _height != heigth){
+				_width = width;
+				_height = heigth;
+			}
+		}else if(data != null && data.length > 0 && NewSurfaceTest.instance != null){//实时视频
+			//硬、软解方法
+			if(type == 0){//视频
+				if(_width != width || _height != heigth){
+					_manufactorType = devType;
+					_width = width;
+					_height = heigth;
+				}
+				if(NewSurfaceTest.instance.isStop && NewSurfaceTest.isGpu)
+					NewSurfaceTest.instance.h264Decoder(data, length,isIFrame);
+			}else if(type == 1 && AudioQueue.runFlag){//音频
+				AudioQueue.addSound(data,pcmType);
+			}
+		}*/
+		if(data.length > 0){
+			if(NewSurfaceTest.instance != null && NewSurfaceTest.isPlay){//实时视频
 				//硬、软解方法
 				if(type == 0){//视频
 					if(_width != width || _height != heigth){
-//						Log.i("isInitDecoder",width+"---------------------------"+heigth);
 						_manufactorType = devType;
 						_width = width;
 						_height = heigth;
 					}
-					NewSurfaceTest.instance._decoderQueue.addData(data,length,isIFrame);
+					if(NewSurfaceTest.instance.isStop && NewSurfaceTest.isGpu)
+						NewSurfaceTest.instance.h264Decoder(data, length,isIFrame);
 				}else if(type == 1 && AudioQueue.runFlag){//音频
 					AudioQueue.addSound(data,pcmType);
 				}
+				return;
 			}
+			
+			//硬解尝试等到IFrame
+//			if (GetChannelIFrameStatus(lDeviceChannelID) == false) {
+//				if (isIFrame == 1) {
+//					SetChannelIFrameStatus(lDeviceChannelID, true);
+//				} else {
+//					return;
+//				}
+//			}
+			
+			DecoderDebugger decoder= GetRealPlayDecoder(lDeviceChannelID);
+			boolean blnHaveReSetDecoder= false;
+			if(decoder==null){
+				blnHaveReSetDecoder=true;
+			}else{
+				if(GetChannelDecoderType(lDeviceChannelID)==false && !decoder.isCanDecode()){
+					//走软解处理
+					SetChannelDecodeType(lDeviceChannelID,true);
+					SetDecoderModel(1,GetChannelPlayContext(lDeviceChannelID));
+					return;
+				}		
+			}
+			if(blnHaveReSetDecoder){
+				if(_RealPlaySurface.containsKey(""+lDeviceChannelID)){
+					Monitor monitor = GetChannelMonitor(lDeviceChannelID);				
+					if(monitor.getAVDecoder()!=null){
+						monitor.getAVDecoder().release();
+						monitor.setAVDecoder(null);
+					}
+					monitor.setAVDecoder(new DecoderDebugger((Surface)_RealPlaySurface.get(""+lDeviceChannelID),176,144));
+					SetAVDecoder(lDeviceChannelID, monitor.getAVDecoder());				
+				}else{
+					try {
+						Thread.sleep(2);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					return;
+				}
+			}
+			if(decoder.isCanDecode()){
+				Monitor monitor = GetRealPlayMonitor(lDeviceChannelID);
+				if(monitor != null){
+					// 计算流量
+					monitor.setCurChnDataFlow(length);
+					if (monitor.getPlay_status() == 1 && type == 0){//视频
+						if(monitor.getCodecwidth() != width || monitor.getCodecheight() != heigth){
+							monitor.setCodecwidth(width);
+							monitor.setCodecheight(heigth);
+						}
+						Lock lock = monitor.getDecoder_lock();
+						lock.lock();
+						int realLen = length;
+						if(devType == 0){		//厂家设备类型为智诺的，需要去头处理
+							if(length>22){//去头处理
+								int exHead = (int)data[22];
+								int realHead = 24 + exHead;
+								realLen = length - realHead - 8;
+								byte[] newbuf = new byte[realLen];
+								System.arraycopy(data, realHead, newbuf, 0, realLen);
+								try{
+									decoder.decoder(newbuf,realLen);
+									//截图
+				        			if(isIFrame == 1 && Fun_RealPlayerActivity.instance.isShot && SDK._shotContext == SDK.GetChannelPlayContext(lDeviceChannelID)){
+				        				Fun_RealPlayerActivity.instance.h264DecoderSnapImg(newbuf,monitor.getImageData(),realLen,monitor.getCodecwidth(),monitor.getCodecheight(),SDK._shotContext);
+				                	}
+								}catch (Exception e) {
+								}
+							}
+						}else{//模拟、海康设备不用去头
+							try{
+								decoder.decoder(data,length);
+								//截图
+			        			if(isIFrame == 1 && Fun_RealPlayerActivity.instance.isShot && SDK._shotContext == SDK.GetChannelPlayContext(lDeviceChannelID)){
+			        				Fun_RealPlayerActivity.instance.h264DecoderSnapImg(data,monitor.getImageData(),length,monitor.getCodecwidth(),monitor.getCodecheight(),SDK._shotContext);
+			                	}
+							}catch (Exception e) {
+								LogUtil.e("SDK", ExceptionsOperator.getExceptionInfo(e));
+							}
+						}
+						lock.unlock();
+					}else if(type == 1){//音频
+						System.out.println(111111);
+					}
+				}
+				
+				
+			}
+			
+			
 		}
-	//}
-	
+		
+	}
+			
 	/*
 	 * C_MSG_CREATE_CHANNEL = 10,		//创建通道(通道信息在 C_Channel_T* param)
 		C_MSG_CLOSE_CHANNEL,			//关闭通道(通道信息在 C_Channel_T* param)
@@ -89,7 +214,7 @@ public class SDK {
 	public static boolean analogPic = false;//模拟抓图
 	public static int nFrameRate = 20;//帧率
 	public static int _bitrate = 80000000;//码率
-	public static int _width = 352;//
+	public static int _width = 352;//ondata返回的宽高
 	public static int _height = 288;//
 	public static int _manufactorType = 0;//厂家类型：0-智诺 1-海康
 	public static int _flag = 0;//收到宽高只处理一次
@@ -139,9 +264,24 @@ public class SDK {
 					msg.what = 3;
 					devSetHandler.sendMessage(msg);
 				}
+			}else if(jsonData.containsKey("action")&&"106".equals(jsonData.getString("action"))){
+				if("7".equals(jsonData.getString("result"))||"0".equals(jsonData.getString("result"))){
+					if(jsonData.containsKey("file_list")){
+						Message msg = new Message();
+						msg.what = 1;
+						Bundle data = new Bundle();
+						data.putString("file_list", jsonData.getJSONArray("file_list").toJSONString());
+						msg.setData(data);
+					//	VideoPlayback.mhandler.sendMessage(msg);
+						BaseApplication.getInstance().getVideoHandler().sendMessage(msg);
+						
+					}
+				}
 			}
 		}else if(cmd == 903){ //ETS会自动下线原有链接
 			
+		}else if(cmd == 100){//关闭报警回放
+			if(Fun_RecordPlay.instance != null) Fun_RecordPlay.instance.stop();
 		}
 		if(cmd == 17){//模拟IPC抓图
 			if(AnalogvideoActivity.instance != null){
@@ -161,11 +301,11 @@ public class SDK {
 //				}
 			}else if(cmd == 11){//关闭通通-停止编码发送数据
 				_createChnlFlag = -1;
-				_sessionId = 0;
+				_sessionIdContext = 0;
 				AnalogvideoActivity.instance.stopEncode();
 				AnalogvideoActivity.instance.changeTextValue();
 			}
-		}else if(Main.Instance._curIndex == Main.XV_NEW_MAIN){//云端
+		}else if(NewSurfaceTest.instance != null && NewSurfaceTest.isPlay){//云端
 			if(cmd == 10){//获取宽高  第3  4  5 个参数分别是帧率  宽 高
 //				LogUtil.d("SDK","收到宽高：    "+param2+"--"+param3 + "--" + param4+ "--" + param5+"--"+param6+"--"+param7);
 //				if(param3 != 0) nFrameRate = param3;
@@ -178,7 +318,7 @@ public class SDK {
 //					BackLoginThread.state = 4;
 //					Main.Instance._loginThead.start();
 //				}
-			}else if(cmd == 26){//设备状态 == 1设备不在线
+			}else if(cmd == 26){//设备状态 == 0.未知状态，初始化为该状态 1. 设备忙 2.设备空闲
 				isInitDecoder = true;
 				if(param2 != 2 && NewSurfaceTest.instance != null) NewSurfaceTest.instance.closeNewSurface(param2);
 			}
@@ -215,9 +355,9 @@ public class SDK {
 	C_STATUS_SVR_DISCONNECTED,		
 	 * */
 	public static boolean _isRun = true; //是否发送登录IDM或ETS 保证只执行一次
-	public static long _sessionId = 0;
+	public static long _sessionIdContext = 0;//这里主要用于设备里面播放视频。 多画面的时候不用这个参数  跟4画面的context 是一个意思。都是打洞成功后通过onstatus 里面返回的
 	public static boolean _isLogout = true;
-	public void OnStatus(int value, long sessionId, int status, String dst_uuid){
+	public void OnStatus(int value, long sessionId, int status, String dst_uuid,long context,long deviceChannelID){
 		switch (value) {
 		case 0:
 			if(status == -4999){//牛眼-停止发送视频  云端 -关闭连接(IDM掉线 移到后台管理)
@@ -233,6 +373,7 @@ public class SDK {
 		case 1:
 			if(status == -4999){//牛眼-停止发送视频 //云端 -关闭连接
 				LogUtil.d("SDK", "value = 1 ETS onStatus:"+status);
+				//1........要先关闭 p2pclose()..P2PCloseChannel
 				if(_isRun) {
 					_isRun = false;
 					BackLoginThread.state = 1;
@@ -241,22 +382,52 @@ public class SDK {
 				}
 			}
 			break;
-		case 2:
+		case 2://打洞返回
 			if(Main.Instance._curIndex == 1){//牛眼
 				if(status == 0){
 					LogUtil.d("SDK", "有人连。。lession ID ="+sessionId);
-					_sessionId = sessionId;
+					_sessionIdContext = sessionId;
 				}else if(status == -5000){
 					LogUtil.d("SDK", "关闭连接。。lession  ID ="+sessionId);
 				}
 			}else if(Main.Instance._curIndex == 0){//云端
 				LogUtil.d("SDK", "OnStatus方法。。value ="+value+"  status="+status+"--sessionid "+sessionId);
 				if(status == -5000){
-					_sessionId = 0;
+					_sessionIdContext = 0;
 					LogUtil.d("SDK", "出现异常，连接关闭。。lession="+sessionId);
+					//2..........要先关闭 p2pclose()..P2PCloseChannel
 					if(NewSurfaceTest.isPlay && NewSurfaceTest.instance != null) NewSurfaceTest.instance.closeNewSurface(-5000);
 				}
 			}
+			//contxt返回  --- 新增多画面 start
+			if(NewSurfaceTest.instance != null){
+				Bundle bdData = new Bundle();
+				bdData.putLong("Context", context);
+				bdData.putInt("Status",status);	
+				SendMessage(_ConnectChannelP2PHandler, bdData);
+			}else{
+				System.out.println("20160309P2P     OnStatus sessionId:"+sessionId+";Value:"+value+";deviceChannelID:"+deviceChannelID+";Context:"+context);
+				String strKey = GetChannelKeyByID(deviceChannelID);
+				System.out.println("20160309P2P     OnStatus strKey:"+strKey);
+				if(strKey.trim().length() > 0){
+					if(status == 0 ){
+						_PlayChannelContextLock.lock();
+						System.out.println("20160324P2P     OnStatus context:"+context + ";deviceChannelID:"+deviceChannelID);
+						_ChannelPlayContext.put(""+deviceChannelID, context);//添加ChannelPlayContext对应关系
+						_PlayChannelContextLock.unlock();
+					}
+					Bundle bdData = new Bundle();
+					String[] strDevChannelInfo = ParseDeviceChannelKey(strKey);
+					System.out.println("20160309P2P     OnStatus ParseDeviceChannelKey(strKey):"+strKey);
+					bdData.putString("DeviceUUID", strDevChannelInfo[0]);
+					bdData.putInt("ChannelIndex", FileUtil.ConvertStringToInt(strDevChannelInfo[1],-1));
+					bdData.putLong("Context", context);
+					bdData.putInt("Status",status);					
+					SendMessage(_ConnectChannelP2PHandler, bdData);
+					System.out.println("20160309P2P     OnStatus strDevChannelInfo[0]:"+strDevChannelInfo[0] + ";strDevChannelInfo[1]:"+strDevChannelInfo[1]+";Context:"+context+";status:"+status);
+				}
+			}
+			//contxt返回  --- 新增多画面 end
 			break;
 		case 3:
 			if(_isLogout){
@@ -271,13 +442,17 @@ public class SDK {
 					if(NewSurfaceTest.isPlay){
 						NewSurfaceTest.instance.stop();
 					}
+					//关闭多画面
+					if(Fun_RealPlayerActivity.instance != null){
+						Fun_RealPlayerActivity.instance.exitDeleteDevice();
+					}
 					//关闭牛眼
 					if(Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog){
 						AnalogvideoActivity.instance.clearAnalog();
 						AnalogvideoActivity.instance.finish();
 					}
 					//关闭报警回放
-					if(Fun_RecordPlay.instance != null && Fun_RecordPlay.instance.is != null){
+					if(Fun_RecordPlay.instance != null/* && Fun_RecordPlay.instance.is != null*/){
 						Fun_RecordPlay.instance.stop();
 					}
 					//判断如果正在播放广场视频关闭
@@ -305,6 +480,480 @@ public class SDK {
 		System.loadLibrary("P2PTransfor");
 		//System.loadLibrary("zbar");
 	}
+	
+	//.............................多画面处理
+	
+	/**
+	 * 打开通道视频
+	 * @param dId:设备UUID
+	 * @param nOpenChannelIndex:通道索引
+	 * @param avdecoder:解码器
+	 * @param monitor:展示容器
+	 * @return
+	 */
+	private static int _MaxChannelID = 0;
+	private static Lock _Lock = new ReentrantLock();
+	private static Lock _PlayChannelContextLock = new ReentrantLock();
+	private static Handler _ConnectChannelP2PHandler = null;
+	private static Map<String,String> _ChannelKeyID = new HashMap<String,String>();//_ChannelID对应关系 Key:设备UUID+通道索引;Object:对应的通道ID(long型)
+	private static Map<String,String> _ChannelIDKey = new HashMap<String,String>();//ChannelState对应关系 Key:对应的通道ID(long型);Object:设备UUID+通道索引
+	private static Map<String,Object> _ChannelPlayContext = new HashMap<String,Object>();//_ChannelContext对应关系 Key:对应的通道ID(long型);Object:对应的Context
+	private static Map<String,Object> _RealPlayDecoder=new HashMap<String,Object>();//AVDecoder对应关系  Key:设备UUID+通道索引;Object:对应的AVDecoder 
+	private static Map<String,Object> _RealPlaySurface=new HashMap<String,Object>();//Surface对应关系  Key:设备UUID+通道索引;Object:对应的Surface
+	private static Map<String,Object> _RealPlayMonitor=new HashMap<String,Object>();//Monitor对应关系  Key:设备UUID+通道索引;Object:对应的Monitor
+	private static Map<String,Object> _CreateChannelState = new HashMap<String,Object>();//_ChannelContext对应关系 Key:对应的通道ID(long型);Object:对应的CreateChannel的状态
+	private static Map<String,Object> _ChannelDecodeType = new HashMap<String,Object>();//_ChannelContext对应关系 Key:对应的通道ID(long型);Object:对应的解码类型 false:硬解;true:软解
+	private static Map<String,Object> _ChannelIFrameStatus = new HashMap<String,Object>();//_ChannelContext对应关系 Key:对应的通道ID(long型);Object:对应的解码类型 false:硬解;true:软解
+	
+	public static long _shotContext = -1;//截图context
+	public static long ConnectChannelP2P(String dId, int nOpenChannelIndex,
+			DecoderDebugger avdecoder, Monitor monitor, Handler hdlConnectStateHandler) {
+		long nRet = 0;
+		_Lock.lock();
+		long lChannelID = GetChannelIDByKey(dId, nOpenChannelIndex);
+		System.out.println("20160309P2P     ConnectChannelP2PlChannelID:"+ lChannelID+" sid = "+dId);
+		if (GetChannelPlayContext(lChannelID) == 0){// 如果当前设备通道正在播放，则不重新打通p2p
+			System.out.println("20160309P2P     ConnectChannelP2P  【Start: " + lChannelID + "】");
+			nRet = P2PConnect(dId,lChannelID);
+			System.out.println("20160309P2P     ConnectChannelP2P  【End: " + lChannelID + "】");
+			if (nRet == 0) {
+				_ConnectChannelP2PHandler = hdlConnectStateHandler;
+				// 支持多窗口处理
+				SetAVDecoder(lChannelID, avdecoder);
+				SetMonitor(lChannelID, monitor);
+			}
+		} else {
+			nRet = 0;
+		}
+		_Lock.unlock();
+		return nRet;
+	}
+	
+	public static void SetMonitor(long lChannelID,Monitor monitor){
+		_RealPlayMonitor.put(""+lChannelID, monitor);
+		monitor.setStatus(0);
+		monitor.setLogin_state(1);
+		if(monitor != null){
+			monitor.setPlay_status(1);;
+			monitor.setCanPTZ(false);
+			monitor.setCanTalk(false);
+			monitor.setCanSwitchStream(false);
+		}
+	}
+	
+	public static void SetAVDecoder(long lChannelID,DecoderDebugger avdecoder){
+		String strKey = GetChannelKeyByID(lChannelID);
+		String[] strArr = ParseDeviceChannelKey(strKey);				
+		String strDevUUID = strArr[0];
+		int nChannelIndex = FileUtil.ConvertStringToInt(strArr[1], 0)  ;
+		SetAVDecoder(strDevUUID,nChannelIndex,avdecoder);
+	}
+	/**
+	 * 设置设备通道对应的AVDecoder
+	 * @param dId
+	 * @param nOpenChannelIndex
+	 * @param avdecoder
+	 */
+	public static void SetAVDecoder(String dId,int nOpenChannelIndex,DecoderDebugger avdecoder){
+		if(avdecoder != null){
+			avdecoder.setCanDecode(true);			
+			long lChannelID = GetChannelIDByKey(dId,nOpenChannelIndex);
+			_RealPlayDecoder.put(""+lChannelID, avdecoder);
+			_RealPlaySurface.put(""+lChannelID, avdecoder.GetSurface());
+		}
+	}
+	
+	public static String GetChannelKeyByID(long lID) {
+		String strRet = "";
+		if (_ChannelIDKey.containsKey("" + lID)) {
+			strRet = _ChannelIDKey.get("" + lID);
+		}
+		return strRet;
+	}
+	
+	private static String[] ParseDeviceChannelKey(String strKey){
+		String[] strArr= strKey.split("_");
+		return strArr;
+	}
+	
+	public static long GetChannelPlayContext(long lChannelID) {
+		long lRet = 0;
+		_PlayChannelContextLock.lock();
+		if (_ChannelPlayContext.containsKey("" + lChannelID)) {
+			lRet = FileUtil.ConvertStringToLong(_ChannelPlayContext.get("" + lChannelID).toString(), 0);
+		}
+		_PlayChannelContextLock.unlock();
+		return lRet;
+	}
+	
+	public static long GetChannelPlayContext(String strUUID,int nChannelIndex){
+		return GetChannelPlayContext(GetChannelIDByKey(strUUID, nChannelIndex));
+	}
+	
+	public static long GetChannelIDByKey(String strUUID,int nChannelIndex){
+		return   GetChannelIDByKey(CreateDeviceChannelKey(strUUID,nChannelIndex));
+	}
+
+	public static long GetChannelIDByKey(String strKey) {
+		long lRet = -1;
+		if (_ChannelKeyID.containsKey(strKey)) {
+			lRet = FileUtil.ConvertStringToLong(_ChannelKeyID.get(strKey),-1);
+		} else {
+			_MaxChannelID += 1;
+			// Channel Key和ID之间建立对应关系，删除时需要一并删除
+			_ChannelKeyID.put(strKey, "" + _MaxChannelID);
+			_ChannelIDKey.put("" + _MaxChannelID, strKey);
+			lRet = _MaxChannelID;
+		}
+		return lRet;
+	}
+	/**
+	 * 生成设备通道对应的Key
+	 * @param strUUID
+	 * @param nChannelIndex
+	 * @return
+	 */
+	private static String CreateDeviceChannelKey(String strUUID,int nChannelIndex){
+		return strUUID+"_"+nChannelIndex;
+	}
+	//创建通道
+	public static long CreateChannelP2P(String dId,int nOpenChannelIndex,long lContext/*,AVDecoder avdecoder,Monitor monitor*/){
+		System.out.println("TEST20160321     CreateChannelP2P:"+dId+"   " + nOpenChannelIndex);
+		long lRet = 0;
+		boolean blnCreateChannel = false;
+		int nCCTryCount = 0;
+		long lChannelID= GetChannelIDByContext(lContext);
+		blnCreateChannel = ChannelHaveCreate(lChannelID);
+		System.out.println("TEST20160321     CreateChannelP2P HaveCreateChannel="+(blnCreateChannel==true?"是":"否")+"___"+lChannelID+";lContext:"+lContext);
+		if(lChannelID != -1){
+			System.out.println("TEST20160321     CreateChannel______________Context:"+lContext);
+			int nplayId = P2PCreateChannel(lContext,nOpenChannelIndex,1,20,10000, 352,288);
+			try {
+				Thread.sleep(10, 10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("TEST20160321     CreateChannelXXXXXXXXXXXXXXXXX  P2PCreadChannel Ret:" + nplayId);
+			if(nplayId >= 0){	
+				blnCreateChannel = true;				
+			}else{
+				lRet = -1;
+			}
+			_CreateChannelState.put(""+lChannelID, blnCreateChannel);
+			nCCTryCount++;
+		}	
+		return lRet;
+			
+	}
+	
+	public static long GetChannelIDByContext(long lContext) {
+		long lRet = -1;
+		_PlayChannelContextLock.lock();
+		System.out.println("20160309    GetChannelIDByContext:" + lContext);
+		if (_ChannelPlayContext.containsValue(lContext)) {
+			System.out.println("20160309    GetChannelIDByContext______________");
+			for (Map.Entry<String, Object> entry : _ChannelPlayContext.entrySet()) {
+				String strValue = entry.getValue().toString();
+				String strKey = entry.getKey();
+				if (lContext == FileUtil.ConvertStringToLong(strValue, -1)) {
+					lRet = FileUtil.ConvertStringToLong(strKey, -1);
+					System.out.println("20160309    GetChannelIDByContextXXXXXXXXXXXX");
+					break;
+				}
+			}
+		}
+		_PlayChannelContextLock.unlock();
+		return lRet;
+	}
+	
+	public static boolean ChannelHaveCreate(long lChannelID) {
+		boolean blnRet = false;
+		if (_CreateChannelState.containsKey("" + lChannelID)) {
+			System.out.println("20160309P2P    _CreateChannelState   _   lChannelID:"+ _CreateChannelState.get("" + lChannelID).toString());
+			blnRet = FileUtil.ConvertToBoolean(_CreateChannelState.get("" + lChannelID), false);
+			System.out.println("20160309P2P    _CreateChannelState   _   blnRet:"+ blnRet);
+		} else {
+			System.out.println("20160325P2P    _CreateChannelState   _   Not Find lChannelID:"+ lChannelID);
+		}
+		return blnRet;
+	}
+	//关闭连接....
+	public static void CloseP2PConnect(String strUUID,int nOpenChannelIndex){
+		long lChannelID = GetChannelIDByKey(strUUID,nOpenChannelIndex);	
+		long lContext = GetChannelPlayContext(lChannelID);
+		if(lContext != 0){
+			System.out.println("20160309P2P     CloseChannel7777777____Context:"+lContext);
+			int nRet = -1;
+			int nTryCount = 0;
+			System.out.println("20160309P2P     CloseChannel88888888____Context:"+lContext);
+			nRet = P2PClose(lContext);
+			System.out.println("20160309P2P     CloseChannel999999999____Context:"+lContext);
+			nTryCount++;
+		}			
+		RemoveChannelPlayContext(lChannelID);
+		RemoveChannelIDByKey(strUUID, nOpenChannelIndex);	
+		RemoveCreateChannelState(lChannelID);
+	}
+
+	public static void RemoveChannelPlayContext(long lChannelID) {
+		_PlayChannelContextLock.lock();
+		if (_ChannelPlayContext.containsKey("" + lChannelID)) {
+			_ChannelPlayContext.remove("" + lChannelID);
+		}
+		_PlayChannelContextLock.unlock();
+		if (_ChannelDecodeType.containsKey("" + lChannelID)) {
+			_ChannelDecodeType.remove("" + lChannelID);
+		}
+		if (_ChannelIFrameStatus.containsKey("" + lChannelID)) {
+			_ChannelIFrameStatus.remove("" + lChannelID);
+		}
+	}
+	public static void RemoveChannelIDByKey(String strUUID,int nChannelIndex){
+		String strKey = CreateDeviceChannelKey(strUUID,nChannelIndex);
+		RemoveChannelIDByKey(strKey);
+	}
+
+	public static void RemoveChannelIDByKey(String strKey) {
+		long lChannelID = GetChannelIDByKey(strKey);
+		if (_ChannelKeyID.containsKey(strKey)) {
+			_ChannelKeyID.remove(strKey);
+		}
+		if (_ChannelIDKey.containsKey("" + lChannelID)) {
+			_ChannelIDKey.remove("" + lChannelID);
+		}
+		if (_ChannelDecodeType.containsKey("" + lChannelID)) {
+			_ChannelDecodeType.remove("" + lChannelID);
+		}
+		if (_ChannelIFrameStatus.containsKey("" + lChannelID)) {
+			_ChannelIFrameStatus.remove("" + lChannelID);
+		}
+	}
+
+	public static void RemoveCreateChannelState(long lChannelID) {
+		if (_CreateChannelState.containsKey("" + lChannelID)) {
+			_CreateChannelState.remove("" + lChannelID);
+		}
+		if (_ChannelDecodeType.containsKey("" + lChannelID)) {
+			_ChannelDecodeType.remove("" + lChannelID);
+		}
+		if (_ChannelIFrameStatus.containsKey("" + lChannelID)) {
+			_ChannelIFrameStatus.remove("" + lChannelID);
+		}
+	}
+	
+	
+	/**
+	 * 发送消息
+	 * @param strKey:区分消息体的关键区分值
+	 * @param bdData:消息内容
+	 */
+	private static Lock m_SendMessageLock = new ReentrantLock();
+	public static void SendMessage(Handler handler,Bundle bdData){
+		SendMessage(handler,-1,bdData);	
+	}
+	/**
+	 * 发送消息
+	 * @param strKey:区分消息体的关键区分值
+	 * @param nWhat:What
+	 * @param bdData:消息内容
+	 */
+	public static void SendMessage(Handler handler, int nWhat, Bundle bdData) {
+		m_SendMessageLock.lock();
+		if (handler != null) {
+			boolean blnHaveMessage = false;
+			Message msg = new Message();
+			if (nWhat != -1) {
+				msg.what = nWhat;
+			}
+			if (bdData != null) {
+				msg.setData(bdData);
+				blnHaveMessage = true;
+			}
+			if (blnHaveMessage) {
+				handler.sendMessage(msg);
+			} else {
+				handler.sendEmptyMessage(nWhat);
+			}
+		}
+		m_SendMessageLock.unlock();
+	}
+	
+	
+	/**
+	 * 关闭通道视频
+	 * @param strUUID:设备UUID
+	 * @param nOpenChannelIndex:播放设备通道
+	 */
+	public static void CloseChannel(String strUUID, int nOpenChannelIndex) {
+		_Lock.lock();
+		System.out.println("20160309P2P     CloseChannel11111");
+		long lChannelID = GetChannelIDByKey(strUUID, nOpenChannelIndex);
+		long lContext = GetChannelPlayContext(lChannelID);
+		if (lContext != 0) {
+			String strKey = CreateDeviceChannelKey(strUUID, nOpenChannelIndex);
+			if (lContext != 0) {
+				System.out.println("20160309P2P     CloseChannel222222____Context:"+ lContext);
+				// Test_WriteFileNewLine(lChannelID,"20160309P2P     CloseChannel222222____Context:"+lContext);
+				int nRet = -1;
+				int nTryCount = 0;
+				boolean blnCreateChannel = ChannelHaveCreate(lChannelID);
+				// while( blnCreateChannel == true && nRet != 0 && nTryCount<5)
+				{
+					System.out.println("20160309P2P     CloseChannel3333333____Context:"+ lContext);
+					// Test_WriteFileNewLine(lChannelID,"20160309P2P     CloseChannel3333333____Context:"+lContext);
+					nRet = P2PCloseChannel(lContext, nOpenChannelIndex);
+					try {
+						Thread.sleep(10, 10);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.out.println("20160309P2P     CloseChannel4444444____Context:"+ lContext);
+					// Test_WriteFileNewLine(lChannelID,"20160309P2P     CloseChannel4444444____Context:"+lContext);
+					nTryCount++;
+				}
+				nRet = -1;
+				nTryCount = 0;
+				// while(nRet != 0 && nTryCount <5)
+				{
+					System.out.println("20160309P2P     CloseChannel5555555____Context:"+ lContext);
+					// Test_WriteFileNewLine(lChannelID,"20160309P2P     CloseChannel5555555____Context:"+lContext);
+					nRet = P2PClose(lContext);
+					try {
+						Thread.sleep(10, 10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					System.out.println("20160309P2P     CloseChannel666666____Context:"+ lContext);
+					nTryCount++;
+				}
+
+			}
+			DecoderDebugger decoder = GetChannelDecoder(strUUID,nOpenChannelIndex);
+			if (decoder != null) {
+				if (_RealPlayDecoder.containsKey(strKey)) {
+					_RealPlayDecoder.remove(strKey);
+				}
+				if (_RealPlaySurface.containsKey(strKey)) {
+					_RealPlaySurface.remove(strKey);
+				}
+			}
+			Monitor monitor = GetChannelMonitor(strUUID, nOpenChannelIndex);
+			if (monitor != null) {
+				// monitor.stopSoftDecoder(); //尝试关闭软件的处理
+				if (_RealPlayMonitor.containsKey(strKey)) {
+					_RealPlayMonitor.remove(strKey);
+				}
+			}
+			System.out.println("20160309P2P     CloseChannel" + strKey + " "+ lContext);
+			RemoveChannelPlayContext(lChannelID);
+			RemoveChannelIDByKey(strUUID, nOpenChannelIndex);
+			RemoveCreateChannelState(lChannelID);
+		}
+		_Lock.unlock();
+	}
+	
+	/**
+	 * 获取通道对应的AVDecoder
+	 * @param strUUID
+	 * @param nChannelIndex
+	 * @return
+	 */
+	public static DecoderDebugger GetChannelDecoder(String strUUID,
+			int nChannelIndex) {
+		DecoderDebugger dRet = null;
+		String strKey = CreateDeviceChannelKey(strUUID, nChannelIndex);
+		if (_RealPlayDecoder.containsKey(strKey)) {
+			try {
+				dRet = (DecoderDebugger) _RealPlayDecoder.get(strKey);
+			} catch (Exception e) {
+				// LogUtil.e("SDK", ExceptionsOperator.getExceptionInfo(e));
+			}
+		}
+		return dRet;
+	}
+	/**
+	 * 获取通道对应的Monitor
+	 * @param strUUID
+	 * @param nChannelIndex
+	 * @return
+	 */
+	public static Monitor GetChannelMonitor(String strUUID, int nChannelIndex) {
+		Monitor dRet = null;
+		// String strKey = CreateDeviceChannelKey(strUUID,nChannelIndex);
+		long lChannelID = GetChannelIDByKey(strUUID, nChannelIndex);
+		if (_RealPlayMonitor.containsKey(lChannelID)) {
+			try {
+				dRet = (Monitor) _RealPlayMonitor.get(lChannelID);
+			} catch (Exception e) {
+				LogUtil.e("SDK", ExceptionsOperator.getExceptionInfo(e));
+			}
+		}
+		return dRet;
+	}
+	
+	/**
+	 * 通过SessionID查询对应的AVDecoder
+	 * @param lSession
+	 * @return
+	 */
+	public static DecoderDebugger GetRealPlayDecoder(long lDeviceChannelID){
+		DecoderDebugger decoder = null;
+		if(_RealPlayDecoder.containsKey(""+lDeviceChannelID)){
+			decoder=(DecoderDebugger)_RealPlayDecoder.get(""+lDeviceChannelID);
+		}
+		return decoder;
+	}
+	
+	/**
+	 * 通过SessionID查询对应的Monitor
+	 * @param lSession
+	 * @return
+	 */
+	public static Monitor GetRealPlayMonitor(long lChannelID) {
+		Monitor decoder = null;
+		if (_RealPlayMonitor.containsKey("" + lChannelID)) {
+			decoder = (Monitor) _RealPlayMonitor.get("" + lChannelID);
+		}
+		return decoder;
+	}
+	
+	public static Monitor GetChannelMonitor(long lChannelID) {
+		Monitor monitor = null;
+		if (_RealPlayMonitor.containsKey("" + lChannelID)) {
+			monitor = (Monitor) _RealPlayMonitor.get("" + lChannelID);
+		}
+		return monitor;
+	}
+	/**
+	 * 设置软解
+	 * @param lSession
+	 * @return
+	 */
+	public static void SetChannelDecodeType(long lChannelID,boolean blnDecodeType){	
+		_ChannelDecodeType.put(""+lChannelID, blnDecodeType);	
+		System.out.println("2016.03.29TEST SetChannelDecodeType:"+lChannelID+";blnDecodeType:"+blnDecodeType);
+	}
+	public static boolean GetChannelDecoderType(long lChannelID){
+		boolean blnRet = false;
+		System.out.println("2016.03.29TEST GetChannelDecoderType:"+lChannelID);
+		if(_ChannelDecodeType.containsKey(""+lChannelID)){
+			System.out.println("2016.03.29TEST GetChannelDecoderType:"+lChannelID+"      ------          Have");
+			blnRet = FileUtil.ConvertToBoolean(_ChannelDecodeType.get(""+lChannelID), false);
+		}
+		return blnRet;
+	}
+	
+	public static int connectChannelP2P_device(String dId, int nOpenChannelIndex,Handler hdlConnectStateHandler) {
+		int nRet = 0;
+		nRet = P2PConnect(dId,nOpenChannelIndex);
+		if (nRet == 0) {
+			_ConnectChannelP2PHandler = hdlConnectStateHandler;
+		}
+		return nRet;
+	}
+	
+	//.............................多画面处理
 	
 	/*
 	 * 登陆ETS
@@ -425,9 +1074,10 @@ public class SDK {
 	/*
 	 * P2P打洞
 	 * jstring   链接对象目标ID
-	 * 返回：=0表示成功，<0参照错误码
+	 * 接口返回值：=0表示成功，<0参照错误码
+	 * 打洞返回值在onstate 里面处理
 	 * */
-	public static native int P2PConnect(String dId,long[] sessionId);
+	public static native int P2PConnect(String dId,long deviceChannelID);
 	/*
 	 * P2P转发
 	 * jstring   链接对象目标ID
@@ -440,6 +1090,8 @@ public class SDK {
 	 *  返回值 1 智诺 2 海康
 	 * */
 	public static native int AnalysisFactoryType(String deviceid);
+	
+	public static native int DecodeUuid(String uuid,byte[] buf);
 	
 	/*海康告警回放*/
 	/*
@@ -501,12 +1153,12 @@ public class SDK {
 	 * audiopath 音频文件路径
 	 * audioflag 音频标志 0没有音频  1 有音频
 	 * */
-	public static native int SetVideoPath(String videopath,String audiopath);
+	public static native int SetVideoPath(String videopath,String audiopath,long context);
 	/*
 	 * 设置软解录像文件路径
 	 * jstring mp4 file
 	 * */
-	public static native int SetFinishVideo(String mp4file);
+	public static native int SetFinishVideo(String mp4file,long context);
 	
 	/*
 	 * jint  截图数据格式 1 nv12 2nv21
@@ -651,8 +1303,10 @@ public class SDK {
 	
 	/*
 	 * jint  1 是软解  0 硬解 我们自己的软解 暂时不用
+	 * long context 上下文
 	 * */
-	public static native int SetDecoderModel(int type);
+	public static native int SetDecoderModel(int type,long deviceChannelID);
+	public static native int SetDecoderModel(int type);//此接口不要了 
 	/*
 	 * jint  宽
 	 * jint  高
@@ -668,19 +1322,52 @@ public class SDK {
 	 *jbyteArray 输出数据
 	 *jint  	 返回值 输出数据的长度
 	 * */
-	public static native int ScreenShots(byte[] indata,int len,byte[] outdata);
+	public static native int ScreenShots(byte[] indata,int len,byte[] outdata,long context);
 	
-	//之前的错误码 全部作废  阮少说的
-    
+	//报警视频
+	public static native int CurlSetOperation(String url,int len,int factorytype,int thresholdpricelen,long context);
+	public static native long CurlSet();
+	public static native int CurldownloadFinish(long context);
+	public static native int CleanPool(long context);
+	
+
+	/**
+	 *  * jlong 链接id
+ * jint 索引
+ * jstring 文件路径
+ * jstring 开始时间
+ * jstring 停止时间
+ * jint    通道
+ * jint    命令字
+	 * @return
+	 */
+	public static native int PlaybackCtrl(long sessionId, int index, String filePath, String startTime, String endTime, int channel, int cmd);
+	
+	/**
+	 * UUID编码
+	 * @param nc
+	 * @param ac
+	 * @param fc
+	 * @param tc
+	 * @param mc
+	 * @param vc
+	 * @param sn
+	 * @return
+	 */
+	public static native String EncodeUuid(byte[] uuid, String nc, int ac, int fc, int tc, int mc, int vc, String sn);
+	
     //2015-7-20 最新版
     public static final int GW_ERRCODE_SUCESS = 0;
     //自定论错误码 从-100开始
     public static final int Error = -1;
     public static final int Err_refresh = -100;
     public static final int Err_SER_FAIL = -101;
+    public static final int Err_Last_page = -102;//最后一页
     
-    public static final int GW_SESSION_UNLINK = -2000;
-    public static final int GW_ERRCODE_UNLOGIN = -1999;
+    public static final int GW_SESSION_UNLINK = -2000;// P2P会话链接断开
+    public static final int GW_ERRCODE_UNLOGIN = -1999;// 设备未登陆
+    public static final int GW_ERRCODE_UPGRADE_PROGRAM = -1998;	// APP需要升级
+    public static final int GW_ERRCODE_DEV_UNSUPORT = -1997;// 设备不支持该功能，需要升级
     
     public static final int GW_ERRCODE_LOGIN_FAILED = -1000;
     public static final int GW_ERRCODE_LOGIN_TIMEOUT = -999;
@@ -743,6 +1430,10 @@ public class SDK {
 			strId = R.string.GW_SESSION_UNLINK; break;
 		case GW_ERRCODE_UNLOGIN:
 			strId = R.string.GW_ERRCODE_UNLOGIN; break;
+		case GW_ERRCODE_UPGRADE_PROGRAM:
+			strId = R.string.GW_ERRCODE_UPGRADE_PROGRAM; break;
+		case GW_ERRCODE_DEV_UNSUPORT:
+			strId = R.string.GW_ERRCODE_DEV_UNSUPORT; break;
 		case GW_ERRCODE_LOGIN_FAILED:
 			strId = R.string.GW_ERRCODE_LOGIN_FAILED; break;
 		case GW_ERRCODE_LOGIN_TIMEOUT:
@@ -817,7 +1508,8 @@ public class SDK {
 			 strId = R.string.fail_refresh; break;
 		case Err_SER_FAIL:
 			 strId = R.string.E_SER_FAIL; break;
-			 
+		case Err_Last_page:
+			 strId = R.string.Err_Last_page; break;	 
 			 
 		}
 		if(strId != 0){

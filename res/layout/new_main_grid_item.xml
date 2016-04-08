@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="500dp"
     android:orientation="vertical"
     android:background="@color/white"
     android:textSize="18sp"
@@ -41,5 +41,12 @@
         android:verticalSpacing="1dp"
         android:numColumns="4"
         android:columnWidth="30dp"></GridView> 
+        
+   <!-- <ListView 
+       android:id="@+id/nvr_list_view"
+       android:layout_width="fill_parent"
+       android:layout_height="680dp">
+   </ListView> -->
+   
     
 </LinearLayout>

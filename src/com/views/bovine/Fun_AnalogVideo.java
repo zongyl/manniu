@@ -69,6 +69,7 @@ import com.basic.APP;
 import com.basic.XMSG;
 import com.bean.LiveVideo;
 import com.google.zxing.WriterException;
+import com.localmedia.XListViewRewrite;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
@@ -363,7 +364,7 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	protected void OnVisibility(int visibility) {
 		super.OnVisibility(visibility);
 		if (visibility == View.VISIBLE) {
-			//initAnalog();
+			XListViewRewrite.dismissPopWindow();//切换时关闭本地的删除按钮
 		}
 	}
     //初始化牛眼
@@ -454,38 +455,41 @@ public class Fun_AnalogVideo extends XViewBasic implements OnClickListener, OnTa
 	}
 	//判断是否分享
 	private void isShare(){
-		RequestParams params = new RequestParams();
-		params.put("deviceId", _devSid);
-		
-		LogUtil.d(TAG, "isShare:" + Constants.hostUrl+"/device/isShare?"+params.toString());
-		
-		HttpUtil.get(Constants.hostUrl + "/device/isShare", params, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(int statusCode, Header[] headers,
-					JSONObject response) {
-				Log.d(TAG, "isShare.onSuccess response:" + response.toString());
-				boolean status = false;
-				try {
-					status = response.getBoolean("result");
-					if(status){
-						Log.d(TAG, "true");
-						isshare = true;
-						_btnShare.setText(context.getString(R.string.analog_video_cancel_share));
-						_btnShare.setEnabled(true);
-					}else{
-						Log.d(TAG, "false");
-						isshare = false;
-						_btnShare.setText(context.getString(R.string.analog_video_open_ok_share));
-						_btnShare.setEnabled(true);
+		try {
+			RequestParams params = new RequestParams();
+			params.put("deviceId", _devSid);
+			
+			LogUtil.d(TAG, "isShare:" + Constants.hostUrl+"/device/isShare?"+params.toString());
+			
+			HttpUtil.get(Constants.hostUrl + "/device/isShare", params, new JsonHttpResponseHandler(){
+				@Override
+				public void onSuccess(int statusCode, Header[] headers,
+						JSONObject response) {
+					Log.d(TAG, "isShare.onSuccess response:" + response.toString());
+					boolean status = false;
+					try {
+						status = response.getBoolean("result");
+						if(status){
+							Log.d(TAG, "true");
+							isshare = true;
+							_btnShare.setText(context.getString(R.string.analog_video_cancel_share));
+							_btnShare.setEnabled(true);
+						}else{
+							Log.d(TAG, "false");
+							isshare = false;
+							_btnShare.setText(context.getString(R.string.analog_video_open_ok_share));
+							_btnShare.setEnabled(true);
+						}
+					} catch (JSONException e) {
 					}
-				} catch (JSONException e) {
 				}
-			}
-			@Override
-			public void onFailure(int statusCode, Header[] headers,
-					String responseString, Throwable throwable) {
-			}
-		});
+				@Override
+				public void onFailure(int statusCode, Header[] headers,
+						String responseString, Throwable throwable) {
+				}
+			});
+		} catch (Exception e) {
+		}
 	}
 	
 	/**

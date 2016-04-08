@@ -1,4 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.client.xgps"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+    <!-- 报警 items    -->
+    <LinearLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip" >
+        <ImageView
+            android:id="@+id/msg_img"
+            android:layout_width="100dp"
+            android:layout_height="66dp" 
+            android:background="@color/circle_color"/>
+    </LinearLayout>
+    <!-- 设备名称 -->
+    <TextView
+        android:id="@+id/msg_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:text="dev_title"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+    <ImageView
+        android:id="@+id/record_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" 
+        />
+
+</RelativeLayout>
+
+
+<!-- <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -6,28 +51,6 @@
     android:textSize="18sp"
     android:orientation="horizontal"
     android:descendantFocusability="blocksDescendants">
-    
-    <!-- <ImageView 
-        android:id="@+id/ck"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/unchecked"
-        android:layout_gravity="center_vertical"/> -->
-    <!--  android:button="@drawable/check_state" -->
-    
-    <!-- 40dp
-     android:scaleX="0.6"
-        android:scaleY="0.6" -->
-    <CheckBox 
-        android:id="@+id/cb"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/check_state"
-        android:layout_gravity="center_vertical"
-        android:button="@null"
-        android:visibility="gone"
-        style="@style/msg_checkbox"/>
-    
     <FrameLayout 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -52,7 +75,6 @@
             android:id="@+id/msg_title">
        </TextView>
        
-        <!-- 进入播放 -->    
      	<Button
 	    android:id="@+id/record_play"
 	    android:layout_width="50dp"
@@ -62,15 +84,5 @@
 	    android:layout_marginTop="15dp"
 	    android:layout_marginRight="5dp"
      	/>
-     
-        <!-- <TextView   android:layout_marginLeft="105dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|right"
-            android:padding="10dp"
-            android:textColor="@color/black"
-            android:id="@+id/msg_time">
-       </TextView> -->
-          
           </FrameLayout> 
-</LinearLayout>
+</LinearLayout> -->

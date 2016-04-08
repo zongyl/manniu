@@ -18,6 +18,7 @@ import android.os.StrictMode;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,19 +27,23 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.adapter.DevAdapter;
+import com.adapter.ExpandableListViewAdapter;
 import com.adapter.Message;
 import com.adapter.MsgAdapter2;
+import com.adapter.PullToRefreshExpandableListView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.backprocess.BackLoginThread;
 import com.basic.APP;
 import com.basic.XMSG;
+import com.bean.DevCart;
 import com.bean.Device;
 import com.bean.LiveVideo;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -71,38 +76,53 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	
 	Context context;
 	
-	ListView listView;
-	
+	ListView listView = null;
+	ListView listViewMsg = null;
+	/** 下拉刷新设备列表 */
+	private PullToRefreshExpandableListView m_pullToRefreshExpandableListView = null;//多画面
+	/** 多画面设备列表数据 */
+	List<Device> m_devicesList;
+	/** 设备列表数据 */
 	List<Device> devList;
+	/** 选中的设备数据 */
+	private List<DevCart> _devCartsList = null;
 	
 	//List<LiveVideo> liveList;
 	
-	ViewPager viewPager; 
+	public ViewPager viewPager; 
 	
 	//DeviceSQLite sqlite;
 	
-	ACache cache;
+	public ACache cache;
 	
 	ArrayList<View> viewList;
 	public int _localIndex = 0;//记录本地TAB的操作
 	public TextView _localVideo,_localImg; 
 	
-	private PullToRefreshScrollView scrollView;
+	private PullToRefreshScrollView scrollViewDev;//设备
+	private PullToRefreshScrollView scrollView;//报警
 	
 	//渲染view的时候，标识是否为刷新
-	boolean isrefresh = false;
+	public boolean isrefresh = false;
 	
 	float temp = 1;
 	public static int devType = 0;
 
-	ArrayList<Message> msgList = null;
+	List<Message> msgList = new ArrayList<Message>();
 //	MsgAdapter adapter;
-	MsgAdapter2 adapter;
+	MsgAdapter2 adapter = null;//报警适配器
+	DevAdapter devAdapter = null;//设备
+	/** 多画面设备列表的Adapter */
+	private ExpandableListViewAdapter m_expandableListViewAdapter = null;
+	/** 播放按钮 */
+	private View m_playView = null;
 	public CheckBox cb;
 	HashMap<String, Object> isSelected = new HashMap<String, Object>();
 	int pageNo = 1;
 //	private RealHandler _realHandler = null;
 //	private BaseApplication mAPP = null;
+	
+	byte[] buf = new byte[28];//取报警设备类型
 	
 	public NewMain(Activity activity, int viewId, String title) {
 		super(activity, viewId, title);
@@ -113,8 +133,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 		instance = this;
 		cache = ACache.get(context);
 		
-		userId = APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", "");
-		
+		userId = Constants.userid;//APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", "")		
 		//String serverPath = context.getResources().getString(R.string.server_address);
 		//getDevicesServerPath = Constants.hostUrl + "/android/getDevices";
 		getDevicesServerPath = Constants.ETShostUrl + "/query_dev_info";
@@ -130,26 +149,36 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 		viewList.add(lf.inflate(R.layout.new_main_tab1, null));
 		//viewList.add(lf.inflate(R.layout.new_main_tab2, null));
 		viewList.add(lf.inflate(R.layout.new_main_tab3, null));//报警
+		viewList.add(lf.inflate(R.layout.mydevicelistlayout, null));//多画面
 		viewList.add(lf.inflate(R.layout.new_main_tab4, null));//本地
 		
 		viewPager = (ViewPager) findViewById(R.id.vp_list_new_main);
 		viewPager.setAdapter(new MyPagerAdapter(viewList));
+		//viewPager.setOffscreenPageLimit(0);//修改ViewPager的缓存页面数量 设置无效果
 		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
 			@Override
 			public void onPageSelected(int arg0) {
 				Log.v(TAG, "onPageSelected..."+arg0);
 				XListViewRewrite.dismissPopWindow();//切换时关闭本地的删除按钮
 				APP.GetMainActivity().tab(arg0);
+				isrefresh = false;
 				switch (arg0) {
 				case 0://设备
 					loadDevList();
+					LogUtil.d(TAG, "切换到loadDevList...");
 					break;
 				case 1://报警消息 
+					devAdapter = null;
 					loadMsgList();
+					LogUtil.d(TAG, "切换到loadMsgList...");
 					break;
-				case 2: //本地
+				case 2://多画面
+					loadDevMultiList();
+					break;
+				case 3: //本地
+					devAdapter = null;
 					loadLocalVideoAndImg();
+					LogUtil.d(TAG, "切换到loadLocalVideoAndImg...");
 	                break;
 				default:
 					break;
@@ -177,73 +206,113 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 		}
 	}
 	
+	public void getSize(){
+		APP.ShowToast("SIZE!");
+	}
+	
 	/**
 	 * 加载消息列表 
 	 */
 	int _direction = 0;//0:PULL_FROM_START 1.PULL_FROM_END
 	public void loadMsgList(){
-		listView = (ListView)findViewById(R.id.msg_list);
-		listView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Intent intent = new Intent(ACT,NewMsgDetail.class);
-				intent.putExtra("position", position);
-//				Bundle bd = new Bundle();
-//				bd.putParcelableArrayList("msgList", msgList);
-//				intent.putExtras(bd);
-				intent.putExtra("msgList",(Serializable) msgList);
-				ACT.startActivity(intent);
-			}
-		});
-		
-		scrollView = (PullToRefreshScrollView)findViewById(R.id.pull_refresh_msg);
-		scrollView.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
-			@Override
-			public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
-				Log.d(TAG, "refreshing...");
-			}
-		});
-		
-		scrollView.setOnPullEventListener(new OnPullEventListener<ScrollView>() {
-			@Override
-			public void onPullEvent(
-					PullToRefreshBase<ScrollView> refreshView,
-					State state, Mode direction) {
-				if(State.REFRESHING == state){
-					isrefresh = true;
-					if(Mode.PULL_FROM_END == direction){
-						//Log.d(TAG, "——————————————————向上拉——————————————————————");
-						_direction = 1;
-					}else if(Mode.PULL_FROM_START == direction){
-						//Log.d(TAG, "——————————————————向下拉——————————————————————");
-						_direction = 0;
+		try {
+			if(listViewMsg == null){
+				listViewMsg = (ListView)findViewById(R.id.msg_list);
+				listViewMsg.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						if(MsgAdapter2._isOpenAlarm){
+							MsgAdapter2._isOpenAlarm = false;
+							final Message alrmdata = (Message)adapter._data.get(position);
+							if(alrmdata.evt_video.equals("") || alrmdata.evt_vsize <= 0){
+	                    		MsgAdapter2._isOpenAlarm = true;
+								//APP.ShowToast(context.getString(R.string.Err_recordvide_null));
+								return;
+							}else{
+								Constants.devName = alrmdata.devicename;
+		                    	Constants.evt_vsize = alrmdata.evt_vsize;
+								android.os.Message me = new android.os.Message();
+								me.what = 1001;
+								me.obj = alrmdata;
+								_handler.sendMessage(me);
+							}
+							
+							/*JSONObject json = null;
+							String params = "?ossUrl="+msg.evt_video+"&timeMillis=0";
+							Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl+"/android/getUrl"+params);
+							if (Integer.parseInt(map.get("code").toString()) == 200) {
+								try {
+									json = new JSONObject(map.get("data").toString());
+									final String str = json.getString("url");
+									if(str.equals("NoSuchKey")){//地址错误
+										APP.ShowToast(SDK.GetErrorStr(-1));
+										MsgAdapter2._isOpenAlarm = true;
+									}else{
+										 _handler.postDelayed(new Runnable() {
+							                    @Override
+							                    public void run() {
+							                    	Constants.evt_video = str;
+							                    	Constants.devName = msg.devicename;
+							                    	Constants.evt_vsize = msg.evt_vsize;
+							                    	Constants.evt_ManufacturerType = 1;
+							                    	
+							                    	Intent intent = new Intent(context, Fun_RecordPlay.class);
+							                    	context.startActivity(intent);
+							                    }
+										 }, 300);
+										
+										LogUtil.d("MsgAdapter","HttpURLConnectionTools  url.....");
+									}
+								} catch (JSONException e) {
+									MsgAdapter2._isOpenAlarm = true;
+									LogUtil.d("MsgAdapter", ExceptionsOperator.getExceptionInfo(e));
+								}
+							}*/
+						}
 					}
-//					loadMsgData(direction);
-					APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
-				}
+				});
+				
+				scrollView = (PullToRefreshScrollView)findViewById(R.id.pull_refresh_msg);
+				scrollView.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
+					@Override
+					public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+						Log.d(TAG, "refreshing...");
+					}
+				});
+				
+				scrollView.setOnPullEventListener(new OnPullEventListener<ScrollView>() {
+					@Override
+					public void onPullEvent(
+							PullToRefreshBase<ScrollView> refreshView,
+							State state, Mode direction) {
+						if(State.REFRESHING == state){
+							isrefresh = true;
+							if(Mode.PULL_FROM_END == direction){
+								//Log.d(TAG, "——————————————————向上拉——————————————————————");
+								_direction = 1;
+							}else if(Mode.PULL_FROM_START == direction){
+								//Log.d(TAG, "——————————————————向下拉——————————————————————");
+								_direction = 0;
+							}
+							APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
+						}
+					}
+				});
+				isrefresh = true;
 			}
-		});
-		
-//		cb = (CheckBox)findViewById(R.id.msg_ck_all);
-//		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {			
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//				selectAll(isChecked);
-//			}
-//		});
-		isrefresh = false;
-		pageNo = 1;
-		if(cache.getAsObject(userId + "_msgList")==null){
-			Log.d(TAG, "用户:" + userId + ", 消息列表没有缓存!");
-//			loadMsgData(Mode.PULL_FROM_START);
-			APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
-		}else{
-			Log.d(TAG, "用户:" + userId + ", 消息列表有缓存，直接加载!!!!!");
-			msgList = (ArrayList<Message>) cache.getAsObject(userId + "_msgList");
-			msgRender(isrefresh);
+			pageNo = 1;
+			if(cache.getAsString(userId + "_msgList")==null){
+				Log.d(TAG, "用户:" + userId + ", 消息列表没有缓存!");
+				APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MSG_LIST_LOAD, _direction);
+			}else{
+				Log.d(TAG, "用户:" + userId + ", 消息列表有缓存，直接加载!!!!!");
+				if(isrefresh)
+					msgRender(cache.getAsString(userId + "_msgList"), isrefresh);
+			}
+		} catch (Exception e) {
+			Log.d(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
-		
 	}
 	
 	int _nClickedCount = 0;
@@ -264,32 +333,50 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				_lastClieckView = null;
 				break;
 			case XMSG.DEVICE_LIST_LOAD:
-				listView.setAdapter(new DevAdapter(context, devList));
+				devAdapter = new DevAdapter(context);
+				devAdapter.addItem(devList);
+				listView.setAdapter(devAdapter);
 				if(BackLoginThread.state == 200){
 					APP.dismissProgressDialog();
 				}
 				break;
 			case XMSG.MSG_LIST_LOAD:
-				adapter = new MsgAdapter2(context, msgList);
-				listView.setAdapter(adapter);
-				break;
-			/*case 1002:
-				if(APP.IsWaitDlgShow()){
-					startTimer();
-	        	}
-				break;
-			case XMSG.DEVICE_LIST_ISREFRESH:
-				if(isrefresh){
-					scrollView.onRefreshComplete();//关闭下拉刷新
+				if(adapter == null){
+					adapter = new MsgAdapter2(context,listViewMsg);
+					adapter.addItem(msgList);
+					listViewMsg.setAdapter(adapter);
+				}else{
+					adapter.updateList(msgList);
 				}
 				break;
-			case 1003:
-				int a = msg.arg1;
-				APP.ShowToast(SDK.GetErrorStr(a));
-				break;*/
+			case 1001:
+				OnMessage(msg);
+				break;
+			case XMSG.MULTI_LIST_LOAD:
+				if(m_expandableListViewAdapter == null){
+					m_expandableListViewAdapter = new ExpandableListViewAdapter(context);
+					m_expandableListViewAdapter.addItem(m_devicesList);
+					m_pullToRefreshExpandableListView.setAdapter(m_expandableListViewAdapter);
+					m_pullToRefreshExpandableListView.setGroupIndicator(null);
+				}else{
+					m_expandableListViewAdapter.updateList(m_devicesList);
+				}
+				break;
 			}
 		}
 	}
+	
+	
+	@Override
+	public void OnMessage(android.os.Message msg) {
+		switch (msg.what) {
+		case 1001:
+			// 开始异步功能操作
+			APP.ShowWaitDlg(this, R.string.querying, 3, msg.obj);
+			break;
+		}
+	}
+	
 	
 	public static boolean _isOpen = true;
 	public void selected(android.os.Message msg,int nClickedCount,int position) {
@@ -315,7 +402,6 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 						intent.putExtra("deviceSid", device.sid);
 						intent.putExtra("deviceName", device.devname);
 						ACT.startActivity(intent);
-						
 						//实时视频
 //						android.os.Message message = new android.os.Message();
 //						message.what = XMSG.PLAY;
@@ -339,14 +425,23 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 						APP.ShowToastLong(APP.GetString(R.string.Video_Dviece_login));
 					}
 					break;
-				case 100:
+				case 100://直播收藏
 					Intent intent=new Intent(Intent.ACTION_VIEW);
 			        intent.setClassName(ACT, "com.views.NewWebActivity"); 
 			        String url = Constants.hostUrl + "/LiveAction_toPlays?lc.deviceId="+device.sid;
-			        Log.d(TAG, "play live url:" + url);
+			        Log.d(TAG, "play live url:" + url +" type= "+ device.type);
 			        intent.putExtra("url", url);
 			        intent.putExtra("playType", "0");
 					APP.GetMainActivity().startActivity(intent);
+					break;
+				case 101://短片收藏
+					Intent intent1=new Intent(Intent.ACTION_VIEW);
+			        intent1.setClassName(ACT, "com.views.NewWebActivity"); 
+			        String url1 = Constants.hostUrl + "/LiveAction_playVideo?lc.deviceId="+device.sid;
+			        Log.d(TAG, "play live url:" + url1);
+			        intent1.putExtra("url", url1);
+			        intent1.putExtra("playType", "1");
+					APP.GetMainActivity().startActivity(intent1);
 					break;
 				default:
 					break;
@@ -360,43 +455,47 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	 * 加载本地存储
 	 */
 	public void loadLocalVideoAndImg(){
-		_localVideo = (TextView) findViewById(R.id.local_text1);
-    	_localImg = (TextView) findViewById(R.id.local_text2);
-    	if(_localIndex == 0){
-    		if(context == null){
-    			LogUtil.d(TAG, "cnotext is null!");
-    		}
-    		if(_localVideo == null){
-    			LogUtil.d(TAG, "_localVideo is null!");
-    		}
-    		try{
-    			_localVideo.setTextColor(context.getResources().getColor(R.color.blue_menu));
-    		}catch(Exception e){
-    			LogUtil.e(TAG, "" + e.toString());
-    		}
-    		
-    	}else{
-    		_localImg.setTextColor(context.getResources().getColor(R.color.blue_menu));
-    	}
-    	getFragmentView(_localIndex);
-    	_localVideo.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				_localIndex = 0;
-				_localVideo.setTextColor(context.getResources().getColor(R.color.blue_menu));
-				_localImg.setTextColor(context.getResources().getColor(R.color.text_color));
-				getFragmentView(0);
-			}
-		});
-    	_localImg.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				_localIndex = 1;
-				_localImg.setTextColor(context.getResources().getColor(R.color.blue_menu));
-				_localVideo.setTextColor(context.getResources().getColor(R.color.text_color));
-				getFragmentView(1);
-			}
-		});
+		if(_localVideo == null){
+			_localVideo = (TextView) findViewById(R.id.local_text1);
+	    	_localImg = (TextView) findViewById(R.id.local_text2);
+	    	if(_localIndex == 0){
+	    		if(context == null){
+	    			LogUtil.d(TAG, "cnotext is null!");
+	    		}
+	    		if(_localVideo == null){
+	    			LogUtil.d(TAG, "_localVideo is null!");
+	    		}
+	    		try{
+	    			_localVideo.setTextColor(context.getResources().getColor(R.color.blue_menu));
+	    		}catch(Exception e){
+	    			LogUtil.e(TAG, "" + e.toString());
+	    		}
+	    		
+	    	}else{
+	    		_localImg.setTextColor(context.getResources().getColor(R.color.blue_menu));
+	    	}
+	    	getFragmentView(_localIndex);
+	    	_localVideo.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					_localIndex = 0;
+					_localVideo.setTextColor(context.getResources().getColor(R.color.blue_menu));
+					_localImg.setTextColor(context.getResources().getColor(R.color.text_color));
+					getFragmentView(0);
+				}
+			});
+	    	_localImg.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					_localIndex = 1;
+					_localImg.setTextColor(context.getResources().getColor(R.color.blue_menu));
+					_localVideo.setTextColor(context.getResources().getColor(R.color.text_color));
+					getFragmentView(1);
+				}
+			});
+		}else if(_localIndex == 1){
+			getFragmentView(_localIndex);
+		}
 	}
 	
 	@SuppressLint("NewApi")
@@ -425,114 +524,147 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	 */
 	public void loadDevList(){
 		try {
-			listView = (ListView)findViewById(R.id.main_list);
-			listView.setOnItemClickListener(new OnItemClickListener() {
+			if(listView == null){
+				listView = (ListView)findViewById(R.id.main_list);
+				listView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View v,
 						int position, long id) {
-					if (v.equals(_lastClieckView)) {
-						_nClickedCount++;
-					} else {
-						_nClickedCount = 1;
-						android.os.Message msg = new android.os.Message();
-						msg.what = DOUBLE_CLICKED;
-						msg.obj = v;
-						msg.arg1 = position;
-						_handler.sendMessageDelayed(msg, 300);
+						if (v.equals(_lastClieckView)) {
+							_nClickedCount++;
+						} else {
+							_nClickedCount = 1;
+							android.os.Message msg = new android.os.Message();
+							msg.what = DOUBLE_CLICKED;
+							msg.obj = v;
+							msg.arg1 = position;
+							_handler.sendMessageDelayed(msg, 300);
+						}
+						_lastClieckView = v;
 					}
-					_lastClieckView = v;
-				}
-			});
-			
-//			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-//				@Override
-//				public boolean onItemLongClick(AdapterView<?> parent, View view,
-//						int position, long id) {
-//					APP.ShowToast("long click!");
-//					return false;
-//				}
-//			});
-			
-			scrollView = (PullToRefreshScrollView)findViewById(R.id.pull_refresh_main);
-			scrollView.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
-				@Override
-				public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
-					Loger.print("devicelist pull to refresh!");
-					isrefresh = true;
-					APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.DEVICE_LIST_LOAD, 0);
-				}
-			});
-			isrefresh = false;
+				});
+				scrollViewDev = (PullToRefreshScrollView)findViewById(R.id.pull_refresh_main);
+				scrollViewDev.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
+					@Override
+					public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+						Loger.print("devicelist pull to refresh!");
+						isrefresh = true;
+						APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.DEVICE_LIST_LOAD, 0);
+					}
+				});
+				isrefresh = true;
+			}
 			//有缓存 就读取缓存  没有缓存 则请求服务器
 			if(cache.getAsString(userId + "_devices")==null){
 				LogUtil.d(TAG, userId + "用户，没有设备列表的缓存，直接加载!");
 				APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.DEVICE_LIST_LOAD, 0);
 			}else{
 				LogUtil.d(TAG, userId + "用户，有设备列表的缓存!");
-				render(cache.getAsString(userId + "_devices"), cache.getAsString(userId + "_collects"), isrefresh);
-				APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.DEVICE_LIST_LOAD, 0);
+				if(isrefresh)
+					render(cache.getAsString(userId + "_devices"), cache.getAsString(userId + "_collects"), isrefresh);
 			}
 		} catch (Exception e) {
 		}
 	}
 	
-	/*//初始化列表
-    private void initDeviceList(){
-		APP._dlgWait.show();
-    	APP.SetWaitDlgText(context.getText(R.string.openning_ReloadData).toString());
-		_handler.sendEmptyMessageDelayed(1002, 1000);
-    }
-	public java.util.Timer _timer = null;
-	private int error_Count= 0;
-	//定时器 如果长时间打洞不成功或打洞成功收不到数据 关闭页面
-	public void startTimer() {
+	/**
+	 * 加载多画面设备列表
+	 */
+	public void loadDevMultiList(){
 		try {
-			if(BackLoginThread.state == 200){
-				if (_timer != null) {
-					_timer.cancel();
-					_timer = null;
-				}
-				if(_timer == null){
-					_timer = new java.util.Timer();
-				}
-				_timer.schedule(new TimerTask() {
+			if(m_pullToRefreshExpandableListView == null){
+				_devCartsList = new ArrayList<DevCart>();
+				m_pullToRefreshExpandableListView = (PullToRefreshExpandableListView) findViewById(R.id.myhome_devslist_refreshview);
+				m_pullToRefreshExpandableListView.setOnRefreshListener(new OnPullableRefreshListener());
+				m_pullToRefreshExpandableListView.setOnChildClickListener(new OnClickDevicesChildListListener());
+				m_playView = findViewById(R.id.myhome_devslist_bottomlayout03);
+				m_playView.setOnClickListener(new OnClickListener() {
 					@Override
-					public void run() {
-						int ret = loadDevData2();
-						if (ret != 0) {	// 打开列表失败
-							android.os.Message msg = new android.os.Message();
-							msg.what = 1003;
-							msg.arg1 = ret;
-							_handler.sendMessage(msg);
-							error_Count ++;
-							if(error_Count > 3){
-								stopTimer();
-								error_Count = 0;
-								if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
+					public void onClick(View v) {
+						try {
+							if (_devCartsList.size() > 0){
+								Intent intent = new Intent(ACT, Fun_RealPlayerActivity.class);
+								//intent.setClass(ACT, Fun_RealPlayerActivity.class);
+								if(_devCartsList!=null && _devCartsList.size()>0){
+									intent.putExtra("RealPlayer_devices", (Serializable) _devCartsList);
+								}
+								ACT.startActivity(intent);
+							}else{
+								APP.ShowToast(APP.GetString(R.string.home_select_chn));
 							}
-						}else{
-							stopTimer();
-							if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
+						} catch (Exception e) {
+							System.out.println(111);
 						}
-						_handler.sendEmptyMessage(XMSG.DEVICE_LIST_ISREFRESH);
 					}
-				}, 100, 3000);
+				});
+				isrefresh = true;
+			}
+			//有缓存 就读取缓存  没有缓存 则请求服务器
+			if(cache.getAsString(userId + "_devices")==null){
+				LogUtil.d(TAG, userId + "用户，没有设备列表的缓存，直接加载!");
+				APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.DEVICE_LIST_LOAD, 0);
 			}else{
-				if(APP.IsWaitDlgShow()) APP._dlgWait.dismiss();
-				APP.ShowToastLong(APP.GetString(R.string.Video_Dviece_login));
-				_handler.sendEmptyMessage(XMSG.DEVICE_LIST_ISREFRESH);
+				LogUtil.d(TAG, userId + "用户，有设备列表的缓存!");
+				if(isrefresh)
+					renderMulti(cache.getAsString(userId + "_devices"), isrefresh);
 			}
 		} catch (Exception e) {
-			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}
-	}
+	}	
+	// 下拉刷新相应事件
+	public class OnPullableRefreshListener implements com.adapter.PullToRefreshExpandableListView.OnRefreshListener{
+		@Override
+		// 下拉刷新操作
+		public void onRefresh(){
+			isrefresh = true;
+			
+			APP.ShowWaitDlg(NewMain.this, R.string.openning_ReloadData, XMSG.MULTI_LIST_LOAD, 0);
+			
+		}
 
-	public void stopTimer() {
-		if (_timer != null) {
-			_timer.cancel();
-			_timer = null;
+	}
+	
+	// Child点击的监听器
+	class OnClickDevicesChildListListener implements ExpandableListView.OnChildClickListener{
+		@Override
+		public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id){
+			if(m_devicesList.get(groupPosition).online == 0){
+				APP.ShowToast(SDK.GetErrorStr(-896));//设备不在线
+				return false;
+			}
+			// 当前选中的devCart
+			DevCart devCart = new DevCart();
+			devCart.setDeviceInfo(m_devicesList.get(groupPosition));
+			devCart.setChannelNum(childPosition + 1);
+			
+			// 判断数组中是否存在当前的devCart
+			boolean isSelected = false;
+			int select_index = -1;
+			for (int i = 0; i < _devCartsList.size(); i++){
+				DevCart _devCart = _devCartsList.get(i);
+				if (_devCart.getDeviceInfo().getSid().equals(devCart.getDeviceInfo().getSid()) && devCart.getChannelNum() == _devCart.getChannelNum()){
+					isSelected = true;
+					select_index = i;
+				}
+			}
+
+			// 当前通道已选中
+			if (isSelected){
+				_devCartsList.remove(select_index);
+			}else{// 当前通道未选中
+				if (_devCartsList.size() >= 4){
+					Toast.makeText(context, R.string.alertMsg23, Toast.LENGTH_SHORT).show();
+				}else{
+					_devCartsList.add(devCart);
+				}
+			}
+			m_expandableListViewAdapter.m_devCartsList.clear();
+			m_expandableListViewAdapter.m_devCartsList.addAll(_devCartsList);
+			m_expandableListViewAdapter.notifyDataSetChanged();
+			return true;
 		}
-	}*/
+
+	}
 	
 	/**
 	 * 全选
@@ -549,9 +681,9 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	}
 	
 	/**
-	 * 加载设备列表
+	 * 加载设备列表 1.设备 2.多画面
 	 */
-	public int loadDevData2() {
+	public int loadDevData2(int type) {
 		int result = 0;
 		JSONObject json = null;
 		try {
@@ -572,7 +704,11 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 						devList = new ArrayList<Device>();
 						cache.put(userId + "_devices", str);
 						cache.put(userId + "_collects", json.getString("collects"));
-						render(str, json.getString("collects"), isrefresh);
+						if(type == 1){
+							render(str, json.getString("collects"), isrefresh);
+						}else{
+							renderMulti(str, isrefresh);
+						}
 					}
 				} catch (JSONException e) {
 					result = SDK.Err_refresh;
@@ -588,56 +724,40 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 	}
 	
 	/**
-	 * 加载消息
+	 * 加载报警消息
 	 */
 	private int loadMsgData(Mode dur){
 		int result = 0;
-		if(msgList == null){
-			Log.d(TAG, "msgList is null!");
-			msgList = new ArrayList<Message>();
-		}else{
-			Log.d(TAG, "msgList is not null!");
-		}
-//		RequestParams params = new RequestParams();
-//		params.put("userId", APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", ""));
-//		params.put("sessionId", Constants.sessionId);
 		String params = "?userId="+APP.GetSharedPreferences(NewLogin.SAVEFILE, "sid", "")+"&sessionId="+Constants.sessionId+"&pageSize=10";
 		if(Mode.PULL_FROM_START == dur){
 			msgList.clear();
 			Log.d(TAG, "msgList clearing!!");
 		}else if(Mode.PULL_FROM_END == dur){
+			//msgList.clear();//测试时只加载下一页数据
 			//累加
 			pageNo += 1;
-			//params.put("pageNo", pageNo);
 			params += "&pageNo="+pageNo;
 		}
-		
 		Log.d(TAG, "params:"+params.toString());
-		
 		
 		JSONObject json = null;
 		try {
 			Map<String, Object> map = HttpURLConnectionTools.get(getMsgServerPath+params);
 			if (Integer.parseInt(map.get("code").toString()) == 200) {
 				json = new JSONObject(map.get("data").toString());
-				LogUtil.d(TAG, "json:" + json.toString());
 				String str;
 				try {
 					str = json.getString("data");
+					//str = "[{\"logtime\":\"2016-03-02 06:16:50.0\",\"evt_type\":1,\"evt_time\":\"2016-03-02 06:15:54.0\",\"evt_state\":1,\"typename\":null,\"thumb_url\":\"NoSuchKey\",\"evt_vsize\":4591868,\"devicename\":\"0IPC(manniu203)\",\"uuid\":\"VFMhAQEAAGUwNjFiMjAxMGJmOAAA\",\"evt_picture\":\"http:man-niu.oss-cn-hangzhou.aliyuncs.com/bc565120/cam_0/20160302061555_fa4aaf3f.jpg?Expires=1456913110&OSSAccessKeyId=3WVh0lsoA8r5uHH6&Signature=MNKgzjOIbINevgPFEC7C9S/8zDw%3D\",\"kid\":72137,\"evt_video\":\"http:man-niu.oss-cn-hangzhou.aliyuncs.com/bc565120/cam_0/20160302061555_1df28238.mp4\"},{\"logtime\":\"2016-03-01 22:16:14.0\",\"evt_type\":1,\"evt_time\":\"2016-03-01 22:15:17.0\",\"evt_state\":1,\"typename\":null,\"thumb_url\":\"NoSuchKey\",\"evt_vsize\":4595006,\"devicename\":\"0IPC(manniu203)\",\"uuid\":\"VFMhAQEAAGUwNjFiMjAxMGJmOAAA\",\"evt_picture\":\"http:man-niu.oss-cn-hangzhou.aliyuncs.com/bc565120/cam_0/20160301221517_8a205bb0.jpg?Expires=1456913110&OSSAccessKeyId=3WVh0lsoA8r5uHH6&Signature=lZWiv6be9X8in604jb58JOJdprw%3D\",\"kid\":72113,\"evt_video\":\"http:man-niu.oss-cn-hangzhou.aliyuncs.com/bc565120/cam_0/20160301221518_6343fe85.mp4\"}]";
 					if("nologin".equals(str)){
 						LogUtil.d(TAG, "报警信息..session超时");
+					}else if(str.equals("[]") && pageNo > 1){
+						result = SDK.Err_Last_page;
 					}else{
-						JSONArray array = JSON.parseArray(json.getString("data"));
-						for(int i = 0; i < array.size(); i++){
-							String str2 = array.get(i).toString();
-							Message msg = JSON.toJavaObject((JSON)JSON.parseObject(str2), Message.class);
-							msgList.add(msg);
-						}
-						cache.put(userId + "_msgList", msgList);
-						Log.d(TAG, "用户:" + userId + ", 已缓存!");
-						msgRender(isrefresh);
+						cache.put(userId + "_msgList", str);
+						msgRender(str,isrefresh);
 					}
-				} catch (JSONException e) {
+				} catch (Exception e) {
 					result = SDK.Err_refresh;
 					LogUtil.d(TAG, "/android/getDevices...error..json:"+json.toString()+"\n"+e.getMessage());
 				}
@@ -645,93 +765,25 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				result = SDK.Err_SER_FAIL;
 			}
 		} catch (Exception e) {
+			LogUtil.d(TAG, ExceptionsOperator.getExceptionInfo(e));
 		}
 		return result;
-		
-		
-		
-		
-		/*HttpUtil.get(getMsgServerPath, params, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
-				Log.d(TAG, "onSuccess");
-				if(statusCode == 200){
-					Log.d(TAG, "message json ："+json);
-					try {
-						if("nologin".equals(json.getString("data"))){
-							LogUtil.d(TAG, "报警信息..session超时");
-							//BaseApplication.getInstance().relogin();
-						}else{
-							JSONArray array = JSON.parseArray(json.getString("data"));
-							for(int i = 0; i < array.size(); i++){
-								String str = array.get(i).toString();
-								Message msg = JSON.toJavaObject((JSON)JSON.parseObject(str), Message.class);
-								msgList.add(msg);
-							}
-							cache.put(userId + "_msgList", msgList);
-							Log.d(TAG, "用户:" + userId + ", 已缓存!");
-							msgRender(isrefresh);
-						}
-					} catch (Exception e) {
-						LogUtil.e(TAG, "/android/getMessage...error.."+e.getMessage());
-					}
-				}
-			}
-			@Override
-			public void onFailure(int statusCode, Header[] headers,String string, Throwable throwable) {
-				Log.d(TAG, "onFailure");
-				APP.ShowToast(ACT.getResources().getString(R.string.E_SER_FAIL));
-			}
-			
-			@Override
-			public void onFailure(int statusCode, Header[] headers,Throwable throwable, JSONObject errorResponse) {
-				Log.d(TAG, "onFailure:");
-				if(errorResponse == null){
-					Log.d(TAG, "errorResponse is null!");
-				}else{
-					Log.d(TAG, "errorResponse is:" + errorResponse);
-				}
-				scrollView.onRefreshComplete();
-				APP.ShowToast(ACT.getResources().getString(R.string.E_SER_FAIL));
-			}
-			@Override  
-            public void onFinish() {  
-                super.onFinish();  
-            }
-			
-		});*/
 	}
 	
 	/**
 	 * 渲染消息列表 
 	 * @param isrefresh
 	 */
-	private void msgRender(boolean isrefresh){
+	private void msgRender(String json,boolean isrefresh){
 		try {
-			/*if(adapter!=null&&adapter.show){
-				Log.v(TAG, "isSelected："+isSelected);
-				Log.v(TAG, "adapter.isSelected："+adapter.isSelected);
-				HashMap<String, Object> maps = new HashMap<String, Object>();
-				if(adapter.isSelected!=null){
-					//isSelected = adapter.isSelected;
-					maps = adapter.isSelected;
+			if(!json.equals("{}")){
+				JSONArray array = JSON.parseArray(json);
+				for(int i = 0; i < array.size(); i++){
+					Message msg = JSON.toJavaObject((JSON)array.get(i), Message.class);
+					msgList.add(msg);
 				}
-				adapter = new MsgAdapter(context, msgList);
-				listView.setAdapter(adapter);
-				adapter.show = true;
-				adapter.notifyDataSetChanged();
-				//adapter.isSelected = isSelected;
-				adapter.isSelected = maps;
-				adapter.notifyDataSetChanged();
-			}else{
-//				adapter = new MsgAdapter(context, msgList);
-//				listView.setAdapter(adapter);
-				_handler.sendEmptyMessage(XMSG.MSG_LIST_LOAD);//通过消息更新数据
-			}*/
+			}
 			_handler.sendEmptyMessage(XMSG.MSG_LIST_LOAD);//通过消息更新数据
-//			if(isrefresh){
-//				scrollView.onRefreshComplete();
-//			}
 		} catch (Exception e) {
 		}
 	}
@@ -756,15 +808,7 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				for(int i = 0; i < array.size(); i++){
 					Device dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
 					//TODO 多通道显示多个
-//					if(dev1.channels > 1){
-//						for(int j=0;j<dev1.channels;j++){
-//							dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
-//							dev1.channelNo = j;
-//							devList.add(dev1);
-//						}
-//					}else{
-						devList.add(dev1);
-//					}
+					devList.add(dev1);
 				}
 			}
 			
@@ -779,19 +823,39 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 					dev.logo = live.getImg();
 					dev.online = 0;
 					dev.userid = "";
-					dev.type = 100;//收藏 
+					if(live.getType() == 0){
+						dev.type = 100;//直播收藏 
+					}else{
+						dev.type = 101;//短片收藏 
+					}
 					devList.add(dev);
 				}
 			}
-			
-			//listView.setAdapter(new DevAdapter(context, devList));
 			_handler.sendEmptyMessage(XMSG.DEVICE_LIST_LOAD);//通过消息更新数据
-			
-//			if(isrefresh){
-//				scrollView.onRefreshComplete();//关闭下拉刷新
-//			}
 		} catch (Exception e) {
 			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
+		}
+	}
+	
+	/**
+	 * 渲染多画面列表 
+	 * @param isrefresh
+	 */
+	private void renderMulti(String json,boolean isrefresh){
+		try {
+			if(m_devicesList == null){
+				m_devicesList = new ArrayList<Device>();
+			}
+			m_devicesList.clear();
+			if(!json.equals("{}")){
+				JSONArray array = JSON.parseArray(json);
+				for(int i = 0; i < array.size(); i++){
+					Device dev1 = JSON.toJavaObject((JSON)array.get(i), Device.class);
+					m_devicesList.add(dev1);
+				}
+			}
+			_handler.sendEmptyMessage(XMSG.MULTI_LIST_LOAD);//通过消息更新数据
+		} catch (Exception e) {
 		}
 	}
 	
@@ -850,10 +914,11 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 		/**
 		 * 销毁position位置的界面
 		 */
-	    @Override
-	    public void destroyItem(View view, int position, Object arg2) {
-	        ((ViewPager) view).removeView(views.get(position));       
-	    }
+	    @Override  
+        public void destroyItem(View view, int position, Object arg2) {
+            ((ViewPager) view).removeView((View)arg2);  
+        }
+	    
 	    @Override
 	    public void notifyDataSetChanged() {         
 	          mChildCount = getCount();
@@ -877,7 +942,10 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 			Integer ret = 0;
 			switch (what) {
 			case XMSG.DEVICE_LIST_LOAD:
-				ret = loadDevData2();
+				ret = loadDevData2(1);
+				return ret;
+			case XMSG.MULTI_LIST_LOAD://多画面
+				ret = loadDevData2(2);
 				return ret;
 			case XMSG.MSG_LIST_LOAD:
 				Mode dur;
@@ -888,6 +956,14 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				}
 				ret = loadMsgData(dur);
 				return ret;
+			case 3:
+				Message alrmdata = (Message)obj;
+				String params = "?ossUrl="+alrmdata.evt_video+"&timeMillis=0";
+				Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl+"/android/getUrl"+params);
+				SDK.DecodeUuid(alrmdata.uuid, buf);
+				int type = buf[3];
+				Constants.evt_ManufacturerType = type;
+				return map;
 			}
 		} catch (Exception e) {
 			LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
@@ -905,9 +981,15 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				if (nRet != 0) {	// 打开设备列表失败
 					APP.ShowToast(SDK.GetErrorStr(nRet));
 				}
+				LogUtil.d(TAG, "isrefresh =  "+isrefresh);
 				if(isrefresh){
-					scrollView.onRefreshComplete();//关闭下拉刷新
+					scrollViewDev.onRefreshComplete();//关闭下拉刷新
 				}
+				break;
+			case XMSG.MULTI_LIST_LOAD://多画面
+				isrefresh = false;
+				m_pullToRefreshExpandableListView.onRefreshComplete();
+				break;
 			case XMSG.MSG_LIST_LOAD:
 				Integer mRet = (Integer) ret;
 				if (mRet != 0) {	// 打开消息列表失败
@@ -915,6 +997,33 @@ public class NewMain extends XViewBasic implements OnItemClickListener, OnClickL
 				}
 				if(isrefresh){
 					scrollView.onRefreshComplete();//关闭下拉刷新
+				}
+				break;
+			case 3:
+				Map<String, Object> map = (Map<String, Object>) ret;
+				JSONObject json = null;
+				if (Integer.parseInt(map.get("code").toString()) == 200) {
+					try {
+						json = new JSONObject(map.get("data").toString());
+						final String str = json.getString("url");
+						if(str.equals("NoSuchKey")){//地址错误
+							APP.ShowToast(SDK.GetErrorStr(-1));
+							MsgAdapter2._isOpenAlarm = true;
+						}else{
+							Constants.evt_video = str;
+	                    	Intent intent = new Intent(context, Fun_RecordPlay.class);
+	                    	intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);  
+	                    	context.startActivity(intent);
+							LogUtil.d("MsgAdapter","HttpURLConnectionTools  url.....");
+						}
+					} catch (JSONException e) {
+						MsgAdapter2._isOpenAlarm = true;
+						LogUtil.d("MsgAdapter", ExceptionsOperator.getExceptionInfo(e));
+						APP.ShowToast(SDK.GetErrorStr(-1));
+					}
+				}else{
+					MsgAdapter2._isOpenAlarm = true;
+					APP.ShowToast(SDK.GetErrorStr(-1));
 				}
 				break;
 			}

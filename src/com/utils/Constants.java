@@ -43,11 +43,11 @@ public class Constants {
 	//public static String userPassword = "";
 	
 	//cn
-//	public static String hostUrl = "http://120.26.194.72/NineCloud";//www.nmy9.com
-//	public static String ETShostUrl = "http://120.26.56.240:9601";
+//	public static String hostUrl = "http://www.mny9.com/NineCloud";//www.mny9.com 120.26.194.72
+//	public static String ETShostUrl = "http://cms.mny9.com:9601";//120.26.56.240
 
 	//us
-//	public static String hostUrl = "http://47.88.30.207/NineCloud";
+//	public static String hostUrl = "http://us.mny9.com";//"http://47.88.30.207/NineCloud";
 //	public static String ETShostUrl = "http://47.88.30.207:9601";
 	
 	//ts
@@ -77,6 +77,12 @@ public class Constants {
 	public static Bitmap bimap;
 	public static String _bucketName;//相册名称
 	public static String packageName;//项目名称
+	
+	public static String evt_video = "";//视频路径
+	public static String devName = "";
+	public static int evt_vsize = 0;
+	public static int evt_ManufacturerType = 1;
+	
 	
 	
 

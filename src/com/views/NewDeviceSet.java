@@ -573,6 +573,9 @@ public class NewDeviceSet extends Activity {
 	 * @param value 值
 	 */
 	private void set(int channelNo, String key, Object value){
+		if(channelNo==-1){
+			channelNo = 0;
+		}
 		String cam_conf = readInfo("cam_conf");
 		com.alibaba.fastjson.JSONArray array;
 		com.alibaba.fastjson.JSONObject obj;
@@ -629,10 +632,11 @@ public class NewDeviceSet extends Activity {
 	}
 	
 	public void show(com.alibaba.fastjson.JSONObject set){
-		String bps,fps,width;
+		String bps, fps, width, alert_type;
 		bps = set.getString("bps");
 		fps = set.getString("fps");
 		width = set.getString("width");
+		alert_type = set.getString("alert_type");
 		
 		if("1".equals(fps)){
 			frameRate.setSelection(0);
@@ -692,10 +696,10 @@ public class NewDeviceSet extends Activity {
 			}
 		}else{ 
 		} 
-		if("0".equals(set.getString("alert_type"))){
+		if("0".equals(alert_type)){
 			LogUtil.d(TAG, "报警未开启!");
 			switchTag(switch1, false);
-		}else if("3".equals(set.getString("alert_type"))){
+		}else if("3".equals(alert_type)){
 			LogUtil.d(TAG, "报警已开启!");
 			switchTag(switch1, true);
 		}
@@ -773,12 +777,12 @@ public class NewDeviceSet extends Activity {
 			iv_switch.setTag("on");
 			iv_switch.setBackgroundResource(R.drawable.my_switch_on);
 			//write(iv_switch, key);
-			set(0, key, onValue);
+			set(channelNo, key, onValue);
 		}else if("on".equals(iv_switch.getTag())){
 			iv_switch.setTag("off");
 			iv_switch.setBackgroundResource(R.drawable.my_switch_off);
 			//write(iv_switch, key);
-			set(0, key, offValue);
+			set(channelNo, key, offValue);
 		}else {
 			
 		}
@@ -930,9 +934,9 @@ public class NewDeviceSet extends Activity {
 				}
 				break;
 			case R.id.channelNos:
-				int channelNo = Integer.valueOf(channelNos.getSelectedItem().toString());
+				channelNo = Integer.valueOf(channelNos.getSelectedItem().toString())-1;
 				LogUtil.d(TAG, "当前通道:" + channelNo);
-				com.alibaba.fastjson.JSONObject obj = get(channelNo-1);
+				com.alibaba.fastjson.JSONObject obj = get(channelNo);
 				if(obj!=null){
 					show(obj);
 				}else{

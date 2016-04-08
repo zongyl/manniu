@@ -6,13 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.os.Environment;
+
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.LogUtil;
 import com.zl.faad.AacDecoder;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.os.Environment;
 //音频 AAC 解码
 public class AudioQueue implements Runnable{
 			
@@ -33,8 +35,8 @@ public class AudioQueue implements Runnable{
     private AacDecoder aacdncoder;
 	private long time;
 	
-	String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
-	//private String AudioName = filepath +"/aac播放.aac";  
+//	String filepath = Environment.getExternalStorageDirectory().getAbsolutePath();
+//	private String AudioName = filepath +"/音频TEST.pcm";  
 //    FileOutputStream outsStream;
 	    
 	public AudioQueue(){
@@ -53,12 +55,6 @@ public class AudioQueue implements Runnable{
 //		}
 	}
 	
-	/*static{
-		int bufsize = AudioTrack.getMinBufferSize(Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding);
-		if(_talkAudio == null)
-			_talkAudio = new AudioTrack(AudioManager.STREAM_MUSIC, Constants.frequency, Constants.channelConfiguration, Constants.audionEncoding, bufsize, AudioTrack.MODE_STREAM);//
-		//_talkAudio.setStereoVolume(0.5f, 0.5f);
-	}*/
 	
 	public static void init(int type){
 		if(type == 1){//ipc 对应 8000采集 牛眼不变
@@ -148,6 +144,7 @@ public class AudioQueue implements Runnable{
 							if(null != bean.getData() && bean.getData().length > 0){
 								if(bean.getPcmType() == 1){//IPC过来数据是PCM 直接去播放
 									_talkAudio.write(bean.getData(), 0, bean.getData().length);//播放
+									//outsStream.write(bean.getData());
 								}else{
 									//解码--牛眼需要解码AAC
 			            			if(isDecorderOpen){

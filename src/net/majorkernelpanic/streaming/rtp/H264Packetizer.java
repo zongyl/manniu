@@ -273,7 +273,7 @@ public class H264Packetizer extends AbstractPacketizer implements Runnable {
         	System.arraycopy(_myBuffer, 0, outData, 4, _myBuffer.length);
         	raf.write(outData,0,naluLength+4);*/
         	
-			if(SDK._sessionId != 0 && SDK._createChnlFlag == 0){
+			if(SDK._sessionIdContext != 0 && SDK._createChnlFlag == 0){
         		//添加SPS PPS  src:源数组；srcPos:源数组要复制的起始位置；dest:目的数组；destPos:目的数组放置的起始位置；length:复制的长度。
         		if(iFrameFlag == 0 && _myBuffer[0] == 0x65){//I帧
         			iFrameFlag = 1;

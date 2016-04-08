@@ -1,10 +1,10 @@
 package com.views;
 
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.adapter.Menu;
 import com.adapter.UpdateDialog;
 import com.basic.APP;
+import com.localmedia.XListViewRewrite;
 import com.manniu.manniu.R;
 import com.utils.BitmapUtils;
 import com.utils.Constants;
@@ -47,9 +48,10 @@ import com.views.bovine.Fun_AnalogVideo;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 //个人
+@SuppressLint("Instantiatable")
 public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	private String TAG =getClass().getName();
-	
+	 
 	static String SAVEFILE = "Info_Login";
 	String _img ="";
 	String _userid = "";
@@ -60,14 +62,15 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 	private final static String PER_DETAIL_ABOUT = "com.views.NewDetailAbout";//关于
 	private final static String PRE_LOG_IN ="com.views.SplashScreen";
 	private final static String TEST ="com.views.TestActivity";
+	private final static String PLAY_BACK ="com.views.VideoPlayback";
 	private UpdateDialog tipDialog;
 	BaseApplication _bApp = null;
 	ImageView _headImage = null;
 	ListView listView0, listView1, listView2;
 	LogoutDilog _mydilog;
-	InnerBroadcastReceiver _broadcast;
+	InnerBroadcastReceiver _broadcast = null;
 	
-	private Button test;
+	private Button test, playback;
 	
 	boolean logout,exitApp;
 	private List<Menu> getMenuList(Activity act, int titleid, int resid) {
@@ -76,17 +79,13 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		
 		TypedArray imgs  =  ACT.getResources().obtainTypedArray(resid);
 		String[] strs = ACT.getResources().getStringArray(titleid);
-		
 		for (int i = 0; i<imgs.length(); i++) {
 			menu = new Menu();
 			menu.setText(strs[i]);
 			menu.setIconResid(imgs.getResourceId(i, 0));
 			menu.setLink("");
-			
 			ret.add(menu);
 		}
-		
-		
 		return ret;
 	}
 	
@@ -115,6 +114,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		test = (Button) findViewById(R.id.btn_test);
 		test.setOnClickListener(this);
 		test.setVisibility(View.GONE);
+		playback = (Button) findViewById(R.id.btn_playback);
+		playback.setOnClickListener(this);
+		playback.setVisibility(View.GONE);
 		
 		//给页面头像和昵称赋值
 		ReadUserInfo();
@@ -126,6 +128,14 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 		
 	}
 	
+	@Override
+	protected void OnVisibility(int visibility) {
+		super.OnVisibility(visibility);
+		if (visibility == View.VISIBLE) {
+			XListViewRewrite.dismissPopWindow();//切换时关闭本地的删除按钮
+		}
+	}
+	
 	public void ReadUserInfo(){
 		preferences = APP.GetMainActivity().getSharedPreferences(SAVEFILE, APP.GetMainActivity().MODE_PRIVATE);
 		String username ="";
@@ -134,16 +144,26 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			username= preferences.getString("username", "");
 			if("zongyl".equals(username)){
 				test.setVisibility(View.VISIBLE);
+				playback.setVisibility(View.VISIBLE);
+			}
+			if("yhb".equals(username)){
+				playback.setVisibility(View.VISIBLE);
 			}
 		}
 		((TextView)findViewById(R.id.main_hotname)).setText(username);
 	}
 	 /**注册广播*/
 	private void RegistBroadcast() {
-		IntentFilter filter = new IntentFilter(NewItemDetailEdit.action); 
-		filter.setPriority(20);
-		_broadcast = new InnerBroadcastReceiver();
-		ACT.registerReceiver(_broadcast, filter);
+		try {
+			IntentFilter filter = new IntentFilter(NewItemDetailEdit.action); 
+			filter.setPriority(20);
+			if(_broadcast == null){
+				_broadcast = new InnerBroadcastReceiver();
+				ACT.registerReceiver(_broadcast, filter);
+			}
+		} catch (Exception e) {
+			LogUtil.e(TAG, ExceptionsOperator.getExceptionInfo(e));
+		}
 	}
 	
 	public void getHeadImg(){
@@ -184,6 +204,9 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			break;
 		case R.id.btn_test:
 			forwardTo(TEST);
+			break;
+		case R.id.btn_playback:
+			forwardTo(PLAY_BACK);
 			break;
 		}
 	}
@@ -267,6 +290,8 @@ public class NewMoresMe extends XViewBasic  implements OnItemClickListener{
 			 case R.id.logout_confirm:
 				 if(logout){//退出登录
 					 _mydilog.dismiss();
+					 //设备图片不会失效 切换账号时在清空
+					 //NewMain.instance.cache.remove(Constants.userid + "_devices");
 					 //APP.GetMainActivity().finish();
 					 Fun_AnalogVideo.instance.m_prevewview = null;
 					 Fun_AnalogVideo.instance = null;

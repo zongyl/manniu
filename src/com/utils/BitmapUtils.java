@@ -80,6 +80,52 @@ public class BitmapUtils extends XViewBasic {
 		}
 		return bitmap;
 	}
+	/**
+	 *byte[] 转 bitmap
+	 * @return
+	 */
+	public static Bitmap parseByte2Bitmap(byte[] b) {
+		Bitmap bitmap = null;
+		if (b != null) {
+			bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+		}
+		return bitmap;
+	}
+	
+	/** 
+ 	 * 根据图片字节数组，对图片可能进行二次采样，不致于加载过大图片出现内存溢出 
+ 	 * @param bytes 
+ 	 * @return 
+ 	 */  
+ 	public static Bitmap getBitmapByBytes(byte[] bytes){  
+ 	    //对于图片的二次采样,主要得到图片的宽与高  
+ 		try {
+ 			BitmapFactory.Options options = new BitmapFactory.Options();  
+ 	 	    options.inJustDecodeBounds = true;  //仅仅解码边缘区域  
+ 	 	    //如果指定了inJustDecodeBounds，decodeByteArray将返回为空  
+ 	 	    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);  
+ 	 	    // 找到正确的刻度值，它应该是2的幂。
+ 			final int REQUIRED_SIZE = 70;
+ 			int width_tmp = options.outWidth, height_tmp = options.outHeight;
+ 			int scale = 1;
+ 			while (true) {
+ 				if (width_tmp / 2 < REQUIRED_SIZE
+ 						|| height_tmp / 2 < REQUIRED_SIZE)
+ 					break;
+ 				width_tmp /= 2;
+ 				height_tmp /= 2;
+ 				scale *= 2;
+ 			}
+ 	 	  
+ 	 	    //不再只加载图片实际边缘  
+ 	 	    options.inJustDecodeBounds = false;  
+ 	 	    //并且制定缩放比例  
+ 	 	    options.inSampleSize = scale;  
+ 	 	    return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);  
+		} catch (Exception e) {
+		}
+ 	    return null;
+ 	}
 	
 	public static void startPhotoZoom(Context context, Uri uri,
             int REQUE_CODE_CROP) {
@@ -110,7 +156,7 @@ public class BitmapUtils extends XViewBasic {
 				imgname = "images/users/"+Constants.userid +".jpg";
 			}
 			if(getContext().getResources().getString(R.string.default_photo).equals(imgname)){
-				imagetarget.setImageResource(R.drawable.images_nophoto_bg);//默认头像
+				imagetarget.setImageResource(R.drawable.head_setting);//默认头像
 			}else{
 //				String temp = replace(imgname);
 //				String [] strs =temp.split("/");
@@ -122,7 +168,7 @@ public class BitmapUtils extends XViewBasic {
 					AsyncImageLoader.setImageViewFromUrl(image_url, imagetarget,userid);*/
 					String url=com.utils.Constants.hostUrl+File.separator+imgname;
 					DisplayImageOptions options = new DisplayImageOptions.Builder()
-					.showImageForEmptyUri(R.drawable.images_nophoto_bg)//没有图片资源时的默认图片 
+					.showImageForEmptyUri(R.drawable.head_setting)//没有图片资源时的默认图片 
 					.showImageOnFail(R.drawable.event_list_fail_pic)//加载失败时的图片  
 					.cacheOnDisk(false)								//启用外存缓存
 					.cacheInMemory(false)                           //启用内存缓存 
@@ -255,7 +301,7 @@ public class BitmapUtils extends XViewBasic {
    		}
    		try {
    			FileOutputStream out = new FileOutputStream(f);
-   			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+   			bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
    			out.flush();
    			out.close();
    		} catch (FileNotFoundException e) {
@@ -273,17 +319,17 @@ public class BitmapUtils extends XViewBasic {
 	
 	
 	/**软解码获取当前帧的Bitmap*/
-	public static Bitmap getScreenBitmap(byte[] data,byte[] outBytes,int len){
+	public static Bitmap getScreenBitmap(byte[] data,byte[] outBytes,int len,int width,int height,long context){
 		Bitmap bmp = null;
 		try {
 			byte[] bmpBuff = null;
 			ByteBuffer byteBuffer = null;
 			if(outBytes==null)
 				return null;
-			int nRet = SDK.ScreenShots(data, len,outBytes);
+			int nRet = SDK.ScreenShots(data, len,outBytes,context);
 			if(nRet > 0){
-				int width_frame = SDK._width;
-				int height_frame = SDK._height;
+				int width_frame = width;
+				int height_frame = height;
 				if (width_frame > 0 && height_frame > 0) {
 					bmpBuff = new byte[width_frame * height_frame * 3];
 

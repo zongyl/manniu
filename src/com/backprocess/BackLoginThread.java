@@ -19,6 +19,7 @@ import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 import com.utils.MD5Util;
 import com.views.BaseApplication;
+import com.views.Fun_RecordPlay;
 import com.views.Main;
 import com.views.NewLogin;
 import com.views.NewSurfaceTest;
@@ -33,7 +34,7 @@ public class BackLoginThread implements Runnable{
 	public final static int QUERY_OK = 200;
 	private String TAG = BackLoginThread.class.getSimpleName();
 	public static boolean runFlag;
-	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高 201:牛眼登录成功
+	//200成功  0:ETS/IDM 1:登出操作  2:用户登录 3:牛眼 4:收到宽高 201:牛眼登录成功 
 	public static int state = 0;
 	public Thread _thread = null;
 	public int error_Count= 0;
@@ -122,7 +123,7 @@ public class BackLoginThread implements Runnable{
 									NewSurfaceTest._runFlag = true;
 								}
 								runFlag = false;//连接成功置成false 
-								_thread.wait();//
+								if(_thread != null) _thread.wait();//
 							}else{
 								Thread.sleep(10000);
 //								error_Count ++;
@@ -143,7 +144,7 @@ public class BackLoginThread implements Runnable{
 								state = 201;
 								SDK._isRun = true;
 								runFlag = false;//连接成功置成false 
-								_thread.wait();//
+								if(_thread != null) _thread.wait();//
 							}else{
 								Thread.sleep(10000);
 								//登录不上就一直登录 直到用户点击退出
@@ -161,7 +162,7 @@ public class BackLoginThread implements Runnable{
 							//IPC
 							if(NewSurfaceTest.isPlay){
 								waitIDMLogin();
-								SDK.P2PClose(SDK._sessionId);
+								SDK.P2PClose(SDK._sessionIdContext);
 							}
 							//牛眼
 							if(AnalogvideoActivity.instance != null && SDK._createChnlFlag == 0){//如果正在发送数据 --停止发送
@@ -169,7 +170,7 @@ public class BackLoginThread implements Runnable{
 								AnalogvideoActivity.instance.sendCheageData();
 								SDK._createChnlFlag = -1;
 							}
-							SDK._sessionId = 0;
+							SDK._sessionIdContext = 0;
 							SDK.Logout();
 							if(Main.Instance._curIndex == Main.XV_NEW_MSG && AnalogvideoActivity.isOpenAnalog){
 								waitIDMLogin();
@@ -192,6 +193,16 @@ public class BackLoginThread implements Runnable{
 							runFlag = false;//连接成功置成false 
 							_thread.wait();//
 							break;*/
+						case 203:
+							runFlag = false;//连接成功置成false 
+							long t3 = System.currentTimeMillis();
+							LogUtil.d(TAG,"SDK.CurlSetOperation.1.1...");
+							SDK.CurlSetOperation(Fun_RecordPlay.instance.evt_video,Fun_RecordPlay.instance.evt_vsize,Fun_RecordPlay.instance.evt_ManufacturerType,Fun_RecordPlay.instance.thresholdpricelen,Fun_RecordPlay.instance._alarmContext);
+							long t4 = System.currentTimeMillis();
+							LogUtil.d(TAG,"SDK.CurlSetOperation..1.2.."+(t4-t3));
+							state = 200;
+							_thread.wait();//
+							break;
 						}
 					}
 				}

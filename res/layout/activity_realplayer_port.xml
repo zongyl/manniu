@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:id="@+id/hhheader"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white">
+
+      <Button
+       	    android:id="@+id/btn_back_video"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/common_title_back" 
+       	    android:layout_marginLeft="5dp"
+       	    android:gravity="left"/>
+         
+         <TextView
+       	    android:id="@+id/dev_name"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="@string/playerview_realplayer"
+        	android:textSize="18dp"
+        	android:textColor="@color/black"
+        	android:layout_gravity="center|center_horizontal"/>
+         
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout_4ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/realplayer_dataflow_txt"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:gravity="center_vertical"
+            android:text="1234567890" />
+
+        <FrameLayout
+            android:id="@+id/playview_4ui"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="24"
+            android:background="#FFFFFF" >
+
+            <FrameLayout
+                android:id="@+id/realplayer_singleplayview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="2dp" 
+                android:visibility="gone">
+
+                <SurfaceView
+                    android:id="@+id/realplayer_singlesurface"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <ImageView
+                    android:id="@+id/realplayer_single_rec_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/monitor_recing" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" >
+
+                    <LinearLayout
+                        android:id="@+id/realplayer_single_detail_view"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <ProgressBar
+                            android:id="@+id/realplayer_single_progress"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" />
+
+                        <ImageButton
+                            android:id="@+id/realplayer_single_refresh"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/monitor_play_refresh" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/realplayer_single_detailtext"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/realplayer_single_detail_view"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="描述信息"
+                        android:textColor="@color/white" >
+                    </TextView>
+                </RelativeLayout>
+                
+                <ImageView
+                   android:id="@+id/addchannel_activity_realplayer"
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:layout_gravity="center"
+                   android:src="@drawable/extend_icon" />
+                <!-- <RelativeLayout 
+                    android:id="@+id/relative_ptz_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+                    <ImageView 
+                        android:id="@+id/ptz_left_up"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ptz_left_up"/>
+                    <ImageView 
+                        android:id="@+id/ptz_up"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/ptz_up"/>
+                    <ImageView 
+                        android:id="@+id/ptz_right_up"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ptz_right_up"/>
+                    <ImageView 
+                        android:id="@+id/ptz_left"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ptz_left"/>
+                    <ImageView 
+                        android:id="@+id/ptz_right"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ptz_right"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"/>
+                    <ImageView 
+                        android:id="@+id/ptz_left_down"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentBottom="true"
+                        android:src="@drawable/ptz_left_down"/>
+                    <ImageView 
+                        android:id="@+id/ptz_down"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:src="@drawable/ptz_down"/>
+                    <ImageView 
+                        android:id="@+id/ptz_right_down"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/ptz_right_down"/>
+                </RelativeLayout> -->
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/realplayer_multiplayview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="2dp"
+                android:visibility="visible" >
+
+                <LinearLayout
+                    android:id="@+id/playview01and02"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal" >
+
+                    <FrameLayout
+                        android:id="@+id/realplayer_multiplayview01"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="1dp" >
+
+                        <SurfaceView
+                            android:id="@+id/realplayer_multisurface01"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <ImageView
+                            android:id="@+id/realplayer_multi_rec_image01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/monitor_recing" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" >
+
+                            <LinearLayout
+                                android:id="@+id/realplayer_multi_detail_view01"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" >
+
+                                <ProgressBar
+                                    android:id="@+id/realplayer_multi_progress01"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center" />
+
+                                <ImageButton
+                                    android:id="@+id/realplayer_multi_refresh01"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/monitor_play_refresh" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/realplayer_multi_detailtext01"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/realplayer_multi_detail_view01"
+                                android:layout_gravity="center"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:text="描述信息"
+                                android:textColor="@color/white" >
+                            </TextView>
+                        </RelativeLayout>
+
+                        <ImageView
+                            android:id="@+id/addchannel1_activity_realplayer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/extend_icon" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/realplayer_multiplayview02"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="1dp" >
+
+                        <SurfaceView
+                            android:id="@+id/realplayer_multisurface02"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <ImageView
+                            android:id="@+id/realplayer_multi_rec_image02"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/monitor_recing" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" >
+
+                            <LinearLayout
+                                android:id="@+id/realplayer_multi_detail_view02"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" >
+
+                                <ProgressBar
+                                    android:id="@+id/realplayer_multi_progress02"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center" />
+
+                                <ImageButton
+                                    android:id="@+id/realplayer_multi_refresh02"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/monitor_play_refresh" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/realplayer_multi_detailtext02"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/realplayer_multi_detail_view02"
+                                android:layout_gravity="center"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:text="描述信息"
+                                android:textColor="@color/white" >
+                            </TextView>
+                        </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/addchannel2_activity_realplayer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/extend_icon" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/playview03and04"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal" >
+
+                    <FrameLayout
+                        android:id="@+id/realplayer_multiplayview03"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="1dp" >
+
+                        <SurfaceView
+                            android:id="@+id/realplayer_multisurface03"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <ImageView
+                            android:id="@+id/realplayer_multi_rec_image03"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/monitor_recing" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" >
+
+                            <LinearLayout
+                                android:id="@+id/realplayer_multi_detail_view03"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" >
+
+                                <ProgressBar
+                                    android:id="@+id/realplayer_multi_progress03"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center" />
+
+                                <ImageButton
+                                    android:id="@+id/realplayer_multi_refresh03"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/monitor_play_refresh" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/realplayer_multi_detailtext03"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/realplayer_multi_detail_view03"
+                                android:layout_gravity="center"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:text="描述信息"
+                                android:textColor="@color/white" >
+                            </TextView>
+                        </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/addchannel3_activity_realplayer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/extend_icon" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/realplayer_multiplayview04"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="1dp" >
+
+                        <SurfaceView
+                            android:id="@+id/realplayer_multisurface04"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <ImageView
+                            android:id="@+id/realplayer_multi_rec_image04"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/monitor_recing" />
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" >
+
+                            <LinearLayout
+                                android:id="@+id/realplayer_multi_detail_view04"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" >
+
+                                <ProgressBar
+                                    android:id="@+id/realplayer_multi_progress04"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center" />
+
+                                <ImageButton
+                                    android:id="@+id/realplayer_multi_refresh04"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/monitor_play_refresh" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/realplayer_multi_detailtext04"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/realplayer_multi_detail_view04"
+                                android:layout_gravity="center"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:text="描述信息"
+                                android:textColor="@color/white" >
+                            </TextView>
+                        </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/addchannel4_activity_realplayer"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/extend_icon" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 中间 菜单 -->
+        <RelativeLayout
+            android:id="@+id/center_menu"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="#00FF00" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#cccccc"
+                android:orientation="horizontal"
+                android:paddingTop="5dp" >
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" >
+
+                    <ImageButton
+                        android:id="@+id/realplayer_control_close"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="#FFFFFF"
+                        android:contentDescription=""
+                        android:scaleType="centerInside"
+                        android:src="@drawable/monitor_control_close" />
+						
+                    <View 
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"/>
+                    
+                    <ImageButton
+                        android:id="@+id/realplayer_control_audio"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="#FFFFFF"
+                        android:contentDescription=""
+                        android:scaleType="centerInside"
+                        android:src="@drawable/monitor_control_audio_off" />
+
+                    <!-- <ImageButton
+                        android:id="@+id/realplayer_control_favor"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="#2A88B7"
+                        android:contentDescription=""
+                        android:scaleType="centerInside"
+                        android:src="@drawable/monitor_control_favor"
+                        android:visibility="invisible" /> -->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:visibility="visible" >
+
+                    <TextView
+                        android:id="@+id/realplayer_control_mainstream"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="#FFFFFF"
+                        android:gravity="center"
+                        android:text="@string/playerview_realplayer_control_mainstream"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/realplayer_control_substream"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="#2A88B7"
+                        android:gravity="center"
+                        android:text="@string/playerview_realplayer_control_substream"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/realplayer_channels_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FF0000"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/realplayer_ptz_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#0000FF"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/realplayer_bottom_tool"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
+			<!-- 通道 -->
+            <LinearLayout
+                android:id="@+id/realplayer_tool_layout01"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:contentDescription="@string/channel"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/toorbar_chn_default" />
+
+                <TextView
+                    android:id="@+id/realplayer_tool_tv01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="@string/channel"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout>
+			<!-- 截图 -->
+            <LinearLayout
+                android:id="@+id/realplayer_tool_layout02"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:contentDescription="@string/playerview_realplayer_tool_picture"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/toorbar_pic_default" />
+
+                <TextView
+                    android:id="@+id/realplayer_tool_tv02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="@string/playerview_realplayer_tool_picture"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            
+            <!-- 录像 -->
+            <LinearLayout
+                android:id="@+id/realplayer_tool_layout05"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:contentDescription="@string/playerview_realplayer_tool_video"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/toorbar_video_default" />
+
+                <TextView 
+                    android:id="@+id/realplayer_tool_tv05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="@string/playerview_realplayer_tool_video"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout>
+			<!-- 语音对讲 -->
+            <LinearLayout
+                android:id="@+id/realplayer_tool_layout03"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:contentDescription="@string/playerview_realplayer_tool_auido"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/toorbar_audio_default" />
+
+                <TextView
+                    android:id="@+id/realplayer_tool_tv03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="@string/playerview_realplayer_tool_auido"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout>
+			<!-- 云台 -->
+            <LinearLayout
+                android:id="@+id/realplayer_tool_layout04"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:contentDescription="@string/playerview_realplayer_tool_ptz"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/toorbar_ptz_default" />
+                <TextView
+                    android:id="@+id/realplayer_tool_tv04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="@string/playerview_realplayer_tool_ptz"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            
+            <!-- 软硬切换 -->
+            <!-- <LinearLayout
+                android:id="@+id/realplayer_tool_layout06"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#2A88B7"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:orientation="vertical" >
+                <ImageButton
+                    android:id="@+id/realplayer_tool_btn06"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="#2A88B7"
+                    android:clickable="false"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/gpu_false" />
+                <TextView
+                    android:id="@+id/realplayer_tool_tv06"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:gravity="center"
+                    android:text="软硬切换"
+                    android:textColor="#BEBEBE"
+                    android:textSize="12sp" />
+            </LinearLayout> -->
+
+            
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

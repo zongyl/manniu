@@ -163,7 +163,7 @@ public class ImageGridAdapter extends BaseAdapter {
 			holder.selected.setImageResource(R.drawable.icon_data_select);  
 			holder.text.setBackgroundResource(R.drawable.bgd_relatly_line);
 		} else {
-			//holder.selected.setImageResource(-1);
+			holder.selected.setImageResource(-1);
 			holder.text.setBackgroundColor(0x00000000);
 		}
 		if(index == 1){

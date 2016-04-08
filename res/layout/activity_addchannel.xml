@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:navigation="http://schemas.android.com/apk/res/com.vss.laview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fun_bkcolor"
+    android:orientation="vertical" >
+      <!-- <com.vss.vssmobile.UINavigationBar
+        android:id="@+id/navigation_activity_addchannel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        navigation:btn_leftText="@string/navi_back"/> -->
+        
+        <FrameLayout android:id="@+id/hhheader"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/white">
+
+      <Button
+       	    android:id="@+id/btn_back_video"
+       	    android:layout_width="wrap_content"
+       	    android:layout_height="wrap_content"
+       	    android:background="@drawable/common_title_back" 
+       	    android:layout_marginLeft="5dp"
+       	    android:gravity="left"/>
+         
+         <TextView
+       	    android:id="@+id/dev_name"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="设备列表"
+        	android:textSize="18dp"
+        	android:textColor="@color/black"
+        	android:layout_gravity="center|center_horizontal"/>
+         
+    </FrameLayout>
+    
+    
+    <ExpandableListView 
+        android:id="@+id/lv_activity_addchannel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></ExpandableListView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:baselineAligned="true"
+        android:background="#CCCCCC"
+        android:orientation="horizontal" >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="horizontal" >
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/play_addchannel_activity"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/iv_activity_addchannel"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                android:src="@drawable/play" />
+
+            <TextView
+                android:id="@+id/tv_activity_addchannel"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_15"
+                android:textColor="@color/black"
+                android:text="@string/Video_play" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

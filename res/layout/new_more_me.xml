@@ -122,6 +122,13 @@
     	    android:textColor="@color/bk_menu"
     	    android:text="Test by administrator"/>
     	
+    	<Button 
+    	    android:id="@+id/btn_playback"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:textColor="@color/bk_menu"
+    	    android:text="Video Playback"/>
+    	
    </LinearLayout>
 </LinearLayout> 
 </ScrollView>

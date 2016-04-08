@@ -881,7 +881,7 @@ public abstract class VideoStream extends MediaStream {
 		                	if(ret > 0){
 		                		String str = G.BytesToStr(imgByte,0,ret);
 		                		sendImg(str);
-		                		APP.ShowToast(APP.GetString(R.string.SUCCESS_UPLOAD));
+		                		APP.ShowToast(APP.GetString(R.string.COVER_SUCCESS_UPLOAD));
 		                	}
 		                }
 		            } catch (Exception e) {

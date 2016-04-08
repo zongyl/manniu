@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <!-- 视频列表 -->
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
@@ -41,7 +40,6 @@
                 <requestFocus />
             </EditText>
     	</LinearLayout>
-    	
     	<ImageButton
                 android:id="@+id/btnQuery"
                 android:layout_width="wrap_content"
@@ -49,7 +47,6 @@
                 android:background="@null"
                 android:src="@drawable/search" />
     </LinearLayout>
-    
     <com.localmedia.XListViewRewrite
         android:id="@+id/listView1"
         android:layout_width="fill_parent"

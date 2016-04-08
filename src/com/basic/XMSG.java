@@ -49,6 +49,7 @@ public class XMSG {
 	public final static int PLAY_CLOSE_WAIT = 301;
 	public final static int DEVICE_LIST_ISREFRESH = 302;
 	public final static int MSG_LIST_LOAD = 303;//消息列表
+	public final static int MULTI_LIST_LOAD = 304;//多画面列表
 	
 	//回放
 	//public final static int RECORD_UPDATE_SEEKBAR = 400;

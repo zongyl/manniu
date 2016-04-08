@@ -8,6 +8,7 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import P2P.SDK;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,6 +44,7 @@ import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.mining.app.zxing.camera.CameraManager;
 import com.utils.Constants;
+import com.utils.LogUtil;
 import com.views.Main;
 import com.views.NewLogin;
 
@@ -219,27 +221,37 @@ public class QRcode_DecodeActivity extends Activity implements Callback {
 			
 			Map<String, Object> infos = parseCode(result);
 
-			if(infos.containsKey("sn")){
+			if(infos.containsKey("LTS_devId")){//LTS device
+				LogUtil.d(TAG, "LTS device ID:" + infos.get("LTS_devId").toString());
+				byte[] b = new byte[28];
+				String res = SDK.EncodeUuid(b, "US", 0, 2, 1, 0, 0, infos.get("LTS_devId").toString());
+				
+				try {
+					res = new String(b, "ISO-8859-1");
+					LogUtil.d(TAG, "b.tostring:" + res);
+					addDevices(res, "ABCDEF", location);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else if(infos.containsKey("sn")){//zeno device
 				if(infos.containsKey("vn")){
 					String sn = infos.get("sn").toString();
 					String vn = infos.get("vn").toString();
-
 					if("".equals(sn)||sn==null){
-						APP.ShowToast(getString(R.string.notHave_SNInfo));
+						APP.ShowToast(getString(R.string.unrecognized_device));
 					}else{
 						if("".equals(vn)||vn==null){
-							APP.ShowToast(getString(R.string.notHave_VNInfo));
+							APP.ShowToast(getString(R.string.unrecognized_device));
 						}else{
 							addDevices(sn, vn, location);
 						}
 					}
 				}else{
-					APP.ShowToast(getString(R.string.notHave_VNInfo));
+					APP.ShowToast(getString(R.string.unrecognized_device));
 				}
 			}else{
-				APP.ShowToast(getString(R.string.notHave_SNInfo));
+				APP.ShowToast(getString(R.string.unrecognized_device));
 			}
-			
 		}
 		QRcode_DecodeActivity.this.finish();
 		
@@ -261,6 +273,14 @@ public class QRcode_DecodeActivity extends Activity implements Callback {
 				info = str.split(":");
 				if(info.length > 1){
 					infos.put(info[0], info[1]);
+				}
+			}
+		}else{
+			strs = result.split("\r");
+			if(strs.length > 1){
+				if("www.LTSecurityinc.com".equals(strs[0])){
+					LogUtil.d(TAG, "LTS device ID:" + strs[1]);
+					infos.put("LTS_devId", strs[1]);
 				}
 			}
 		}

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.manniu.manniu"
-    android:versionCode="107"
-    android:versionName="1.1.0.7" >
+    android:versionCode="1501"
+    android:versionName="1.5.0.1" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -11,18 +11,14 @@
     <permission android:name="com.manniu.manniu.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
     <uses-permission android:name="com.manniu.manniu.permission.C2D_MESSAGE"/>  
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>  
-    <uses-permission android:name="android.permission.INTERNET"/> 
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>  
     
-    <uses-permission android:name="android.permission.VIBRATE"/>      
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" />
  	<uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/> 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 	<permission
         android:name="com.manniu.manniu.permission.JPUSH_MESSAGE"
@@ -31,13 +27,35 @@
     <!-- Required  一些系统要求的权限，如访问网络等-->
     <uses-permission android:name="com.manniu.manniu.permission.JPUSH_MESSAGE" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <!-- SDK1.5需要android.permission.GET_TASKS权限判断本程序是否为当前运行的应用? -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 这个权限用于进行网络定位-->
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<!-- 这个权限用于访问GPS定位-->
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+	<!-- 用于读取手机当前的状态-->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<!-- 访问网络，网络定位需要上网-->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- SD卡读取权限，用户写入离线定位数据-->
+	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+	<!--允许应用读取低级别的系统日志文件 -->
+	<uses-permission android:name="android.permission.READ_LOGS"/>
     
     <application 
         android:largeHeap="true"
@@ -167,6 +185,11 @@
         </activity>
         
         <activity
+            android:name="com.views.VideoPlayback"
+            android:label="@string/app_name" >
+        </activity>
+        
+        <activity
             android:name="com.adapter.ScanActivity"
             android:label="@string/app_name" >
         </activity>
@@ -266,6 +289,8 @@
        <activity android:name="net.majorkernelpanic.streaming.hw.AnalogvideoActivity"
            android:screenOrientation="landscape"/>
        
+      <!-- <activity android:name="com.views.cloud.MainActivity" /> -->
+       
        <!-- 相册  -->
        <activity android:name="com.views.bovine.Fra_SnapActivity"/>
        <activity android:name="com.localsnap.Fun_ImgGridActivity"/>
@@ -274,6 +299,13 @@
        <activity android:name="com.localmedia.Fun_RecordplayActivity_MediaPlayer"/>
        <!-- 报警录像回放 -->
        <activity android:name="com.views.Fun_RecordPlay" android:screenOrientation="portrait"/>
+       <!-- 多画面实时视频 -->
+       <!-- <activity android:name="com.views.Fun_RealPlayerActivity"/> -->
+       <activity android:name="com.views.Fun_RealPlayerActivity"
+            android:screenOrientation="sensor"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize|layoutDirection">
+       </activity>
+       <activity android:name="com.views.Fun_AddChannelActivity" android:screenOrientation="portrait"/>
  
        <activity
            android:name="com.mob.tools.MobUIShell"
@@ -328,34 +360,6 @@
         android:normalScreens="false"
         android:resizeable="true"
         android:smallScreens="true" />
-      
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" >
-    </uses-permission>
-    <!-- SDK1.5需要android.permission.GET_TASKS权限判断本程序是否为当前运行的应用? -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <!-- 这个权限用于进行网络定位-->
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-	<!-- 这个权限用于访问GPS定位-->
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-	<!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-	<!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-	<!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-	<!-- 用于读取手机当前的状态-->
-	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-	<!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	<!-- 访问网络，网络定位需要上网-->
-	<uses-permission android:name="android.permission.INTERNET" />
-	<!-- SD卡读取权限，用户写入离线定位数据-->
-	<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-	<!--允许应用读取低级别的系统日志文件 -->
-	<uses-permission android:name="android.permission.READ_LOGS"/>
- 
 
     <supports-screens
         android:anyDensity="true"

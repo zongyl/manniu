@@ -54,10 +54,12 @@
 	<string name="del_chose_ask">delete all yes cancel?</string>
 	
     
-    <string name="GW_ERRCODE_SUCESS">成功</string>
+    <string name="GW_ERRCODE_SUCESS">success</string>
     
-    <string name="GW_SESSION_UNLINK">设备掉线</string>
-    <string name="GW_ERRCODE_UNLOGIN">设备未登录</string>
+    <string name="GW_SESSION_UNLINK">Dropping device</string>
+    <string name="GW_ERRCODE_UNLOGIN">Equipment not logged in</string>
+    <string name="GW_ERRCODE_UPGRADE_PROGRAM">APP needs to be upgraded</string>
+    <string name="GW_ERRCODE_DEV_UNSUPORT">Device does not support this feature, it needs to be upgraded.</string>
     
     <string name="GW_ERRCODE_LOGIN_FAILED">登录失败</string>
     <string name="GW_ERRCODE_LOGIN_TIMEOUT">登录超时</string>
@@ -116,7 +118,7 @@
 	<string name="time_error">时间有问题</string>
 
 	<string name="E_SER_FAIL">The current network is poor, please try again later!</string>
-
+	<string name="Err_Last_page">Already the last page!</string>
   	<string name ="default_photo">./images/users/users.jpg</string>
 	<string name="scan_text">The RQ code into the box, you can automatically scan</string>
  	
@@ -138,6 +140,7 @@
  	<string name="setphoto">Avatar setting</string>
  	<string name="camera">Take photo</string>
  	
+ 	<string name="COVER_SUCCESS_UPLOAD">Cover upload success!</string>
  	<string name="SUCCESS_UPLOAD">Upload success!</string>
  	<string name="Err_CONNET">NetWork connection failure!</string>
  	<string name="cancelShare_ask">确认取消分享吗?</string>
@@ -238,6 +241,56 @@
  	<string name="dev_offline">Offline</string>
  	<string name="dev_cancelColl">Cancel Favourite</string>
  	<string name="dev_coverfresh">Refreshing...</string>
+ 	
+ 	<!-- 多画面列表 -->
+ 	<string name="home_chn">Channel</string>
+	<string name="home_select_chn">Please choose channel first</string>
+	
+ 	<!-- 播放器 -->
+    <string name="playerview_realplayer">Monitor</string>
+    <string name="playerview_realplayer_tool_channels">Channels</string>
+    <string name="playerview_realplayer_tool_picture">Screenshot</string>
+    <string name="playerview_realplayer_tool_auido">Talk</string>
+    <string name="playerview_realplayer_tool_ptz">PTZ</string>
+    <string name="playerview_realplayer_tool_video">Record</string>
+    <string name="playerview_realplayer_control_mainstream">HD</string>
+    <string name="playerview_realplayer_control_substream">Fluent</string>
+    <string name="playerview_backplayer">Playback</string>
+    <string name="playerview_zeroplayer">Multi-View</string>
+    <string name="playerview_remoteplayer">Remote</string>
+    
+     <!-- 播放器描述信息 -->
+    <string name="playerview_detailtext_noChooseCH">No Channel</string>
+    <string name="playerview_detailtext_connecting">Connecting</string>
+    <string name="playerview_detailtext_buffering">Buffering</string>
+    <string name="playerview_detailtext_stopped">Stopped</string>
+    <string name="playerview_detailtext_P2PError">Server Disconnection</string>
+    <string name="playerview_detailtext_devFailed">Device Connects Failed</string>
+    <string name="playerview_detailtext_loginFailed">Device Login Failed</string>
+    <string name="playerview_detailtext_pwdError">Password is Error</string>
+    <string name="playerview_detailtext_devLock">Device is Locked</string>
+    <string name="playerview_detailtext_devNoUser">Account dosen\'t exist</string>
+    <string name="playerview_detailtext_devLogged">Account is logged</string>
+    <string name="playerview_detailtext_devTimeout">Device connects timeout</string>
+    <string name="playerview_detailtext_chnFailed">Channel connects failed</string>
+    <string name="playerview_detailtext_chnTimeout">Channel connects timeout</string>
+    <string name="playerview_detailtext_chnNoVideo">No Video</string>
+    <string name="playerview_detailtext_devNoZero">Device doesn\'t Support Multi-view Preview</string>
+    <string name="playerview_detailtext_error02">System Error (2)</string>
+    
+    <!-- Toast内容 -->
+    <string name="toast_oom">Out of memory!Please close unnecessary programs!</string>
+    <string name="stop_talk">Talking,please stop and try again!</string>
+    
+    
+    <!-- 警告框 -->
+    <string name="alertMsg1">Video is loading, please try again later!</string>
+    <string name="alertMsg10">Device supports only %i channels, please replace the channel!</string>
+    <string name="alertMsg13">Recording, stop and exit!</string>
+    <string name="alertMsg17">Please select the channel, then operate it!</string>
+    <string name="alertMsg19">Recording, stop and switch other channel!</string>
+    <string name="alertMsg23">Select the video channel can only choose four channels!</string>
+    <string name="alertMsg35">The channel to switch already exists!</string>
  	
  	<string-array name="device_set_list0">
  	    <item>二维码名片</item>
@@ -377,7 +430,9 @@
         <item>RotateDown</item>
         <item>Accordion</item>
     </string-array>
-
+    
+	<string name="Err_recordvide_null">Alarm video is empty</string>
+	<string name="downloading">Loading alarm video, please wait...</string>
     <string name="action_settings">Settings</string>
     <string name="creat_file_error">Failed to create the file, check the memory card is normal</string>
     <string name="openning_stream">opening video</string>
@@ -439,6 +494,7 @@
 	<string name="FAIL_CANCEL_LIKE">Cancel likes failure</string>
 	<string name="FAIL_CANCEL_COLLECT">Cancel collection failure</string>
 	<string name="SUCCESS_COLLECT">Collection success</string>
+	<string name="ALREADY_COLLECT">Already Collection</string>
 	<string name="SUCCESS_MODIFY">Modify success!</string>
 	<string name="SUCCESS_LOGIN">Login success</string>
 	<string name="CANCEL_COLLECT">Cancel collection</string>
@@ -721,6 +777,7 @@
 	<string name="pwd_modiFail">Failed to modify password!</string>
 	<string name="pwd_oldEmpty">Old password can\'t be empty!</string>
 	<string name="pwd_newEmpty">New password can\'t be empty!</string>
+	<string name="pwd_newidentical">The new password is the same as the old one</string>
 	<string name="pwd_confrimEmpty">Confirm new password can\'t be empty!</string>
 	<string name="pwd_confrimNoMatch">Two times the password is not consistent</string>
 	<string name="declare_devname">No more than 50 characters</string>
@@ -758,6 +815,7 @@
  	<string name="connectclosed_preview">Connection Closed, Is the preview...</string>
  	<string name="nothave_SDCard">没有外置SD卡!</string>
  	<string name="downloadbitmap_failed">获取图片失败</string>
+ 	<string name="unrecognized_device">Unrecognized device!</string>
  	<string name="notHave_SNInfo">没有SN信息</string>
  	<string name="notHave_VNInfo">没有VN信息</string>
  	<string name="unregisterad_sn">序列号不存在</string>
@@ -769,7 +827,7 @@
  	
  	<string name="send_comment">send comment</string>
  	<string name="comment_tip">comment</string>
- 	<string name="profile_tip">profie</string>
+ 	<string name="profile_tip">profile</string>
  	<string name="comment_btn">Say your thoughts</string>
  	<string name="default_address">Manniu</string>
  	<string name="address_pre">Address</string>
@@ -809,6 +867,7 @@
  	<string name="priview">priview</string>
  	<string name="set_success">Setting success!</string>
  	<string name="submit_success">Submit success!</string>
+ 	<string name="notempty">Please input content!</string>
  	
  	<string name="analog_video_update">修改</string>
 	<string name="analog_video_open">开通</string>

@@ -43,7 +43,7 @@
     <RelativeLayout 
         android:id="@+id/record_footer"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
+        android:layout_height="50dp"
         android:layout_gravity="bottom|center"
         android:background="#ae000000"
         android:paddingTop="5dp"
@@ -57,7 +57,7 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical" 
 	    >
-        <LinearLayout
+        <!-- <LinearLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:gravity="center_vertical|center_horizontal"
@@ -80,7 +80,7 @@
 			    xgps:NormalImage="@drawable/reco_stop"
 			    xgps:SelectedImage="@drawable/reco_stop" />
 		
-		</LinearLayout>
+		</LinearLayout> -->
 	
 		<SeekBar
 		    android:id="@+id/seekBar1"

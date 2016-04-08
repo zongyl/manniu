@@ -52,7 +52,6 @@ import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.utils.ExceptionsOperator;
 import com.utils.HttpURLConnectionTools;
-import com.utils.LanguageUtil;
 import com.utils.LogUtil;
 import com.utils.Loger;
 import com.utils.MD5Util;
@@ -134,7 +133,7 @@ public class NewLogin extends Activity implements OnClickListener{
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		ReadUserInfo();
 		_ipPreferences = getSharedPreferences(SplashScreen.HOSTIP, this.MODE_PRIVATE);
-		Constants.hostUrl = _ipPreferences.getString("hostIP", "");
+		//Constants.hostUrl = _ipPreferences.getString("hostIP", "");
 		//连本地服务
 //		Constants.hostUrl = "http://10.12.6.118:8080/NineCloud";
 	}
@@ -342,7 +341,7 @@ public class NewLogin extends Activity implements OnClickListener{
 				message.what = XMSG.LOGIN_NETWORK_ERROR;
 				_handler.sendMessage(message);
 				//重新解析域名
-				updateHostIP();
+				//updateHostIP();
 				LogUtil.i("httpClientUtils", "访问失败" + responseCode);
 			}
 		} catch (Exception e) {
@@ -482,16 +481,12 @@ public class NewLogin extends Activity implements OnClickListener{
 			params.put("alias", param.split(",")[1]);
 			params.put("time_token", param.split(",")[2]);
 			params.put("sessionId", Constants.sessionId+"");
-			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/android/getCompanyInfo",params);
+			Map<String, Object> map = HttpURLConnectionTools.post(Constants.hostUrl + "/jpush/setAlias",params);
 			if (Integer.parseInt(map.get("code").toString()) != 200) {
 				showToast(getResources().getString(R.string.E_SER_FAIL));
 			}
 		} catch (Exception e) {
 		}
-		/*Map<String, Object> map = HttpURLConnectionTools.get(Constants.hostUrl + "/jpush/setAlias"+params);
-		if (Integer.parseInt(map.get("code").toString()) != 200) {
-			showToast(this.getResources().getString(R.string.E_SER_FAIL));
-		}*/
 	}
 	
 	//2.接受消息

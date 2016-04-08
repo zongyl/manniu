@@ -74,6 +74,8 @@ public class NewPwdWriteEdit extends Activity implements OnClickListener{
 			Log.v("输入的新密码",_newPwd );
 			if("".equals(_newPwd)){
 				APP.ShowToast(getString(R.string.pwd_newEmpty));
+			}else if(_newPwd.equals(_oldPwd)){
+				APP.ShowToast(getString(R.string.pwd_newidentical));
 			}else{
 				Log.v("-转向确认密码", _newPwd);
 				msgs.add(_newPwd);

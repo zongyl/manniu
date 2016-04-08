@@ -81,7 +81,8 @@ public class Main extends Activity implements OnClickListener {
 	public final static int XV_NEW_MSG = 1;//牛眼
 	public final static int XV_NEW_WEB = 2;//新版本 . web
 	public final static int XV_NEW_MORE = 3;//新版本 . 更多
-	
+	//public final static int XV_MEDIA = 4;//测试页
+	//public final static int XV_RECORDPLAY = 4;//录像播放
 	
 	//public static List<MenuInfo> menulists;
 	public Button _btnMainMore,
@@ -94,7 +95,8 @@ public class Main extends Activity implements OnClickListener {
 	btn_main_tab_1,//设备
 	//btn_main_tab_2, //收藏
 	btn_main_tab_3,//设备
-	btn_main_tab_4; //收藏
+	btn_main_tab_multi,//多画面
+	btn_main_tab_4; //本地
 	
 	XImageBtn _showMain, btn_me, btn_msg, btn_web, btn_more, btn_add, btn_share, /*btn_share1,*/ btn_webmore, btn_msgedit, btn_qrcode;
 	
@@ -206,11 +208,13 @@ public class Main extends Activity implements OnClickListener {
 		btn_main_tab_1 = (Button)findViewById(R.id.main_tab_1);
 	//	btn_main_tab_2 = (Button)findViewById(R.id.main_tab_2);
 		btn_main_tab_3 = (Button)findViewById(R.id.main_tab_3);
+		btn_main_tab_multi = (Button)findViewById(R.id.main_tab_multi);
 		btn_main_tab_4 = (Button)findViewById(R.id.main_tab_4);
 
 		btn_main_tab_1.setOnClickListener(this);
 	//	btn_main_tab_2.setOnClickListener(this);
 		btn_main_tab_3.setOnClickListener(this);
+		btn_main_tab_multi.setOnClickListener(this);
 		btn_main_tab_4.setOnClickListener(this);
 		//netReceiver = new NetWakeReceiver();
 		_loginThead = new BackLoginThread();
@@ -218,17 +222,13 @@ public class Main extends Activity implements OnClickListener {
 		//_loginThead.waitIDMLogin();
 		
 		//if(NewLogin.instance != null) NewLogin.instance.closeLogin();
-		
-		//_xViews[XV_REALPLAY] = new Fun_RealPlay(this, R.id.fun_realplay, "实时视频");//
-		
 		_xViews[XV_NEW_MAIN] = new NewMain(this, R.id.new_main, APP.GetString(R.string.cloud));
-		
-		_xViews[XV_NEW_MORE] = new NewMoresMe(this, R.id.new_more, APP.GetString(R.string.personel));
-		
-		_xViews[XV_NEW_WEB] = new NewSquare(this, R.id.new_web, APP.GetString(R.string.square));
-		
+//		_xViews[XV_NEW_MAIN] = new Fun_Cloud(this, R.id.fun_cloud, APP.GetString(R.string.niuyan));
 		_xViews[XV_NEW_MSG] = new Fun_AnalogVideo(this, R.id.lay_setting, APP.GetString(R.string.niuyan));
-		
+		_xViews[XV_NEW_WEB] = new NewSquare(this, R.id.new_web, APP.GetString(R.string.square));
+		_xViews[XV_NEW_MORE] = new NewMoresMe(this, R.id.new_more, APP.GetString(R.string.personel));
+		//_xViews[XV_RECORDPLAY] = new Fun_RecordPlay3(this, R.id.fun_recordplay, "录像播放");
+		//_xViews[XV_MEDIA] = new Fun_Cloud(this, R.id.fun_cloud, Constants.childTitle);
 		
 		_curIndex = XV_NEW_MORE;
 		ShowXView(XV_NEW_MAIN);
@@ -328,8 +328,11 @@ public class Main extends Activity implements OnClickListener {
 		return (NewMain)_xViews[XV_NEW_MAIN];
 	}
 	
+	//添加设备成功之后 调此方法
 	public void NewMainreLoad(){
+		NewMain.instance.cache.remove(Constants.userid + "_devices");
 		((NewMain)_xViews[XV_NEW_MAIN]).loadDevList();
+		//((Fun_Cloud)_xViews[XV_NEW_MAIN]).loadDevList();
 	}
 	
 	/**
@@ -354,11 +357,18 @@ public class Main extends Activity implements OnClickListener {
 			return;
 		}
 		
-		if(index == XV_NEW_MSG){
+		if(index == XV_NEW_MSG/* || index == XV_NEW_MAIN*/){ //牛眼或云端 不显示MAIN的主菜单
 			_layoutHead.setVisibility(View.GONE);
 		}else{
 			_layoutHead.setVisibility(View.VISIBLE);
 		}
+		
+		/*if(index == XV_RECORDPLAY){
+			_layoutHead.setVisibility(View.GONE);
+			findViewById(R.id.layOutBottom2).setVisibility(View.GONE);
+		}else{
+			findViewById(R.id.layOutBottom2).setVisibility(View.VISIBLE);
+		}*/
 		
 //		if(index == XV_REALPLAY){
 //			_layoutHead.setVisibility(View.GONE);
@@ -486,21 +496,20 @@ public class Main extends Activity implements OnClickListener {
 					findViewById(R.id.layOutBottom2).setVisibility(View.VISIBLE);
 				}*/
 				break;
-			case R.id.main_tab_1:
-				tab(0);
+			case R.id.main_tab_1://设备
+				//tab(0);
 				((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(0);
 				break;
-			/*case R.id.main_tab_2:
-				tab(1);
-				((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(1);
-				break;*/
-			case R.id.main_tab_3:
-				tab(1);
+			case R.id.main_tab_3://报警
+				//tab(1);
 				((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(1);
 				break;
-			case R.id.main_tab_4:
-				tab(2);
+			case R.id.main_tab_multi://多画面
 				((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(2);
+				break;
+			case R.id.main_tab_4://本地
+				//tab(2);
+				((NewMain)_xViews[XV_NEW_MAIN]).setCurrentItem(3);
 				break;
 			case R.id.btn_addDevice://添加模拟摄像机
 				Intent intent2 = new Intent(Intent.ACTION_VIEW);
@@ -738,6 +747,7 @@ public class Main extends Activity implements OnClickListener {
 		btn_main_tab_1.setTextColor(getResources().getColor(R.color.gray));
 		//btn_main_tab_2.setTextColor(getResources().getColor(R.color.gray));
 		btn_main_tab_3.setTextColor(getResources().getColor(R.color.gray));
+		btn_main_tab_multi.setTextColor(getResources().getColor(R.color.gray));
 		btn_main_tab_4.setTextColor(getResources().getColor(R.color.gray));
 		switch (index) {
 		case 0:
@@ -750,6 +760,9 @@ public class Main extends Activity implements OnClickListener {
 			btn_main_tab_3.setTextColor(getResources().getColor(R.color.blue_menu));
 			break;
 		case 2:
+			btn_main_tab_multi.setTextColor(getResources().getColor(R.color.blue_menu));
+			break;
+		case 3:
 			btn_main_tab_4.setTextColor(getResources().getColor(R.color.blue_menu));
 			break;
 		default:
@@ -913,7 +926,7 @@ public class Main extends Activity implements OnClickListener {
 
 	public void ExitApp(String flag) {
 		try {
-			Log.d(TAG, "main---start   sdk.logout:");
+			LogUtil.d(TAG, "main---start   sdk.logout:");
 			stopUpdateCheck();
 			_loginThead.stop();
 			SDK.Logout();
@@ -923,11 +936,16 @@ public class Main extends Activity implements OnClickListener {
 				_wakeLock.release();
 				_wakeLock = null;
 			}
-			//android.os.Process.killProcess(android.os.Process.myPid());
+			//清空账号下面的报警缓存(报警图片地址默认1小时失效，因此每次退出需要清空)
+			NewMain.instance.cache.remove(Constants.userid + "_msgList");
+			//解决设备掉线后状态不能通知过来 所以要清空，实时取数据
+			NewMain.instance.cache.remove(Constants.userid + "_devices");
+			NewMain.instance = null;
 			BaseApplication.getInstance().exitApp(flag);
 			//点击退出登录返回登录页面不需要关进程
 			if(!"exit".equals(flag))
 				System.exit(0);		// 退出操作
+				//android.os.Process.killProcess(android.os.Process.myPid());
 		} catch (Exception e) {
 			Log.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}
@@ -941,10 +959,12 @@ public class Main extends Activity implements OnClickListener {
 				if ((cur - _lLastBack < 1500)) {
 					this.ExitApp("close");
 				} else {
-					_lLastBack = cur;
-					Toast.makeText(this, getString(R.string.reclick_tip), Toast.LENGTH_SHORT).show();
-//					if(this._curIndex == XV_REALPLAY){
-//						Fun_RealPlay.instance.stop();
+//					if(this._curIndex == XV_RECORDPLAY){
+//						_lastIndex = XV_NEW_MAIN;
+//						this.ShowXView(_lastIndex);
+//					}else{
+						_lLastBack = cur;
+						Toast.makeText(this, getString(R.string.reclick_tip), Toast.LENGTH_SHORT).show();
 //					}
 				}
 			} else {

@@ -1,9 +1,5 @@
 package com.views;
 
-import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,9 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.adapter.HttpUtil;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.manniu.manniu.R;
 import com.utils.Constants;
 import com.views.RecommendSheet.OnRecmSheetSelected;

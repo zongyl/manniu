@@ -1,15 +1,12 @@
 package com.localmedia;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.json.JSONObject;
-
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +34,8 @@ import com.utils.FileUtil;
 import com.utils.HttpURLConnectionTools;
 import com.utils.LogUtil;
 import com.utils.SortUtils;
+import com.views.Main;
+import com.views.NewMain;
 /**
  * 录像适配器
  * @author jianhua
@@ -238,109 +237,111 @@ public class XVideoAdapter extends BaseAdapter {
 		}else{
 			vh = (VideoHolder) vi.getTag();
 		}
-		HashMap<String, String> song = Constants.data.get(position);
-		vh.title.setText(song.get(KEY_TITLE));
-        vh.artist.setText(song.get(KEY_DATE));
-        vh.length.setText(song.get(KEY_LENGTH));
-        String url = song.get(KEY_THUMB_URL);
-        if (!(url.endsWith(".bmp") || url.endsWith(".jpg"))) {
-        	url = url.substring(0, url.length() - 3) + "bmp";
-        	imageLoader.DisplayImage(url, vh.thumb_image);
-		}
-        
-        //视频分享
-        vh.play_upload.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				try {
-					final String path = Constants.data.get(position).get(KEY_THUMB_URL);
-					File file = new File(path);
-					if(file.exists()){
-						long fsize = file.length();
-						if(fsize < 102400){
-							APP.ShowToast(activity.getString(R.string.share_error));
-							return;
-						}
-					}	
-					final EditText editText = new EditText(activity);
-					editText.setText(Constants.data.get(position).get(KEY_TITLE));
-					editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
-					editText.setFocusable(true);
-					new AlertDialog.Builder(activity).setTitle(APP.GetString(R.string.tip_title)).setMessage(APP.GetString(R.string.video_share)).setIcon(R.drawable.help)
-					.setPositiveButton(APP.GetString(R.string.confirm), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							final String title = editText.getText().toString();
-							if(!title.trim().equals("") && title.length() < 21){
-								APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
-								new Thread(new Runnable() {
-									@Override
-									public void run() {//上传视频
-										byte[] tem = SDK.StartupLoadLocalMedia();
-										int ret = 0;
-										String str = "";
-										if(tem != null){
-											ret = FileUtil.readFile(path);//调用上传方法
-											str  = ret+","+path.replace(".mp4", ".bmp")+","+new String(tem)+","+title;
-										}else{
-											ret = -1;
-											str  = ret+","+path.replace(".mp4", ".bmp")+","+1+","+title;
-										}
-										Message msg = new Message();
-										msg.what = SHARE_SEND_MSG;
-										msg.obj = str;
-										_handler.sendMessage(msg);
-									}
-								}).start();
-							}else{
-								APP.ShowToastLong(APP.GetString(R.string.title_tip));
+		if(NewMain.instance.viewPager.getCurrentItem() == 3 && Main.Instance._curIndex == 0){
+			HashMap<String, String> song = Constants.data.get(position);
+			vh.title.setText(song.get(KEY_TITLE));
+	        vh.artist.setText(song.get(KEY_DATE));
+	        vh.length.setText(song.get(KEY_LENGTH));
+	        String url = song.get(KEY_THUMB_URL);
+	        if (!(url.endsWith(".bmp") || url.endsWith(".jpg"))) {
+	        	url = url.substring(0, url.length() - 3) + "bmp";
+	        	imageLoader.DisplayImage(url, vh.thumb_image);
+			}
+	        
+	        //视频分享
+	        vh.play_upload.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					try {
+						final String path = Constants.data.get(position).get(KEY_THUMB_URL);
+						File file = new File(path);
+						if(file.exists()){
+							long fsize = file.length();
+							if(fsize < 102400){
+								APP.ShowToast(activity.getString(R.string.share_error));
+								return;
 							}
-						}
-					}).setView(editText).setNegativeButton(APP.GetString(R.string.cancel),null).show();
-					
-				} catch (Exception e) {
-					return;
-				}
-			}
-		});
-        
-        //播放
-        vh.play_image.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				try {
-//					if(!Main.reconnect){
-//						APP.ShowToastLong("服务器断开连接！");
-//						return;
-//					}
-					String path = Constants.data.get(position).get(KEY_THUMB_URL);
-					File file = new File(path);
-					if(file.exists()){
-						long fsize = file.length();
-						if(fsize < 102400){
-							APP.ShowToast(activity.getString(R.string.smalfile_tip));
-							return;
-						}
-						if(path.length() > 4 && _isOpen){
-							_isOpen = false;
-							Intent intent = new Intent(activity.getApplicationContext(), Fun_RecordplayActivity_MediaPlayer.class);
-							intent.putExtra("fileName", path);
-							activity.startActivity(intent);
-						}else{
-							_isOpen = true;
-							APP.ShowToast(activity.getString(R.string.openVideo_error));
-						}
-					}else{
-						APP.ShowToast(activity.getString(R.string.nofile));
+						}	
+						final EditText editText = new EditText(activity);
+						editText.setText(Constants.data.get(position).get(KEY_TITLE));
+						editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
+						editText.setFocusable(true);
+						new AlertDialog.Builder(activity).setTitle(APP.GetString(R.string.tip_title)).setMessage(APP.GetString(R.string.video_share)).setIcon(R.drawable.help)
+						.setPositiveButton(APP.GetString(R.string.confirm), new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								final String title = editText.getText().toString();
+								if(!title.trim().equals("") && title.length() < 21){
+									APP.showProgressDialog(activity, APP.GetString(R.string.uploading));
+									new Thread(new Runnable() {
+										@Override
+										public void run() {//上传视频
+											byte[] tem = SDK.StartupLoadLocalMedia();
+											int ret = 0;
+											String str = "";
+											if(tem != null){
+												ret = FileUtil.readFile(path);//调用上传方法
+												str  = ret+","+path.replace(".mp4", ".bmp")+","+new String(tem)+","+title;
+											}else{
+												ret = -1;
+												str  = ret+","+path.replace(".mp4", ".bmp")+","+1+","+title;
+											}
+											Message msg = new Message();
+											msg.what = SHARE_SEND_MSG;
+											msg.obj = str;
+											_handler.sendMessage(msg);
+										}
+									}).start();
+								}else{
+									APP.ShowToastLong(APP.GetString(R.string.title_tip));
+								}
+							}
+						}).setView(editText).setNegativeButton(APP.GetString(R.string.cancel),null).show();
+						
+					} catch (Exception e) {
+						return;
 					}
-				} catch (Exception e) {
-					_isOpen = true;
-					APP.ShowToast(activity.getString(R.string.video_failopen));
-					LogUtil.d("XVideoAdapter", ExceptionsOperator.getExceptionInfo(e));
-					return;
 				}
-			}
-		});
+			});
+	        
+	        //播放
+	        vh.play_image.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					try {
+//						if(!Main.reconnect){
+//							APP.ShowToastLong("服务器断开连接！");
+//							return;
+//						}
+						String path = Constants.data.get(position).get(KEY_THUMB_URL);
+						File file = new File(path);
+						if(file.exists()){
+							long fsize = file.length();
+							if(fsize < 102400){
+								APP.ShowToast(activity.getString(R.string.smalfile_tip));
+								return;
+							}
+							if(path.length() > 4 && _isOpen){
+								_isOpen = false;
+								Intent intent = new Intent(activity.getApplicationContext(), Fun_RecordplayActivity_MediaPlayer.class);
+								intent.putExtra("fileName", path);
+								activity.startActivity(intent);
+							}else{
+								_isOpen = true;
+								APP.ShowToast(activity.getString(R.string.openVideo_error));
+							}
+						}else{
+							APP.ShowToast(activity.getString(R.string.nofile));
+						}
+					} catch (Exception e) {
+						_isOpen = true;
+						APP.ShowToast(activity.getString(R.string.video_failopen));
+						LogUtil.d("XVideoAdapter", ExceptionsOperator.getExceptionInfo(e));
+						return;
+					}
+				}
+			});
+		}
 		return vi;
 	}
 	

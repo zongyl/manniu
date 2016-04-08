@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:minHeight="60dp"
+    android:background="@color/fun_bkcolor"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+    </TextView>
+
+    <ImageView
+        android:id="@+id/home_devslist_channel_cell_img"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1.5"
+        android:contentDescription="home_devslist_channel_cell_img"
+        android:scaleType="centerInside"
+        android:src="@drawable/home_dev_pic" />
+
+    <TextView
+        android:id="@+id/home_devslist_channel_cell_txtlabel"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:text="Channel 01" />
+
+    <ImageView
+        android:id="@+id/home_devslist_channel_cell_select_img"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:contentDescription="home_devslist_channel_cell_select_img"
+        android:scaleType="centerInside"
+        android:src="@drawable/home_channel_unchecked" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5" >
+    </TextView>
+
+</LinearLayout>

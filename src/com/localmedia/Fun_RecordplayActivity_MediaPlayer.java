@@ -39,7 +39,7 @@ import android.widget.TextView;
  */
 public class Fun_RecordplayActivity_MediaPlayer extends Activity implements SurfaceHolder.Callback,OnClickListener{
 	
-	private final static String TAG = "[Fun_RecordplayActivity]";
+	private final String TAG = "[Fun_RecordplayActivity]";
 
 	XImageBtn _btnpause,_btnstop,_btnSlow,_btnFast;
 	SurfaceView surfaceView;
@@ -365,11 +365,12 @@ public class Fun_RecordplayActivity_MediaPlayer extends Activity implements Surf
 	}
 	@Override
 	public void onDestroy(){
+		super.onDestroy();
 	    if(mediaPlayer != null) {
 	    	mediaPlayer.release();
 	    	mediaPlayer = null;
 	    }
-	    super.onDestroy();
+	    surfaceView = null;
 	}
 
 	private void play() {
@@ -397,6 +398,7 @@ public class Fun_RecordplayActivity_MediaPlayer extends Activity implements Surf
 				}
 			});
 			mediaPlayer.prepare();
+//			mediaPlayer.prepareAsync();
 			startTimer();
 			// 播放
 			mediaPlayer.start();
@@ -408,7 +410,7 @@ public class Fun_RecordplayActivity_MediaPlayer extends Activity implements Surf
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) { // 处理返回按键
 			onClick(_btnstop);
 		}
