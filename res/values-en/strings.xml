@@ -248,7 +248,7 @@
 	
  	<!-- 播放器 -->
     <string name="playerview_realplayer">Monitor</string>
-    <string name="playerview_realplayer_tool_channels">Channels</string>
+    <!-- <string name="playerview_realplayer_tool_channels">Channels</string> -->
     <string name="playerview_realplayer_tool_picture">Screenshot</string>
     <string name="playerview_realplayer_tool_auido">Talk</string>
     <string name="playerview_realplayer_tool_ptz">PTZ</string>
@@ -276,7 +276,10 @@
     <string name="playerview_detailtext_chnTimeout">Channel connects timeout</string>
     <string name="playerview_detailtext_chnNoVideo">No Video</string>
     <string name="playerview_detailtext_devNoZero">Device doesn\'t Support Multi-view Preview</string>
+    <string name="playerview_detailtext_error01">System Error (1)</string>
     <string name="playerview_detailtext_error02">System Error (2)</string>
+    <string name="playerview_detailtext_error03">System Error (3)</string>
+    <string name="playerview_detailtext_error04">System Error (4)</string>
     
     <!-- Toast内容 -->
     <string name="toast_oom">Out of memory!Please close unnecessary programs!</string>
@@ -291,6 +294,7 @@
     <string name="alertMsg19">Recording, stop and switch other channel!</string>
     <string name="alertMsg23">Select the video channel can only choose four channels!</string>
     <string name="alertMsg35">The channel to switch already exists!</string>
+    <string name="alertMsg56">H.265 Does not support the video</string>
  	
  	<string-array name="device_set_list0">
  	    <item>二维码名片</item>

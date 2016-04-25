@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.afinal.simplecache.ACache;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import P2P.SDK;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,7 +20,6 @@ import android.os.StrictMode;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.adapter.DevAdapter;
 import com.adapter.ExpandableListViewAdapter;
 import com.adapter.Message;

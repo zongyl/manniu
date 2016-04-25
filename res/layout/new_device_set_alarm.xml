@@ -67,19 +67,17 @@
             />
     </RelativeLayout>
       <RelativeLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:background="@color/white" >
     
-    <TextView android:id="@+id/tag"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
@@ -88,7 +86,6 @@
             android:textColor="@color/black" />
         
         <ImageView 
-            android:id="@+id/dev_set_item_switch3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -96,19 +93,17 @@
             />
     </RelativeLayout>
       <RelativeLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:background="@color/white" >
     
-    <TextView android:id="@+id/tag"
+    <TextView 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
@@ -117,132 +112,10 @@
             android:textColor="@color/black" />
         
         <ImageView 
-            android:id="@+id/dev_set_item_switch3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@drawable/my_switch_on"
             />
     </RelativeLayout>
-     <!--  <RelativeLayout
-       android:id="@+id/device_set_alarm_week"
-       android:layout_marginTop="1dp"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="@color/yellow" >
-    
-    <TextView android:id="@+id/tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    
-        <TextView 
-            android:id="@+id/dev_item_ver_tv"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="报警时间"
-            android:textColor="@color/black" />
-        
-        <LinearLayout 
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            >
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-            <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            />
-        </LinearLayout>
-    </RelativeLayout>
-      <RelativeLayout
-       android:id="@+id/device_set_alarm"
-       android:layout_marginTop="1dp"
-        android:layout_width="fill_parent"
-        android:layout_height="150dp"
-        android:background="@color/grayslate" >
-    
-    <TextView android:id="@+id/tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    
-        <TextView 
-            android:id="@+id/dev_item_ver_tv"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="开始时间"
-            android:textColor="@color/black" />
-        
-        <TimePicker 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            />
-    </RelativeLayout>
-      <RelativeLayout
-       android:id="@+id/device_set_alarm"
-       android:layout_marginTop="1dp"
-        android:layout_width="fill_parent"
-        android:layout_height="150dp"
-        android:background="@color/grayslate" >
-    
-    <TextView android:id="@+id/tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    
-        <TextView 
-            android:id="@+id/dev_item_ver_tv"
-            android:layout_height="50dp"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="结束时间 "
-            android:textColor="@color/black" />
-        
-        <TimePicker 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            />
-    </RelativeLayout> -->
-    
 </LinearLayout>

@@ -282,6 +282,13 @@ public class ViESurfaceRenderer{
             			if(monitor == null) return;
             			// 计算流量
     					monitor.setCurChnDataFlow(realLen);
+    					
+    					//多画面时 如果放大了 别的窗口不用调画图片方法
+						if(Fun_RealPlayerActivity.instance.m_isFullView && Fun_RealPlayerActivity.instance.m_monitorsList.size() > 0){
+							if(monitor != Fun_RealPlayerActivity.instance.m_chooseMonitor){
+								return;
+							}
+						}
             			Lock lock = monitor.getDecoder_lock();
         				lock.lock();
             			if(videobitmap._byteBuffer == null)
@@ -291,16 +298,14 @@ public class ViESurfaceRenderer{
             			
             			//截图
             			if(Fun_RealPlayerActivity.instance.isShot && SDK._shotContext == SDK.GetChannelPlayContext(deviceChannelID)){
-            				System.out.println(Fun_RealPlayerActivity.instance.m_chooseIndex +"   "+deviceChannelID);
             				Fun_RealPlayerActivity.instance.screenshot(videobitmap._bitmap);
-            				//Fun_RealPlayerActivity.instance.isShot = false;
                     	}
             			
             			if(monitor.getAVDecoder()!=null){
             				if(monitor.getAVDecoder().isCanDecode() == true){
             					monitor.getAVDecoder().close();
             				}
-            				monitor.getAVDecoder().release();
+            				//monitor.getAVDecoder().release();
             			}
             			if(monitor.getSoftDecoder()!=null){
             				monitor.getSoftDecoder().AddDecoderData(videobitmap._bitmap);

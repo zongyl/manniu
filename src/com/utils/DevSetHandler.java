@@ -11,6 +11,7 @@ import android.os.Message;
 import com.alibaba.fastjson.JSONObject;
 import com.basic.APP;
 import com.manniu.manniu.R;
+import com.views.Fun_RecordPlay;
 import com.views.NewDeviceSet;
 
 /**
@@ -54,10 +55,9 @@ public class DevSetHandler extends Handler{
 			LogUtil.d(TAG, "设备不在线!");
 			APP.ShowToast(APP.GetString(R.string.GW_ERRCODE_P2P_DEST_DISCONNECT));
 			break;
-//		case 4:
-//			long context = (Long) msg.obj;
-//			SDK.SetDecoderModel(1,context);
-//			break;
+		case 4:
+			if(Fun_RecordPlay.instance != null) Fun_RecordPlay.instance.stop();
+			break;
 		default:
 			break;
 		}

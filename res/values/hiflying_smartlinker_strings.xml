@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="hiflying_smartlinker_ssid">SSID:</string>
+    <string name="hiflying_smartlinker_password">Password:</string>
+    <string name="hiflying_smartlinker_start">Start</string>
+    <string name="hiflying_smartlinker_waiting">Waiting&#8230;</string>
+    <string name="hiflying_smartlinker_timeout">Time Out!</string>
+    <string name="hiflying_smartlinker_completed">SmartLink completed</string>
+    <string name="hiflying_smartlinker_new_module_found" formatted="false">New smart linked module: Mac-%s Ip-%s</string>
+    <string name="hiflying_smartlinker_no_wifi_connectivity">No Wifi Connectivity</string>
+</resources>

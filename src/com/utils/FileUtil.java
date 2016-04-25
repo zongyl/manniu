@@ -219,11 +219,9 @@ public class FileUtil {
 		return ConvertStringToBoolean(ConvertObjectToString(objValue, "true"),defaultValue);
 	}
 
-	public static boolean ConvertStringToBoolean(String strValue,
-			boolean defaultValue) {
+	public static boolean ConvertStringToBoolean(String strValue,boolean defaultValue) {
 		boolean blnRet = defaultValue;
 		blnRet = Boolean.parseBoolean(strValue);
-		System.out.println("2016.03.29TEST ConvertStringToBoolean   strValue:"+ strValue + ";blnRet:" + blnRet);
 		return blnRet;
 	}
 	

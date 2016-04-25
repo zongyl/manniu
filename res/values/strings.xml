@@ -294,7 +294,9 @@
     <string name="playerview_realplayer_tool_video">录像</string>
     <string name="playerview_realplayer_control_mainstream">高清</string>
     <string name="playerview_realplayer_control_substream">流畅</string>
-    <string name="alertMsg56">H.265暂不支持录像</string>
+    <string name="playerview_backplayer">远程回放</string>
+    <string name="playerview_zeroplayer">零通道预览</string>
+    <string name="playerview_remoteplayer">远程遥控器</string>
     
      <!-- 播放器描述信息 -->
     <string name="playerview_detailtext_noChooseCH">未选择通道</string>
@@ -313,7 +315,10 @@
     <string name="playerview_detailtext_chnTimeout">通道连接超时</string>
     <string name="playerview_detailtext_chnNoVideo">无录像</string>
     <string name="playerview_detailtext_devNoZero">设备不支持零通道预览</string>
+    <string name="playerview_detailtext_error01">系统错误 (1)</string>
     <string name="playerview_detailtext_error02">系统错误 (2)</string>
+    <string name="playerview_detailtext_error03">系统错误 (3)</string>
+    <string name="playerview_detailtext_error04">系统错误 (4)</string>
     
      <!-- Toast内容 -->
     <string name="toast_oom">运行内存不足，请关闭不必要的程序</string>
@@ -327,6 +332,7 @@
     <string name="alertMsg19">正在录像，请停止后再切换通道！</string>
     <string name="alertMsg23">选择视频通道最多只能选4个！</string>
     <string name="alertMsg35">切换的通道已存在！</string>
+    <string name="alertMsg56">H.265暂不支持录像</string>
  	
  	
  	<!-- 下拉刷新 -->

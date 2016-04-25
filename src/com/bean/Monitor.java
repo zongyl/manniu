@@ -112,10 +112,14 @@ public class Monitor implements Serializable
 	public SoftDecoder getSoftDecoder() {
 		if (softDecoder == null) {
 			softDecoder = new SoftDecoder();
-			softDecoder.StartDecoder();
+			//softDecoder.StartDecoder();
 			softDecoder.SetMonitor(this);
 		}
 		return softDecoder;
+	}
+	
+	public void clearSoftDecoder(){
+		softDecoder = null;
 	}
 	
 	public boolean getCanShot()

@@ -67,28 +67,9 @@ public class SoftDecoder {
 		if(nLength == 0){
 			return;
 		}
-		/*long t1 = System.currentTimeMillis();
-		if(bmpBuff == null || nWidth != oldWidth || nHeight!= oldHeight)
-		{
-			bmpBuff = new byte[nWidth * nHeight * 2];			
-		}
-		if (bmpBuff != null) {
-			System.arraycopy(data, 0, bmpBuff, 0, nWidth
-					* nHeight * 2);
-			byteBuffer = ByteBuffer.wrap(data);
-			oldWidth = nWidth;
-			oldHeight = nHeight;
-			haveNewData=true;
-		}	
-		long t2 = System.currentTimeMillis();
-		System.out.println("20160324TEST  AddDecoderData TimeMillis:"+(t2-t1));
-		DrawH265();*/
 		
 	}
 	public void AddDecoderData(Bitmap bitmap){
-//		Monitor monitor = SDK.GetChannelMonitor(deviceChannelID);
-//		Lock lock = monitor.getDecoder_lock();
-//		lock.lock();
 		if (bitmap == null) return;
 		try {
 			Canvas videoCanvas = surfaceHolder.lockCanvas();
@@ -103,9 +84,6 @@ public class SoftDecoder {
 		} catch (Exception e) {
 			//LogUtil.e(TAG,ExceptionsOperator.getExceptionInfo(e));
 		}
-		//bmp = bitmap;
-		//DrawBitmap();
-		//lock.unlock();
 	}
 	
 	public void DrawBitmap() {

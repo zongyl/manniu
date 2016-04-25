@@ -302,9 +302,7 @@ public class Fun_RecordPlay extends Activity implements SurfaceHolder.Callback,O
     			LogUtil.d(TAG, "2..stop start...."+" _alarmContext = "+_alarmContext);
     			isClose = true;
         		SDK.CurldownloadFinish(_alarmContext);
-        		LogUtil.d(TAG, "2..stop start..1.1..");
-        		//SDK.CleanPool();
-        		LogUtil.d(TAG, "2..stop start...1.2.");
+        		//LogUtil.d(TAG, "2..stop start..1.1..");
         		stopTimer();
         		seekbar.setProgress(0);
     			Fun_RecordPlay.this.finish();

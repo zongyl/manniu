@@ -15,6 +15,7 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 import android.view.Surface;
 
 
@@ -171,6 +172,17 @@ public class DecoderDebugger {
 		}
 	}
 	
+	/**
+	 * 释放解码器
+	 */
+	public void release2() {
+		if (!isRelease) {
+			Log.v("debug", "....mediaThread.release...."+mediaCodecDecode);
+			mediaCodecDecode.release();
+			isRelease = true;
+		}
+	}
+	
 	//初始化解码器  MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar
 	public void configureDecoder2(int framerate,int bitrate,int _width,int _height){
 		try {
@@ -231,7 +243,6 @@ public class DecoderDebugger {
 				canDecode = false;
 				release();
 				isRelease=true;
-				//SDK.SetDecoderModel(1);
 			}*/
 			//end.....
 			
@@ -270,13 +281,17 @@ public class DecoderDebugger {
 			//end.....
 		} catch (Exception e) {
 			errorCount ++;
-			if(NewMain.devType == 1 && errorCount > 2){//IPC
+			if(NewSurfaceTest.instance != null && NewMain.devType == 1 && errorCount > 2){//IPC
 				errorCount = 0;
 				canDecode = false;
 				release();
 				//不支持硬解 图标变成不可点击
 				NewSurfaceTest.instance.showGpu();
-				SDK.SetDecoderModel(1);
+				SDK.SetDecoderModel(1,SDK._sessionIdContext);
+			}else if(errorCount > 50){
+				errorCount = 0;
+				canDecode = false;
+				release();
 			}else{
 				flag = 0;
 				ret = -1;

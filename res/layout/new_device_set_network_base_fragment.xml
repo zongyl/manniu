@@ -50,7 +50,6 @@
         
     </RelativeLayout>
       <LinearLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -58,26 +57,12 @@
         android:background="@color/white" >
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="80dp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="@string/ip"
             android:textColor="@color/black" />
-        
-        <!--  <EditText 
-             android:id="@+id/dev_name_et"
-             android:layout_width="260dp"
-             android:layout_height="30dp"
-             android:layout_marginLeft="20dp"
-             android:layout_marginTop="10dp"
-             android:layout_toRightOf="@id/dev_name_label"
-             android:hint="device name"
-             android:cursorVisible="true"
-             android:textColor="@color/black"
-             android:background="@drawable/radius_corner"
-             /> -->
         
         <EditText 
             android:id="@+id/dev_set_base_network_ip"
@@ -87,7 +72,6 @@
             android:background="@drawable/radius_corner"/>
     </LinearLayout>
       <LinearLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -95,7 +79,6 @@
         android:background="@color/white" >
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="80dp"
             android:gravity="center_vertical"
@@ -111,7 +94,6 @@
             android:background="@drawable/radius_corner"/>
     </LinearLayout>
       <LinearLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -119,7 +101,6 @@
         android:background="@color/white" >
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="80dp"
             android:gravity="center_vertical"
@@ -136,7 +117,6 @@
     </LinearLayout>
       
       <LinearLayout
-       android:id="@+id/device_set_alarm"
        android:layout_marginTop="1dp"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -144,7 +124,6 @@
         android:background="@color/white" >
     
         <TextView 
-            android:id="@+id/dev_item_ver_tv"
             android:layout_height="50dp"
             android:layout_width="80dp"
             android:gravity="center_vertical"

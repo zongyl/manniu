@@ -7,45 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import P2P.SDK;
-import P2P.ViESurfaceRenderer;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Rect;
-import android.media.AudioTrack;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver.OnPreDrawListener;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.adapter.ChannelPageAdapter;
 import com.basic.APP;
 import com.basic.OnDoubleClick;
@@ -61,6 +22,47 @@ import com.utils.LogUtil;
 import com.utils.SdCardUtils;
 import com.views.analog.camera.encode.DecoderDebugger;
 import com.views.bovine.Fun_AnalogVideo;
+import P2P.SDK;
+import P2P.ViESurfaceRenderer;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.PorterDuff.Mode;
+import android.media.AudioTrack;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver.OnPreDrawListener;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SlidingDrawer;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 
 /**
  * @author: li_jianhua Date: 2016-3-29 上午10:48:22
@@ -68,6 +70,7 @@ import com.views.bovine.Fun_AnalogVideo;
  * Description：多画面 实时视频
  */
 
+@SuppressLint("DefaultLocale")
 public class Fun_RealPlayerActivity extends Activity{
 	private String TAG = Fun_RealPlayerActivity.class.getSimpleName();
 	public static Fun_RealPlayerActivity instance = null;
@@ -75,15 +78,15 @@ public class Fun_RealPlayerActivity extends Activity{
 	private final int MAX_PLAYVIEWNUM = 4;
 	private final int MAX_IMG_BUFFER_SIZE =2560*1600*3;//704*576*3;//
 	private final int MIN_IMG_BUFFER_SIZE=1280*720*3;//1280*720*3;
-	private final int INIT_SINGLE_CONTROLS = 1;
-	private final int PLAYING_SINGLE_CONTROLS = 2;
+	private final int INIT_SINGLE_CONTROLS = 1;//单画面：打开进度条
+	private final int PLAYING_SINGLE_CONTROLS = 2;//单画面：隐藏加载进度条
 	private final int STOP_SINGLE_CONTROLS = 3;
-	private final int PLAYING_SINGLE_BUTTONS = 4;
-	private final int FAIL_PLAYING_SINGLE_BUTTONS = 5;
-	private final int STOP_SINGLE_BUTTONS = 6;
+//	private final int PLAYING_SINGLE_BUTTONS = 4;
+//	private final int FAIL_PLAYING_SINGLE_BUTTONS = 5;
+//	private final int STOP_SINGLE_BUTTONS = 6;
 	private final int INIT_MULTI_CONTROLS = 11;
-	private final int INIT_EACHVIEW_CONTROLS = 12;
-	private final int PLAYING_EACHVIEW_CONTROLS = 13;
+	private final int INIT_EACHVIEW_CONTROLS = 12;//多画面：打开进度条
+	private final int PLAYING_EACHVIEW_CONTROLS = 13;//多画面：隐藏加载进度条
 	private final int STOP_EACHVIEW_CONTROLS = 14;
 	private final int CLOSE_EACHVIEW_CONTROLS = 15;
 	private final int PLAYING_EACHVIEW_BUTTONS = 16;
@@ -113,6 +116,7 @@ public class Fun_RealPlayerActivity extends Activity{
 	View m_multiPlayView = null;
 	/** 单路绘图视图 */
 	SurfaceView m_singleSurface = null;
+	int _verticalScreenWidth = 0,_verticalScreenHeigth = 0 ;//竖屏宽
 	/** 多路播放子视图 */
 	View m_multiPlayView01 = null;
 	View m_multiPlayView02 = null;
@@ -206,13 +210,13 @@ public class Fun_RealPlayerActivity extends Activity{
 	 *         1:注册成功 -21:注册失败（已存在） 请求视频请求 -1:主连接不存在 -2:通道连接不存在 -11:请求视频数据发送失败
 	 *         -12:请求视频回调超时 1:请求视频成功 -21:请求视频失败
 	 */
-	List<Monitor> m_monitorsList = null;
-	Monitor m_chooseMonitor = null;
+	public List<Monitor> m_monitorsList = null;
+	public Monitor m_chooseMonitor = null;
 	/**
 	 * 正在录制视频的monitor
 	 */
 	Monitor record_monitor = null;
-	boolean m_isFullView = false;
+	public boolean m_isFullView = false;//是否全屏
 	Rect m_fullViewRect = null;
 	/**
 	 * 正在录制视频的index
@@ -270,10 +274,11 @@ public class Fun_RealPlayerActivity extends Activity{
 	/** 通道选择适配器 */
 	private ChannelPageAdapter channelPageAdapter;
 	//private boolean _isGpu = true;//软硬切换 默认走硬解
-	FrameLayout _hreadframeLayout;//标题头,_playview4ui
+	FrameLayout _hreadframeLayout,_playview4ui;//标题头
 	LinearLayout _bottomMemo,_playview01and02,_playview03and04;//底部菜单
 	//LinearLayout _LinearLayout4ui;
 	RelativeLayout _middleMenu;//中间菜单
+	LinearLayout.LayoutParams params;
 	
 	/** 码流相关 总流量 */
 	long m_totalDataFlow = 0;
@@ -304,7 +309,8 @@ public class Fun_RealPlayerActivity extends Activity{
 //		}
 			
 		_hreadframeLayout = (FrameLayout) this.findViewById(R.id.hhheader);
-		//_playview4ui = (FrameLayout) this.findViewById(R.id.playview_4ui);
+		_playview4ui = (FrameLayout) this.findViewById(R.id.frame_playview_4ui);
+		params = (LinearLayout.LayoutParams)_playview4ui.getLayoutParams();
 		_bottomMemo = (LinearLayout) this.findViewById(R.id.realplayer_bottom_tool);
 		_middleMenu = (RelativeLayout) this.findViewById(R.id.center_menu);
 		_playview01and02 = (LinearLayout) this.findViewById(R.id.playview01and02);
@@ -397,6 +403,9 @@ public class Fun_RealPlayerActivity extends Activity{
 							newHeight = eventheight;
 							m_singleMonitor.setDrawRect(new Rect(0, 0,eventwidth, eventheight));
 							m_singleSurface.getViewTreeObserver().removeOnPreDrawListener(this);
+							_verticalScreenWidth = _playview4ui.getWidth();
+							_verticalScreenHeigth = _playview4ui.getHeight();
+							System.out.println(_playview4ui.getWidth()+"--"+_playview4ui.getHeight());
 							return true;
 						}
 					});
@@ -682,12 +691,11 @@ public class Fun_RealPlayerActivity extends Activity{
 						dataFlowArray.remove(0);
 					}
 					dataFlowArray.add(dataFlowEachSecond);
-
+					
 					long dataFlowBefore = 0;
 					for (int i = 0; i < dataFlowArray.size(); i++) {
 						dataFlowBefore += dataFlowArray.get(i);
 					}
-
 					dataFlowEachSecond = dataFlowBefore / dataFlowArray.size();
 
 					monitor.dataFlowEachSecond = dataFlowEachSecond;
@@ -702,7 +710,6 @@ public class Fun_RealPlayerActivity extends Activity{
 					curVideoBPS = dataFlowEachSecond1 + dataFlowEachSecond2
 							+ dataFlowEachSecond3 + dataFlowEachSecond4;
 				}
-
 				String dataStr = String.format("Rate: %2.2fKbps,Total:%.2fMB",
 						curVideoBPS * 8 / 1024, dataMB);
 
@@ -869,33 +876,37 @@ public class Fun_RealPlayerActivity extends Activity{
 		}
 	}
 	
+	/** 刷新通道监听接口 */
 	private class OnRefreshButtonClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			switch (v.getId()) {
-			case R.id.realplayer_single_refresh: {
-				btnRefreshClick(-1);
-			}
-				break;
-			case R.id.realplayer_multi_refresh01: {
-				btnRefreshClick(1);
-			}
-				break;
-			case R.id.realplayer_multi_refresh02: {
-				btnRefreshClick(2);
-			}
-				break;
-			case R.id.realplayer_multi_refresh03: {
-				btnRefreshClick(3);
-			}
-				break;
-			case R.id.realplayer_multi_refresh04: {
-				btnRefreshClick(4);
-			}
-				break;
+			try {
+				switch (v.getId()) {
+				case R.id.realplayer_single_refresh: {
+					btnRefreshClick(-1);
+				}
+					break;
+				case R.id.realplayer_multi_refresh01: {
+					btnRefreshClick(1);
+				}
+					break;
+				case R.id.realplayer_multi_refresh02: {
+					btnRefreshClick(2);
+				}
+					break;
+				case R.id.realplayer_multi_refresh03: {
+					btnRefreshClick(3);
+				}
+					break;
+				case R.id.realplayer_multi_refresh04: {
+					btnRefreshClick(4);
+				}
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -976,12 +987,12 @@ public class Fun_RealPlayerActivity extends Activity{
 	//软解时截图
 	public void screenshot(Bitmap bitmap){
 		long fileLong = snapPic(bitmap, _fileName);
-		if(fileLong >= 102400){// || NewMain.devType == 4
+		if(fileLong >= 51200){// || NewMain.devType == 4
 			isShot = false;
 			if(_fileName.indexOf("images") != -1){
 				SDK._shotContext = -1;
 			}
-			((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
+			//((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
 		}
 	}
 	//硬解时截图
@@ -999,14 +1010,14 @@ public class Fun_RealPlayerActivity extends Activity{
 							SDK._shotContext = -1;
 						}
 						m_imageBitmap = null;
-						((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
+						//((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
 					}
 				}
 			}else{
 				isShot = false;
 				screenCount=0;
 				controlHandler.sendEmptyMessage(100);
-				((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
+				//((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(true);
 			}
 		} catch (Exception e) {
 		}
@@ -1061,7 +1072,7 @@ public class Fun_RealPlayerActivity extends Activity{
 					Toast.makeText(Fun_RealPlayerActivity.this,R.string.Video_snap_error, Toast.LENGTH_SHORT).show();
 				} else {
 					Device devInfo = monitor.getDevCart().getDeviceInfo();
-					((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(false);
+					//((ImageButton) m_toolView02.findViewById(R.id.realplayer_tool_btn02)).setClickable(false);
 					SDK._shotContext = SDK.GetChannelPlayContext(devInfo.sid, monitor.getDevCart().getChannelNum()-1);
 					_fileName = getFileName(devInfo.devname);
 					isShot = true;
@@ -1224,9 +1235,9 @@ public class Fun_RealPlayerActivity extends Activity{
 	public void btnStopClick() {
 		if (m_devNum == 1) {
 			Monitor monitor = m_singleMonitor;
-			int devID = monitor.getDevID();
-			int chnNum = monitor.getDevCart().getChannelNum();
-			int isSubStream = monitor.getIsSubStream();
+//			int devID = monitor.getDevID();
+//			int chnNum = monitor.getDevCart().getChannelNum();
+//			int isSubStream = monitor.getIsSubStream();
 			monitor.setPlay_status(0);
 			// 播放和暂停按钮
 			disableStreamButton();
@@ -1244,9 +1255,9 @@ public class Fun_RealPlayerActivity extends Activity{
 				return;
 
 			if (m_chooseIndex > 0) {
-				int devID = m_chooseMonitor.getDevID();
-				int chnNum = m_chooseMonitor.getDevCart().getChannelNum();
-				int isSubStream = m_chooseMonitor.getIsSubStream();
+//				int devID = m_chooseMonitor.getDevID();
+//				int chnNum = m_chooseMonitor.getDevCart().getChannelNum();
+//				int isSubStream = m_chooseMonitor.getIsSubStream();
 
 				// 播放和暂停按钮
 				Message msg = new Message();
@@ -1446,6 +1457,7 @@ public class Fun_RealPlayerActivity extends Activity{
 	}
 	
 	private void enlargePlayView2(int index){
+		SDK.ClearChannelIFrameStatus();
 		switch (index) {
 		case 0: 
 			if(m_isFullView){
@@ -1480,8 +1492,10 @@ public class Fun_RealPlayerActivity extends Activity{
 				_playview03and04.setVisibility(View.VISIBLE);
 			}else{
 				m_isFullView = true;
-				m_multiPlayView01.setVisibility(View.GONE);
+				m_surface01.clearAnimation();
+				m_surface01.clearFocus();
 				m_surface01.setVisibility(View.GONE);
+				m_multiPlayView01.setVisibility(View.GONE);
 				m_multiPlayView03.setVisibility(View.GONE);
 				m_surface03.setVisibility(View.GONE);
 				m_multiPlayView04.setVisibility(View.GONE);
@@ -1534,6 +1548,35 @@ public class Fun_RealPlayerActivity extends Activity{
 		default:
 			break;
 		}
+		//软解时重置画布
+		m_chooseMonitor.clearSoftDecoder();
+		
+		/*int play_state = m_chooseMonitor.getPlay_status();
+		// boolean isRecord = m_chooseMonitor.isRecord();
+		if (play_state == -1) {
+			disableCloseButton();
+		} else if (play_state == 0) {
+			enableCloseButton();
+		} else if (play_state == 1) {
+			enableCloseButton();
+		}
+		
+		try{
+			m_chooseMonitor.setImageData(null);
+			m_chooseMonitor.setImageData(new byte[MAX_IMG_BUFFER_SIZE]);
+		}catch(OutOfMemoryError e){
+			showAlertDialog(R.string.toast_oom);
+			for(int i=0;i<m_monitorsList.size();i++){
+				if(m_monitorsList.get(i).getAVDecoder()!=null){
+					m_monitorsList.get(i).getAVDecoder().release();
+					m_monitorsList.get(i).setAVDecoder(null);
+				}
+			}
+			return;
+		}
+		
+		disableCloseButton();
+		EnablePlayViewButtons(m_chooseMonitor);*/
 		
 	}
 	
@@ -1805,7 +1848,40 @@ public class Fun_RealPlayerActivity extends Activity{
 			e.printStackTrace();
 		}
 	}
-	
+	/** 显示等待画面 */
+	private void showProgressBar(int tag) {
+		ProgressBar progress = null;
+		int i = tag;
+		switch (tag) {
+		case -1:
+			progress = m_singleProgressBar;
+			i = 0;
+			break;
+		case 1:
+			progress = m_multiProgressBar01;
+			break;
+		case 2:
+			progress = m_multiProgressBar02;
+			break;
+		case 3:
+			progress = m_multiProgressBar03;
+			break;
+		case 4:
+			progress = m_multiProgressBar04;
+			break;
+
+		default:
+			break;
+		}
+
+		try
+		{
+		progress.setVisibility(View.VISIBLE);
+		progress_show[i] = View.VISIBLE;
+		} catch (Exception e) {
+			e.printStackTrace();			
+		} 
+	}
 	/** 隐藏等待画面 */
 	private void hideProgressBar(int tag) {
 		ProgressBar progress = null;
@@ -1987,6 +2063,7 @@ public class Fun_RealPlayerActivity extends Activity{
 		m_addchannel04.setOnClickListener(onClick);
 	}
 	
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -2031,10 +2108,9 @@ public class Fun_RealPlayerActivity extends Activity{
 			}
 			
 			startMultiLoginRequestVideoThread();
-		}
-		else if(resultCode == 2)
-		{
-			startMultiLoginRequestVideoThread();			
+		}else if(resultCode == 2){
+			startMultiLoginRequestVideoThread();
+			defaultChoose();
 		}
 	}
 	/** 隐藏重载画面 */
@@ -2163,6 +2239,51 @@ public class Fun_RealPlayerActivity extends Activity{
 			}
 		}
 	}
+	//单路 刷新视频
+	private void refreshStartMNRealPlay(DevCart devCart,DecoderDebugger avdecoder,Monitor monitor,int nWinIndex,boolean blnSingle){
+		if(devCart.getDeviceInfo()!=null){
+			//int nGetCount =0;
+			//if(HttpCenter.getMNDeviceIsOnLine(devCart.getDeviceInfo().getUuid())){
+				//System.out.println("2016.04.08TEST    StartMNRealPlay____在线"+devCart.getDeviceInfo().getUuid()+"===="+devCart.getChannelNum());
+				StartMNRealPlay(devCart.getDeviceInfo().sid, devCart.getChannelNum(), devCart.getDeviceInfo().online == 1, avdecoder, monitor, nWinIndex, blnSingle);				
+			/*}
+			else
+			{
+				System.out.println("2016.04.08TEST    StartMNRealPlay____不在线"+devCart.getDeviceInfo().getUuid()+"===="+devCart.getChannelNum());
+				if(monitor!=null)
+				{
+					monitor.setPlay_status(0);
+				}
+				Message msg = new Message();
+				msg.what = SHOW_CONNECTSUBTODEVICE_STATE;
+				Bundle bundle = new Bundle();
+				bundle.putInt("tag", nWinIndex);
+				bundle.putInt("state", -2);//-2,-3
+				msg.setData(bundle);
+				controlHandler.sendMessage(msg);
+			}*/
+		}
+	}
+	
+	/** 请求视频线程 */
+	private void runMultiRequestVideoThread(int sender) {
+		Monitor monitor = m_monitorsList.get(sender - 1);
+		Message msg = null;
+		Bundle bundle = null;
+		DevCart devCart = monitor.getDevCart();
+		msg = new Message();
+		msg.what = INIT_EACHVIEW_CONTROLS;
+		bundle = new Bundle();
+		bundle.putInt("tag", sender);
+		msg.setData(bundle);
+		controlHandler.sendMessage(msg);
+		monitor.setCanChangeChn(false);
+		
+		StartMNRealPlay(devCart, monitor.getAVDecoder(), monitor, sender,false);
+		// 完成登录操作，无论成功失败
+		monitor.setCanChangeChn(true);
+	}
+	
 	//停止蛮牛的实时播放
 	private void StopMNRealPlay(DevCart devCart) {
 		if (devCart != null && devCart.getDeviceInfo() != null) {
@@ -2604,9 +2725,9 @@ public class Fun_RealPlayerActivity extends Activity{
 
 		monitor.setPlay_status(-1);
 
-		int devID = monitor.getDevID();
-		int chnNum = monitor.getDevCart().getChannelNum();
-		int isSubStream = monitor.getIsSubStream();
+//		int devID = monitor.getDevID();
+//		int chnNum = monitor.getDevCart().getChannelNum();
+//		int isSubStream = monitor.getIsSubStream();
 		// 关闭通道
 		/*m_zlvss.devmanager_stopVideoFromDevice_devID(devID, chnNum, isSubStream);
 		Lock lock = monitor.getDecoder_lock();
@@ -2646,7 +2767,7 @@ public class Fun_RealPlayerActivity extends Activity{
 		} else {//多路
 			Monitor monitor = m_monitorsList.get(tag - 1);
 			monitor.setPlay_status(-1);
-			//startMultiRequestVideoThread(tag);
+			startMultiRequestVideoThread(tag);
 		}
 	}
 	public void startSingleLoginRequestVideoThread() {
@@ -2672,9 +2793,8 @@ public class Fun_RealPlayerActivity extends Activity{
 	private void runSingleLoginRequestVideoThread(int sender)
 			throws InterruptedException {
 		// 若sender = 1，则断开连接，重新连接。
-		int tag = sender;
-
-		boolean isTimeout = false; // 视频数据是否超时
+//		int tag = sender;
+//		boolean isTimeout = false; // 视频数据是否超时
 		Message msg = null;
 		Bundle bundle = null;
 
@@ -2684,7 +2804,7 @@ public class Fun_RealPlayerActivity extends Activity{
 		// 通过devInfo获取devID
 		DevCart devCart = m_singleMonitor.getDevCart();
 		Device deviceInfo = devCart.getDeviceInfo();
-		if(deviceInfo.type == 1){
+		if(deviceInfo.type == 1 || deviceInfo.type == 4){
 			StartMNRealPlay(devCart,m_avdecoder, m_singleMonitor,-1,true);
 		}
 
@@ -2704,19 +2824,31 @@ public class Fun_RealPlayerActivity extends Activity{
 		StartMNRealPlay(devCart.getDeviceInfo().sid, devCart.getChannelNum(), devCart.getDeviceInfo().online == 1, avdecoder, monitor, nWinIndex, blnSingle);
 	}
 
-	private void StartMNRealPlay(final String strUUID, final int nChannelIndex,
-			final boolean blnOnLine, final DecoderDebugger avdecoder,
-			final Monitor monitor, final int nWinIndex, boolean blnSingle) {
+	private void StartMNRealPlay(final String strUUID, final int nChannelIndex,final boolean blnOnLine, final DecoderDebugger avdecoder,final Monitor monitor, final int nWinIndex, final boolean blnSingle) {
 		// 蛮牛设备的请求视频处理
 		new Thread() {
 			@Override
 			public void run() {
+				//设置界面初始的状态显示
+				Message msg = null;
+				Bundle bundle = null;						
+				msg = new Message();
+				if(blnSingle == true){
+					msg.what = INIT_SINGLE_CONTROLS;
+				}else{
+					msg.what = INIT_EACHVIEW_CONTROLS;
+				}
+				bundle = new Bundle();
+				bundle.putInt("tag", nWinIndex);
+				msg.setData(bundle);
+				controlHandler.sendMessage(msg);
+				
 				if (blnOnLine) {
 					long lRet = SDK.ConnectChannelP2P(strUUID,nChannelIndex - 1, avdecoder, monitor,ConnectChannelP2PHandler);
 					// 返回登录状态
-					Message msg = new Message();
+					msg = new Message();
 					msg.what = SHOW_CONNECTSUBTODEVICE_STATE;
-					Bundle bundle = new Bundle();
+					bundle = new Bundle();
 					bundle.putInt("tag", nWinIndex);
 					if (lRet == 0) {
 						bundle.putInt("state", 1);
@@ -2727,9 +2859,9 @@ public class Fun_RealPlayerActivity extends Activity{
 					controlHandler.sendMessage(msg);
 				} else {
 					// 不在线提示
-					Message msg = new Message();
+					msg = new Message();
 					msg.what = SHOW_LOGINTODEVICE_STATE;
-					Bundle bundle = new Bundle();
+					bundle = new Bundle();
 					bundle.putInt("tag", nWinIndex);
 					bundle.putInt("state", -2);
 					msg.setData(bundle);
@@ -2765,7 +2897,7 @@ public class Fun_RealPlayerActivity extends Activity{
 	
 	//软件处理.....................
 	
-	
+	//单路刷新处理
 	public void startSingleRequestVideoThread() {
 		if(m_devCartsList.size() == 0){			 
 			return;
@@ -2781,6 +2913,21 @@ public class Fun_RealPlayerActivity extends Activity{
 			};
 		}.start();
 	}
+	//多路刷新处理
+	public void startMultiRequestVideoThread(int sender) {
+		final int tag = sender;
+		if(m_devCartsList == null || m_devCartsList.size() == 0)
+		{			 
+			return ;
+		}
+		new Thread() {
+			@Override
+			public void run() {
+				runMultiRequestVideoThread(tag);
+			}
+
+		}.start();
+	}
 	
 	/**
 	 * 请求视频线程
@@ -2789,12 +2936,10 @@ public class Fun_RealPlayerActivity extends Activity{
 	 */
 	private void runSingleRequsetVideoThread(int sender) throws InterruptedException{
 		// 若sender = 1，则断开连接，重新连接。
-		int tag = sender;
-
+		/*int tag = sender;
 		boolean isTimeout = false; // 视频数据是否超时
 		Message msg = null;
-		Bundle bundle = null;
-
+		Bundle bundle = null;*/
 		// 显示加载控件
 		controlHandler.sendEmptyMessage(INIT_SINGLE_CONTROLS);
 
@@ -2802,45 +2947,8 @@ public class Fun_RealPlayerActivity extends Activity{
 
 		// 通过devInfo获取devID
 		DevCart devCart = m_singleMonitor.getDevCart();
-		/*int devID = m_zlvss.devmanager_get_devID_fromDeviceInfo(devCart.getDeviceInfo());
-		m_singleMonitor.setDevID(devID);
-
-		if(devCart.getDeviceInfo().getP2PType() == Constants.P2PType_MN)
-		{
-			//增加对蛮牛设备的处理
-			StartMNRealPlay(devCart,m_avdecoder,m_singleMonitor,0);
-		}
-		else
-		{
-			int status = 0;
-			while (true) {
-				// 判断是否建立主连接
-				status = m_zlvss.devmanager_isConnectMainToDevice(devID);
-				m_singleMonitor.setStatus(status);
-				m_singleMonitor.setLogin_state(status);
-				m_singleMonitor.setCanPTZ(true);
-				m_singleMonitor.setCanRecord(true);
-				m_singleMonitor.setCanShot(true);
-				m_singleMonitor.setCanTalk(true);
-				m_singleMonitor.setCanSwitchStream(true);
-				if (status != Macro.AVDEVICE_VIDEOCHNNECL_STATE_CONNECTING)
-					break;
-	
-				Thread.sleep(100);
-			}
-	
-			// 理论上主连接成功，实际上已断开
-			if (status == Macro.AVDEVICE_VIDEOCHNNECL_STATE_CONNECTED
-					&& !m_zlvss.devmanager_test_mainIsConnected(devID)) {
-				m_zlvss.devmanager_logoutFromDevice_devID(devID);
-			}
-	
-			// 是否建立主连接
-			status = m_zlvss.devmanager_isConnectMainToDevice(devID);
-			m_singleMonitor.setStatus(status);
-			m_singleMonitor.setLogin_state(status);
-			
-		}*/
+		refreshStartMNRealPlay(devCart,m_avdecoder,m_singleMonitor,0,true);	
+		
 		// 完成请求码流操作，无论成功失败
 		m_singleMonitor.setCanChangeChn(true);
 		
@@ -3078,6 +3186,43 @@ public class Fun_RealPlayerActivity extends Activity{
 		// 退出当前页面
 		finish();
 	}
+	private int[] pixels;
+	private void layout(){
+		if(pixels[0] > pixels[1]){
+			//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			params.width = pixels[0];
+			params.height = pixels[1];
+			_playview4ui.setLayoutParams(params);
+			//如果是软解 要改变画图的尺寸
+			m_chooseMonitor.setDrawRect(new Rect(0, 0, pixels[0], pixels[1]));
+		}else{
+			params.width = _verticalScreenWidth;
+			params.height = 0;
+			_playview4ui.setLayoutParams(params);
+			m_chooseMonitor.setDrawRect(new Rect(0, 0, _verticalScreenWidth, _verticalScreenHeigth+20));
+		}
+	}
+	
+	private int[] getSize(){
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int[] pixels = new int[2];
+		pixels[0] = dm.widthPixels;
+		pixels[1] = dm.heightPixels;
+		return pixels;
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		//SDK.ClearChannelIFrameStatus();
+		isScreenChange(0,0);
+		pixels = getSize();
+		if(m_devNum == 1){
+			layout();
+		}
+	}
+	
 	int _flag = 0;
 	@SuppressWarnings("static-access")
 	public void isScreenChange(int width,int height) {
@@ -3091,14 +3236,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				_bottomMemo.setVisibility(View.GONE);
 				_middleMenu.setVisibility(View.GONE);
 				m_dataFlowView.setVisibility(View.GONE);
-				if(m_devNum > 1){
-					controlHandler.sendEmptyMessage(102);
-				}
 			}
-			
-			//如果是软解 要改变画图的尺寸
-			//monitor.setDrawRect(new Rect(0, 0, eventwidth, eventheight));
-			
 		}else if(ori == mConfiguration.ORIENTATION_PORTRAIT){//竖屏
 			_flag = 0;
 			_hreadframeLayout.setVisibility(View.VISIBLE);
@@ -3118,7 +3256,7 @@ public class Fun_RealPlayerActivity extends Activity{
 		}
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
-			switch(index){
+			/*switch(index){
 			case 0:
 				if(m_avdecoder == null){
 					m_avdecoder = new DecoderDebugger(holder.getSurface(),352,288);
@@ -3151,7 +3289,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				break;
 			default:
 				break;	
-			}
+			}*/
 			
 		}
 
@@ -3160,7 +3298,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				int height) {
 			switch(index){
 			case 0:
-				/*if(m_avdecoder == null){
+				if(m_avdecoder == null){
 					m_avdecoder = new DecoderDebugger(holder.getSurface(),352,288);
 					DevCart devCart = m_singleMonitor.getDevCart();
 					if(devCart!=null && devCart.getDeviceInfo()!=null){
@@ -3171,15 +3309,16 @@ public class Fun_RealPlayerActivity extends Activity{
 							SDK.SetAVDecoder(strDevUUID,nChannelIndex, m_avdecoder);
 						}
 					}
-				}*/
-				System.out.println("................width = "+width+" newHeight: "+height);
-				isScreenChange(width,height);
+				}
+				//isScreenChange(width,height);
 				break;
 			case 1:
 			case 2:
 			case 3:
 			case 4:
-				/*if(m_monitorsList.get(index-1).getAVDecoder()==null){
+				if(m_monitorsList.get(index-1).getAVDecoder() != null){
+					m_monitorsList.get(index-1).setDrawRect(new Rect(0, 0, width, height));
+				}else if(m_monitorsList.get(index-1).getAVDecoder() == null){
 					m_monitorsList.get(index-1).setAVDecoder(new DecoderDebugger(holder.getSurface(),352,288));
 					DevCart devCart = m_monitorsList.get(index-1).getDevCart();
 					if(devCart!=null && devCart.getDeviceInfo()!=null){
@@ -3189,11 +3328,8 @@ public class Fun_RealPlayerActivity extends Activity{
 							SDK.SetAVDecoder(strDevUUID,nChannelIndex, m_monitorsList.get(index-1).getAVDecoder());
 						}
 					}
-				}*/
-				//if(m_isFullView == false){//如果是4窗口就调
-				System.out.println("................width = "+width+" newHeight: "+height);
-					isScreenChange(width,height);
-				//}
+				}
+				//isScreenChange(width,height);
 				
 				break;
 			default:
@@ -3216,9 +3352,28 @@ public class Fun_RealPlayerActivity extends Activity{
 			case 2:
 			case 3:
 			case 4:
-				if(m_monitorsList.get(index-1).getAVDecoder()!=null){
-					m_monitorsList.get(index-1).getAVDecoder().release();
-					m_monitorsList.get(index-1).setAVDecoder(null);
+				//多画面时 如果放大了 别的窗口不用调画图片方法
+				if(m_isFullView && m_monitorsList.size() > 0){
+//					android.os.Message msg = new android.os.Message();
+//					msg.what = 103;
+//					msg.arg1 = index;
+//					controlHandler.sendMessage(msg);
+					
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							if(m_monitorsList.get(index-1).getAVDecoder()!=null){
+								m_monitorsList.get(index-1).getAVDecoder().release();
+								m_monitorsList.get(index-1).setAVDecoder(null);
+							}
+						}
+					}).start();
+					
+				}else{
+					if(m_monitorsList.get(index-1).getAVDecoder()!=null){
+						m_monitorsList.get(index-1).getAVDecoder().release();
+						m_monitorsList.get(index-1).setAVDecoder(null);
+					}
 				}
 				break;
 			default:
@@ -3314,26 +3469,15 @@ public class Fun_RealPlayerActivity extends Activity{
 					if (devCart != null && devCart.getDeviceInfo() != null
 							&& devCart.getDeviceInfo().sid.equals(strUUID)
 							&& devCart.getChannelNum() == nChannelIndex + 1) {
-						System.out.println("DevCart:    AAAAAAAAAAAAAAAAAAAAAAAAAA");
-						System.out.println("20160309  DevCart:"
-								+ devCart.getDeviceInfo().getDevname()
-								+ ";strUUID:" + strUUID
-								+ ";devCart.getDeviceInfo().getUuid():"
-								+ devCart.getDeviceInfo().sid
-								+ ";nChannelIndex:" + nChannelIndex
-								+ ";devCart.getChannelNum():"
-								+ devCart.getChannelNum() + ";");
 						msgNew.what = PLAYING_EACHVIEW_CONTROLS;
 						monitor = mt;
 						nWinIndex = n + 1;
 					}
 				}
 			}
-			if (nStatus == 0){// p2pConnect成功
-				System.out.println("TEST20160321   P2pConnect成功   ChannelIndex:"+ nChannelIndex);
-				long lRet = SDK.CreateChannelP2P(strUUID, nChannelIndex,lContext/* , avdecoder, monitor */);
-				if (lRet == 0) {
-					// 创建通道成功
+			
+			if (msg.what != 0 && msg.what != -1) {//去掉加载框
+				if (msg.what == PLAYING_EACHVIEW_CONTROLS) {
 					if (IsSingleViewType == true) {
 						msgNew.what = PLAYING_SINGLE_CONTROLS;
 					} else {
@@ -3343,11 +3487,43 @@ public class Fun_RealPlayerActivity extends Activity{
 					bundle.putInt("tag", nWinIndex);
 					msgNew.setData(bundle);
 					controlHandler.sendMessage(msgNew);
-					if (monitor != null) {
-						monitor.setPlay_status(1);
+				}
+			}else{
+				if (nStatus == 0){// p2pConnect成功
+					System.out.println("TEST20160321   P2pConnect成功   ChannelIndex:"+ nChannelIndex);
+					long lRet = SDK.CreateChannelP2P(strUUID, nChannelIndex,lContext/* , avdecoder, monitor */);
+					if (lRet == 0) {
+						// 创建通道成功
+						if (IsSingleViewType == true) {
+							msgNew.what = PLAYING_SINGLE_CONTROLS;//去掉加载框
+						} else {
+							msgNew.what = PLAYING_EACHVIEW_CONTROLS;
+						}
+						Bundle bundle = new Bundle();
+						bundle.putInt("tag", nWinIndex);
+						msgNew.setData(bundle);
+						controlHandler.sendMessage(msgNew);
+						if (monitor != null) {
+							monitor.setPlay_status(1);
+						}
+					} else {
+						// TODO:创建通道失败
+						msgNew.what = SHOW_CONNECTSUBTODEVICE_STATE;
+						Bundle bundle = new Bundle();
+						bundle.putInt("tag", nWinIndex);
+						bundle.putInt("state", -2);// -2||-3 连接失败
+						msgNew.setData(bundle);
+						controlHandler.sendMessage(msgNew);
+						if (monitor != null) {
+							monitor.setPlay_status(0);
+						}
 					}
 				} else {
-					// TODO:创建通道失败
+					if (nStatus == -5000/* || nStatus == -4999 */) {
+						// 调打洞失败的处理
+						SDK.CloseP2PConnect(strUUID, nChannelIndex);
+					}
+					// ConnectP2P失败的处理
 					msgNew.what = SHOW_CONNECTSUBTODEVICE_STATE;
 					Bundle bundle = new Bundle();
 					bundle.putInt("tag", nWinIndex);
@@ -3358,23 +3534,8 @@ public class Fun_RealPlayerActivity extends Activity{
 						monitor.setPlay_status(0);
 					}
 				}
-			} else {
-				if (nStatus == -5000/* || nStatus == -4999 */) {
-					System.out.println("20160325TEST Receive Message to CloseP2PConnect");
-					// 调打洞失败的处理
-					SDK.CloseP2PConnect(strUUID, nChannelIndex);
-				}
-				// ConnectP2P失败的处理
-				msgNew.what = SHOW_CONNECTSUBTODEVICE_STATE;
-				Bundle bundle = new Bundle();
-				bundle.putInt("tag", nWinIndex);
-				bundle.putInt("state", -2);// -2||-3 连接失败
-				msgNew.setData(bundle);
-				controlHandler.sendMessage(msgNew);
-				if (monitor != null) {
-					monitor.setPlay_status(0);
-				}
 			}
+			
 		}
 	};
 	
@@ -3382,7 +3543,7 @@ public class Fun_RealPlayerActivity extends Activity{
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			/*case INIT_SINGLE_CONTROLS: {
+			case INIT_SINGLE_CONTROLS: {
 				showProgressBar(-1);
 				showDetailText(-1, R.string.playerview_detailtext_connecting);
 				hideRefreshButton(-1);
@@ -3396,13 +3557,13 @@ public class Fun_RealPlayerActivity extends Activity{
 				hideDetailText(-1);
 				enableStreamButton();
 			}
-				break;*/
+				break;
 			case STOP_SINGLE_CONTROLS: {
 				int tag = msg.getData().getInt("tag");
 				showDetailText(tag, R.string.playerview_detailtext_stopped);
 			}
 				break;
-			/*case INIT_MULTI_CONTROLS: {
+			case INIT_MULTI_CONTROLS: {
 				disableCloseButton();
 				disableStreamButton();
 			}
@@ -3414,7 +3575,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				hideRefreshButton(tag);
 				hideAddButton(tag);
 			}
-				break;*/
+				break;
 			case PLAYING_EACHVIEW_CONTROLS: {
 				int tag = msg.getData().getInt("tag");
 				hideProgressBar(tag);
@@ -3440,7 +3601,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				showAddButton(tag);
 			}
 				break;
-			/*case PLAYING_EACHVIEW_BUTTONS: {
+			case PLAYING_EACHVIEW_BUTTONS: {
 				if(!m_isFullView)
 					enableCloseButton();
 				enableStreamButton();
@@ -3469,7 +3630,7 @@ public class Fun_RealPlayerActivity extends Activity{
 				int state = msg.getData().getInt("state");
 				show_requestVideoFromDevice_state(tag, state);
 			}
-				break;*/
+				break;
 			case SHOW_CONNECTSUBTODEVICE_STATE: {
 				int tag = msg.getData().getInt("tag");
 				int state = msg.getData().getInt("state");
@@ -3516,44 +3677,81 @@ public class Fun_RealPlayerActivity extends Activity{
 					controlHandler.sendEmptyMessageDelayed(101, 500); //延迟发送
 				}
 				break;
-			case 102:
-				doublePlayViewEvent(m_multiPlayView01);
-				doublePlayViewEvent(m_multiPlayView01);
-				
-				try {
-					Thread.sleep(300);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				int eventwidth = m_surface01.getMeasuredWidth();
-				int eventheight = m_surface01.getMeasuredHeight();
-				LogUtil.d(TAG, "eventwidth:"+eventwidth+" eventheight:"+eventheight);
-				int eventwidth2 = m_surface02.getMeasuredWidth();
-				int eventheight2 = m_surface02.getMeasuredHeight();
-				LogUtil.d(TAG, "eventwidth:"+eventwidth2+" eventheight:"+eventheight2);
-				
-				for (int i = 0; i < m_monitorsList.size(); i++) {
-					Monitor monitor = m_monitorsList.get(i);
-					//DecoderDebugger decoder = monitor.getAVDecoder().isCanDecode();
-					System.out.println("m_monitorsList==== "+monitor.getAVDecoder().isCanDecode());
-					//monitor.setDrawRect(new Rect(0, 0, eventwidth, eventheight));
-				}
-				
-				for (int j = 0; j < m_devCartsList.size(); j++) {
-					DevCart devCart = m_devCartsList.get(j);
-					System.out.println("m_monitorsList==== "+devCart.getChannelNum());
-				}
-				
-				break;
+//			case 102:
+//				doublePlayViewEvent(m_multiPlayView01);
+//				doublePlayViewEvent(m_multiPlayView01);
+//				break;
+//			case 103:
+//				int index = msg.arg1;
+//				if(m_monitorsList.get(index-1).getAVDecoder()!=null){
+//					m_monitorsList.get(index-1).getAVDecoder().release2();
+//					m_monitorsList.get(index-1).setAVDecoder(null);
+//				}
+//				break;
 			default:
 				break;
 			}
 		}
 	};
 	
+	/** 返回登录状态 */
+	private void show_loginToDevice_state(int tag, int state) {
+		Log.d(TAG, "TAG = " + tag + ",登录状态 = " + state);
+		/*
+		 * 登录：-1:P2P服务器未连上 -2:P2P连接失败 -3:IP连接失败 -11:登录数据发送失败 -12:登录超时 -21:密码错误
+		 * -22:设备锁定 -23:账号不存在 -24:账号已登录
+		 */
+		if (state < 0) {
+			hideProgressBar(tag);
+			hideAddButton(tag);
+			// -1:P2P服务器未连上
+			if (state == -1) {
+				showDetailText(tag, R.string.playerview_detailtext_P2PError);
+			}
+			// -2||-3:连接失败
+			else if (state == -2 || state == -3) {
+				showDetailText(tag, R.string.playerview_detailtext_devFailed);
+			}
+			// -11:登录数据发送失败
+			else if (state == -11) {
+				showDetailText(tag, R.string.playerview_detailtext_loginFailed);
+			}
+			// -12:登录超时
+			else if (state == -12) {
+				showDetailText(tag, R.string.playerview_detailtext_devTimeout);
+			}
+			// -21:密码错误
+			else if (state == -21) {
+				showDetailText(tag, R.string.playerview_detailtext_pwdError);
+			}
+			// -22:设备锁定
+			else if (state == -22) {
+				showDetailText(tag, R.string.playerview_detailtext_devLock);
+			}
+			// -23:账号不存在
+			else if (state == -23) {
+				showDetailText(tag, R.string.playerview_detailtext_devNoUser);
+			}
+			// -24:账号已登录
+			else if (state == -24) {
+				showDetailText(tag, R.string.playerview_detailtext_devLogged);
+			} else {
+				showDetailText(tag, R.string.playerview_detailtext_error01);
+			}
+			showRefreshButton(tag);
+			if (tag == -1) {
+				disableCloseButton();
+			} else {
+				enableCloseButton();
+			}
+			return;
+		}
+
+	}
+	
 	/** 返回辅连接请求状态 */
 	private void show_connectSubToDevice_state(int tag, int state) {
-		Log.d(TAG, "TAG = " + tag + ",辅连接请求状态 = " + state);
+		LogUtil.d(TAG, "TAG = " + tag + ",辅连接请求状态 = " + state);
 		/*
 		 * 创建并注册辅连接 -1:P2P服务器未连上 -2:P2P连接失败 -3:IP连接失败 -11:注册数据发送失败 -12:注册回调超时
 		 * 1:注册成功 -21:注册失败（已存在）
@@ -3584,6 +3782,73 @@ public class Fun_RealPlayerActivity extends Activity{
 				showDetailText(tag, R.string.playerview_detailtext_error02);
 			}
 
+			showRefreshButton(tag);
+
+			return;
+		}
+	}
+	/** 返回请求视频数据状态 */
+	private void show_requestVideoFromDevice_state(int tag, int state) {
+		LogUtil.d(TAG, "TAG = " + tag + "请求视频数据状态 = " + state);
+		/*
+		 * 请求视频请求 -1:主连接不存在 -2:通道连接不存在 -11:请求视频数据发送失败 -12:请求视频回调超时 1:请求视频成功
+		 * -21:请求视频失败
+		 */
+		hideProgressBar(tag);
+		hideAddButton(tag);
+		if (state < 0) {
+			// -1 -2 -11:请求视频数据发送失败
+			if (state == -1 || state == -2 || state == -11) {
+				showDetailText(tag, R.string.playerview_detailtext_chnFailed);
+			}
+			// -12:请求视频回调超时
+			else if (state == -12) {
+				showDetailText(tag, R.string.playerview_detailtext_chnTimeout);
+			}
+			// -21:请求视频失败
+			else if (state == -21) {
+				showDetailText(tag, R.string.playerview_detailtext_chnFailed);
+			} else {
+				showDetailText(tag, R.string.playerview_detailtext_error04);
+			}
+
+			showRefreshButton(tag);
+
+			return;
+		}
+	}
+	/** 返回通道请求状态 */
+	private void show_connectVideoToDevice_state(int tag, int state) {
+		LogUtil.d(TAG, "TAG = " + tag + ",通道请求状态 = " + state);
+		/*
+		 * 通道连接：-1:P2P服务器未连上 -2:P2P连接失败 -3:IP连接失败 -11:注册数据发送失败 -12:注册回调超时 1:注册成功
+		 * -21:注册失败（已存在）
+		 */
+		if (state < 0) {
+			hideProgressBar(tag);
+			hideAddButton(tag);
+			// -1:P2P服务器未连上
+			if (state == -1) {
+				showDetailText(tag, R.string.playerview_detailtext_P2PError);
+			}
+			// -2||-3:连接失败
+			else if (state == -2 || state == -3) {
+				showDetailText(tag, R.string.playerview_detailtext_chnFailed);
+			}
+			// -11:注册数据发送失败
+			else if (state == -11) {
+				showDetailText(tag, R.string.playerview_detailtext_chnFailed);
+			}
+			// -12:注册回调超时
+			else if (state == -12) {
+				showDetailText(tag, R.string.playerview_detailtext_chnTimeout);
+			}
+			// -21:注册失败（已存在）
+			else if (state == -21) {
+				showDetailText(tag, R.string.playerview_detailtext_chnFailed);
+			} else {
+				showDetailText(tag, R.string.playerview_detailtext_error03);
+			}
 			showRefreshButton(tag);
 
 			return;

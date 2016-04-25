@@ -235,7 +235,7 @@ public class Main extends Activity implements OnClickListener {
 		
 		change(R.id.btn_mes, R.drawable.common_bar_cloud_sel);
 		change(btn_add, btn_qrcode);
-		//_handler.sendEmptyMessageDelayed(XMSG.UPDATEA_APP, 10000); //延迟发送升级提示  -- 测试注了,打包时开启来
+		_handler.sendEmptyMessageDelayed(XMSG.UPDATEA_APP, 10000); //延迟发送升级提示  -- 测试注了,打包时开启来
 		MyReceiver.isCloseApp = true;
 		initLocation();
 		//删除过期的日志

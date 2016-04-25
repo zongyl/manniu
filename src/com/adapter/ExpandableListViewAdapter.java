@@ -129,12 +129,12 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter{
 
 		// 获取文字信息
 		TextView tvDevName = (TextView) contentView.findViewById(R.id.home_devslist_cell_txtlabel);
-		TextView tvDetailName = (TextView) contentView.findViewById(R.id.home_devslist_cell_detaillabel);
+		//TextView tvDetailName = (TextView) contentView.findViewById(R.id.home_devslist_cell_detaillabel);
 		tvDevName.setText(deviceInfo.getDevname());
 		// 1-IP设备、4-牛眼
-		if (deviceInfo.type == 1 || deviceInfo.type == 4) {
-			tvDetailName.setText(deviceInfo.sid);
-		}
+//		if (deviceInfo.type == 1 || deviceInfo.type == 4) {
+//			tvDetailName.setText(deviceInfo.sid);//列表显示设备ID（优化方案：先隐藏）
+//		}
 		// 设置more按钮事件
 		View btnMore = contentView.findViewById(R.id.home_devslist_cell_morelayout);
 		btnMore.setTag(groupPosition);
